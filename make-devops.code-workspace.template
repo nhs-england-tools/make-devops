@@ -1,0 +1,41 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"breadcrumbs.enabled": true,
+		"editor.autoIndent": "full",
+		"editor.fontSize": 18,
+		"editor.formatOnSave": true,
+		"editor.renderWhitespace": "all",
+		"editor.suggestSelection": "recentlyUsedByPrefix",
+		"explorer.autoReveal": true,
+		"explorer.sortOrder": "type",
+		"extensions.ignoreRecommendations": true,
+		"extensions.showRecommendationsOnlyOnDemand": true,
+		"files.autoSave": "onFocusChange",
+		"files.eol": "\n",
+		"files.insertFinalNewline": true,
+		"files.trimTrailingWhitespace": true,
+		"python.formatting.provider": "black",
+		"python.linting.flake8Enabled": true,
+		"python.linting.mypyEnabled": true,
+		"python.linting.pylintEnabled": true,
+		"telemetry.enableCrashReporter": false,
+		"telemetry.enableTelemetry": false,
+		"terraform.indexing.enabled": false,
+		"terraform.languageServer.enabled": true,
+		"window.title": "${activeEditorMedium}${separator}${rootName}",
+		"window.zoomLevel": 0,
+		/*"workbench.colorCustomizations": {
+			"editorWhitespace.foreground": "#FF0000",
+		},*/
+		"workbench.colorTheme": "Better Solarized Dark",
+		"workbench.tree.indent": 24,
+		"[dockerfile]": {
+			"editor.formatOnSave": false,
+		},
+	},
+}

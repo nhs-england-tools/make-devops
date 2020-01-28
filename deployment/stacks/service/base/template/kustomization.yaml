@@ -1,0 +1,13 @@
+resources:
+  - namespace.yaml
+  - sample-deployment.yaml
+  - sample-service.yaml
+
+configMapGenerator:
+  - name: sample-configmap
+    literals:
+      - PROFILE=PROFILE_TO_REPLACE
+
+images:
+  - name: DOCKER_REGISTRY_TO_REPLACE/sample
+    newTag: SAMPLE_IMAGE_TAG_TO_REPLACE

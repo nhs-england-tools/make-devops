@@ -1,0 +1,22 @@
+version: "3.7"
+
+services:
+  localstack:
+    image: localstack/localstack:0.10.6
+    container_name: localstack
+    hostname: localstack
+    ports:
+      - "4567-4597:4567-4597"
+      - "8080:8080"
+    environment:
+      - SERVICES=dynamodb,s3,secretsmanager
+      - DATA_DIR=$TMP_DIR/localstack/data
+      - PORT_WEB_UI=8080
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - "$TMP_DIR/localstack:/tmp/localstack"
+
+networks:
+  default:
+    external:
+      name: $DOCKER_NETWORK

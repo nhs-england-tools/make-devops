@@ -1,0 +1,4 @@
+PROJECT_GROUP := uec/tools
+PROJECT_GROUP_SHORT := uec-tools
+PROJECT_NAME := make-devops
+PROJECT_NAME_SHORT := mdo

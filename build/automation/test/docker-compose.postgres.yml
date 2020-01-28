@@ -1,0 +1,13 @@
+version: "3.7"
+
+services:
+  postgres:
+    image: $AWS_ECR/$PROJECT_GROUP/$PROJECT_NAME/postgres:latest
+    container_name: postgres
+    hostname: postgres
+    command: ["postgres", "-c", "config_file=/etc/postgresql/postgresql.conf"]
+
+networks:
+  default:
+    external:
+      name: $DOCKER_NETWORK

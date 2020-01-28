@@ -1,0 +1,29 @@
+pipeline {
+    agent any
+    stages {
+        stage("Show Variables") {
+            steps {
+                script {
+                    sh 'make devops-print-variables'
+                }
+            }
+        }
+        stage("Run Test Suite") {
+            steps {
+                script {
+                    sh '''
+                        export AWS_ACCOUNT_ID_MGMT=123456789
+                        export AWS_ACCOUNT_ID_NONPROD=123456789
+                        export AWS_ACCOUNT_ID_PROD=123456789
+                        make devops-test-suite || make devops-test-suite DEBUG=1
+                    '''
+                }
+            }
+        }
+    }
+    post {
+        always {
+            sh 'make devops-test-cleanup'
+        }
+    }
+}

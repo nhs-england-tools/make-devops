@@ -1,0 +1,64 @@
+version: "3.7"
+
+services:
+  # service:
+  #   image: $DOCKER_REGISTRY/service:latest
+  #   container_name: service
+  #   hostname: service
+  #   environment:
+  #     PROFILE: $PROFILE
+  #   ports:
+  #     - "8443:8443"
+  #   networks:
+  #     default:
+  #       aliases:
+  #         - service.$PROJECT_NAME_SHORT.local
+
+  mock:
+    image: jamesdbloom/mockserver:latest
+    container_name: mock
+    hostname: mock
+    stdin_open: true
+    tty: true
+    ports:
+      - "1080:1080"
+      - "1090:1090"
+    networks:
+      default:
+        aliases:
+          - mock.$PROJECT_NAME_SHORT.local
+
+  mail:
+    image: mailhog/mailhog:latest
+    container_name: mail
+    hostname: mail
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      default:
+        aliases:
+          - mail.$PROJECT_NAME_SHORT.local
+
+  browser:
+    image: selenium/standalone-chrome-debug:latest
+    container_name: browser
+    hostname: browser
+    environment:
+      JAVA_OPTS: -Dselenium.LOGGER.level=ALL
+    volumes:
+      - /dev/shm:/dev/shm
+    ports:
+      - "4444:4444"
+      - "5900:5900"
+    networks:
+      default:
+        aliases:
+          - browser.$PROJECT_NAME_SHORT.local
+
+  # TODO: jmeter
+
+networks:
+  default:
+    external:
+      name: $DOCKER_NETWORK

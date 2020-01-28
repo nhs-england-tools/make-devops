@@ -1,0 +1,10 @@
+bases:
+  - ../../../base/effective
+
+patchesStrategicMerge:
+  - sample-service-customisation.yaml
+
+namespace: K8S_APP_NAMESPACE_TO_REPLACE
+
+commonLabels:
+  env: live
