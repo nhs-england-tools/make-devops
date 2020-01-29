@@ -199,13 +199,13 @@ docker-run-composer: ### Run composer container - mandatory: CMD; optional: DIR,
 	docker run --interactive $(_TTY) --rm \
 		--name composer-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7) \
 		--user $$(id -u):$$(id -g) \
-		--env PROFILE=$(PROFILE) \
-		--env-file <(env | grep "^AWS_") \
-		--env-file <(env | grep "^TF_VAR_") \
-		--env-file <(env | grep "^SERV[A-Z]*_") \
-		--env-file <(env | grep "^APP[A-Z]*_") \
-		--env-file <(env | grep "^PROJ[A-Z]*_") \
+		--env-file <(env | grep "^AWS_" | grep -v '=$$') \
+		--env-file <(env | grep "^TF_VAR_" | grep -v '=$$') \
+		--env-file <(env | grep "^SERV[A-Z]*_" | grep -v '=$$') \
+		--env-file <(env | grep "^APP[A-Z]*_" | grep -v '=$$') \
+		--env-file <(env | grep "^PROJ[A-Z]*_" | grep -v '=$$') \
 		--env-file <(make _docker-get-variables-from-file VARS_FILE=$(VARS_FILE)) \
+		--env PROFILE=$(PROFILE) \
 		--volume $(PROJECT_DIR):/project \
 		--volume ~/.composer:/tmp \
 		--network $(DOCKER_NETWORK) \
@@ -223,7 +223,12 @@ docker-run-data: ### Run data container - mandatory: CMD; optional: ENGINE=postg
 		docker run --interactive $(_TTY) --rm \
 			--name data-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7) \
 			--user $$(id -u):$$(id -g) \
-			--env PROFILE=$(PROFILE) \
+			--env-file <(env | grep "^AWS_" | grep -v '=$$') \
+			--env-file <(env | grep "^TF_VAR_" | grep -v '=$$') \
+			--env-file <(env | grep "^SERV[A-Z]*_" | grep -v '=$$') \
+			--env-file <(env | grep "^APP[A-Z]*_" | grep -v '=$$') \
+			--env-file <(env | grep "^PROJ[A-Z]*_" | grep -v '=$$') \
+			--env-file <(make _docker-get-variables-from-file VARS_FILE=$(VARS_FILE)) \
 			--env DB_HOST=$(DB_HOST) \
 			--env DB_PORT=$(DB_PORT) \
 			--env DB_NAME=$(DB_NAME) \
@@ -231,12 +236,7 @@ docker-run-data: ### Run data container - mandatory: CMD; optional: ENGINE=postg
 			--env DB_MASTER_PASSWORD=$(DB_MASTER_PASSWORD) \
 			--env DB_USERNAME=$(DB_USERNAME) \
 			--env DB_PASSWORD=$(DB_PASSWORD) \
-			--env-file <(env | grep "^AWS_") \
-			--env-file <(env | grep "^TF_VAR_") \
-			--env-file <(env | grep "^SERV[A-Z]*_") \
-			--env-file <(env | grep "^APP[A-Z]*_") \
-			--env-file <(env | grep "^PROJ[A-Z]*_") \
-			--env-file <(make _docker-get-variables-from-file VARS_FILE=$(VARS_FILE)) \
+			--env PROFILE=$(PROFILE) \
 			--volume $(PROJECT_DIR):/project \
 			--network $(DOCKER_NETWORK) \
 			--workdir /project/$(DIR) \
@@ -249,13 +249,13 @@ docker-run-dotnet: ### Run dotnet container - mandatory: CMD; optional: DIR,ARGS
 	docker run --interactive $(_TTY) --rm \
 		--name dotnet-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7) \
 		--user $$(id -u):$$(id -g) \
-		--env PROFILE=$(PROFILE) \
-		--env-file <(env | grep "^AWS_") \
-		--env-file <(env | grep "^TF_VAR_") \
-		--env-file <(env | grep "^SERV[A-Z]*_") \
-		--env-file <(env | grep "^APP[A-Z]*_") \
-		--env-file <(env | grep "^PROJ[A-Z]*_") \
+		--env-file <(env | grep "^AWS_" | grep -v '=$$') \
+		--env-file <(env | grep "^TF_VAR_" | grep -v '=$$') \
+		--env-file <(env | grep "^SERV[A-Z]*_" | grep -v '=$$') \
+		--env-file <(env | grep "^APP[A-Z]*_" | grep -v '=$$') \
+		--env-file <(env | grep "^PROJ[A-Z]*_" | grep -v '=$$') \
 		--env-file <(make _docker-get-variables-from-file VARS_FILE=$(VARS_FILE)) \
+		--env PROFILE=$(PROFILE) \
 		--volume $(PROJECT_DIR):/project \
 		--network $(DOCKER_NETWORK) \
 		--workdir /project/$(DIR) \
@@ -267,14 +267,14 @@ docker-run-gradle: ### Run gradle container - mandatory: CMD; optional: DIR,ARGS
 	docker run --interactive $(_TTY) --rm \
 		--name gradle-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7) \
 		--user $$(id -u):$$(id -g) \
+		--env-file <(env | grep "^AWS_" | grep -v '=$$') \
+		--env-file <(env | grep "^TF_VAR_" | grep -v '=$$') \
+		--env-file <(env | grep "^SERV[A-Z]*_" | grep -v '=$$') \
+		--env-file <(env | grep "^APP[A-Z]*_" | grep -v '=$$') \
+		--env-file <(env | grep "^PROJ[A-Z]*_" | grep -v '=$$') \
+		--env-file <(make _docker-get-variables-from-file VARS_FILE=$(VARS_FILE)) \
 		--env GRADLE_USER_HOME=/home/gradle/.gradle \
 		--env PROFILE=$(PROFILE) \
-		--env-file <(env | grep "^AWS_") \
-		--env-file <(env | grep "^TF_VAR_") \
-		--env-file <(env | grep "^SERV[A-Z]*_") \
-		--env-file <(env | grep "^APP[A-Z]*_") \
-		--env-file <(env | grep "^PROJ[A-Z]*_") \
-		--env-file <(make _docker-get-variables-from-file VARS_FILE=$(VARS_FILE)) \
 		--volume $(PROJECT_DIR):/project \
 		--volume ~/.gradle:/home/gradle/.gradle \
 		--network $(DOCKER_NETWORK) \
@@ -287,14 +287,14 @@ docker-run-mvn: ### Run maven container - mandatory: CMD; optional: DIR,ARGS=[Do
 	docker run --interactive $(_TTY) --rm \
 		--name mvn-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7) \
 		--user $$(id -u):$$(id -g) \
-		--env PROFILE=$(PROFILE) \
-		--env MAVEN_CONFIG=/var/maven/.m2 \
-		--env-file <(env | grep "^AWS_") \
-		--env-file <(env | grep "^TF_VAR_") \
-		--env-file <(env | grep "^SERV[A-Z]*_") \
-		--env-file <(env | grep "^APP[A-Z]*_") \
-		--env-file <(env | grep "^PROJ[A-Z]*_") \
+		--env-file <(env | grep "^AWS_" | grep -v '=$$') \
+		--env-file <(env | grep "^TF_VAR_" | grep -v '=$$') \
+		--env-file <(env | grep "^SERV[A-Z]*_" | grep -v '=$$') \
+		--env-file <(env | grep "^APP[A-Z]*_" | grep -v '=$$') \
+		--env-file <(env | grep "^PROJ[A-Z]*_" | grep -v '=$$') \
 		--env-file <(make _docker-get-variables-from-file VARS_FILE=$(VARS_FILE)) \
+		--env MAVEN_CONFIG=/var/maven/.m2 \
+		--env PROFILE=$(PROFILE) \
 		--volume $(PROJECT_DIR):/project \
 		--volume ~/.m2:/var/maven/.m2 \
 		--network $(DOCKER_NETWORK) \
@@ -308,13 +308,13 @@ docker-run-mvn: ### Run maven container - mandatory: CMD; optional: DIR,ARGS=[Do
 docker-run-node: ### Run node container - mandatory: CMD; optional: DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file]
 	docker run --interactive $(_TTY) --rm \
 		--name node-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7) \
-		--env PROFILE=$(PROFILE) \
-		--env-file <(env | grep "^AWS_") \
-		--env-file <(env | grep "^TF_VAR_") \
-		--env-file <(env | grep "^SERV[A-Z]*_") \
-		--env-file <(env | grep "^APP[A-Z]*_") \
-		--env-file <(env | grep "^PROJ[A-Z]*_") \
+		--env-file <(env | grep "^AWS_" | grep -v '=$$') \
+		--env-file <(env | grep "^TF_VAR_" | grep -v '=$$') \
+		--env-file <(env | grep "^SERV[A-Z]*_" | grep -v '=$$') \
+		--env-file <(env | grep "^APP[A-Z]*_" | grep -v '=$$') \
+		--env-file <(env | grep "^PROJ[A-Z]*_" | grep -v '=$$') \
 		--env-file <(make _docker-get-variables-from-file VARS_FILE=$(VARS_FILE)) \
+		--env PROFILE=$(PROFILE) \
 		--volume $(PROJECT_DIR):/project \
 		--volume ~/.cache:/home/default/.cache \
 		--network $(DOCKER_NETWORK) \
@@ -333,16 +333,16 @@ docker-run-python: ### Run python container - mandatory: CMD; optional: SH=true,
 		docker run --interactive $(_TTY) --rm \
 			--name python-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7) \
 			--user $$(id -u):$$(id -g) \
-			--env PROFILE=$(PROFILE) \
+			--env-file <(env | grep "^AWS_" | grep -v '=$$') \
+			--env-file <(env | grep "^TF_VAR_" | grep -v '=$$') \
+			--env-file <(env | grep "^SERV[A-Z]*_" | grep -v '=$$') \
+			--env-file <(env | grep "^APP[A-Z]*_" | grep -v '=$$') \
+			--env-file <(env | grep "^PROJ[A-Z]*_" | grep -v '=$$') \
+			--env-file <(make _docker-get-variables-from-file VARS_FILE=$(VARS_FILE)) \
 			--env PIP_TARGET=/tmp/.packages \
 			--env PYTHONPATH=/tmp/.packages \
 			--env XDG_CACHE_HOME=/tmp/.cache \
-			--env-file <(env | grep "^AWS_") \
-			--env-file <(env | grep "^TF_VAR_") \
-			--env-file <(env | grep "^SERV[A-Z]*_") \
-			--env-file <(env | grep "^APP[A-Z]*_") \
-			--env-file <(env | grep "^PROJ[A-Z]*_") \
-			--env-file <(make _docker-get-variables-from-file VARS_FILE=$(VARS_FILE)) \
+			--env PROFILE=$(PROFILE) \
 			--volume $(PROJECT_DIR):/project \
 			--volume ~/.python/pip/cache:/tmp/.cache/pip \
 			--volume ~/.python/pip/packages:/tmp/.packages \
@@ -355,16 +355,16 @@ docker-run-python: ### Run python container - mandatory: CMD; optional: SH=true,
 		docker run --interactive $(_TTY) --rm \
 			--name python-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7) \
 			--user $$(id -u):$$(id -g) \
-			--env PROFILE=$(PROFILE) \
+			--env-file <(env | grep "^AWS_" | grep -v '=$$') \
+			--env-file <(env | grep "^TF_VAR_" | grep -v '=$$') \
+			--env-file <(env | grep "^SERV[A-Z]*_" | grep -v '=$$') \
+			--env-file <(env | grep "^APP[A-Z]*_" | grep -v '=$$') \
+			--env-file <(env | grep "^PROJ[A-Z]*_" | grep -v '=$$') \
+			--env-file <(make _docker-get-variables-from-file VARS_FILE=$(VARS_FILE)) \
 			--env PIP_TARGET=/tmp/.packages \
 			--env PYTHONPATH=/tmp/.packages \
 			--env XDG_CACHE_HOME=/tmp/.cache \
-			--env-file <(env | grep "^AWS_") \
-			--env-file <(env | grep "^TF_VAR_") \
-			--env-file <(env | grep "^SERV[A-Z]*_") \
-			--env-file <(env | grep "^APP[A-Z]*_") \
-			--env-file <(env | grep "^PROJ[A-Z]*_") \
-			--env-file <(make _docker-get-variables-from-file VARS_FILE=$(VARS_FILE)) \
+			--env PROFILE=$(PROFILE) \
 			--volume $(PROJECT_DIR):/project \
 			--volume ~/.python/pip/cache:/tmp/.cache/pip \
 			--volume ~/.python/pip/packages:/tmp/.packages \
@@ -381,13 +381,13 @@ docker-run-terraform: ### Run terraform container - mandatory: CMD; optional: DI
 	docker run --interactive $(_TTY) --rm \
 		--name terraform-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7) \
 		--user $$(id -u):$$(id -g) \
-		--env PROFILE=$(PROFILE) \
-		--env-file <(env | grep "^AWS_") \
-		--env-file <(env | grep "^TF_VAR_") \
-		--env-file <(env | grep "^SERV[A-Z]*_") \
-		--env-file <(env | grep "^APP[A-Z]*_") \
-		--env-file <(env | grep "^PROJ[A-Z]*_") \
+		--env-file <(env | grep "^AWS_" | grep -v '=$$') \
+		--env-file <(env | grep "^TF_VAR_" | grep -v '=$$') \
+		--env-file <(env | grep "^SERV[A-Z]*_" | grep -v '=$$') \
+		--env-file <(env | grep "^APP[A-Z]*_" | grep -v '=$$') \
+		--env-file <(env | grep "^PROJ[A-Z]*_" | grep -v '=$$') \
 		--env-file <(make _docker-get-variables-from-file VARS_FILE=$(VARS_FILE)) \
+		--env PROFILE=$(PROFILE) \
 		--volume $(PROJECT_DIR):/project \
 		--network $(DOCKER_NETWORK) \
 		--workdir /project/$(DIR) \
@@ -401,42 +401,42 @@ docker-run-tools: ### Run tools container - mandatory: CMD; optional: SH=true,DI
 	fi
 	if [[ ! "$(SH)" =~ ^(true|yes|y|on|1|TRUE|YES|Y|ON)$$ ]]; then
 		docker run --interactive $(_TTY) --rm \
-				--name tools-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7) \
-				--user $$(id -u):$$(id -g) \
-				--env PROFILE=$(PROFILE) \
-				--env-file <(env | grep "^AWS_") \
-				--env-file <(env | grep "^TF_VAR_") \
-				--env-file <(env | grep "^SERV[A-Z]*_") \
-				--env-file <(env | grep "^APP[A-Z]*_") \
-				--env-file <(env | grep "^PROJ[A-Z]*_") \
-				--env-file <(make _docker-get-variables-from-file VARS_FILE=$(VARS_FILE)) \
-				--volume $(PROJECT_DIR):/project \
-				--volume ~/.aws:/root/.aws \
-				--network $(DOCKER_NETWORK) \
-				--workdir /project/$(DIR) \
-				$(ARGS) \
-				$(DOCKER_REGISTRY)/tools:$(DOCKER_TOOLS_VERSION) \
-					$(CMD)
+			--name tools-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7) \
+			--user $$(id -u):$$(id -g) \
+			--env-file <(env | grep "^AWS_" | grep -v '=$$') \
+			--env-file <(env | grep "^TF_VAR_" | grep -v '=$$') \
+			--env-file <(env | grep "^SERV[A-Z]*_" | grep -v '=$$') \
+			--env-file <(env | grep "^APP[A-Z]*_" | grep -v '=$$') \
+			--env-file <(env | grep "^PROJ[A-Z]*_" | grep -v '=$$') \
+			--env-file <(make _docker-get-variables-from-file VARS_FILE=$(VARS_FILE)) \
+			--env PROFILE=$(PROFILE) \
+			--volume $(PROJECT_DIR):/project \
+			--volume ~/.aws:/root/.aws \
+			--network $(DOCKER_NETWORK) \
+			--workdir /project/$(DIR) \
+			$(ARGS) \
+			$(DOCKER_REGISTRY)/tools:$(DOCKER_TOOLS_VERSION) \
+				$(CMD)
 	else
 		docker run --interactive $(_TTY) --rm \
-				--name tools-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7) \
-				--user $$(id -u):$$(id -g) \
-				--env PROFILE=$(PROFILE) \
-				--env-file <(env | grep "^AWS_") \
-				--env-file <(env | grep "^TF_VAR_") \
-				--env-file <(env | grep "^SERV[A-Z]*_") \
-				--env-file <(env | grep "^APP[A-Z]*_") \
-				--env-file <(env | grep "^PROJ[A-Z]*_") \
-				--env-file <(make _docker-get-variables-from-file VARS_FILE=$(VARS_FILE)) \
-				--volume $(PROJECT_DIR):/project \
-				--volume ~/.aws:/root/.aws \
-				--network $(DOCKER_NETWORK) \
-				--workdir /project/$(DIR) \
-				$(ARGS) \
-				$(DOCKER_REGISTRY)/tools:$(DOCKER_TOOLS_VERSION) \
-					/bin/sh -c "
-						$(CMD)
-					"
+			--name tools-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7) \
+			--user $$(id -u):$$(id -g) \
+			--env-file <(env | grep "^AWS_" | grep -v '=$$') \
+			--env-file <(env | grep "^TF_VAR_" | grep -v '=$$') \
+			--env-file <(env | grep "^SERV[A-Z]*_" | grep -v '=$$') \
+			--env-file <(env | grep "^APP[A-Z]*_" | grep -v '=$$') \
+			--env-file <(env | grep "^PROJ[A-Z]*_" | grep -v '=$$') \
+			--env-file <(make _docker-get-variables-from-file VARS_FILE=$(VARS_FILE)) \
+			--env PROFILE=$(PROFILE) \
+			--volume $(PROJECT_DIR):/project \
+			--volume ~/.aws:/root/.aws \
+			--network $(DOCKER_NETWORK) \
+			--workdir /project/$(DIR) \
+			$(ARGS) \
+			$(DOCKER_REGISTRY)/tools:$(DOCKER_TOOLS_VERSION) \
+				/bin/sh -c "
+					$(CMD)
+				"
 	fi
 
 # ==============================================================================

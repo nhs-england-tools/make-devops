@@ -35,6 +35,8 @@ test-docker: \
 	test-docker-run-terraform \
 	test-docker-run-tools-single-cmd \
 	test-docker-run-tools-multiple-cmd \
+	test-docker-run-pass-variables \
+	test-docker-run-do-not-pass-empty-variables \
 	test-docker-clean \
 	test-docker-prune \
 	test-docker-teardown
@@ -329,6 +331,24 @@ test-docker-run-tools-multiple-cmd:
 		| grep -E -- '^(curl|jq)' | wc -l)
 	# assert
 	mk_test $(@) 0 -lt "$$output"
+
+test-docker-run-pass-variables:
+	# arrange
+	make docker-config
+	# act
+	export PROJECT_NON_EMPTY_VAR=value
+	output=$$(make -s docker-run-tools CMD=env | grep PROJECT_NON_EMPTY_VAR | wc -l)
+	# assert
+	mk_test $(@) 1 -eq "$$output"
+
+test-docker-run-do-not-pass-empty-variables:
+	# arrange
+	make docker-config
+	# act
+	export PROJECT_EMPTY_VAR=
+	output=$$(make -s docker-run-tools CMD=env | grep PROJECT_EMPTY_VAR | wc -l)
+	# assert
+	mk_test $(@) 0 -eq "$$output"
 
 # ==============================================================================
 # Supporting files
