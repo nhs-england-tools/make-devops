@@ -31,6 +31,7 @@ test-docker: \
 	test-docker-run-node \
 	test-docker-run-python-single-cmd \
 	test-docker-run-python-multiple-cmd \
+	test-docker-run-python-multiple-cmd-pip-install \
 	test-docker-run-terraform \
 	test-docker-run-tools-single-cmd \
 	test-docker-run-tools-multiple-cmd \
@@ -282,6 +283,17 @@ test-docker-run-python-multiple-cmd:
 		make docker-run-python SH=y \
 			CMD="python3 --version && pip3 --version" \
 		| grep -Eo "Python" | wc -l)
+	# assert
+	mk_test $(@) 0 -lt "$$output"
+
+test-docker-run-python-multiple-cmd-pip-install:
+	# arrange
+	make docker-config
+	# act
+	output=$$(
+		make docker-run-python SH=y \
+			CMD="pip3 install django > /dev/null 2>&1 && pip3 list" \
+		| grep -i "django" | wc -l)
 	# assert
 	mk_test $(@) 0 -lt "$$output"
 
