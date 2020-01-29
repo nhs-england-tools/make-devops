@@ -195,7 +195,8 @@ docker-compose-log: ### Log Docker Compose output - mandatory: YML=[docker-compo
 
 # ==============================================================================
 
-docker-run-composer: ### Run composer container - mandatory: CMD; optional: DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file]
+docker-run-composer: ### Run composer container - mandatory: CMD; optional: DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file],IMAGE
+	image=$$([ -n "$(IMAGE)" ] && echo $(IMAGE) || echo composer:$(DOCKER_COMPOSER_VERSION))
 	docker run --interactive $(_TTY) --rm \
 		--name composer-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7) \
 		--user $$(id -u):$$(id -g) \
@@ -211,13 +212,14 @@ docker-run-composer: ### Run composer container - mandatory: CMD; optional: DIR,
 		--network $(DOCKER_NETWORK) \
 		--workdir /project/$(DIR) \
 		$(ARGS) \
-		composer:$(DOCKER_COMPOSER_VERSION) \
+		$$image \
 			$(CMD)
 
-docker-run-data: ### Run data container - mandatory: CMD; optional: ENGINE=postgres|msslq|mysql,DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file]
+docker-run-data: ### Run data container - mandatory: CMD; optional: ENGINE=postgres|msslq|mysql,DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file],IMAGE
+	image=$$([ -n "$(IMAGE)" ] && echo $(IMAGE) || echo $(DOCKER_REGISTRY)/data:$(DOCKER_DATA_VERSION))
 	engine=$$([ -z "$(ENGINE)" ] && echo postgres || echo "$(ENGINE)")
 	if [ "$$engine" == postgres ]; then
-		if [ -z "$$(docker images --filter=reference="$(DOCKER_REGISTRY)/data:$(DOCKER_DATA_VERSION)" --quiet)" ]; then
+		if [ -z "$$(docker images --filter=reference="$$image" --quiet)" ]; then
 			make docker-image NAME=data
 		fi
 		docker run --interactive $(_TTY) --rm \
@@ -241,11 +243,12 @@ docker-run-data: ### Run data container - mandatory: CMD; optional: ENGINE=postg
 			--network $(DOCKER_NETWORK) \
 			--workdir /project/$(DIR) \
 			$(ARGS) \
-			$(DOCKER_REGISTRY)/data:$(DOCKER_DATA_VERSION) \
+			$$image \
 				$(CMD)
 	fi
 
 docker-run-dotnet: ### Run dotnet container - mandatory: CMD; optional: DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file]
+	image=$$([ -n "$(IMAGE)" ] && echo $(IMAGE) || echo mcr.microsoft.com/dotnet/core/sdk:$(DOCKER_DOTNET_VERSION))
 	docker run --interactive $(_TTY) --rm \
 		--name dotnet-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7) \
 		--user $$(id -u):$$(id -g) \
@@ -260,10 +263,11 @@ docker-run-dotnet: ### Run dotnet container - mandatory: CMD; optional: DIR,ARGS
 		--network $(DOCKER_NETWORK) \
 		--workdir /project/$(DIR) \
 		$(ARGS) \
-		mcr.microsoft.com/dotnet/core/sdk:$(DOCKER_DOTNET_VERSION) \
+		$$image \
 			dotnet $(CMD)
 
 docker-run-gradle: ### Run gradle container - mandatory: CMD; optional: DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file]
+	image=$$([ -n "$(IMAGE)" ] && echo $(IMAGE) || echo gradle:$(DOCKER_GRADLE_VERSION))
 	docker run --interactive $(_TTY) --rm \
 		--name gradle-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7) \
 		--user $$(id -u):$$(id -g) \
@@ -280,10 +284,11 @@ docker-run-gradle: ### Run gradle container - mandatory: CMD; optional: DIR,ARGS
 		--network $(DOCKER_NETWORK) \
 		--workdir /project/$(DIR) \
 		$(ARGS) \
-		gradle:$(DOCKER_GRADLE_VERSION) \
+		$$image \
 			$(CMD)
 
 docker-run-mvn: ### Run maven container - mandatory: CMD; optional: DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file]
+	image=$$([ -n "$(IMAGE)" ] && echo $(IMAGE) || echo maven:$(DOCKER_MAVEN_VERSION))
 	docker run --interactive $(_TTY) --rm \
 		--name mvn-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7) \
 		--user $$(id -u):$$(id -g) \
@@ -300,12 +305,13 @@ docker-run-mvn: ### Run maven container - mandatory: CMD; optional: DIR,ARGS=[Do
 		--network $(DOCKER_NETWORK) \
 		--workdir /project/$(DIR) \
 		$(ARGS) \
-		maven:$(DOCKER_MAVEN_VERSION) \
+		$$image \
 			/bin/sh -c " \
 				mvn -Duser.home=/var/maven $(CMD) \
 			"
 
 docker-run-node: ### Run node container - mandatory: CMD; optional: DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file]
+	image=$$([ -n "$(IMAGE)" ] && echo $(IMAGE) || echo node:$(DOCKER_NODE_VERSION))
 	docker run --interactive $(_TTY) --rm \
 		--name node-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7) \
 		--env-file <(env | grep "^AWS_" | grep -v '=$$') \
@@ -320,7 +326,7 @@ docker-run-node: ### Run node container - mandatory: CMD; optional: DIR,ARGS=[Do
 		--network $(DOCKER_NETWORK) \
 		--workdir /project/$(DIR) \
 		$(ARGS) \
-		node:$(DOCKER_NODE_VERSION) \
+		$$image \
 			/bin/sh -c " \
 				groupadd default -g $$(id -g) 2> /dev/null ||: && \
 				useradd default -u $$(id -u) -g $$(id -g) 2> /dev/null ||: && \
@@ -329,6 +335,7 @@ docker-run-node: ### Run node container - mandatory: CMD; optional: DIR,ARGS=[Do
 			"
 
 docker-run-python: ### Run python container - mandatory: CMD; optional: SH=true,DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file]
+	image=$$([ -n "$(IMAGE)" ] && echo $(IMAGE) || echo python:$(DOCKER_PYTHON_VERSION))
 	if [[ ! "$(SH)" =~ ^(true|yes|y|on|1|TRUE|YES|Y|ON)$$ ]]; then
 		docker run --interactive $(_TTY) --rm \
 			--name python-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7) \
@@ -349,7 +356,7 @@ docker-run-python: ### Run python container - mandatory: CMD; optional: SH=true,
 			--network $(DOCKER_NETWORK) \
 			--workdir /project/$(DIR) \
 			$(ARGS) \
-			python:$(DOCKER_PYTHON_VERSION) \
+			$$image \
 				$(CMD)
 	else
 		docker run --interactive $(_TTY) --rm \
@@ -371,13 +378,14 @@ docker-run-python: ### Run python container - mandatory: CMD; optional: SH=true,
 			--network $(DOCKER_NETWORK) \
 			--workdir /project/$(DIR) \
 			$(ARGS) \
-			python:$(DOCKER_PYTHON_VERSION) \
+			$$image \
 				/bin/sh -c " \
 					$(CMD) \
 				"
 	fi
 
 docker-run-terraform: ### Run terraform container - mandatory: CMD; optional: DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file]
+	image=$$([ -n "$(IMAGE)" ] && echo $(IMAGE) || echo hashicorp/terraform:$(DOCKER_TERRAFORM_VERSION))
 	docker run --interactive $(_TTY) --rm \
 		--name terraform-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7) \
 		--user $$(id -u):$$(id -g) \
@@ -392,11 +400,12 @@ docker-run-terraform: ### Run terraform container - mandatory: CMD; optional: DI
 		--network $(DOCKER_NETWORK) \
 		--workdir /project/$(DIR) \
 		$(ARGS) \
-		hashicorp/terraform:$(DOCKER_TERRAFORM_VERSION) \
+		$$image \
 			$(CMD)
 
 docker-run-tools: ### Run tools container - mandatory: CMD; optional: SH=true,DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file]
-	if [ -z "$$(docker images --filter=reference="$(DOCKER_REGISTRY)/tools:$(DOCKER_TOOLS_VERSION)" --quiet)" ]; then
+	image=$$([ -n "$(IMAGE)" ] && echo $(IMAGE) || echo $(DOCKER_REGISTRY)/tools:$(DOCKER_TOOLS_VERSION))
+	if [ -z "$$(docker images --filter=reference="$$image" --quiet)" ]; then
 		make docker-image NAME=tools
 	fi
 	if [[ ! "$(SH)" =~ ^(true|yes|y|on|1|TRUE|YES|Y|ON)$$ ]]; then
@@ -415,7 +424,7 @@ docker-run-tools: ### Run tools container - mandatory: CMD; optional: SH=true,DI
 			--network $(DOCKER_NETWORK) \
 			--workdir /project/$(DIR) \
 			$(ARGS) \
-			$(DOCKER_REGISTRY)/tools:$(DOCKER_TOOLS_VERSION) \
+			$$image \
 				$(CMD)
 	else
 		docker run --interactive $(_TTY) --rm \
@@ -433,7 +442,7 @@ docker-run-tools: ### Run tools container - mandatory: CMD; optional: SH=true,DI
 			--network $(DOCKER_NETWORK) \
 			--workdir /project/$(DIR) \
 			$(ARGS) \
-			$(DOCKER_REGISTRY)/tools:$(DOCKER_TOOLS_VERSION) \
+			$$image \
 				/bin/sh -c "
 					$(CMD)
 				"
