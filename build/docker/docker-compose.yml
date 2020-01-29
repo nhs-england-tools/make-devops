@@ -14,6 +14,27 @@ services:
   #       aliases:
   #         - service.$PROJECT_NAME_SHORT.local
 
+  python:
+    image: python:latest
+    container_name: python
+    hostname: python
+    environment:
+      PROFILE: $PROFILE
+      PIP_TARGET: /tmp/.packages
+      PYTHONPATH: /tmp/.packages
+      XDG_CACHE_HOME: /tmp/.cache
+    volumes:
+      - $PROJECT_DIR:/project
+      - $HOME/.python/pip/packages:/tmp/.packages
+      - $HOME/.python/pip/cache:/tmp/.cache/pip
+    user: $USER_ID:$GROUP_ID
+    working_dir: /project/application
+    command: sh -c "pip install django"
+    networks:
+      default:
+        aliases:
+          - python.$PROJECT_NAME_SHORT.local
+
   mock:
     image: jamesdbloom/mockserver:latest
     container_name: mock

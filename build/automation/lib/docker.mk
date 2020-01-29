@@ -50,6 +50,7 @@ docker-image: ### Build Docker image - mandatory: NAME; optional: VERSION,NAME_A
 			$(DOCKER_REGISTRY)/$(NAME_AS):latest
 		make docker-image-keep-latest-only NAME=$(NAME_AS)
 	fi
+	docker image inspect $(DOCKER_REGISTRY)/$(NAME):latest --format='{{.Size}}'
 
 docker-image-keep-latest-only: ### Remove other images than latest - mandatory: NAME
 	docker rmi --force $$( \
@@ -333,8 +334,9 @@ docker-run-python: ### Run python container - mandatory: CMD; optional: SH=true,
 			--name python-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7) \
 			--user $$(id -u):$$(id -g) \
 			--env PROFILE=$(PROFILE) \
-			--env PIP_TARGET=/root/.packages \
-			--env PYTHONPATH=/root/.packages:\$$PYTHONPATH \
+			--env PIP_TARGET=/tmp/.packages \
+			--env PYTHONPATH=/tmp/.packages \
+			--env XDG_CACHE_HOME=/tmp/.cache \
 			--env-file <(env | grep "^AWS_") \
 			--env-file <(env | grep "^TF_VAR_") \
 			--env-file <(env | grep "^SERV[A-Z]*_") \
@@ -342,8 +344,8 @@ docker-run-python: ### Run python container - mandatory: CMD; optional: SH=true,
 			--env-file <(env | grep "^PROJ[A-Z]*_") \
 			--env-file <(make _docker-get-variables-from-file VARS_FILE=$(VARS_FILE)) \
 			--volume $(PROJECT_DIR):/project \
-			--volume ~/.python/pip/packages:/root/.packages \
-			--volume ~/.python/pip/cache:/root/.cache/pip \
+			--volume ~/.python/pip/cache:/tmp/.cache/pip \
+			--volume ~/.python/pip/packages:/tmp/.packages \
 			--network $(DOCKER_NETWORK) \
 			--workdir /project/$(DIR) \
 			$(ARGS) \
@@ -354,8 +356,9 @@ docker-run-python: ### Run python container - mandatory: CMD; optional: SH=true,
 			--name python-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7) \
 			--user $$(id -u):$$(id -g) \
 			--env PROFILE=$(PROFILE) \
-			--env PIP_TARGET=/root/.packages \
-			--env PYTHONPATH=/root/.packages:\$$PYTHONPATH \
+			--env PIP_TARGET=/tmp/.packages \
+			--env PYTHONPATH=/tmp/.packages \
+			--env XDG_CACHE_HOME=/tmp/.cache \
 			--env-file <(env | grep "^AWS_") \
 			--env-file <(env | grep "^TF_VAR_") \
 			--env-file <(env | grep "^SERV[A-Z]*_") \
@@ -363,8 +366,8 @@ docker-run-python: ### Run python container - mandatory: CMD; optional: SH=true,
 			--env-file <(env | grep "^PROJ[A-Z]*_") \
 			--env-file <(make _docker-get-variables-from-file VARS_FILE=$(VARS_FILE)) \
 			--volume $(PROJECT_DIR):/project \
-			--volume ~/.python/pip/packages:/root/.packages \
-			--volume ~/.python/pip/cache:/root/.cache/pip \
+			--volume ~/.python/pip/cache:/tmp/.cache/pip \
+			--volume ~/.python/pip/packages:/tmp/.packages \
 			--network $(DOCKER_NETWORK) \
 			--workdir /project/$(DIR) \
 			$(ARGS) \
