@@ -348,10 +348,11 @@ _dev-config-command-line:
 	# configure Git
 	make git-config
 	# configure shell
-	mkdir -p ~/{.aws,.kube/configs,.ssh,bin,tmp,projects}
+	mkdir -p ~/{.aws,.kube/configs,.ssh,bin,tmp,usr,projects}
 	[ ! -f ~/.aws/config ] && echo "[default]\noutput = json\nregion = eu-west-2\n\n# TODO: Add AWS accounts\n" > ~/.aws/config
 	[ ! -f ~/.aws/credentials ] && echo "[default]\naws_access_key_id = xxx\naws_secret_access_key = xxx\n\n# TODO: Add AWS credentials" > ~/.aws/credentials
 	cp $(BIN_DIR)/* ~/bin
+	cp $(USR_DIR)/* ~/usr
 	chmod 700 ~/.ssh
 	rm -f ~/.zcompdump*
 	mkdir -p $(DEV_OHMYZSH_DIR)/plugins/$(DEVOPS_PROJECT_NAME)
@@ -364,9 +365,7 @@ _dev-config-command-line:
 		echo "zstyle ':completion:*:descriptions' format '%B%d%b'"
 		echo
 		echo "# Alises"
-		echo "alias tx-mfa='~/bin/texas-mfa.py'"
-		echo "alias tx-mfa-clear='source ~/bin/texas-mfa-clear.sh'"
-		echo "alias tns='~/bin/toggle-natural-scrolling.sh'"
+		echo "for file in ~/usr/*-aliases; do source \$$file; done"
 		echo
 		echo "# Variables"
 		echo "export PATH=/usr/local/opt/coreutils/libexec/gnubin:/usr/local/opt/findutils/libexec/gnubin:/usr/local/opt/gnu-sed/libexec/gnubin:/usr/local/opt/gnu-tar/libexec/gnubin:/usr/local/opt/grep/libexec/gnubin:/usr/local/opt/make/libexec/gnubin:/usr/local/Cellar/python/$$(python3 --version | grep -Eo '[0-9.]*')/Frameworks/Python.framework/Versions/Current/bin:\$$PATH"
@@ -389,7 +388,7 @@ _dev-config-command-line:
 		echo ". /usr/local/opt/nvm/etc/bash_completion.d/nvm"
 		echo
 		echo "# AWS platform"
-		echo "source $(DEV_OHMYZSH_DIR)/plugins/$(DEVOPS_PROJECT_NAME)/aws-platform.zsh"
+		echo ". $(DEV_OHMYZSH_DIR)/plugins/$(DEVOPS_PROJECT_NAME)/aws-platform.zsh"
 		echo
 	) > $(DEV_OHMYZSH_DIR)/plugins/$(DEVOPS_PROJECT_NAME)/$(DEVOPS_PROJECT_NAME).plugin.zsh
 	if [ ! -f $(DEV_OHMYZSH_DIR)/plugins/$(DEVOPS_PROJECT_NAME)/aws-platform.zsh ]; then
