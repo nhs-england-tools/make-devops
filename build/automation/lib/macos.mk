@@ -11,8 +11,7 @@ dev-setup: ## Provision your MacBook (and become a DevOps ninja) - optional: REI
 		dev-install-corporate \
 		dev-check \
 		dev-config \
-		dev-fix \
-		dev-info
+		dev-fix
 	make dev-enable-gatekeeper
 	touch $(SETUP_COMPLETE_FLAG_FILE)
 
@@ -202,11 +201,12 @@ dev-config:: ## Configure development dependencies
 		_dev-config-visual-studio-code \
 		_dev-config-visual-studio-code-disable-java-extensions \
 		_dev-config-command-line
+	make dev-info
 
 dev-fix:: ## Fix development dependencies
 	make _dev-fix-vagrant-virtualbox
 
-dev-info: ## Show "Setting up your macOS using Make DevOps" manual
+dev-info:: ## Show "Setting up your macOS using Make DevOps" manual
 	info=$(LIB_DIR)/macos/README.md
 	html=$(TMP_DIR)/make-devops-doc-$(shell echo $$info | md5sum | cut -c1-7).html
 	perl $(BIN_DIR)/markdown.pl --html4tags $$info > $$html

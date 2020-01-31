@@ -1,4 +1,4 @@
-# Setting up your macOS using Make DevOps
+# Setting up your macOS using [Make DevOps](https://github.com/nhsd-ddce/make-devops)
 
 ## Next steps
 
