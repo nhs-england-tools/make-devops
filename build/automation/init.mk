@@ -156,6 +156,8 @@ TEST_DIR := $(abspath $(DEVOPS_PROJECT_DIR)/test)
 TEST_DIR_REL := $(shell echo $(TEST_DIR) | sed "s;$(PROJECT_DIR);;g")
 TMP_DIR := $(abspath $(DEVOPS_PROJECT_DIR)/tmp)
 TMP_DIR_REL := $(shell echo $(TMP_DIR) | sed "s;$(PROJECT_DIR);;g")
+USR_DIR := $(abspath $(DEVOPS_PROJECT_DIR)/usr)
+USR_DIR_REL := $(shell echo $(USR_DIR) | sed "s;$(PROJECT_DIR);;g")
 VAR_DIR := $(abspath $(DEVOPS_PROJECT_DIR)/var)
 VAR_DIR_REL := $(shell echo $(VAR_DIR) | sed "s;$(PROJECT_DIR);;g")
 
