@@ -39,8 +39,8 @@ If you hear your teams or individuals saying _"It will take days to onboard a ne
 * Pre-commit [git hook](build/automation/etc/githooks/pre-commit) example
 * Visual Studio Code and iTerm configuration
 * Virtual environments for Python, Go, Java and Node.js
-* AWS MFA [script](build/automation/bin/texas-mfa.py)
-* Toggle natural scrolling [script](build/automation/bin/toggle-natural-scrolling.sh)
+* AWS MFA [script](build/automation/bin/texas-mfa)
+* Toggle natural scrolling [script](build/automation/bin/toggle-natural-scrolling)
 * Remote pair programming
 
 ## Documentation

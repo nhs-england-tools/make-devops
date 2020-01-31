@@ -209,7 +209,7 @@ dev-fix:: ## Fix development dependencies
 dev-info:: ## Show "Setting up your macOS using Make DevOps" manual
 	info=$(LIB_DIR)/macos/README.md
 	html=$(TMP_DIR)/make-devops-doc-$(shell echo $$info | md5sum | cut -c1-7).html
-	perl $(BIN_DIR)/markdown.pl --html4tags $$info > $$html
+	perl $(BIN_DIR)/markdown --html4tags $$info > $$html
 	cp -f $$html ~/Desktop/Setting\ up\ your\ macOS\ using\ Make\ DevOps.html
 	open -a "Safari" ~/Desktop/Setting\ up\ your\ macOS\ using\ Make\ DevOps.html
 

@@ -18,4 +18,4 @@ alias hidedesktop="defaults write com.apple.finder CreateDesktop -bool false && 
 alias showdesktop="defaults write com.apple.finder CreateDesktop -bool true && killall Finder"
 
 # Toggle natural scrolling
-alias tns='~/bin/toggle-natural-scrolling.sh'
+alias tns='~/bin/toggle-natural-scrolling'
