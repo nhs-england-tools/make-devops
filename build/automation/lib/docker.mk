@@ -12,6 +12,7 @@ DOCKER_PYTHON_VERSION := $(or $(DOCKER_PYTHON_VERSION), 3.8.0-alpine)
 DOCKER_TERRAFORM_VERSION := $(or $(DOCKER_TERRAFORM_VERSION), 0.12.13)
 DOCKER_TOOLS_VERSION := $(or $(DOCKER_TOOLS_VERSION), 1.0.0)
 
+DOCKER_BROWSER_DEBUG := $(or $(DOCKER_BROWSER_DEBUG), -debug)
 DOCKER_NETWORK = $(PROJECT_GROUP)/$(BUILD_ID)
 DOCKER_REGISTRY = $(AWS_ECR)/$(PROJECT_GROUP)/$(PROJECT_NAME)
 
@@ -443,8 +444,8 @@ docker-run-tools: ### Run tools container - mandatory: CMD; optional: SH=true,DI
 			--workdir /project/$(DIR) \
 			$(ARGS) \
 			$$image \
-				/bin/sh -c "
-					$(CMD)
+				/bin/sh -c " \
+					$(CMD) \
 				"
 	fi
 

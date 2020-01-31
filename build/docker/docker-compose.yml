@@ -62,11 +62,11 @@ services:
           - mail.$PROJECT_NAME_SHORT.local
 
   browser:
-    image: selenium/standalone-chrome-debug:latest
+    image: selenium/standalone-chrome${DOCKER_BROWSER_DEBUG}:latest
     container_name: browser
     hostname: browser
     environment:
-      JAVA_OPTS: -Dselenium.LOGGER.level=ALL
+      JAVA_OPTS: "-Xmx512m -Dselenium.LOGGER.level=ALL"
     volumes:
       - /dev/shm:/dev/shm
     ports:
