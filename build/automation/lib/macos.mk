@@ -365,10 +365,10 @@ _dev-config-command-line:
 		echo "zstyle ':completion:*:descriptions' format '%B%d%b'"
 		echo
 		echo "# Alises"
-		echo "for file in ~/usr/*-aliases; do source \$$file; done"
+		echo "for file in \$$HOME/usr/*-aliases; do source \$$file; done"
 		echo
 		echo "# Variables"
-		echo "export PATH=/usr/local/opt/coreutils/libexec/gnubin:/usr/local/opt/findutils/libexec/gnubin:/usr/local/opt/gnu-sed/libexec/gnubin:/usr/local/opt/gnu-tar/libexec/gnubin:/usr/local/opt/grep/libexec/gnubin:/usr/local/opt/make/libexec/gnubin:/usr/local/Cellar/python/$$(python3 --version | grep -Eo '[0-9.]*')/Frameworks/Python.framework/Versions/Current/bin:\$$PATH"
+		echo "export PATH=\$$HOME/bin:/usr/local/opt/coreutils/libexec/gnubin:/usr/local/opt/findutils/libexec/gnubin:/usr/local/opt/gnu-sed/libexec/gnubin:/usr/local/opt/gnu-tar/libexec/gnubin:/usr/local/opt/grep/libexec/gnubin:/usr/local/opt/make/libexec/gnubin:/usr/local/Cellar/python/$$(python3 --version | grep -Eo '[0-9.]*')/Frameworks/Python.framework/Versions/Current/bin:\$$PATH"
 		echo "export GPG_TTY=\$$(tty)"
 		echo "export KUBECONFIG=\$$(ls -1 ~/.kube/configs/*-$(or $(AWS_ACCOUNT_NAME), nonprod)*kubeconfig) 2> /dev/null"
 		echo
