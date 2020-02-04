@@ -25,6 +25,7 @@
 		"python.linting.pylintEnabled": true,
 		"telemetry.enableCrashReporter": false,
 		"telemetry.enableTelemetry": false,
+		"terminal.integrated.fontFamily": "Hack Nerd Font",
 		"terraform.indexing.enabled": false,
 		"terraform.languageServer.enabled": true,
 		"window.title": "${activeEditorMedium}${separator}${rootName}",

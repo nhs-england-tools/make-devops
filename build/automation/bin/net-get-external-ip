@@ -23,7 +23,7 @@ function get_ip() {
             | grep -oEi "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+"
 }
 ip=
-[ -z "$ip" ] && ip=$(dig +short myip.opendns.com @resolver1.opendns.com) ||:
+[ -z "$ip" ] && ip=$(dig +short myip.opendns.com @resolver1.opendns.com 2> /dev/null) ||:
 [ -z "$ip" ] && ip=$(get_ip "http://myip.dnsomatic.com") ||:
 [ -z "$ip" ] && ip=$(get_ip "http://checkip.dyndns.org") ||:
 [ -z "$ip" ] && ip=$(get_ip "http://ipecho.net") ||:
