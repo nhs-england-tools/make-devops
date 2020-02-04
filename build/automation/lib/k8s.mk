@@ -79,7 +79,7 @@ k8s-undeploy: ### Remove Kubernetes resources
 
 # ==============================================================================
 
-k8s-cnf: # Show configmaps
+k8s-cnf: ### Show configmaps
 	echo
 	kubectl get configmaps \
 		--namespace=$(K8S_APP_NAMESPACE) \
@@ -87,7 +87,7 @@ k8s-cnf: # Show configmaps
 		--output json
 	echo
 
-k8s-log: # Show logs
+k8s-log: ### Show logs
 	echo
 	kubectl logs \
 		--namespace=$(K8S_APP_NAMESPACE) \
@@ -98,14 +98,14 @@ k8s-log: # Show logs
 		--follow=true
 	echo
 
-k8s-net: # Show network policies
+k8s-net: ### Show network policies
 	echo
 	kubectl describe networkpolicies \
 		--namespace=$(K8S_APP_NAMESPACE) \
 		--selector "env=$(PROFILE)"
 	echo
 
-k8s-sts: # Show status of pods and services
+k8s-sts: ### Show status of pods and services
 	echo
 	kubectl get namespace \
 		--selector "project-group=$(PROJECT_GROUP_SHORT)" \
@@ -131,10 +131,8 @@ k8s-sts: # Show status of pods and services
 
 # ==============================================================================
 
-k8s-wait-for-job-to-complete: # Wait for the job to complete
-
+k8s-wait-for-job-to-complete: ### Wait for the job to complete
 	count=1
-
 	until [ $$count -gt 20 ]; do
 		if [ "$$(make -s k8s-job-failed | tr -d '\n')" == "True" ]; then
 			echo "The job has failed"
@@ -148,42 +146,41 @@ k8s-wait-for-job-to-complete: # Wait for the job to complete
 		sleep 5
 		((count++))
 	done
-
 	echo "The job has not completed, but have given up waiting."
 	exit 1
 
-k8s-job-log: # Show the job pod logs
+k8s-job-log: ### Show the job pod logs
 	echo
 	kubectl logs $$(make -s k8s-job-pod) \
 		--namespace=$(K8S_JOB_NAMESPACE)
 
-k8s-job-pod: # Get the name of the pod created by the job
+k8s-job-pod: ### Get the name of the pod created by the job
 	echo
 	kubectl get pods \
 		--namespace=$(K8S_JOB_NAMESPACE) \
 		--selector "env=$(PROFILE)" \
 		--output jsonpath='{.items..metadata.name}'
 
-k8s-job-name: # Get the name of the job
+k8s-job-name: ### Get the name of the job
 	echo
 	kubectl get jobs \
 		--namespace=$(K8S_JOB_NAMESPACE) \
 		--selector "env=$(PROFILE)" \
 		--output jsonpath='{.items..metadata.name}'
 
-k8s-job-failed: # Show whether the job failed
+k8s-job-failed: ### Show whether the job failed
 	echo
 	kubectl get jobs $$(make -s k8s-job-name)\
 		--namespace=$(K8S_JOB_NAMESPACE) \
 		--output jsonpath='{.status.conditions[?(@.type=="Failed")].status}'
 
-k8s-job-complete: # Show whether the job completed
+k8s-job-complete: ### Show whether the job completed
 	echo
 	kubectl get jobs $$(make -s k8s-job-name)\
 		--namespace=$(K8S_JOB_NAMESPACE) \
 		--output jsonpath='{.status.conditions[?(@.type=="Complete")].status}'
 
-k8s-job: # Show status of jobs
+k8s-job: ### Show status of jobs
 	echo
 	kubectl get namespace \
 		--selector "project-group=$(PROJECT_GROUP_SHORT)" \
