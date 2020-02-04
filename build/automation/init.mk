@@ -252,40 +252,51 @@ endif
 # ==============================================================================
 # Check if all the prerequisites are met
 
-ifeq (true, $(shell [ "Darwin" == "$$(uname)" ] && [ ! -f $(SETUP_COMPLETE_FLAG_FILE) ] && echo true))
-# Xcode Command Line Tools
+ifeq (true, $(shell [ ! -f $(SETUP_COMPLETE_FLAG_FILE) ] && echo true))
+ifeq (true, $(shell [ "Darwin" == "$$(uname)" ] && echo true))
+# macOS: Xcode Command Line Tools
 ifneq (0, $(shell xcode-select -p > /dev/null 2>&1; echo $$?))
 $(info )
 $(info Installation of the Xcode Command Line Tools has just been triggered automatically...)
 $(info )
 $(error $(shell tput setaf 1; echo "ERROR: Please, before proceeding install the Xcode Command Line Tools"; tput sgr0))
 endif
-# brew
+# macOS: Homebrew
 ifneq (0, $(shell which brew > /dev/null 2>&1; echo $$?))
 $(info )
 $(info /usr/bin/ruby -e "$$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)")
 $(info )
-$(error $(shell tput setaf 1; echo "ERROR: Please, before proceeding install the brew package manager. Copy and paste in your terminal, then execute the above command"; tput sgr0))
+$(error $(shell tput setaf 1; echo "ERROR: Please, before proceeding install the brew package manager. Copy and paste in your terminal the above command, then execute it"; tput sgr0))
 endif
-# make
+# macOS: GNU Make
 ifeq (true, $(shell [ ! -f /usr/local/opt/make/libexec/gnubin/make ] && echo true))
 $(info )
 $(info brew install make)
 $(info )
-$(error $(shell tput setaf 1; echo "ERROR: Please, before proceeding install the GNU make tool. Copy and paste in your terminal, then execute the above command"; tput sgr0))
+$(error $(shell tput setaf 1; echo "ERROR: Please, before proceeding install the GNU make tool. Copy and paste in your terminal the above command, then execute it"; tput sgr0))
 endif
 ifeq (, $(findstring oneshell, $(.FEATURES)))
 $(info )
 $(info export PATH=$(PATH))
 $(info )
-$(error $(shell tput setaf 1; echo "ERROR: Please, before proceeding make sure GNU make is included in your \$$PATH. Copy and paste in your terminal, then execute the above command"; tput sgr0))
+$(error $(shell tput setaf 1; echo "ERROR: Please, before proceeding make sure GNU make is included in your \$$PATH. Copy and paste in your terminal the above command, then execute it"; tput sgr0))
 endif
-# $HOME
+# macOS: $HOME
 ifeq (true, $(shell echo "$(HOME)" | grep -qE '[ ]+' && echo true))
 $(info )
 $(info The $$HOME variable is set to '$(HOME)')
 $(info )
 $(error $(shell tput setaf 1; echo "ERROR: Please, before proceeding make sure your \$$HOME directory does not include spaces"; tput sgr0))
+endif
+else
+# *NIX: GNU Make
+ifeq (, $(findstring oneshell, $(.FEATURES)))
+$(error $(shell tput setaf 1; echo "ERROR: Please, before proceeding make sure your GNU make version supports 'oneshell' feature. On Linux this may mean upgrading to the latest release version"; tput sgr0))
+endif
+# *NIX: Docker
+ifneq (0, $(shell which docker > /dev/null 2>&1; echo $$?))
+$(error $(shell tput setaf 1; echo "ERROR: Please, before proceeding install Docker"; tput sgr0))
+endif
 endif
 endif
 
