@@ -1,5 +1,6 @@
+DOCKER_ALPINE_VERSION := $(or $(DOCKER_ALPINE_VERSION), 3.11.3)
 DOCKER_COMPOSER_VERSION := $(or $(DOCKER_COMPOSER_VERSION), 1.9.1)
-DOCKER_DATA_VERSION := $(or $(DOCKER_DATA_VERSION),)
+DOCKER_DATA_VERSION := $(or $(DOCKER_DATA_VERSION), $(shell cat $(DOCKER_DIR)/data/.version 2> /dev/null || cat $(DOCKER_DIR)/data/VERSION))
 DOCKER_DOTNET_VERSION := $(or $(DOCKER_DOTNET_VERSION), 3.0-alpine)
 DOCKER_ELASTICSEARCH_VERSION := $(or $(DOCKER_ELASTICSEARCH_VERSION), 6.7.2)
 DOCKER_GRADLE_VERSION := $(or $(DOCKER_GRADLE_VERSION), 5.6.4-jdk11)
@@ -8,9 +9,9 @@ DOCKER_NGINX_VERSION := $(or $(DOCKER_NGINX_VERSION), 1.16.1-alpine)
 DOCKER_NODE_VERSION := $(or $(DOCKER_NODE_VERSION), 10.16.3)
 DOCKER_OPENJDK_VERSION := $(or $(DOCKER_OPENJDK_VERSION), 14-jdk-slim)
 DOCKER_POSTGRES_VERSION := $(or $(DOCKER_POSTGRES_VERSION), 11.4)
-DOCKER_PYTHON_VERSION := $(or $(DOCKER_PYTHON_VERSION), 3.8.0-alpine)
+DOCKER_PYTHON_VERSION := $(or $(DOCKER_PYTHON_VERSION), 3.8.1-slim)
 DOCKER_TERRAFORM_VERSION := $(or $(DOCKER_TERRAFORM_VERSION), 0.12.20)
-DOCKER_TOOLS_VERSION := $(or $(DOCKER_TOOLS_VERSION), 1.0.0)
+DOCKER_TOOLS_VERSION := $(or $(DOCKER_TOOLS_VERSION), $(shell cat $(DOCKER_DIR)/tools/.version 2> /dev/null || cat $(DOCKER_DIR)/tools/VERSION ))
 
 DOCKER_BROWSER_DEBUG := $(or $(DOCKER_BROWSER_DEBUG), -debug)
 DOCKER_NETWORK = $(PROJECT_GROUP)/$(BUILD_ID)
@@ -98,10 +99,14 @@ docker-create-dockerfile: ### Create effective Dockerfile - mandatory: NAME
 	cd $(DOCKER_DIR)/$(NAME)
 	cat Dockerfile ../Dockerfile.metadata > Dockerfile.effective
 	sed -i " \
-		s/FROM nginx:latest/FROM nginx:${DOCKER_NGINX_VERSION}/g; \
-		s/FROM openjdk:latest/FROM openjdk:${DOCKER_OPENJDK_VERSION}/g; \
-		s/FROM postgres:latest/FROM postgres:${DOCKER_POSTGRES_VERSION}/g; \
-		s/FROM python:latest/FROM python:${DOCKER_PYTHON_VERSION}/g; \
+		s#FROM alpine:latest#FROM alpine:${DOCKER_ALPINE_VERSION}#g; \
+		s#FROM elasticsearch:latest#FROM elasticsearch:${DOCKER_ELASTICSEARCH_VERSION}#g; \
+		s#FROM mcr.microsoft.com/dotnet/core/sdk:latest#FROM mcr.microsoft.com/dotnet/core/sdk:${DOCKER_DOTNET_VERSION}#g; \
+		s#FROM nginx:latest#FROM nginx:${DOCKER_NGINX_VERSION}#g; \
+		s#FROM node:latest#FROM node:${DOCKER_NODE_VERSION}#g; \
+		s#FROM openjdk:latest#FROM openjdk:${DOCKER_OPENJDK_VERSION}#g; \
+		s#FROM postgres:latest#FROM postgres:${DOCKER_POSTGRES_VERSION}#g; \
+		s#FROM python:latest#FROM python:${DOCKER_PYTHON_VERSION}#g; \
 	" Dockerfile.effective
 	cd $$dir
 
@@ -221,6 +226,7 @@ docker-run-data: ### Run data container - mandatory: CMD; optional: ENGINE=postg
 	engine=$$([ -z "$(ENGINE)" ] && echo postgres || echo "$(ENGINE)")
 	if [ "$$engine" == postgres ]; then
 		if [ -z "$$(docker images --filter=reference="$$image" --quiet)" ]; then
+			# TODO: Try to pull the image first
 			make docker-image NAME=data
 		fi
 		docker run --interactive $(_TTY) --rm \
@@ -407,6 +413,7 @@ docker-run-terraform: ### Run terraform container - mandatory: CMD; optional: DI
 docker-run-tools: ### Run tools container - mandatory: CMD; optional: SH=true,DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file]
 	image=$$([ -n "$(IMAGE)" ] && echo $(IMAGE) || echo $(DOCKER_REGISTRY)/tools:$(DOCKER_TOOLS_VERSION))
 	if [ -z "$$(docker images --filter=reference="$$image" --quiet)" ]; then
+		# TODO: Try to pull the image first
 		make docker-image NAME=tools
 	fi
 	if [[ ! "$(SH)" =~ ^(true|yes|y|on|1|TRUE|YES|Y|ON)$$ ]]; then

@@ -8,12 +8,6 @@ If you hear your teams or individuals saying _"It will take days to onboard a ne
 * Highly customisable project toolchain (inspired by dotfiles) for advanced *nix shell scripting
 * Building blocks to support a clean implementation of CI/CD pipelines
 
-## Installation
-
-* To set up your development environment on a MacBook run `curl -L bit.ly/make-devops | bash`
-* For a project toolchain integration, copy the content of this repository to your project's root directory, commit your changes then run `make devops-synchronise`
-* Use make targets to support your CI/CD flow
-
 ## Features
 
 * Shell native
@@ -30,7 +24,8 @@ If you hear your teams or individuals saying _"It will take days to onboard a ne
   * Twistlock (coming soon)
   * Notifications, e.g. email and Slack (coming soon)
   * Technology radar (coming soon)
-* Unit and integration tests
+  * [macOS](build/automation/lib/macos.mk)
+* Unit and integration [tests](build/automation/test)
 * Example of a monolithic repository structure that consists of multiple projects
 * Architectural decision record [template](documentation/adr/README.md)
 * Deployment [profiles](build/automation/var/profile/README.md)
@@ -41,9 +36,23 @@ If you hear your teams or individuals saying _"It will take days to onboard a ne
 * Virtual environments for Python, Go, Java and Node.js
 * AWS MFA [script](build/automation/bin/texas-mfa)
 * Toggle natural scrolling [script](build/automation/bin/toggle-natural-scrolling)
-* Remote pair programming
+* Remote pair programming and [live collaboration](https://marketplace.visualstudio.com/items?itemName=MS-vsliveshare.vsliveshare)
 
-## Documentation
+## Installation
+
+* To set up your development environment on a MacBook run `curl -L bit.ly/make-devops | bash`
+* For a project toolchain integration, copy the content of this repository to your project's root directory, commit your changes then run `make devops-synchronise`
+* Use make targets to support your CI/CD flow
+
+## Usage
+
+* Run `make help-all` to see all available targets
+* Update the toolchain scripts to the most recent version by executing `make devops-synchronise`
+* Use `make devops-print-variables` to print out all the effective variables. Include `PROFILE=[name]` to evaluate profile specific variables
+* To run unit test suite use `make devops-test-suite` or alternatively to run a single one execute `make devops-test-single NAME=[test target name]`. Set the `DEBUG=true` flag to run the tests in the verbose mode
+* To provision your macOS run `make dev-setup` or alternatively update configuration `make dev-config`
+
+## Conventions
 
 * Set all the profile specific information in a `build/automation/var/profile/[name].mk` file
 * Set all the project specific information in the `build/automation/var/project.mk` file. There is set of mandatory variables that must be defined for the library to function correctly. For more details, please refer to the `build/automation/var/project.mk.default` file
@@ -70,11 +79,9 @@ If you hear your teams or individuals saying _"It will take days to onboard a ne
   * Never modify library files, except the `Makefile` and files that are in the `build/automation/var` directory which are project-specific
   * Always use a single tab character for code indentations
 
-## Internals
+## Design
 
-* To run unit test suite use `make devops-test-suite` or alternatively to run a single one execute `make devops-test-single NAME=[test target name]`. Set the `DEBUG=true` flag to run the tests in the verbose mode
-* Use `make devops-print-variables` to print out all the effective variables. Include `PROFILE=[name]` to evaluate profile specific variables
-* Update the toolchain scripts to the most recent version by executing `make devops-synchronise`
+* Considerations ...
 
 ## Todo
 
@@ -84,6 +91,9 @@ If you hear your teams or individuals saying _"It will take days to onboard a ne
 
 ## Gotchas
 
-* [How to escape single quotes within single quoted strings](https://stackoverflow.com/questions/1250079/how-to-escape-single-quotes-within-single-quoted-strings)
-* [Exporting JSON to environment variables](https://stackoverflow.com/questions/48512914/exporting-json-to-environment-variables)
-* [jq Manual](https://stedolan.github.io/jq/manual/)
+* Bash
+  * [Escape single quotes](https://stackoverflow.com/questions/1250079/how-to-escape-single-quotes-within-single-quoted-strings)
+  * [Export JSON to environment variables](https://stackoverflow.com/questions/48512914/exporting-json-to-environment-variables)
+  * [Remove colours from output](https://stackoverflow.com/questions/17998978/removing-colors-from-output)
+* Docker
+  * [Python Docker base image](https://pythonspeed.com/articles/alpine-docker-python/)
