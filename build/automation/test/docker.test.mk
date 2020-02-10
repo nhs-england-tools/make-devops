@@ -317,10 +317,10 @@ test-docker-run-tools-single-cmd:
 	# act
 	output=$$(
 		make docker-run-tools \
-			CMD="apk info" \
-		| grep -E -- '^(curl|jq)' | wc -l)
+			CMD="apt list --installed" \
+		| sed 's/\x1b\[[0-9;]*m//g' | grep -E -- '^curl/now' | wc -l)
 	# assert
-	mk_test $(@) 0 -lt "$$output"
+	mk_test $(@) 1 -eq "$$output"
 
 test-docker-run-tools-multiple-cmd:
 	# arrange
@@ -328,10 +328,10 @@ test-docker-run-tools-multiple-cmd:
 	# act
 	output=$$(
 		make docker-run-tools SH=y \
-			CMD="apk info; apk info" \
-		| grep -E -- '^(curl|jq)' | wc -l)
+			CMD="cat /etc/issue && apt list --installed" \
+		| sed 's/\x1b\[[0-9;]*m//g' | grep -Ei -- '^(debian gnu/linux|curl/now)' | wc -l)
 	# assert
-	mk_test $(@) 0 -lt "$$output"
+	mk_test $(@) 2 -eq "$$output"
 
 test-docker-run-pass-variables:
 	# arrange
