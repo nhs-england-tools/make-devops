@@ -64,7 +64,12 @@ docker-login: ### Log into the Docker registry
 	$$(aws ecr get-login --region $(AWS_REGION) --no-include-email)
 
 docker-create-repository: ### Create Docker repository to store an image - mandatory: NAME
-	aws ecr create-repository --repository-name $(PROJECT_GROUP)/$(NAME)
+	aws ecr create-repository \
+		--repository-name $(PROJECT_GROUP)/$(PROJECT_NAME)/$(NAME) \
+		--tags Key=Service,Value=$(PROJECT_NAME)
+	aws ecr set-repository-policy \
+		--repository-name $(PROJECT_GROUP)/$(PROJECT_NAME)/$(NAME) \
+		--policy-text file://$(LIB_DIR)/aws/ecr-policy.json
 
 docker-push: ### Push Docker image - mandatory: NAME
 	docker push $(DOCKER_REGISTRY)/$(NAME):$$(cat $(DOCKER_DIR)/$(NAME)/.version)
