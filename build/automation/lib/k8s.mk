@@ -2,21 +2,21 @@ K8S_APP_NAMESPACE = $(PROJECT_GROUP_SHORT)-$(PROFILE)
 K8S_DIR := $(or $(K8S_DIR), deployment/stacks)
 K8S_JOB_NAMESPACE = $(PROJECT_GROUP_SHORT)-job-$(PROFILE)
 K8S_KUBECONFIG_FILE = $(or $(TEXAS_K8S_KUBECONFIG_FILE), kubeconfig-lk8s-$(PROFILE)/cluster_kubeconfig)
-K8S_TTL_DEFAULT := $(or $(K8S_TTL_DEFAULT), 2)
+K8S_TTL_LENGTH := $(or $(K8S_TTL_LENGTH), 2 days)
 
 # ==============================================================================
 
-k8s-deploy: ### Deploy application to kubernetes - mandatory: STACK=[name],PROFILE=[name]
+k8s-deploy: ### Deploy application to the Kubernetes cluster - mandatory: STACK=[name],PROFILE=[name]
 	make k8s-replace-variables STACK=$(STACK) PROFILE=$(PROFILE)
-	kubectl apply -k $(K8S_DIR)/$(STACK)/overlays/$(PROFILE)
-	# make k8s-sts
+	kubectl apply -k $$(make -s _k8s-get-deployment-directory)
+	make k8s-sts
 
-k8s-deploy-job: ### Deploy job to kubernetes - mandatory: STACK=[name],PROFILE=[name]
+k8s-deploy-job: ### Deploy job to the Kubernetes cluster - mandatory: STACK=[name],PROFILE=[name]
 	make k8s-replace-variables STACK=$(STACK) PROFILE=$(PROFILE)
 	kubectl delete jobs --all -n $(K8S_JOB_NAMESPACE)
-	kubectl apply -k $(K8S_DIR)/$(STACK)/overlays/$(PROFILE)
-	# make k8s-job
-	# make k8s-wait-for-job-to-complete
+	kubectl apply -k $$(make -s _k8s-get-deployment-directory)
+	make k8s-job
+	make k8s-wait-for-job-to-complete
 
 k8s-replace-variables: ### Replace variables in base and overlay of a stack - mandatory: STACK=[name],PROFILE=[name]
 	function replace_variables {
@@ -40,8 +40,8 @@ k8s-replace-variables: ### Replace variables in base and overlay of a stack - ma
 			$(K8S_DIR)/$(STACK)/overlays/$(PROFILE)
 	fi
 	files=(
-		$$(find $(K8S_DIR)/$(STACK)/base -type f -name '*.yaml' -print | grep -v '/template/')
-		$$(find $(K8S_DIR)/$(STACK)/overlays/$(PROFILE) -type f -name '*.yaml' -print 2> /dev/null | grep -v '/template/' ||:)
+		$$(find $(K8S_DIR)/$(STACK)/base -type f -name '*.yaml' -print | grep -v "/template/")
+		$$(find $(K8S_DIR)/$(STACK)/overlays/$(PROFILE) -type f -name '*.yaml' -print 2> /dev/null | grep -v "/template/" ||:)
 	)
 	export K8S_TTL=$$(make k8s-get-namespace-ttl)
 	for file in $${files[@]}; do
@@ -49,31 +49,48 @@ k8s-replace-variables: ### Replace variables in base and overlay of a stack - ma
 	done
 
 k8s-get-namespace-ttl: ### Get the length of time for the namespace to live
-	date -u +"%d-%b-%Y" -d "+$(K8S_TTL_DEFAULT) days"
+	date -u +"%d-%b-%Y" -d "+$(K8S_TTL_LENGTH)"
 
 k8s-kubeconfig-get: ### Get configuration file
 	make aws-s3-download \
-		$(K8S_KUBECONFIG_FILE) \
-		$(ETC_DIR)/kubeconfig-$(AWS_ACCOUNT_NAME)
+		URI=$(K8S_KUBECONFIG_FILE) \
+		FILE=$(ETC_DIR_REL)/kubeconfig-$(AWS_ACCOUNT_NAME)
 
 k8s-kubeconfig-export: ### Export configuration file
 	echo "export KUBECONFIG=$(ETC_DIR)/kubeconfig-$(AWS_ACCOUNT_NAME)"
 
 k8s-clean: ### Clean Kubernetes files
-	find $(K8S_DIR) -type f -name '*.yaml' -print | grep -v '/template/' | xargs rm -fv
+	find $(K8S_DIR) -type f -name '*.yaml' -print | grep -v "/template/" | xargs rm -fv
 	find $(K8S_DIR)/$(STACK)/base ! -path $(K8S_DIR)/$(STACK)/base -type d -print | \
-		grep -v '/template' | \
+		grep -v "/template" | \
 		xargs rm -rfv
 	rm -rf $(ETC_DIR)/kubeconfig-*
 
 k8s-undeploy: ### Remove Kubernetes resources
 	eval "$$(make -s k8s-kubeconfig-export)"
-	kubectl delete namespace $(K8S_APP_NAMESPACE)
-	kubectl delete namespace $(K8S_JOB_NAMESPACE)
+	if kubectl get namespaces | grep -o "$(NAME) "; then
+		kubectl delete namespace $(K8S_APP_NAMESPACE)
+	fi
+
+k8s-undeploy-job: ### Remove Kubernetes resources from job namespace
+	eval "$$(make -s k8s-kubeconfig-export)"
+	if kubectl get namespaces | grep -o "$(NAME) "; then
+		kubectl delete namespace $(K8S_JOB_NAMESPACE)
+	fi
+
+# ==============================================================================
+
+_k8s-get-deployment-directory:
+	if [ -d $(K8S_DIR)/$(STACK)/overlays/$(PROFILE) ]; then
+		echo $(K8S_DIR)/$(STACK)/overlays/$(PROFILE)
+	else
+		echo $(K8S_DIR)/$(STACK)/base
+	fi
 
 # ==============================================================================
 
 .SILENT: \
+	_k8s-get-deployment-directory \
 	k8s-get-namespace-ttl \
 	k8s-kubeconfig-export
 
@@ -106,28 +123,30 @@ k8s-net: ### Show network policies
 	echo
 
 k8s-sts: ### Show status of pods and services
-	echo
+	echo -e "\nDisplay namespaces"
 	kubectl get namespace \
 		--selector "project-group=$(PROJECT_GROUP_SHORT)" \
 		--show-labels
-	echo
+	echo -e "\nDisplay configmaps"
 	kubectl get configmaps \
 		--namespace=$(K8S_APP_NAMESPACE) \
 		--selector "env=$(PROFILE)"
-	echo
+	echo -e "\nDisplay networkpolicies"
 	kubectl get networkpolicies \
 		--namespace=$(K8S_APP_NAMESPACE) \
 		--selector "env=$(PROFILE)"
-	echo
+	echo -e "\nDisplay pods"
 	kubectl get pods \
 		--namespace=$(K8S_APP_NAMESPACE) \
 		--selector "env=$(PROFILE)" \
 		--output wide
-	echo
+	echo -e "\nDisplay services"
 	kubectl get services \
 		--namespace=$(K8S_APP_NAMESPACE) \
 		--selector "env=$(PROFILE)"
-	echo
+	echo -e "\nDisplay events"
+	kubectl get events \
+		--namespace=$(K8S_APP_NAMESPACE)
 
 # ==============================================================================
 
@@ -181,28 +200,30 @@ k8s-job-complete: ### Show whether the job completed
 		--output jsonpath='{.status.conditions[?(@.type=="Complete")].status}'
 
 k8s-job: ### Show status of jobs
-	echo
+	echo -e "\nDisplay namespaces"
 	kubectl get namespace \
 		--selector "project-group=$(PROJECT_GROUP_SHORT)" \
 		--show-labels
-	echo
+	echo -e "\nDisplay configmaps"
 	kubectl get configmaps \
 		--namespace=$(K8S_JOB_NAMESPACE) \
 		--selector "env=$(PROFILE)"
-	echo
+	echo -e "\nDisplay networkpolicies"
 	kubectl get networkpolicies \
 		--namespace=$(K8S_JOB_NAMESPACE) \
 		--selector "env=$(PROFILE)"
-	echo
+	echo -e "\nDisplay pods"
 	kubectl get pods \
 		--namespace=$(K8S_JOB_NAMESPACE) \
 		--selector "env=$(PROFILE)" \
 		--output wide
-	echo
+	echo -e "\nDisplay jobs"
 	kubectl get jobs \
 		--namespace=$(K8S_JOB_NAMESPACE) \
 		--selector "env=$(PROFILE)"
-	echo
+	echo -e "\nDisplay events"
+	kubectl get events \
+		--namespace=$(K8S_JOB_NAMESPACE)
 
 # ==============================================================================
 

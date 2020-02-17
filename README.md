@@ -81,7 +81,19 @@ If you hear your teams or individuals saying _"It will take days to onboard a ne
 
 ## Design
 
-* Considerations ...
+Here is a list of guiding principles to extend the library as well as to build project specific CI/CD pipeline
+
+* Usability and simplicity
+* Principle of least surprise
+* Low coupling high cohesion
+* A product team has full control over their pipeline execution and owns the pipeline code
+* Pipeline implementation has to meet requirements specified by the platform
+* Adoption of the clean code best practices
+* Common pipeline is a template pipeline that consists of building blocks
+* Implementation is independent from the CI/CD system, we need just a 'scheduler'
+* Technology agnostic and universal design that can support Java, .NET, Python, Go, Node and others
+* Elements of the pipeline can be executed locally as one-liners, e.g. `'run' build` or `'run' test`
+* Pipeline runs anywhere, e.g. any *NIX like system
 
 ## Todo
 
