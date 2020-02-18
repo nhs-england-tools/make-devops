@@ -64,7 +64,7 @@ docker-image-keep-latest-only: ### Remove other images than latest - mandatory: 
 	) 2> /dev/null ||:
 
 docker-login: ### Log into the Docker registry
-	$$(aws ecr get-login --region $(AWS_REGION) --no-include-email)
+	aws ecr get-login-password | docker login --username AWS --password-stdin $(AWS_ACCOUNT_ID_MGMT).dkr.ecr.$(AWS_REGION).amazonaws.com
 
 docker-create-repository: ### Create Docker repository to store an image - mandatory: NAME
 	aws ecr create-repository \
