@@ -16,6 +16,7 @@ dev-setup: ## Provision your MacBook (and become a DevOps ninja) - optional: REI
 	touch $(SETUP_COMPLETE_FLAG_FILE)
 
 dev-prepare:: ## Prepare for installation and configuration of the development dependencies
+	networksetup -setdnsservers Wi-Fi 8.8.8.8
 	sudo chown -R $$(id -u) $$(brew --prefix)/*
 
 dev-update:: ## Update all currently installed development dependencies
