@@ -17,6 +17,7 @@ test-aws: \
 	test-aws-s3-exists \
 	test-aws-s3-create \
 	test-aws-s3-upload-download \
+	test-aws-ecr-get-login-password \
 	test-aws-teardown
 
 test-aws-setup:
@@ -142,6 +143,9 @@ test-aws-s3-upload-download:
 	hash1=$$(md5sum $(TEST_AWS_BUCKET_FILE_PATH).upload | awk '{ print $$1 }')
 	hash2=$$(md5sum $(TEST_AWS_BUCKET_FILE_PATH).download | awk '{ print $$1 }')
 	mk_test $(@) "$$hash1" = "$$hash2"
+
+test-aws-ecr-get-login-password:
+	mk_test_skip $(@) ||:
 
 # ==============================================================================
 
