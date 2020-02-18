@@ -50,6 +50,7 @@ dev-install-essential:: ## Install essential development dependencies - optional
 	brew $$install gnu-tar ||:
 	brew $$install gnutls ||:
 	brew $$install go ||:
+	brew $$install google-java-format ||:
 	brew $$install gpg ||:
 	brew $$install gradle ||:
 	brew $$install grep ||:
@@ -150,6 +151,7 @@ dev-check:: ## Check if the development dependencies are installed
 	brew list gnu-tar ||:
 	brew list gnutls ||:
 	brew list go ||:
+	brew list google-java-format ||:
 	brew list gpg ||:
 	brew list gradle ||:
 	brew list grep ||:
@@ -286,6 +288,8 @@ _dev-config-visual-studio-code:
 	code --force --install-extension donjayamanne.githistory
 	code --force --install-extension eamodio.gitlens
 	code --force --install-extension editorconfig.editorconfig
+	code --force --install-extension emeraldwalk.runonsave
+	code --force --install-extension esbenp.prettier-vscode
 	code --force --install-extension gabrielbb.vscode-lombok
 	code --force --install-extension ginfuru.ginfuru-better-solarized-dark-theme
 	code --force --install-extension mauve.terraform
@@ -302,6 +306,7 @@ _dev-config-visual-studio-code:
 	code --force --install-extension streetsidesoftware.code-spell-checker
 	code --force --install-extension timonwong.shellcheck
 	code --force --install-extension tomoki1207.pdf
+	code --force --install-extension vscjava.vscode-java-pack
 	code --force --install-extension vscjava.vscode-spring-boot-dashboard
 	code --force --install-extension vscjava.vscode-spring-initializr
 	code --force --install-extension vscode-icons-team.vscode-icons
