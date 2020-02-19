@@ -117,7 +117,7 @@ aws-s3-exists: ### Check if bucket exists - mandatory: NAME=[bucket name]
 
 aws-ecr-get-login-password: ### Get the ECR user login password
 	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=localstack' ||:)" CMD=" \
-		$(AWSCLI) ecr get-login-password \
+		$(AWSCLI) ecr get-login-password --region $(AWS_REGION) \
 	"
 
 # ==============================================================================
