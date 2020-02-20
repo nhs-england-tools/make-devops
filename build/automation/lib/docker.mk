@@ -213,10 +213,11 @@ docker-compose-log: ### Log Docker Compose output - mandatory: YML=[docker-compo
 
 # ==============================================================================
 
-docker-run-composer: ### Run composer container - mandatory: CMD; optional: DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file],IMAGE
+docker-run-composer: ### Run composer container - mandatory: CMD; optional: DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file],IMAGE=[image name],NAME=[container name]
 	image=$$([ -n "$(IMAGE)" ] && echo $(IMAGE) || echo composer:$(DOCKER_COMPOSER_VERSION))
+	name=$$([ -n "$(NAME)" ] && echo $(NAME) || echo composer-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7))
 	docker run --interactive $(_TTY) --rm \
-		--name composer-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7) \
+		--name $$name \
 		--user $$(id -u):$$(id -g) \
 		--env-file <(env | grep "^AWS_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(env | grep "^TF_VAR_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
@@ -234,8 +235,9 @@ docker-run-composer: ### Run composer container - mandatory: CMD; optional: DIR,
 		$$image \
 			$(CMD)
 
-docker-run-data: ### Run data container - mandatory: CMD; optional: ENGINE=postgres|msslq|mysql,DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file],IMAGE
+docker-run-data: ### Run data container - mandatory: CMD; optional: ENGINE=postgres|msslq|mysql,DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file],IMAGE=[image name],NAME=[container name]
 	image=$$([ -n "$(IMAGE)" ] && echo $(IMAGE) || echo $(DOCKER_REGISTRY)/data:$(DOCKER_DATA_VERSION))
+	name=$$([ -n "$(NAME)" ] && echo $(NAME) || echo data-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7))
 	engine=$$([ -z "$(ENGINE)" ] && echo postgres || echo "$(ENGINE)")
 	if [ "$$engine" == postgres ]; then
 		if [ -z "$$(docker images --filter=reference="$$image" --quiet)" ]; then
@@ -243,7 +245,7 @@ docker-run-data: ### Run data container - mandatory: CMD; optional: ENGINE=postg
 			make docker-image NAME=data > /dev/null 2>&1
 		fi
 		docker run --interactive $(_TTY) --rm \
-			--name data-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7) \
+			--name $$name \
 			--user $$(id -u):$$(id -g) \
 			--env-file <(env | grep "^AWS_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 			--env-file <(env | grep "^TF_VAR_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
@@ -268,10 +270,11 @@ docker-run-data: ### Run data container - mandatory: CMD; optional: ENGINE=postg
 				$(CMD)
 	fi
 
-docker-run-dotnet: ### Run dotnet container - mandatory: CMD; optional: DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file],IMAGE
+docker-run-dotnet: ### Run dotnet container - mandatory: CMD; optional: DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file],IMAGE=[image name],NAME=[container name]
 	image=$$([ -n "$(IMAGE)" ] && echo $(IMAGE) || echo mcr.microsoft.com/dotnet/core/sdk:$(DOCKER_DOTNET_VERSION))
+	name=$$([ -n "$(NAME)" ] && echo $(NAME) || echo dotnet-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7))
 	docker run --interactive $(_TTY) --rm \
-		--name dotnet-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7) \
+		--name $$name \
 		--user $$(id -u):$$(id -g) \
 		--env-file <(env | grep "^AWS_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(env | grep "^TF_VAR_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
@@ -288,10 +291,11 @@ docker-run-dotnet: ### Run dotnet container - mandatory: CMD; optional: DIR,ARGS
 		$$image \
 			dotnet $(CMD)
 
-docker-run-gradle: ### Run gradle container - mandatory: CMD; optional: DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file],IMAGE
+docker-run-gradle: ### Run gradle container - mandatory: CMD; optional: DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file],IMAGE=[image name],NAME=[container name]
 	image=$$([ -n "$(IMAGE)" ] && echo $(IMAGE) || echo gradle:$(DOCKER_GRADLE_VERSION))
+	name=$$([ -n "$(NAME)" ] && echo $(NAME) || echo gradle-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7))
 	docker run --interactive $(_TTY) --rm \
-		--name gradle-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7) \
+		--name $$name \
 		--user $$(id -u):$$(id -g) \
 		--env-file <(env | grep "^AWS_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(env | grep "^TF_VAR_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
@@ -310,10 +314,11 @@ docker-run-gradle: ### Run gradle container - mandatory: CMD; optional: DIR,ARGS
 		$$image \
 			$(CMD)
 
-docker-run-mvn: ### Run maven container - mandatory: CMD; optional: DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file],IMAGE
+docker-run-mvn: ### Run maven container - mandatory: CMD; optional: DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file],IMAGE=[image name],NAME=[container name]
 	image=$$([ -n "$(IMAGE)" ] && echo $(IMAGE) || echo maven:$(DOCKER_MAVEN_VERSION))
+	name=$$([ -n "$(NAME)" ] && echo $(NAME) || echo mvn-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7))
 	docker run --interactive $(_TTY) --rm \
-		--name mvn-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7) \
+		--name $$name \
 		--user $$(id -u):$$(id -g) \
 		--env-file <(env | grep "^AWS_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(env | grep "^TF_VAR_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
@@ -334,10 +339,11 @@ docker-run-mvn: ### Run maven container - mandatory: CMD; optional: DIR,ARGS=[Do
 				mvn -Duser.home=/var/maven $(CMD) \
 			"
 
-docker-run-node: ### Run node container - mandatory: CMD; optional: DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file],IMAGE
+docker-run-node: ### Run node container - mandatory: CMD; optional: DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file],IMAGE=[image name],NAME=[container name]
 	image=$$([ -n "$(IMAGE)" ] && echo $(IMAGE) || echo node:$(DOCKER_NODE_VERSION))
+	name=$$([ -n "$(NAME)" ] && echo $(NAME) || echo node-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7))
 	docker run --interactive $(_TTY) --rm \
-		--name node-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7) \
+		--name $$name \
 		--env-file <(env | grep "^AWS_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(env | grep "^TF_VAR_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(env | grep "^SERV[A-Z]*_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
@@ -359,11 +365,12 @@ docker-run-node: ### Run node container - mandatory: CMD; optional: DIR,ARGS=[Do
 				su \$$(id -nu $$(id -u)) -c 'cd /project/$(DIR); $(CMD)' \
 			"
 
-docker-run-python: ### Run python container - mandatory: CMD; optional: SH=true,DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file],IMAGE
+docker-run-python: ### Run python container - mandatory: CMD; optional: SH=true,DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file],IMAGE=[image name],NAME=[container name]
 	image=$$([ -n "$(IMAGE)" ] && echo $(IMAGE) || echo python:$(DOCKER_PYTHON_VERSION))
+	name=$$([ -n "$(NAME)" ] && echo $(NAME) || echo python-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7))
 	if [[ ! "$(SH)" =~ ^(true|yes|y|on|1|TRUE|YES|Y|ON)$$ ]]; then
 		docker run --interactive $(_TTY) --rm \
-			--name python-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7) \
+			--name $$name \
 			--user $$(id -u):$$(id -g) \
 			--env-file <(env | grep "^AWS_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 			--env-file <(env | grep "^TF_VAR_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
@@ -386,7 +393,7 @@ docker-run-python: ### Run python container - mandatory: CMD; optional: SH=true,
 				$(CMD)
 	else
 		docker run --interactive $(_TTY) --rm \
-			--name python-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7) \
+			--name $$name \
 			--user $$(id -u):$$(id -g) \
 			--env-file <(env | grep "^AWS_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 			--env-file <(env | grep "^TF_VAR_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
@@ -411,10 +418,11 @@ docker-run-python: ### Run python container - mandatory: CMD; optional: SH=true,
 				"
 	fi
 
-docker-run-terraform: ### Run terraform container - mandatory: CMD; optional: DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file],IMAGE
+docker-run-terraform: ### Run terraform container - mandatory: CMD; optional: DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file],IMAGE=[image name],NAME=[container name]
 	image=$$([ -n "$(IMAGE)" ] && echo $(IMAGE) || echo hashicorp/terraform:$(DOCKER_TERRAFORM_VERSION))
+	name=$$([ -n "$(NAME)" ] && echo $(NAME) || echo terraform-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7))
 	docker run --interactive $(_TTY) --rm \
-		--name terraform-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7) \
+		--name $$name \
 		--user $$(id -u):$$(id -g) \
 		--env-file <(env | grep "^AWS_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(env | grep "^TF_VAR_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
@@ -431,15 +439,16 @@ docker-run-terraform: ### Run terraform container - mandatory: CMD; optional: DI
 		$$image \
 			$(CMD)
 
-docker-run-tools: ### Run tools (Python) container - mandatory: CMD; optional: SH=true,DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file],IMAGE
+docker-run-tools: ### Run tools (Python) container - mandatory: CMD; optional: SH=true,DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file],IMAGE=[image name],NAME=[container name]
 	image=$$([ -n "$(IMAGE)" ] && echo $(IMAGE) || echo $(DOCKER_REGISTRY)/tools:$(DOCKER_TOOLS_VERSION))
+	name=$$([ -n "$(NAME)" ] && echo $(NAME) || echo tools-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7))
 	if [ -z "$$(docker images --filter=reference="$$image" --quiet)" ]; then
 		# TODO: Try to pull the image first
 		make docker-image NAME=tools > /dev/null 2>&1
 	fi
 	if [[ ! "$(SH)" =~ ^(true|yes|y|on|1|TRUE|YES|Y|ON)$$ ]]; then
 		docker run --interactive $(_TTY) --rm \
-			--name tools-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7) \
+			--name $$name \
 			--user $$(id -u):$$(id -g) \
 			--env-file <(env | grep "^AWS_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 			--env-file <(env | grep "^TF_VAR_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
@@ -464,7 +473,7 @@ docker-run-tools: ### Run tools (Python) container - mandatory: CMD; optional: S
 				$(CMD)
 	else
 		docker run --interactive $(_TTY) --rm \
-			--name tools-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7) \
+			--name $$name \
 			--user $$(id -u):$$(id -g) \
 			--env-file <(env | grep "^AWS_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 			--env-file <(env | grep "^TF_VAR_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
