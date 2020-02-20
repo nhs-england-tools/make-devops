@@ -1,6 +1,7 @@
 {
   "folders": [
     {
+      "name": "[Repository]",
       "path": "."
     }
   ],
@@ -55,6 +56,10 @@
       "editor.tabSize": 2,
       "editor.insertSpaces": true
     },
+    "[java]": {
+      "editor.insertSpaces": true,
+      "editor.tabSize": 4
+    },
     "[javascript]": {
       "editor.defaultFormatter": "esbenp.prettier-vscode",
       "editor.insertSpaces": true,
@@ -64,6 +69,15 @@
       "editor.defaultFormatter": "esbenp.prettier-vscode",
       "editor.insertSpaces": true,
       "editor.tabSize": 2
+    },
+    "[json]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+      "editor.insertSpaces": true,
+      "editor.tabSize": 2
+    },
+    "[terraform]": {
+      "editor.tabSize": 2,
+      "editor.insertSpaces": true
     },
     "[typescript]": {
       "editor.defaultFormatter": "esbenp.prettier-vscode",
@@ -75,22 +89,13 @@
       "editor.insertSpaces": true,
       "editor.tabSize": 2
     },
-    "[json]": {
-      "editor.defaultFormatter": "esbenp.prettier-vscode",
-      "editor.insertSpaces": true,
-      "editor.tabSize": 2
-    },
     "[xml]": {
       "editor.tabSize": 2,
       "editor.insertSpaces": true
     },
-    "emeraldwalk.runonsave": {
-      "commands": [
-        {
-          "match": "\\.java$",
-          "cmd": "/usr/local/bin/google-java-format --replace ${file}"
-        }
-      ]
+    "[yaml]": {
+      "editor.tabSize": 2,
+      "editor.insertSpaces": true
     }
   }
 }
