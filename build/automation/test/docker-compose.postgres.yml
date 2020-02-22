@@ -5,6 +5,8 @@ services:
     image: $AWS_ECR/$PROJECT_GROUP/$PROJECT_NAME/postgres:latest
     container_name: postgres
     hostname: postgres
+    environment:
+      - POSTGRES_HOST_AUTH_METHOD=trust
     command: ["postgres", "-c", "config_file=/etc/postgresql/postgresql.conf"]
 
 networks:

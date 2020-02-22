@@ -1,16 +1,16 @@
 DOCKER_ALPINE_VERSION := $(or $(DOCKER_ALPINE_VERSION), 3.11.3)
-DOCKER_COMPOSER_VERSION := $(or $(DOCKER_COMPOSER_VERSION), 1.9.1)
+DOCKER_COMPOSER_VERSION := $(or $(DOCKER_COMPOSER_VERSION), 1.9.3)
 DOCKER_DATA_VERSION := $(or $(DOCKER_DATA_VERSION), $(shell cat $(DOCKER_DIR)/data/.version 2> /dev/null || cat $(DOCKER_DIR)/data/VERSION 2> /dev/null || echo unknown))
-DOCKER_DOTNET_VERSION := $(or $(DOCKER_DOTNET_VERSION), 3.0-alpine)
-DOCKER_ELASTICSEARCH_VERSION := $(or $(DOCKER_ELASTICSEARCH_VERSION), 6.7.2)
-DOCKER_GRADLE_VERSION := $(or $(DOCKER_GRADLE_VERSION), 6.2.0-jdk13)
-DOCKER_MAVEN_VERSION := $(or $(DOCKER_MAVEN_VERSION), 3.6.3-jdk-13)
-DOCKER_NGINX_VERSION := $(or $(DOCKER_NGINX_VERSION), 1.16.1-alpine)
-DOCKER_NODE_VERSION := $(or $(DOCKER_NODE_VERSION), 10.16.3)
-DOCKER_OPENJDK_VERSION := $(or $(DOCKER_OPENJDK_VERSION), 13-jdk)
-DOCKER_POSTGRES_VERSION := $(or $(DOCKER_POSTGRES_VERSION), 11.4)
-DOCKER_PYTHON_VERSION := $(or $(DOCKER_PYTHON_VERSION), 3.8.1-slim)
-DOCKER_TERRAFORM_VERSION := $(or $(DOCKER_TERRAFORM_VERSION), 0.12.20)
+DOCKER_DOTNET_VERSION := $(or $(DOCKER_DOTNET_VERSION), 3.1.102)
+DOCKER_ELASTICSEARCH_VERSION := $(or $(DOCKER_ELASTICSEARCH_VERSION), 7.6.0)
+DOCKER_GRADLE_VERSION := $(or $(DOCKER_GRADLE_VERSION), 6.2.0-jdk13) # JDK version for Java, Mave and Gradle should be in sync
+DOCKER_MAVEN_VERSION := $(or $(DOCKER_MAVEN_VERSION), 3.6.3-jdk-13) # JDK version for Java, Mave and Gradle should be in sync
+DOCKER_NGINX_VERSION := $(or $(DOCKER_NGINX_VERSION), 1.17.8)
+DOCKER_NODE_VERSION := $(or $(DOCKER_NODE_VERSION), 13.8.0)
+DOCKER_OPENJDK_VERSION := $(or $(DOCKER_OPENJDK_VERSION), 13-jdk) # JDK version for Java, Mave and Gradle should be in sync
+DOCKER_POSTGRES_VERSION := $(or $(DOCKER_POSTGRES_VERSION), 12.2)
+DOCKER_PYTHON_VERSION := $(or $(DOCKER_PYTHON_VERSION), 3.8.1-slim) # Do not use Alpine image
+DOCKER_TERRAFORM_VERSION := $(or $(DOCKER_TERRAFORM_VERSION), 0.12.20) # Maintained by the platform
 DOCKER_TOOLS_VERSION := $(or $(DOCKER_TOOLS_VERSION), $(shell cat $(DOCKER_DIR)/tools/.version 2> /dev/null || cat $(DOCKER_DIR)/tools/VERSION 2> /dev/null || echo unknown))
 
 DOCKER_BROWSER_DEBUG := $(or $(DOCKER_BROWSER_DEBUG), -debug)
@@ -99,7 +99,7 @@ docker-clean: ### Clean Docker files
 docker-prune: docker-clean ### Clean Docker resources - optional: ALL=true
 	docker rmi --force $$(docker images | grep $(DOCKER_REGISTRY) | awk '{ print $$3 }') 2> /dev/null ||:
 	docker network rm $(DOCKER_NETWORK) 2> /dev/null ||:
-	[[ "$(ALL)" =~ ^(true|yes|y|on|1|TRUE|YES|Y|ON)$$ ]] && docker system prune --volumes --all --force
+	[[ "$(ALL)" =~ ^(true|yes|y|on|1|TRUE|YES|Y|ON)$$ ]] && docker system prune --volumes --all --force ||:
 
 # ==============================================================================
 

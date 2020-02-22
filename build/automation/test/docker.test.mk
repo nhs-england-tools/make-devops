@@ -126,7 +126,7 @@ test-docker-image-start:
 	docker rm --force postgres-$(BUILD_HASH)-$(BUILD_ID) 2> /dev/null ||:
 	make docker-image NAME=postgres
 	# act
-	make docker-image-start NAME=postgres
+	make docker-image-start NAME=postgres ARGS="--env POSTGRES_HOST_AUTH_METHOD=trust"
 	sleep 1
 	# assert
 	mk_test $(@) 1 -eq $$(docker ps | grep postgres-$(BUILD_HASH)-$(BUILD_ID) | wc -l)
@@ -135,7 +135,7 @@ test-docker-image-stop:
 	# arrange
 	docker rm --force postgres-$(BUILD_HASH)-$(BUILD_ID) 2> /dev/null ||:
 	make docker-image NAME=postgres
-	make docker-image-start NAME=postgres
+	make docker-image-start NAME=postgres ARGS="--env POSTGRES_HOST_AUTH_METHOD=trust"
 	sleep 1
 	# act
 	make docker-image-stop NAME=postgres
