@@ -88,9 +88,11 @@ dev-install-additional:: ## Install additional development dependencies - option
 		install="reinstall --force"
 	fi
 	brew update
+	brew $$install github/gh/gh
 	brew cask $$install appcleaner ||:
 	brew cask $$install atom ||:
 	brew cask $$install bettertouchtool ||:
+	brew cask $$install cheatsheet ||:
 	brew cask $$install dbeaver-community ||:
 	brew cask $$install dcommander ||:
 	brew cask $$install drawio
@@ -106,6 +108,7 @@ dev-install-additional:: ## Install additional development dependencies - option
 	brew cask $$install postman ||:
 	brew cask $$install pycharm ||:
 	brew cask $$install smartgit ||:
+	brew cask $$install sourcetree ||:
 	brew cask $$install spectacle ||:
 	brew cask $$install tripmode ||:
 	brew cask $$install tunnelblick ||:
@@ -181,7 +184,9 @@ dev-check:: ## Check if the development dependencies are installed
 	brew cask list iterm2 ||:
 	brew cask list visual-studio-code ||:
 	# Additional dependencies
+	brew list github/gh/gh
 	brew cask list atom ||:
+	brew cask list cheatsheet ||:
 	brew cask list dbeaver-community ||:
 	brew cask list drawio ||:
 	brew cask list gitkraken ||:
@@ -192,6 +197,7 @@ dev-check:: ## Check if the development dependencies are installed
 	brew cask list postman ||:
 	brew cask list pycharm ||:
 	brew cask list smartgit ||:
+	brew cask list sourcetree ||:
 	brew cask list spectacle ||:
 	brew cask list tunnelblick ||:
 
@@ -202,7 +208,6 @@ dev-config:: ## Configure development dependencies
 		_dev-config-oh-my-zsh \
 		_dev-config-iterm2 \
 		_dev-config-visual-studio-code \
-		_dev-config-visual-studio-code-disable-java-extensions \
 		_dev-config-command-line
 	make dev-info
 
@@ -279,6 +284,7 @@ _dev-config-iterm2:
 	rm /tmp/com.googlecode.iterm2.plist
 
 _dev-config-visual-studio-code:
+	# Extensions
 	code --force --install-extension alefragnani.bookmarks
 	code --force --install-extension alexkrechik.cucumberautocomplete
 	code --force --install-extension ban.spellright
@@ -291,7 +297,7 @@ _dev-config-visual-studio-code:
 	code --force --install-extension emeraldwalk.runonsave
 	code --force --install-extension esbenp.prettier-vscode
 	code --force --install-extension gabrielbb.vscode-lombok
-	code --force --install-extension ginfuru.ginfuru-better-solarized-dark-theme
+	code --force --install-extension johnpapa.vscode-peacock
 	code --force --install-extension mauve.terraform
 	code --force --install-extension mhutchie.git-graph
 	code --force --install-extension ms-azuretools.vscode-docker
@@ -311,21 +317,21 @@ _dev-config-visual-studio-code:
 	code --force --install-extension vscjava.vscode-spring-initializr
 	code --force --install-extension vscode-icons-team.vscode-icons
 	code --list-extensions --show-versions
-
-_dev-config-visual-studio-code-disable-java-extensions:
-	# TODO: This currently doesn't work well and needs investigation. There seems to be a bug in an extension implementation
-	# code --disable-extension gabrielbb.vscode-lombok
-	# code --disable-extension pivotal.vscode-boot-dev-pack
-	# code --disable-extension pivotal.vscode-spring-boot
-	# code --disable-extension pivotal.vscode-spring-boot
-	# code --disable-extension redhat.java
-	# code --disable-extension vscjava.vscode-java-debug
-	# code --disable-extension vscjava.vscode-java-dependency
-	# code --disable-extension vscjava.vscode-java-pack
-	# code --disable-extension vscjava.vscode-java-test
-	# code --disable-extension vscjava.vscode-maven
-	# code --disable-extension vscjava.vscode-spring-boot-dashboard
-	# code --disable-extension vscjava.vscode-spring-initializr
+	# Themes
+	code --force --install-extension ahmadawais.shades-of-purple
+	code --force --install-extension akamud.vscode-theme-onedark
+	code --force --install-extension arcticicestudio.nord-visual-studio-code
+	code --force --install-extension dracula-theme.theme-dracula
+	code --force --install-extension equinusocio.vsc-material-theme
+	code --force --install-extension ginfuru.ginfuru-better-solarized-dark-theme
+	code --force --install-extension johnpapa.winteriscoming
+	code --force --install-extension liviuschera.noctis
+	code --force --install-extension ryanolsonx.solarized
+	code --force --install-extension sdras.night-owl
+	code --force --install-extension smlombardi.slime
+	code --force --install-extension vangware.dark-plus-material
+	code --force --install-extension wesbos.theme-cobalt2
+	code --force --install-extension zhuangtongfa.material-theme
 
 _dev-config-command-line:
 	sudo chown -R $$(id -u) $$(brew --prefix)/*
