@@ -45,8 +45,10 @@
     "workbench.colorTheme": "Better Solarized Dark Italics",
     "workbench.editor.enablePreview": false,
     "workbench.tree.indent": 24,
-    "[dockerfile]": {
-      "editor.formatOnSave": false
+
+      "editor.formatOnSave": false,
+      "editor.insertSpaces": true,
+      "editor.tabSize": 4
     },
     "[groovy]": {
       "editor.insertSpaces": true,
@@ -59,17 +61,21 @@
     "[javascript]": {
       "editor.defaultFormatter": "esbenp.prettier-vscode",
       "editor.insertSpaces": true,
-      "editor.tabSize": 2
+      "editor.tabSize": 4
     },
     "[javascriptreact]": {
       "editor.defaultFormatter": "esbenp.prettier-vscode",
       "editor.insertSpaces": true,
-      "editor.tabSize": 2
+      "editor.tabSize": 4
     },
     "[json]": {
       "editor.defaultFormatter": "esbenp.prettier-vscode",
       "editor.insertSpaces": true,
       "editor.tabSize": 2
+    },
+    "[python]": {
+      "editor.tabSize": 4,
+      "editor.insertSpaces": true
     },
     "[terraform]": {
       "editor.insertSpaces": true,
@@ -78,12 +84,12 @@
     "[typescript]": {
       "editor.defaultFormatter": "esbenp.prettier-vscode",
       "editor.insertSpaces": true,
-      "editor.tabSize": 2
+      "editor.tabSize": 4
     },
     "[typescriptreact]": {
       "editor.defaultFormatter": "esbenp.prettier-vscode",
       "editor.insertSpaces": true,
-      "editor.tabSize": 2
+      "editor.tabSize": 4
     },
     "[makefile]": {
       "editor.insertSpaces": false,
