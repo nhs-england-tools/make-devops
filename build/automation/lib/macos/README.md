@@ -5,7 +5,7 @@
 - Restart your macOS
 - Fully enable the `Avast Security` antivirus software
 - Open the `Docker Desktop` application and make sure it always starts when you log in and has sufficient resources allocated. e.g. at least 4GB memory and 4 CPUs
-- Use the `Spectacle` and `KeepingYouAwake` applications to improve the ergonomics
+- Use the `Spectacle`, `KeepingYouAwake` and `CheatSheet` applications to improve the ergonomics
 - Go to System Preferences > Security & Privacy > Privacy > Accessibility > [ Add iTerm to the list ]
 - Go to System Preferences > Security & Privacy > Privacy > Full Disk Access > [ Add iTerm to the list ]
 - If you can no longer open Java-based applications (e.g. DBeaver) due to the JDK execution error, follow the steps below
@@ -18,7 +18,7 @@
 - Your AWS credentials are stored in `~/.aws/credentials`, check it
 - Edit `~/.dotfiles/oh-my-zsh/plugins/make-devops/aws-platform.zsh` to include correct AWS platform variables
 - Place the Kubernetes configuration as `~/.kube/configs/*-nonprod-kubeconfig` file and the `KUBECONFIG` environment variable will be set automatically when your shell session reloads
-- From now on use `iTerm` as your terminal and `Visual Studio Code` as your IDE. These tools have been configured to support development in
+- From now on use `iTerm` as your terminal, `Visual Studio Code` as your IDE and `Firefox` for web development. These tools have been configured to support development in
   - Node
   - Python
   - Java

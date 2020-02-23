@@ -42,6 +42,7 @@ dev-install-essential:: ## Install essential development dependencies - optional
 	brew $$install awscli ||:
 	brew $$install bash ||:
 	brew $$install coreutils ||:
+	brew $$install ctop ||:
 	brew $$install dive ||:
 	brew $$install findutils ||:
 	brew $$install gawk ||:
@@ -146,6 +147,7 @@ dev-check:: ## Check if the development dependencies are installed
 	brew list awscli ||:
 	brew list bash ||:
 	brew list coreutils ||:
+	brew list ctop ||:
 	brew list dive ||:
 	brew list findutils ||:
 	brew list gawk ||:
@@ -208,6 +210,7 @@ dev-config:: ## Configure development dependencies
 		_dev-config-oh-my-zsh \
 		_dev-config-iterm2 \
 		_dev-config-visual-studio-code \
+		_dev-config-firefox \
 		_dev-config-command-line
 	make dev-info
 
@@ -284,16 +287,20 @@ _dev-config-iterm2:
 	rm /tmp/com.googlecode.iterm2.plist
 
 _dev-config-visual-studio-code:
-	# Extensions
+	# Install extensions
 	code --force --install-extension alefragnani.bookmarks
 	code --force --install-extension alexkrechik.cucumberautocomplete
 	code --force --install-extension ban.spellright
+	code --force --install-extension christian-kohler.npm-intellisense
+	code --force --install-extension christian-kohler.path-intellisense
 	code --force --install-extension coenraads.bracket-pair-colorizer
 	code --force --install-extension davidanson.vscode-markdownlint
 	code --force --install-extension dbaeumer.vscode-eslint
 	code --force --install-extension donjayamanne.githistory
+	code --force --install-extension dsznajder.es7-react-js-snippets
 	code --force --install-extension eamodio.gitlens
 	code --force --install-extension editorconfig.editorconfig
+	code --force --install-extension eg2.vscode-npm-script
 	code --force --install-extension emeraldwalk.runonsave
 	code --force --install-extension esbenp.prettier-vscode
 	code --force --install-extension gabrielbb.vscode-lombok
@@ -310,14 +317,18 @@ _dev-config-visual-studio-code:
 	code --force --install-extension pivotal.vscode-spring-boot
 	code --force --install-extension redhat.java
 	code --force --install-extension streetsidesoftware.code-spell-checker
+	code --force --install-extension techer.open-in-browser
 	code --force --install-extension timonwong.shellcheck
 	code --force --install-extension tomoki1207.pdf
+	code --force --install-extension visualstudioexptteam.vscodeintellicode
 	code --force --install-extension vscjava.vscode-java-pack
 	code --force --install-extension vscjava.vscode-spring-boot-dashboard
 	code --force --install-extension vscjava.vscode-spring-initializr
 	code --force --install-extension vscode-icons-team.vscode-icons
-	code --list-extensions --show-versions
-	# Themes
+	code --force --install-extension wayou.vscode-todo-highlight
+	code --force --install-extension xabikos.javascriptsnippets
+	code --force --install-extension yzhang.markdown-all-in-one
+	# Install themes
 	code --force --install-extension ahmadawais.shades-of-purple
 	code --force --install-extension akamud.vscode-theme-onedark
 	code --force --install-extension arcticicestudio.nord-visual-studio-code
@@ -332,6 +343,34 @@ _dev-config-visual-studio-code:
 	code --force --install-extension vangware.dark-plus-material
 	code --force --install-extension wesbos.theme-cobalt2
 	code --force --install-extension zhuangtongfa.material-theme
+	# List them all
+	code --list-extensions --show-versions
+
+_dev-config-firefox:
+	function firefox_install_extension {
+		url=$$1
+		file=$$2
+		(
+			cd ~/tmp
+			curl -L $$url --output $$file
+			mv $$file $$file.zip
+			mkdir -p $$file
+			mv $$file.zip $$file
+			cd $$file
+			unzip $$file.zip
+			id=$$(jq -r '.applications.gecko.id' manifest.json)
+			profile=$$(ls -1 ~/Library/Application\ Support/Firefox/Profiles/ | grep dev-edition-default)
+			cp $$file.zip ~/Library/Application\ Support/Firefox/Profiles/$$profile/extensions/$$id.xpi
+			cd ~/tmp
+			rm -rf $$file
+		)
+	}
+	firefox_install_extension \
+		https://addons.mozilla.org/firefox/downloads/file/3478747/react_developer_tools-4.4.0-fx.xpi \
+		react_developer_tools.xpi
+	firefox_install_extension \
+		https://addons.mozilla.org/firefox/downloads/file/1509811/redux_devtools-2.17.1-fx.xpi \
+		redux_devtools.xpi
 
 _dev-config-command-line:
 	sudo chown -R $$(id -u) $$(brew --prefix)/*
