@@ -272,12 +272,16 @@ _dev-config-oh-my-zsh:
 	echo "    colorize" >> ~/.zshrc
 	echo "    $(DEVOPS_PROJECT_NAME)" >> ~/.zshrc
 	echo ")" >> ~/.zshrc
-	echo "ZSH_THEME=powerlevel10k/powerlevel10k" >> ~/.zshrc
+	echo "function tx-status { [ -n "\$$TEXAS_PROFILE" ] && echo \$$TEXAS_PROFILE ||: }" >> ~/.zshrc
+	echo "POWERLEVEL9K_CUSTOM_TEXAS=tx-status" >> ~/.zshrc
+	echo "POWERLEVEL9K_CUSTOM_TEXAS_BACKGROUND=balck" >> ~/.zshrc
+	echo "POWERLEVEL9K_CUSTOM_TEXAS_FOREGROUND=yellow" >> ~/.zshrc
 	echo "POWERLEVEL9K_MODE=nerdfont-complete" >> ~/.zshrc
 	echo "POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(context dir vcs)" >> ~/.zshrc
-	echo "POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status virtualenv root_indicator background_jobs history time)" >> ~/.zshrc
+	echo "POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status custom_texas virtualenv root_indicator background_jobs time)" >> ~/.zshrc
 	echo "POWERLEVEL9K_PROMPT_ON_NEWLINE=true" >> ~/.zshrc
 	echo "POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true" >> ~/.zshrc
+	echo "ZSH_THEME=powerlevel10k/powerlevel10k" >> ~/.zshrc
 	echo "source \$$ZSH/oh-my-zsh.sh" >> ~/.zshrc
 	echo "# END: Custom configuration" >> ~/.zshrc
 
