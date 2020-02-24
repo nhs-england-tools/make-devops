@@ -272,7 +272,7 @@ _dev-config-oh-my-zsh:
 	echo "    colorize" >> ~/.zshrc
 	echo "    $(DEVOPS_PROJECT_NAME)" >> ~/.zshrc
 	echo ")" >> ~/.zshrc
-	echo "function tx-status { [ -n "\$$TEXAS_PROFILE" ] && [ \$$TEXAS_SESSION_EXPIRY_TIME -gt \$$(date -u +"%Y%m%d%H%M%S") ] && echo \$$TEXAS_PROFILE ||: }" >> ~/.zshrc
+	echo 'function tx-status { [ -n "$$TEXAS_SESSION_EXPIRY_TIME" ] && [ "$$TEXAS_SESSION_EXPIRY_TIME" -gt $$(date -u +"%Y%m%d%H%M%S") ] && echo $$TEXAS_PROFILE ||: }' >> ~/.zshrc
 	echo "POWERLEVEL9K_CUSTOM_TEXAS=tx-status" >> ~/.zshrc
 	echo "POWERLEVEL9K_CUSTOM_TEXAS_BACKGROUND=balck" >> ~/.zshrc
 	echo "POWERLEVEL9K_CUSTOM_TEXAS_FOREGROUND=yellow" >> ~/.zshrc
