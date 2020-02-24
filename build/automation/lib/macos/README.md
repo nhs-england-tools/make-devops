@@ -37,7 +37,6 @@
   - `gc` (git commit --gpg-sign -m)
   - `gl` / `gl+` (git log --graph --oneline --decorate / git log --graph --oneline --decorate --stat)
   - `gpu` (git push)
-  - `gpuo` (git push --set-upstream origin)
   - `gf` (git fetch --prune)
   - `gp` (git pull --prune)
   - `gcm` (git checkout master)
@@ -45,7 +44,7 @@
 - Docker
   - `dim` (docker images)
   - `dps` (docker ps --all)
-  - `drc` (docker rm --volumes --force \$(docker ps --all --quiet) 2> /dev/null)
+  - `drc` (docker rm --volumes --force $(docker ps --all --quiet) 2> /dev/null)
 
 ## Starting from scratch
 
