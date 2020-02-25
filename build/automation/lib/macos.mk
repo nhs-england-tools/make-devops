@@ -450,6 +450,7 @@ _dev-config-command-line:
 		(
 			echo
 			echo "# export: AWS platform variables"
+			echo "export AWS_ACCOUNT_ID_LIVE_PARENT=123456789"
 			echo "export AWS_ACCOUNT_ID_MGMT=123456789"
 			echo "export AWS_ACCOUNT_ID_NONPROD=123456789"
 			echo "export AWS_ACCOUNT_ID_PROD=123456789"
