@@ -45,7 +45,7 @@
     "workbench.colorTheme": "Better Solarized Dark Italics",
     "workbench.editor.enablePreview": false,
     "workbench.tree.indent": 24,
-
+    "[dockerfile]": {
       "editor.formatOnSave": false,
       "editor.insertSpaces": true,
       "editor.tabSize": 4
