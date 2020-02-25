@@ -7,6 +7,8 @@ test-aws: \
 	test-aws-session-fail-if-invalid \
 	test-aws-session-fail-if-invalid-error \
 	test-aws-assume-role-export-variables \
+	test-aws-account-check-id \
+	test-aws-account-get-id \
 	test-aws-secret-create-value \
 	test-aws-secret-create-object \
 	test-aws-secret-put-get-value \
@@ -18,6 +20,7 @@ test-aws: \
 	test-aws-s3-create \
 	test-aws-s3-upload-download \
 	test-aws-ecr-get-login-password \
+	test-aws-ses-verify-email-identity \
 	test-aws-teardown
 
 test-aws-setup:
@@ -58,6 +61,12 @@ test-aws-assume-role-export-variables:
 	# export=$$(make aws-assume-role-export-variables)
 	# # assert
 	# mk_test $(@) -n "$$export"
+	mk_test_skip $(@) ||:
+
+test-aws-account-check-id:
+	mk_test_skip $(@) ||:
+
+test-aws-account-get-id:
 	mk_test_skip $(@) ||:
 
 test-aws-secret-create-value:
@@ -145,6 +154,9 @@ test-aws-s3-upload-download:
 	mk_test $(@) "$$hash1" = "$$hash2"
 
 test-aws-ecr-get-login-password:
+	mk_test_skip $(@) ||:
+
+test-aws-ses-verify-email-identity:
 	mk_test_skip $(@) ||:
 
 # ==============================================================================

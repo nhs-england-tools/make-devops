@@ -19,6 +19,20 @@ aws-assume-role-export-variables: ### Get assume AWS role export for the Jenkins
 		echo "export AWS_SESSION_TOKEN=$${array[2]}"
 	fi
 
+aws-account-check-id: ### Checked if user has MFA'd into the account - mandatory: ID; returns: true|false
+	if [ $(ID) == "$$(make aws-account-get-id)" ] && [ "$$TEXAS_SESSION_EXPIRY_TIME" -gt $$(date -u +"%Y%m%d%H%M%S") ]; then
+		echo true
+	else
+		echo false
+	fi
+
+aws-account-get-id: ### Get the account ID user has MFA'd into
+	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=localstack' ||:)" CMD=" \
+		$(AWSCLI) sts get-caller-identity \
+		--query 'Account' \
+		--output text \
+	" | tr -d '\r' | tr -d '\n'
+
 aws-secret-create: ### Create a new AWS secret and save the value - mandatory: NAME=[secret name]; optional: VALUE=[string or file://file.json],AWS_REGION=[AWS region]
 	if [ "false" == $$(make aws-secret-exists NAME=$(NAME)) ]; then
 		make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=localstack' ||:)" CMD=" \
@@ -118,6 +132,13 @@ aws-s3-exists: ### Check if bucket exists - mandatory: NAME=[bucket name]
 aws-ecr-get-login-password: ### Get the ECR user login password
 	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=localstack' ||:)" CMD=" \
 		$(AWSCLI) ecr get-login-password --region $(AWS_REGION) \
+	"
+
+aws-ses-verify-email-identity: ### Verify SES email address - mandatory: NAME
+	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=localstack' ||:)" CMD=" \
+		$(AWSCLI) ses verify-email-identity \
+			--email-address $(NAME) \
+			--region $(AWS_REGION_SES) \
 	"
 
 # ==============================================================================
