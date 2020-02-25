@@ -138,7 +138,7 @@ aws-ses-verify-email-identity: ### Verify SES email address - mandatory: NAME
 	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=localstack' ||:)" CMD=" \
 		$(AWSCLI) ses verify-email-identity \
 			--email-address $(NAME) \
-			--region $(AWS_REGION_SES) \
+			--region $(AWS_SES_REGION) \
 	"
 
 # ==============================================================================
