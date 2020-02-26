@@ -54,10 +54,10 @@ k8s-get-namespace-ttl: ### Get the length of time for the namespace to live
 k8s-kubeconfig-get: ### Get configuration file
 	make aws-s3-download \
 		URI=$(K8S_KUBECONFIG_FILE) \
-		FILE=$(ETC_DIR_REL)/kubeconfig-$(AWS_ACCOUNT_NAME)
+		FILE=$(ETC_DIR_REL)/lk8s-$(AWS_ACCOUNT_NAME)-kubeconfig
 
 k8s-kubeconfig-export: ### Export configuration file
-	echo "export KUBECONFIG=$(ETC_DIR)/kubeconfig-$(AWS_ACCOUNT_NAME)"
+	echo "export KUBECONFIG=$(ETC_DIR)/lk8s-$(AWS_ACCOUNT_NAME)-kubeconfig"
 
 k8s-clean: ### Clean Kubernetes files
 	find $(K8S_DIR) -type f -name '*.yaml' -print | grep -v "/template/" | xargs rm -fv

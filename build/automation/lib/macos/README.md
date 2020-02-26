@@ -17,7 +17,7 @@
 - Your AWS profiles are stored in `~/.aws/config`, check it
 - Your AWS credentials are stored in `~/.aws/credentials`, check it
 - Edit `~/.dotfiles/oh-my-zsh/plugins/make-devops/aws-platform.zsh` to include correct AWS platform variables
-- Place the Kubernetes configuration as `~/.kube/configs/*-nonprod-kubeconfig` file and the `KUBECONFIG` environment variable will be set automatically when your shell session reloads
+- Place the Kubernetes NONPROD configuration as `~/.kube/configs/lk8s-nonprod-kubeconfig` file and the `KUBECONFIG` environment variable will be set automatically when your shell session reloads
 - From now on use `iTerm` as your terminal, `Visual Studio Code` as your IDE and `Firefox` for web development. These tools have been configured to support development in
   - Node
   - Python
@@ -44,7 +44,7 @@
 - Docker
   - `dim` (docker images)
   - `dps` (docker ps --all)
-  - `drc` (docker rm --volumes --force $(docker ps --all --quiet) 2> /dev/null)
+  - `drc` (docker rm --volumes --force \$(docker ps --all --quiet) 2> /dev/null)
 
 ## Starting from scratch
 
