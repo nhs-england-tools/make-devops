@@ -1,5 +1,4 @@
 -include $(VAR_DIR)/platform-texas/account-live-k8s-nonprod.mk
 
-STACKS :=
-
-TF_VAR_profile := $(PROFILE) # This evaluates to 'local'
+# ==============================================================================
+# Service variables
