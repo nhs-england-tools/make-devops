@@ -200,7 +200,7 @@ test-docker-get-variables-from-file:
 	# act
 	vars=$$(make _docker-get-variables-from-file VARS_FILE=$(VAR_DIR)/project.mk.default)
 	# assert
-	mk_test $(@) "PROJECT_NAME=make-devops" = $$(echo "$$vars" | grep PROJECT_NAME=make-devops)
+	mk_test $(@) "PROJECT_NAME=" = $$(echo "$$vars" | grep -o PROJECT_NAME=)
 
 test-docker-run-data:
 	# arrange

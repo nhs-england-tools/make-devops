@@ -67,6 +67,7 @@ docker-login: ### Log into the Docker registry
 	make aws-ecr-get-login-password | docker login --username AWS --password-stdin $(AWS_ECR)
 
 docker-create-repository: ### Create Docker repository to store an image - mandatory: NAME
+	# TODO: Use Docker tools image to run the AWS CLI command
 	aws ecr create-repository \
 		--repository-name $(PROJECT_GROUP)/$(PROJECT_NAME)/$(NAME) \
 		--tags Key=Service,Value=$(PROJECT_NAME)

@@ -175,6 +175,8 @@ aws-get-cognito-client-secret: ### Get Cognito client secret - mandatory: NAME; 
 # ==============================================================================
 
 .SILENT: \
+	aws-account-check-id \
+	aws-account-get-id \
 	aws-assume-role-export-variables \
 	aws-ecr-get-login-password \
 	aws-s3-exists \
