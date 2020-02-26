@@ -10,6 +10,7 @@ RUN set -ex && \
     apt-get --yes upgrade && \
     apt-get --yes install \
         curl \
+        netcat \
     && \
     \
     # Install Python packages
