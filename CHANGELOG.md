@@ -6,204 +6,211 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 ## [Unreleased]
 
+## [0.6.5] - 2020-03-04
+
+### Changed
+
+- Refactoring based on a user feedback
+
 ## [0.6.0] - 2020-01-28
 
 ### Changed
 
-* Code in the open and move the repository to GitHub
-* Throw an error if the prerequisites are not met
+- Code in the open and move the repository to GitHub
+- Throw an error if the prerequisites are not met
 
 ## [0.5.6] - 2020-01-27
 
 ### Changed
 
-* Pin VirtualBox package to v6.1.0
-* Pin Vagrant package to v2.2.6
+- Pin VirtualBox package to v6.1.0
+- Pin Vagrant package to v2.2.6
 
 ### Fixed
 
-* Maven installation on a new system
+- Maven installation on a new system
 
 ## [0.5.5] - 2020-01-26
 
 ### Added
 
-* Installation of the Gradle and Maven
-* Test project placeholder
-* Alias to toggle natural scrolling
-* Check if user home directory contains spaces
-* Open manual after macOS provisioning
+- Installation of the Gradle and Maven
+- Test project placeholder
+- Alias to toggle natural scrolling
+- Check if user home directory contains spaces
+- Open manual after macOS provisioning
 
 ### Changed
 
-* Git configuration
-* Documentation
-* More intuitive output while experiencing setup errors
+- Git configuration
+- Documentation
+- More intuitive output while experiencing setup errors
 
 ## [0.5.4] - 2020-01-25
 
 ### Added
 
-* Installation of the Golang
-* More deployment profiles
+- Installation of the Golang
+- More deployment profiles
 
 ### Changed
 
-* Documentation
-* Tests
+- Documentation
+- Tests
 
 ## [0.5.3] - 2020-01-23
 
 ### Changed
 
-* Structure of the k8s deployment scripts
+- Structure of the k8s deployment scripts
 
 ## [0.5.2] - 2020-01-23
 
 ### Added
 
-* Texas infrastructure configuration dependencies
-* Pass options to the Terraform targets
+- Texas infrastructure configuration dependencies
+- Pass options to the Terraform targets
 
 ### Changed
 
-* Location of the Texas infrastructure configuration files, now being stored in the `var` directory
-* Name of the macOS provisioning library to `macos.mk`
-* Development environment setup scripts to improve user experience
-* Documentation
+- Location of the Texas infrastructure configuration files, now being stored in the `var` directory
+- Name of the macOS provisioning library to `macos.mk`
+- Development environment setup scripts to improve user experience
+- Documentation
 
 ## [0.5.1] - 2020-01-20
 
 ### Added
 
-* Installation of the Avast Security antivirus
-* Installation of the Cucumber Visual Studio Code extension
-* Test library
+- Installation of the Avast Security antivirus
+- Installation of the Cucumber Visual Studio Code extension
+- Test library
 
 ### Changed
 
-* Development environment setup scripts to improve user experience
+- Development environment setup scripts to improve user experience
 
 ### Fixed
 
-* Node container file permissions
+- Node container file permissions
 
 ## [0.5.0] - 2020-01-19
 
 ### Added
 
-* Various Docker library improvements
-* Target to push repository snapshot to GitHub
-* Installation of additional development dependencies
+- Various Docker library improvements
+- Target to push repository snapshot to GitHub
+- Installation of additional development dependencies
 
 ### Changed
 
-* Name of the synchronisation target to `devops-synchronise`
+- Name of the synchronisation target to `devops-synchronise`
 
 ### Fixed
 
-* Slow execution of the `docker-run-node` target
+- Slow execution of the `docker-run-node` target
 
 ## [0.0.9] - 2020-01-16
 
 ### Added
 
-* Unique Docker container names for all the `docker-run-*` make targets
+- Unique Docker container names for all the `docker-run-*` make targets
 
 ### Changed
 
-* Version for `data` and `postgres` Docker images
-* Kubernetes namespace naming for the production environment
+- Version for `data` and `postgres` Docker images
+- Kubernetes namespace naming for the production environment
 
 ## [0.0.8] - 2020-01-14
 
 ### Added
 
-* Various Docker library improvements
+- Various Docker library improvements
 
 ### Changed
 
-* ECR image location
+- ECR image location
 
 ### Fixed
 
-* Issue with the automated dev setup
+- Issue with the automated dev setup
 
 ## [0.0.7] - 2020-01-12
 
 ### Added
 
-* Docker image supporting functionality
-* `USER_ID` and `GROUP_ID` variables
-* Config directory
+- Docker image supporting functionality
+- `USER_ID` and `GROUP_ID` variables
+- Config directory
 
 ## [0.0.6] - 2020-01-10
 
 ### Fixed
 
-* Synchronisation of the DevOps automation toolchain
+- Synchronisation of the DevOps automation toolchain
 
 ## [0.0.5] - 2020-01-10
 
 ### Added
 
-* Python virtual environment
-* Node virtual environment
-* Java virtual environment
-* PHP composer image
-* Terraform configuration in Visual Studio Code
+- Python virtual environment
+- Node virtual environment
+- Java virtual environment
+- PHP composer image
+- Terraform configuration in Visual Studio Code
 
 ### Changed
 
-* Documentation
-* Development environment setup
+- Documentation
+- Development environment setup
 
 ### Fixed
 
-* Vagrant 2.2.6 and VirtualBox 6.1 incompatibility
+- Vagrant 2.2.6 and VirtualBox 6.1 incompatibility
 
 ## [0.0.4] - 2020-01-06
 
 ### Added
 
-* Kubernetes library
-* AWS S3 support
-* Functionality to synchronise DevOps automation toolchain to the latest tag
+- Kubernetes library
+- AWS S3 support
+- Functionality to synchronise DevOps automation toolchain to the latest tag
 
 ### Fixed
 
-* Non-existing `~/.ssh` directory on a clean operating system
+- Non-existing `~/.ssh` directory on a clean operating system
 
 ## [0.0.3] - 2020-01-05
 
 ### Added
 
-* Terraform library
-* Oh My Zsh plugins to improve development environment configuration
-* MacBook configuration settings
+- Terraform library
+- Oh My Zsh plugins to improve development environment configuration
+- MacBook configuration settings
 
 ### Fixed
 
-* Bug due to which installed software packages were not detected correctly
+- Bug due to which installed software packages were not detected correctly
 
 ## [0.0.2] - 2020-01-03
 
 ### Added
 
-* Script to install development dependencies in a convenient manner
+- Script to install development dependencies in a convenient manner
 
 ### Changed
 
-* Development environment setup scripts to improve user experience
-* Documentation
+- Development environment setup scripts to improve user experience
+- Documentation
 
 ## [0.0.1] - 2020-01-02
 
 ### Added
 
-* Initial release of the DevOps automation toolchain scripts
+- Initial release of the DevOps automation toolchain scripts
 
-[unreleased]: https://gitlab.mgmt.texasplatform.uk/uec/tools/make-devops/compare/v0.6.0...master
+[unreleased]: https://github.com/nhsd-ddce/make-devops/compare/v0.6.5...master
+[0.6.5]: https://github.com/nhsd-ddce/make-devops/compare/v0.6.0...v0.6.5
 [0.6.0]: https://gitlab.mgmt.texasplatform.uk/uec/tools/make-devops/compare/v0.5.6...v0.6.0
 [0.5.6]: https://gitlab.mgmt.texasplatform.uk/uec/tools/make-devops/compare/v0.5.5...v0.5.6
 [0.5.5]: https://gitlab.mgmt.texasplatform.uk/uec/tools/make-devops/compare/v0.5.4...v0.5.5
