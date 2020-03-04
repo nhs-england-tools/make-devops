@@ -371,10 +371,10 @@ _dev-config-firefox:
 	}
 	firefox_install_extension \
 		https://addons.mozilla.org/firefox/downloads/file/3478747/react_developer_tools-4.4.0-fx.xpi \
-		react_developer_tools.xpi
+		react_developer_tools.xpi ||:
 	firefox_install_extension \
 		https://addons.mozilla.org/firefox/downloads/file/1509811/redux_devtools-2.17.1-fx.xpi \
-		redux_devtools.xpi
+		redux_devtools.xpi ||:
 
 _dev-config-command-line:
 	sudo chown -R $$(id -u) $$(brew --prefix)/*
