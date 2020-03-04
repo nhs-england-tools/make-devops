@@ -108,7 +108,6 @@ dev-install-additional:: ## Install additional development dependencies - option
 	brew cask $$install keepingyouawake ||:
 	brew cask $$install postman ||:
 	brew cask $$install pycharm ||:
-	brew cask $$install smartgit ||:
 	brew cask $$install sourcetree ||:
 	brew cask $$install spectacle ||:
 	brew cask $$install tripmode ||:
@@ -198,7 +197,6 @@ dev-check:: ## Check if the development dependencies are installed
 	brew cask list keepingyouawake ||:
 	brew cask list postman ||:
 	brew cask list pycharm ||:
-	brew cask list smartgit ||:
 	brew cask list sourcetree ||:
 	brew cask list spectacle ||:
 	brew cask list tunnelblick ||:
