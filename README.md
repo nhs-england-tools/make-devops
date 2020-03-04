@@ -101,7 +101,6 @@ Here is a list of guiding principles to extend the library as well as to build p
 - Why `git checkout -b branch` forces then `git push origin`
 - Run `make devops-synchronise` from the downloaded submodule
 - Move iTerm2 config file into the repository
-- Install Chrome bookmarks
 
 ## Gotchas
 
