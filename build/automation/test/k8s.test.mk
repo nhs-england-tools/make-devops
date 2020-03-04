@@ -27,7 +27,7 @@ test-k8s-replace-variables:
 	# assert
 	cbase=$$(find $(K8S_DIR)/service/base -type f -name '*.yaml' -print | grep -v '/template/' | wc -l)
 	cover=$$(find $(K8S_DIR)/service/overlays/live -type f -name '*.yaml' -print | grep -v '/template/' | wc -l)
-	mk_test "$(@) base" 4 -eq $$cbase
+	mk_test "$(@) base" 5 -eq $$cbase
 	mk_test "$(@) overlays" 2 -eq $$cover
 
 test-k8s-kubeconfig-get:
