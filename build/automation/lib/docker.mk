@@ -216,6 +216,7 @@ docker-compose-log: ### Log Docker Compose output - mandatory: YML=[docker-compo
 # ==============================================================================
 
 docker-run-composer: ### Run composer container - mandatory: CMD; optional: DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file],IMAGE=[image name],CONTAINER=[container name]
+	mkdir -p $(HOME)/.composer
 	image=$$([ -n "$(IMAGE)" ] && echo $(IMAGE) || echo composer:$(DOCKER_COMPOSER_VERSION))
 	container=$$([ -n "$(CONTAINER)" ] && echo $(CONTAINER) || echo composer-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7))
 	docker run --interactive $(_TTY) --rm \
@@ -230,7 +231,7 @@ docker-run-composer: ### Run composer container - mandatory: CMD; optional: DIR,
 		--env-file <(make _docker-get-variables-from-file VARS_FILE=$(VARS_FILE)) \
 		--env PROFILE=$(PROFILE) \
 		--volume $(PROJECT_DIR):/project \
-		--volume ~/.composer:/tmp \
+		--volume $(HOME)/.composer:/tmp \
 		--network $(DOCKER_NETWORK) \
 		--workdir /project/$(DIR) \
 		$(ARGS) \
@@ -294,6 +295,7 @@ docker-run-dotnet: ### Run dotnet container - mandatory: CMD; optional: DIR,ARGS
 			dotnet $(CMD)
 
 docker-run-gradle: ### Run gradle container - mandatory: CMD; optional: DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file],IMAGE=[image name],CONTAINER=[container name]
+	mkdir -p $(HOME)/.gradle
 	image=$$([ -n "$(IMAGE)" ] && echo $(IMAGE) || echo gradle:$(DOCKER_GRADLE_VERSION))
 	container=$$([ -n "$(CONTAINER)" ] && echo $(CONTAINER) || echo gradle-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7))
 	docker run --interactive $(_TTY) --rm \
@@ -309,7 +311,7 @@ docker-run-gradle: ### Run gradle container - mandatory: CMD; optional: DIR,ARGS
 		--env GRADLE_USER_HOME=/home/gradle/.gradle \
 		--env PROFILE=$(PROFILE) \
 		--volume $(PROJECT_DIR):/project \
-		--volume ~/.gradle:/home/gradle/.gradle \
+		--volume $(HOME)/.gradle:/home/gradle/.gradle \
 		--network $(DOCKER_NETWORK) \
 		--workdir /project/$(DIR) \
 		$(ARGS) \
@@ -317,6 +319,7 @@ docker-run-gradle: ### Run gradle container - mandatory: CMD; optional: DIR,ARGS
 			$(CMD)
 
 docker-run-mvn: ### Run maven container - mandatory: CMD; optional: DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file],IMAGE=[image name],CONTAINER=[container name]
+	mkdir -p $(HOME)/.m2
 	image=$$([ -n "$(IMAGE)" ] && echo $(IMAGE) || echo maven:$(DOCKER_MAVEN_VERSION))
 	container=$$([ -n "$(CONTAINER)" ] && echo $(CONTAINER) || echo mvn-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7))
 	docker run --interactive $(_TTY) --rm \
@@ -332,7 +335,7 @@ docker-run-mvn: ### Run maven container - mandatory: CMD; optional: DIR,ARGS=[Do
 		--env MAVEN_CONFIG=/var/maven/.m2 \
 		--env PROFILE=$(PROFILE) \
 		--volume $(PROJECT_DIR):/project \
-		--volume ~/.m2:/var/maven/.m2 \
+		--volume $(HOME)/.m2:/var/maven/.m2 \
 		--network $(DOCKER_NETWORK) \
 		--workdir /project/$(DIR) \
 		$(ARGS) \
@@ -342,6 +345,7 @@ docker-run-mvn: ### Run maven container - mandatory: CMD; optional: DIR,ARGS=[Do
 			"
 
 docker-run-node: ### Run node container - mandatory: CMD; optional: DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file],IMAGE=[image name],CONTAINER=[container name]
+	mkdir -p $(HOME)/.cache
 	image=$$([ -n "$(IMAGE)" ] && echo $(IMAGE) || echo node:$(DOCKER_NODE_VERSION))
 	container=$$([ -n "$(CONTAINER)" ] && echo $(CONTAINER) || echo node-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7))
 	docker run --interactive $(_TTY) --rm \
@@ -355,7 +359,7 @@ docker-run-node: ### Run node container - mandatory: CMD; optional: DIR,ARGS=[Do
 		--env-file <(make _docker-get-variables-from-file VARS_FILE=$(VARS_FILE)) \
 		--env PROFILE=$(PROFILE) \
 		--volume $(PROJECT_DIR):/project \
-		--volume ~/.cache:/home/default/.cache \
+		--volume $(HOME)/.cache:/home/default/.cache \
 		--network $(DOCKER_NETWORK) \
 		--workdir /project/$(DIR) \
 		$(ARGS) \
@@ -368,6 +372,7 @@ docker-run-node: ### Run node container - mandatory: CMD; optional: DIR,ARGS=[Do
 			"
 
 docker-run-python: ### Run python container - mandatory: CMD; optional: SH=true,DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file],IMAGE=[image name],CONTAINER=[container name]
+	mkdir -p $(HOME)/.python/pip/{cache,packages}
 	image=$$([ -n "$(IMAGE)" ] && echo $(IMAGE) || echo python:$(DOCKER_PYTHON_VERSION))
 	container=$$([ -n "$(CONTAINER)" ] && echo $(CONTAINER) || echo python-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7))
 	if [[ ! "$(SH)" =~ ^(true|yes|y|on|1|TRUE|YES|Y|ON)$$ ]]; then
@@ -386,8 +391,8 @@ docker-run-python: ### Run python container - mandatory: CMD; optional: SH=true,
 			--env XDG_CACHE_HOME=/tmp/.cache \
 			--env PROFILE=$(PROFILE) \
 			--volume $(PROJECT_DIR):/project \
-			--volume ~/.python/pip/cache:/tmp/.cache/pip \
-			--volume ~/.python/pip/packages:/tmp/.packages \
+			--volume $(HOME)/.python/pip/cache:/tmp/.cache/pip \
+			--volume $(HOME)/.python/pip/packages:/tmp/.packages \
 			--network $(DOCKER_NETWORK) \
 			--workdir /project/$(DIR) \
 			$(ARGS) \
@@ -409,8 +414,8 @@ docker-run-python: ### Run python container - mandatory: CMD; optional: SH=true,
 			--env XDG_CACHE_HOME=/tmp/.cache \
 			--env PROFILE=$(PROFILE) \
 			--volume $(PROJECT_DIR):/project \
-			--volume ~/.python/pip/cache:/tmp/.cache/pip \
-			--volume ~/.python/pip/packages:/tmp/.packages \
+			--volume $(HOME)/.python/pip/cache:/tmp/.cache/pip \
+			--volume $(HOME)/.python/pip/packages:/tmp/.packages \
 			--network $(DOCKER_NETWORK) \
 			--workdir /project/$(DIR) \
 			$(ARGS) \
@@ -442,6 +447,7 @@ docker-run-terraform: ### Run terraform container - mandatory: CMD; optional: DI
 			$(CMD)
 
 docker-run-tools: ### Run tools (Python) container - mandatory: CMD; optional: SH=true,DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file],IMAGE=[image name],CONTAINER=[container name]
+	mkdir -p $(HOME)/{.aws,.python/pip/{cache,packages}}
 	image=$$([ -n "$(IMAGE)" ] && echo $(IMAGE) || echo $(DOCKER_REGISTRY)/tools:$(DOCKER_TOOLS_VERSION))
 	container=$$([ -n "$(CONTAINER)" ] && echo $(CONTAINER) || echo tools-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7))
 	if [ -z "$$(docker images --filter=reference="$$image" --quiet)" ]; then
@@ -465,9 +471,9 @@ docker-run-tools: ### Run tools (Python) container - mandatory: CMD; optional: S
 			--env XDG_CACHE_HOME=/tmp/.cache \
 			--env PROFILE=$(PROFILE) \
 			--volume $(PROJECT_DIR):/project \
-			--volume ~/.aws:/tmp/.aws \
-			--volume ~/.python/pip/cache:/tmp/.cache/pip \
-			--volume ~/.python/pip/packages:/tmp/.packages \
+			--volume $(HOME)/.aws:/tmp/.aws \
+			--volume $(HOME)/.python/pip/cache:/tmp/.cache/pip \
+			--volume $(HOME)/.python/pip/packages:/tmp/.packages \
 			--network $(DOCKER_NETWORK) \
 			--workdir /project/$(DIR) \
 			$(ARGS) \
@@ -490,9 +496,9 @@ docker-run-tools: ### Run tools (Python) container - mandatory: CMD; optional: S
 			--env XDG_CACHE_HOME=/tmp/.cache \
 			--env PROFILE=$(PROFILE) \
 			--volume $(PROJECT_DIR):/project \
-			--volume ~/.aws:/tmp/.aws \
-			--volume ~/.python/pip/cache:/tmp/.cache/pip \
-			--volume ~/.python/pip/packages:/tmp/.packages \
+			--volume $(HOME)/.aws:/tmp/.aws \
+			--volume $(HOME)/.python/pip/cache:/tmp/.cache/pip \
+			--volume $(HOME)/.python/pip/packages:/tmp/.packages \
 			--network $(DOCKER_NETWORK) \
 			--workdir /project/$(DIR) \
 			$(ARGS) \
