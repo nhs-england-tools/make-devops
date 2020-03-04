@@ -308,6 +308,7 @@ _dev-config-visual-studio-code:
 	code --force --install-extension emeraldwalk.runonsave
 	code --force --install-extension esbenp.prettier-vscode
 	code --force --install-extension gabrielbb.vscode-lombok
+	code --force --install-extension humao.rest-client
 	code --force --install-extension johnpapa.vscode-peacock
 	code --force --install-extension mauve.terraform
 	code --force --install-extension mhutchie.git-graph
