@@ -9,12 +9,14 @@ K8S_TTL_LENGTH := $(or $(K8S_TTL_LENGTH), 2 days)
 k8s-deploy: ### Deploy application to the Kubernetes cluster - mandatory: STACK=[name],PROFILE=[name]
 	make k8s-replace-variables STACK=$(STACK) PROFILE=$(PROFILE)
 	kubectl apply -k $$(make -s _k8s-get-deployment-directory)
+	k8s-clean # TODO: Create a flag to switch it off
 	make k8s-sts
 
 k8s-deploy-job: ### Deploy job to the Kubernetes cluster - mandatory: STACK=[name],PROFILE=[name]
 	make k8s-replace-variables STACK=$(STACK) PROFILE=$(PROFILE)
 	kubectl delete jobs --all -n $(K8S_JOB_NAMESPACE)
 	kubectl apply -k $$(make -s _k8s-get-deployment-directory)
+	k8s-clean # TODO: Create a flag to switch it off
 	make k8s-job
 	make k8s-wait-for-job-to-complete
 
@@ -25,7 +27,7 @@ k8s-replace-variables: ### Replace variables in base and overlay of a stack - ma
 			key=$$(cut -d "=" -f1 <<<"$$str" | sed "s/_TO_REPLACE//g")
 			value=$$(echo $$(eval echo "\$$$$key"))
 			[ -z "$$value" ] && echo "WARNING: Variable $$key has no value" || sed -i \
-				"s;$${key}_TO_REPLACE;$${value};g" \
+				"s;$${key}_TO_REPLACE;$${value//&/\\&};g" \
 				$$file ||:
 		done
 	}
@@ -54,10 +56,10 @@ k8s-get-namespace-ttl: ### Get the length of time for the namespace to live
 k8s-kubeconfig-get: ### Get configuration file
 	make aws-s3-download \
 		URI=$(K8S_KUBECONFIG_FILE) \
-		FILE=$(ETC_DIR_REL)/kubeconfig-$(AWS_ACCOUNT_NAME)
+		FILE=$(ETC_DIR_REL)/lk8s-$(AWS_ACCOUNT_NAME)-kubeconfig
 
 k8s-kubeconfig-export: ### Export configuration file
-	echo "export KUBECONFIG=$(ETC_DIR)/kubeconfig-$(AWS_ACCOUNT_NAME)"
+	echo "export KUBECONFIG=$(ETC_DIR)/lk8s-$(AWS_ACCOUNT_NAME)-kubeconfig"
 
 k8s-clean: ### Clean Kubernetes files
 	find $(K8S_DIR) -type f -name '*.yaml' -print | grep -v "/template/" | xargs rm -fv

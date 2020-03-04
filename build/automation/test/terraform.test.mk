@@ -14,6 +14,7 @@ test-terraform: \
 	test-terraform-apply \
 	test-terraform-plan-after-apply \
 	test-terraform-destroy \
+	test-terraform-unlock \
 	test-terraform-teardown
 
 test-terraform-setup:
@@ -137,6 +138,9 @@ test-terraform-destroy:
 	str="Destroy complete! Resources: 1 destroyed\."
 	count=$$(echo "$$output" | grep "$$str" | wc -l)
 	mk_test $(@) 1 = $$count
+
+test-terraform-unlock:
+	mk_test_skip $(@) ||:
 
 # ==============================================================================
 

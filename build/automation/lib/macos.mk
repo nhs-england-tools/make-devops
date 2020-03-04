@@ -16,6 +16,7 @@ dev-setup: ## Provision your MacBook (and become a DevOps ninja) - optional: REI
 	touch $(SETUP_COMPLETE_FLAG_FILE)
 
 dev-prepare:: ## Prepare for installation and configuration of the development dependencies
+	networksetup -setdnsservers Wi-Fi 8.8.8.8
 	sudo chown -R $$(id -u) $$(brew --prefix)/*
 
 dev-update:: ## Update all currently installed development dependencies
@@ -41,6 +42,7 @@ dev-install-essential:: ## Install essential development dependencies - optional
 	brew $$install awscli ||:
 	brew $$install bash ||:
 	brew $$install coreutils ||:
+	brew $$install ctop ||:
 	brew $$install dive ||:
 	brew $$install findutils ||:
 	brew $$install gawk ||:
@@ -49,6 +51,7 @@ dev-install-essential:: ## Install essential development dependencies - optional
 	brew $$install gnu-tar ||:
 	brew $$install gnutls ||:
 	brew $$install go ||:
+	brew $$install google-java-format ||:
 	brew $$install gpg ||:
 	brew $$install gradle ||:
 	brew $$install grep ||:
@@ -86,9 +89,11 @@ dev-install-additional:: ## Install additional development dependencies - option
 		install="reinstall --force"
 	fi
 	brew update
+	brew $$install github/gh/gh
 	brew cask $$install appcleaner ||:
 	brew cask $$install atom ||:
 	brew cask $$install bettertouchtool ||:
+	brew cask $$install cheatsheet ||:
 	brew cask $$install dbeaver-community ||:
 	brew cask $$install dcommander ||:
 	brew cask $$install drawio
@@ -103,7 +108,7 @@ dev-install-additional:: ## Install additional development dependencies - option
 	brew cask $$install keepingyouawake ||:
 	brew cask $$install postman ||:
 	brew cask $$install pycharm ||:
-	brew cask $$install smartgit ||:
+	brew cask $$install sourcetree ||:
 	brew cask $$install spectacle ||:
 	brew cask $$install tripmode ||:
 	brew cask $$install tunnelblick ||:
@@ -141,6 +146,7 @@ dev-check:: ## Check if the development dependencies are installed
 	brew list awscli ||:
 	brew list bash ||:
 	brew list coreutils ||:
+	brew list ctop ||:
 	brew list dive ||:
 	brew list findutils ||:
 	brew list gawk ||:
@@ -149,6 +155,7 @@ dev-check:: ## Check if the development dependencies are installed
 	brew list gnu-tar ||:
 	brew list gnutls ||:
 	brew list go ||:
+	brew list google-java-format ||:
 	brew list gpg ||:
 	brew list gradle ||:
 	brew list grep ||:
@@ -178,7 +185,9 @@ dev-check:: ## Check if the development dependencies are installed
 	brew cask list iterm2 ||:
 	brew cask list visual-studio-code ||:
 	# Additional dependencies
+	brew list github/gh/gh
 	brew cask list atom ||:
+	brew cask list cheatsheet ||:
 	brew cask list dbeaver-community ||:
 	brew cask list drawio ||:
 	brew cask list gitkraken ||:
@@ -188,7 +197,7 @@ dev-check:: ## Check if the development dependencies are installed
 	brew cask list keepingyouawake ||:
 	brew cask list postman ||:
 	brew cask list pycharm ||:
-	brew cask list smartgit ||:
+	brew cask list sourcetree ||:
 	brew cask list spectacle ||:
 	brew cask list tunnelblick ||:
 
@@ -199,7 +208,7 @@ dev-config:: ## Configure development dependencies
 		_dev-config-oh-my-zsh \
 		_dev-config-iterm2 \
 		_dev-config-visual-studio-code \
-		_dev-config-visual-studio-code-disable-java-extensions \
+		_dev-config-firefox \
 		_dev-config-command-line
 	make dev-info
 
@@ -228,6 +237,8 @@ _dev-config-mac:
 	defaults write -g com.apple.mouse.scaling -float 5.0
 	defaults write -g InitialKeyRepeat -int 15
 	defaults write -g KeyRepeat -int 2
+	sudo mdutil -i off /
+	sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.metadata.mds.plist
 
 _dev-config-zsh:
 	cat /etc/shells | grep $$(brew --prefix)/bin/zsh > /dev/null 2>&1 || sudo sh -c "echo $$(brew --prefix)/bin/zsh >> /etc/shells"
@@ -261,12 +272,16 @@ _dev-config-oh-my-zsh:
 	echo "    colorize" >> ~/.zshrc
 	echo "    $(DEVOPS_PROJECT_NAME)" >> ~/.zshrc
 	echo ")" >> ~/.zshrc
-	echo "ZSH_THEME=powerlevel10k/powerlevel10k" >> ~/.zshrc
+	echo 'function tx-status { [ -n "$$TEXAS_SESSION_EXPIRY_TIME" ] && [ "$$TEXAS_SESSION_EXPIRY_TIME" -gt $$(date -u +"%Y%m%d%H%M%S") ] && echo $$TEXAS_PROFILE ||: }' >> ~/.zshrc
+	echo "POWERLEVEL9K_CUSTOM_TEXAS=tx-status" >> ~/.zshrc
+	echo "POWERLEVEL9K_CUSTOM_TEXAS_BACKGROUND=balck" >> ~/.zshrc
+	echo "POWERLEVEL9K_CUSTOM_TEXAS_FOREGROUND=yellow" >> ~/.zshrc
 	echo "POWERLEVEL9K_MODE=nerdfont-complete" >> ~/.zshrc
 	echo "POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(context dir vcs)" >> ~/.zshrc
-	echo "POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status virtualenv root_indicator background_jobs history time)" >> ~/.zshrc
+	echo "POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status custom_texas virtualenv root_indicator background_jobs time)" >> ~/.zshrc
 	echo "POWERLEVEL9K_PROMPT_ON_NEWLINE=true" >> ~/.zshrc
 	echo "POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true" >> ~/.zshrc
+	echo "ZSH_THEME=powerlevel10k/powerlevel10k" >> ~/.zshrc
 	echo "source \$$ZSH/oh-my-zsh.sh" >> ~/.zshrc
 	echo "# END: Custom configuration" >> ~/.zshrc
 
@@ -276,17 +291,24 @@ _dev-config-iterm2:
 	rm /tmp/com.googlecode.iterm2.plist
 
 _dev-config-visual-studio-code:
+	# Install extensions
 	code --force --install-extension alefragnani.bookmarks
 	code --force --install-extension alexkrechik.cucumberautocomplete
 	code --force --install-extension ban.spellright
+	code --force --install-extension christian-kohler.npm-intellisense
+	code --force --install-extension christian-kohler.path-intellisense
 	code --force --install-extension coenraads.bracket-pair-colorizer
 	code --force --install-extension davidanson.vscode-markdownlint
 	code --force --install-extension dbaeumer.vscode-eslint
 	code --force --install-extension donjayamanne.githistory
+	code --force --install-extension dsznajder.es7-react-js-snippets
 	code --force --install-extension eamodio.gitlens
 	code --force --install-extension editorconfig.editorconfig
+	code --force --install-extension eg2.vscode-npm-script
+	code --force --install-extension emeraldwalk.runonsave
+	code --force --install-extension esbenp.prettier-vscode
 	code --force --install-extension gabrielbb.vscode-lombok
-	code --force --install-extension ginfuru.ginfuru-better-solarized-dark-theme
+	code --force --install-extension johnpapa.vscode-peacock
 	code --force --install-extension mauve.terraform
 	code --force --install-extension mhutchie.git-graph
 	code --force --install-extension ms-azuretools.vscode-docker
@@ -299,27 +321,60 @@ _dev-config-visual-studio-code:
 	code --force --install-extension pivotal.vscode-spring-boot
 	code --force --install-extension redhat.java
 	code --force --install-extension streetsidesoftware.code-spell-checker
+	code --force --install-extension techer.open-in-browser
 	code --force --install-extension timonwong.shellcheck
 	code --force --install-extension tomoki1207.pdf
+	code --force --install-extension visualstudioexptteam.vscodeintellicode
+	code --force --install-extension vscjava.vscode-java-pack
 	code --force --install-extension vscjava.vscode-spring-boot-dashboard
 	code --force --install-extension vscjava.vscode-spring-initializr
 	code --force --install-extension vscode-icons-team.vscode-icons
+	code --force --install-extension wayou.vscode-todo-highlight
+	code --force --install-extension xabikos.javascriptsnippets
+	code --force --install-extension yzhang.markdown-all-in-one
+	# Install themes
+	code --force --install-extension ahmadawais.shades-of-purple
+	code --force --install-extension akamud.vscode-theme-onedark
+	code --force --install-extension arcticicestudio.nord-visual-studio-code
+	code --force --install-extension dracula-theme.theme-dracula
+	code --force --install-extension equinusocio.vsc-material-theme
+	code --force --install-extension ginfuru.ginfuru-better-solarized-dark-theme
+	code --force --install-extension johnpapa.winteriscoming
+	code --force --install-extension liviuschera.noctis
+	code --force --install-extension ryanolsonx.solarized
+	code --force --install-extension sdras.night-owl
+	code --force --install-extension smlombardi.slime
+	code --force --install-extension vangware.dark-plus-material
+	code --force --install-extension wesbos.theme-cobalt2
+	code --force --install-extension zhuangtongfa.material-theme
+	# List them all
 	code --list-extensions --show-versions
 
-_dev-config-visual-studio-code-disable-java-extensions:
-	# TODO: This currently doesn't work well and needs investigation. There seems to be a bug in an extension implementation
-	# code --disable-extension gabrielbb.vscode-lombok
-	# code --disable-extension pivotal.vscode-boot-dev-pack
-	# code --disable-extension pivotal.vscode-spring-boot
-	# code --disable-extension pivotal.vscode-spring-boot
-	# code --disable-extension redhat.java
-	# code --disable-extension vscjava.vscode-java-debug
-	# code --disable-extension vscjava.vscode-java-dependency
-	# code --disable-extension vscjava.vscode-java-pack
-	# code --disable-extension vscjava.vscode-java-test
-	# code --disable-extension vscjava.vscode-maven
-	# code --disable-extension vscjava.vscode-spring-boot-dashboard
-	# code --disable-extension vscjava.vscode-spring-initializr
+_dev-config-firefox:
+	function firefox_install_extension {
+		url=$$1
+		file=$$2
+		(
+			cd ~/tmp
+			curl -L $$url --output $$file
+			mv $$file $$file.zip
+			mkdir -p $$file
+			mv $$file.zip $$file
+			cd $$file
+			unzip $$file.zip
+			id=$$(jq -r '.applications.gecko.id' manifest.json)
+			profile=$$(ls -1 ~/Library/Application\ Support/Firefox/Profiles/ | grep dev-edition-default)
+			cp $$file.zip ~/Library/Application\ Support/Firefox/Profiles/$$profile/extensions/$$id.xpi
+			cd ~/tmp
+			rm -rf $$file
+		)
+	}
+	firefox_install_extension \
+		https://addons.mozilla.org/firefox/downloads/file/3478747/react_developer_tools-4.4.0-fx.xpi \
+		react_developer_tools.xpi ||:
+	firefox_install_extension \
+		https://addons.mozilla.org/firefox/downloads/file/1509811/redux_devtools-2.17.1-fx.xpi \
+		redux_devtools.xpi ||:
 
 _dev-config-command-line:
 	sudo chown -R $$(id -u) $$(brew --prefix)/*
@@ -349,8 +404,8 @@ _dev-config-command-line:
 	make git-config
 	# configure shell
 	mkdir -p ~/{.aws,.kube/configs,.ssh,bin,tmp,usr,projects}
-	[ ! -f ~/.aws/config ] && echo "[default]\noutput = json\nregion = eu-west-2\n\n# TODO: Add AWS accounts\n" > ~/.aws/config
-	[ ! -f ~/.aws/credentials ] && echo "[default]\naws_access_key_id = xxx\naws_secret_access_key = xxx\n\n# TODO: Add AWS credentials" > ~/.aws/credentials
+	[ ! -f ~/.aws/config ] && echo -e "[default]\noutput = json\nregion = eu-west-2\n\n# TODO: Add AWS accounts\n" > ~/.aws/config
+	[ ! -f ~/.aws/credentials ] && echo -e "[default]\naws_access_key_id = xxx\naws_secret_access_key = xxx\n\n# TODO: Add AWS credentials" > ~/.aws/credentials
 	cp $(BIN_DIR)/* ~/bin
 	cp $(USR_DIR)/* ~/usr
 	chmod 700 ~/.ssh
@@ -370,7 +425,7 @@ _dev-config-command-line:
 		echo "# Variables"
 		echo "export PATH=\$$HOME/bin:/usr/local/opt/coreutils/libexec/gnubin:/usr/local/opt/findutils/libexec/gnubin:/usr/local/opt/gnu-sed/libexec/gnubin:/usr/local/opt/gnu-tar/libexec/gnubin:/usr/local/opt/grep/libexec/gnubin:/usr/local/opt/make/libexec/gnubin:/usr/local/Cellar/python/$$(python3 --version | grep -Eo '[0-9.]*')/Frameworks/Python.framework/Versions/Current/bin:\$$PATH"
 		echo "export GPG_TTY=\$$(tty)"
-		echo "export KUBECONFIG=\$$(ls -1 ~/.kube/configs/*-$(or $(AWS_ACCOUNT_NAME), nonprod)*kubeconfig) 2> /dev/null"
+		echo "export KUBECONFIG=\$$(ls -1 ~/.kube/configs/lk8s-nonprod-kubeconfig) 2> /dev/null"
 		echo
 		echo "# env: Python"
 		echo "export PATH=\$$HOME/.pyenv/bin:\$$PATH"
@@ -395,6 +450,7 @@ _dev-config-command-line:
 		(
 			echo
 			echo "# export: AWS platform variables"
+			echo "export AWS_ACCOUNT_ID_LIVE_PARENT=123456789"
 			echo "export AWS_ACCOUNT_ID_MGMT=123456789"
 			echo "export AWS_ACCOUNT_ID_NONPROD=123456789"
 			echo "export AWS_ACCOUNT_ID_PROD=123456789"

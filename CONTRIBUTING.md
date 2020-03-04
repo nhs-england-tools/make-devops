@@ -2,17 +2,18 @@
 
 ## Table of contents
 
-* [Table of contents](#table-of-contents)
-* [Development Environment](#development-environment)
-  * [Prerequisites](#prerequisites)
-  * [Configuration](#configuration)
-* [Version Control](#version-control)
-  * [Git Configuration](#git-configuration)
-  * [Signing your Git commits](#signing-your-git-commits)
-  * [Git Usage](#git-usage)
-* [Merge request](#merge-request)
-  * [GitLab web interface](#gitlab-web-interface)
-* [Code review](#code-review)
+- [Contributing](#contributing)
+  - [Table of contents](#table-of-contents)
+  - [Development Environment](#development-environment)
+    - [Prerequisites](#prerequisites)
+    - [Configuration](#configuration)
+  - [Version Control](#version-control)
+    - [Git configuration](#git-configuration)
+    - [Signing your Git commits](#signing-your-git-commits)
+    - [Git usage](#git-usage)
+  - [Merge request](#merge-request)
+    - [GitLab web interface](#gitlab-web-interface)
+  - [Code review](#code-review)
 
 ## Development Environment
 
@@ -46,6 +47,9 @@ Global Git configuration
 
     git config --global user.name "Your Name"
     git config --global user.email "your.name@nhs.net"
+    git config --global branch.autosetupmerge always
+    git config --global branch.autosetuprebase always
+    git config --global commit.gpgsign true
     git config --global core.autocrlf input
     git config --global core.filemode true
     git config --global core.hidedotfiles false

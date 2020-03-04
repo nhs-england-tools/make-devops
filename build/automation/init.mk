@@ -20,6 +20,7 @@ devops-print-variables: ### Print all the variables
 	)
 
 devops-test-suite: ### Run the DevOps unit test suite - optional: DEBUG=true
+	[ "$(AWS_ACCOUNT_ID_LIVE_PARENT)" == 123456789 ] && echo "AWS_ACCOUNT_ID_LIVE_PARENT is not set correctly"
 	[ "$(AWS_ACCOUNT_ID_MGMT)" == 123456789 ] && echo "AWS_ACCOUNT_ID_MGMT is not set correctly"
 	[ "$(AWS_ACCOUNT_ID_NONPROD)" == 123456789 ] && echo "AWS_ACCOUNT_ID_NONPROD is not set correctly"
 	[ "$(AWS_ACCOUNT_ID_PROD)" == 123456789 ] && echo "AWS_ACCOUNT_ID_PROD is not set correctly"
@@ -102,6 +103,11 @@ devops-synchronise: ### Synchronise the DevOps automation toolchain scripts used
 	function cleanup() {
 		cd $(PROJECT_DIR)
 		rm -rf \
+			~/bin/texas-mfa-clear.sh \
+			~/bin/texas-mfa.py \
+			~/bin/toggle-natural-scrolling.sh \
+			$(BIN_DIR)/markdown.pl \
+			$(DOCKER_DIR)/Dockerfile.metadata \
 			$(ETC_DIR)/platform-texas* \
 			$(LIB_DIR)/dev.mk
 		rm -rf \
@@ -239,6 +245,9 @@ ifndef PROJECT_NAME_SHORT
 $(error PROJECT_NAME_SHORT is not set)
 endif
 
+ifndef AWS_ACCOUNT_ID_LIVE_PARENT
+$(info AWS_ACCOUNT_ID_LIVE_PARENT is not set)
+endif
 ifndef AWS_ACCOUNT_ID_MGMT
 $(info AWS_ACCOUNT_ID_MGMT is not set)
 endif

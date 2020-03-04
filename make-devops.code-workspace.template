@@ -1,42 +1,119 @@
 {
-	"folders": [
-		{
-			"path": "."
-		}
-	],
-	"settings": {
-		"breadcrumbs.enabled": true,
-		"editor.autoIndent": "full",
-		"editor.fontSize": 18,
-		"editor.formatOnSave": true,
-		"editor.renderWhitespace": "all",
-		"editor.suggestSelection": "recentlyUsedByPrefix",
-		"explorer.autoReveal": true,
-		"explorer.sortOrder": "type",
-		"extensions.ignoreRecommendations": true,
-		"extensions.showRecommendationsOnlyOnDemand": true,
-		"files.autoSave": "onFocusChange",
-		"files.eol": "\n",
-		"files.insertFinalNewline": true,
-		"files.trimTrailingWhitespace": true,
-		"python.formatting.provider": "black",
-		"python.linting.flake8Enabled": true,
-		"python.linting.mypyEnabled": true,
-		"python.linting.pylintEnabled": true,
-		"telemetry.enableCrashReporter": false,
-		"telemetry.enableTelemetry": false,
-		"terminal.integrated.fontFamily": "Hack Nerd Font",
-		"terraform.indexing.enabled": false,
-		"terraform.languageServer.enabled": true,
-		"window.title": "${activeEditorMedium}${separator}${rootName}${separator}${rootPath}",
-		"window.zoomLevel": 0,
-		/*"workbench.colorCustomizations": {
-			"editorWhitespace.foreground": "#FF0000",
-		},*/
-		"workbench.colorTheme": "Better Solarized Dark",
-		"workbench.tree.indent": 24,
-		"[dockerfile]": {
-			"editor.formatOnSave": false,
-		},
-	},
+  "folders": [
+    {
+      "name": "[Repository]",
+      "path": "."
+    }
+  ],
+  "settings": {
+    "breadcrumbs.enabled": true,
+    "editor.autoIndent": "full",
+    "editor.fontSize": 18,
+    "editor.formatOnSave": true,
+    "editor.renderWhitespace": "all",
+    "editor.suggestSelection": "recentlyUsedByPrefix",
+    "explorer.autoReveal": true,
+    "explorer.sortOrder": "type",
+    "extensions.ignoreRecommendations": true,
+    "extensions.showRecommendationsOnlyOnDemand": true,
+    "files.autoSave": "onFocusChange",
+    "files.eol": "\n",
+    "files.exclude": {
+      "**/.classpath": true,
+      "**/.project": true,
+      "**/.settings": true,
+      "**/.factorypath": true
+    },
+    "files.insertFinalNewline": true,
+    "files.trimTrailingWhitespace": true,
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "java.format.enabled": false,
+    "python.formatting.provider": "black",
+    "python.linting.flake8Enabled": true,
+    "python.linting.mypyEnabled": true,
+    "python.linting.pylintEnabled": true,
+    "telemetry.enableCrashReporter": false,
+    "telemetry.enableTelemetry": false,
+    "terminal.integrated.fontFamily": "Hack Nerd Font",
+    "terraform.indexing.enabled": false,
+    "terraform.languageServer.enabled": true,
+    "window.title": "${activeEditorMedium}${separator}${rootName}${separator}${rootPath}",
+    "window.zoomLevel": 0,
+    /*"workbench.colorCustomizations": {
+      "editorWhitespace.foreground": "#FF0000",
+    },*/
+    "workbench.colorTheme": "Better Solarized Dark Italics",
+    "workbench.editor.enablePreview": false,
+    "workbench.tree.indent": 24,
+    "[dockerfile]": {
+      "editor.formatOnSave": false,
+      "editor.insertSpaces": true,
+      "editor.tabSize": 4
+    },
+    "[groovy]": {
+      "editor.insertSpaces": true,
+      "editor.tabSize": 2
+    },
+    "[java]": {
+      "editor.tabSize": 2,
+      "editor.insertSpaces": true
+    },
+    "[javascript]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+      "editor.insertSpaces": true,
+      "editor.tabSize": 2
+    },
+    "[javascriptreact]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+      "editor.insertSpaces": true,
+      "editor.tabSize": 2
+    },
+    "[json]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+      "editor.insertSpaces": true,
+      "editor.tabSize": 2
+    },
+    "[python]": {
+      "editor.tabSize": 2,
+      "editor.insertSpaces": true
+    },
+    "[terraform]": {
+      "editor.insertSpaces": true,
+      "editor.tabSize": 2
+    },
+    "[typescript]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+      "editor.insertSpaces": true,
+      "editor.tabSize": 2
+    },
+    "[typescriptreact]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+      "editor.insertSpaces": true,
+      "editor.tabSize": 2
+    },
+    "[makefile]": {
+      "editor.insertSpaces": false,
+      "editor.tabSize": 2
+    },
+    "[markdown]": {
+      "editor.insertSpaces": true,
+      "editor.tabSize": 2
+    },
+    "[xml]": {
+      "editor.insertSpaces": true,
+      "editor.tabSize": 2
+    },
+    "[yaml]": {
+      "editor.insertSpaces": true,
+      "editor.tabSize": 2
+    },
+    "emeraldwalk.runonsave": {
+      "commands": [
+        {
+          "match": "\\.java$",
+          "cmd": "/usr/local/bin/google-java-format --replace ${file}"
+        }
+      ]
+    }
+  }
 }

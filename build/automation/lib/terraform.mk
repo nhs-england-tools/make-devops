@@ -32,6 +32,11 @@ terraform-plan: ### Tear down infrastructure - mandatory: STACKS=[comma-separate
 		STACKS="$(STACKS)" \
 		CMD="plan $(OPTS)"
 
+terraform-unlock: ### Remove state lock - mandatory: STACKS=[comma-separated names],ID=[lock ID]; optional: PROFILE=[name],INIT=false,OPTS=-force
+	make _terraform-stacks \
+		STACKS="$(STACKS)" \
+		CMD="force-unlock $(ID) $(OPTS)"
+
 terraform-fmt: ### Format Terraform code - optional: DIR,OPTS=[Terraform options]
 	make docker-run-terraform \
 		CMD="fmt -recursive $(OPTS)"
@@ -109,11 +114,13 @@ terraform-delete-state: ### Delete the Terraform state - mandatory: STACKS=[comm
 	done
 
 _terraform-delete-state-store: ### Delete Terraform state store - mandatory: STACK=[name]; optional: PROFILE=[name]
+	# TODO: Use Docker tools image to run the AWS CLI command
 	aws s3 rm \
 		s3://$(TERRAFORM_STATE_STORE)/$(TERRAFORM_STATE_KEY)-$(STACK)-$(PROFILE) \
 		--recursive
 
 _terraform-delete-state-lock: ### Delete Terraform state lock - mandatory: STACK=[name]; optional: PROFILE=[name]
+	# TODO: Use Docker tools image to run the AWS CLI command
 	aws dynamodb delete-item \
 		--table-name $(TERRAFORM_STATE_LOCK) \
 		--key '{"LockID": {"S": "$(TERRAFORM_STATE_STORE)/$(TERRAFORM_STATE_KEY)-$(STACK)-$(PROFILE)/terraform.state-md5"}}'

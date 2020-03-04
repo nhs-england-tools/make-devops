@@ -1,6 +1,6 @@
 DOMAINS := $(or $(DOMAINS), $(NAME))
 
-ssl-generate-certificate: ### Generate self-signed certificate - mandatory: DIR,NAME=[file and single domain name]; optional: DOMAINS=[comma-separated]
+ssl-generate-certificate: ### Generate self-signed certificate - mandatory: DIR,NAME=[file and single domain name]; optional: DOMAINS='*.domain1,DNS:*.domain2'
 	rm -f $(DIR)/$(NAME).{crt,key,pem,p12}
 	openssl req \
 		-new -x509 -nodes -sha256 \
@@ -20,6 +20,7 @@ ssl-generate-certificate: ### Generate self-signed certificate - mandatory: DIR,
 		-in $(DIR)/$(NAME).crt \
 		-inkey $(DIR)/$(NAME).key \
 		-out $(DIR)/$(NAME).p12
+	openssl x509 -text < $(DIR)/$(NAME).crt
 
 ssl-trust-certificate: ### Trust self-signed certificate - mandatory: FILE=[path to .pem file]
 	sudo security add-trusted-cert -d \

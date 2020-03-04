@@ -54,7 +54,7 @@ export TEXAS_SESSION_EXPIRY_TIME={expiry_time}
             secret_access_key=str(response["Credentials"]["SecretAccessKey"]),
             session_token=str(response["Credentials"]["SessionToken"]),
             profile=str(aws_profile),
-            expiry_time=expiry_time.strftime("%H:%M:%S"),
+            expiry_time=expiry_time.strftime("%Y%m%d%H%M%S"),
         )
     )
 

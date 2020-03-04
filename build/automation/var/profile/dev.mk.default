@@ -1,5 +1,11 @@
 -include $(VAR_DIR)/platform-texas/account-live-k8s-nonprod.mk
 
+# ==============================================================================
+# Service variables
+
+# ==============================================================================
+# Infrastructure variables
+
 STACKS := service
 
 TF_VAR_profile := $(PROFILE) # This evaluates to 'dev'
