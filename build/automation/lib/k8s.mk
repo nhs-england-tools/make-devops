@@ -8,17 +8,31 @@ K8S_TTL_LENGTH := $(or $(K8S_TTL_LENGTH), 2 days)
 
 k8s-deploy: ### Deploy application to the Kubernetes cluster - mandatory: STACK=[name],PROFILE=[name]
 	make k8s-replace-variables STACK=$(STACK) PROFILE=$(PROFILE)
+	eval "$$(make -s k8s-kubeconfig-export)"
 	kubectl apply -k $$(make -s _k8s-get-deployment-directory)
 	k8s-clean # TODO: Create a flag to switch it off
 	make k8s-sts
 
+k8s-undeploy: ### Remove Kubernetes resources
+	eval "$$(make -s k8s-kubeconfig-export)"
+	if kubectl get namespaces | grep -o "$(K8S_APP_NAMESPACE) "; then
+		kubectl delete namespace $(K8S_APP_NAMESPACE)
+	fi
+
 k8s-deploy-job: ### Deploy job to the Kubernetes cluster - mandatory: STACK=[name],PROFILE=[name]
 	make k8s-replace-variables STACK=$(STACK) PROFILE=$(PROFILE)
+	eval "$$(make -s k8s-kubeconfig-export)"
 	kubectl delete jobs --all -n $(K8S_JOB_NAMESPACE)
 	kubectl apply -k $$(make -s _k8s-get-deployment-directory)
 	k8s-clean # TODO: Create a flag to switch it off
 	make k8s-job
 	make k8s-wait-for-job-to-complete
+
+k8s-undeploy-job: ### Remove Kubernetes resources from job namespace
+	eval "$$(make -s k8s-kubeconfig-export)"
+	if kubectl get namespaces | grep -o "$(K8S_JOB_NAMESPACEss) "; then
+		kubectl delete namespace $(K8S_JOB_NAMESPACE)
+	fi
 
 k8s-replace-variables: ### Replace variables in base and overlay of a stack - mandatory: STACK=[name],PROFILE=[name]
 	function replace_variables {
@@ -54,31 +68,19 @@ k8s-get-namespace-ttl: ### Get the length of time for the namespace to live
 	date -u +"%d-%b-%Y" -d "+$(K8S_TTL_LENGTH)"
 
 k8s-kubeconfig-get: ### Get configuration file
+	mkdir -p $(HOME)/etc
 	make aws-s3-download \
 		URI=$(K8S_KUBECONFIG_FILE) \
-		FILE=$(ETC_DIR_REL)/lk8s-$(AWS_ACCOUNT_NAME)-kubeconfig
+		FILE=/tmp/etc/lk8s-$(AWS_ACCOUNT_NAME)-kubeconfig
 
 k8s-kubeconfig-export: ### Export configuration file
-	echo "export KUBECONFIG=$(ETC_DIR)/lk8s-$(AWS_ACCOUNT_NAME)-kubeconfig"
+	echo "export KUBECONFIG=$(HOME)/etc/lk8s-$(AWS_ACCOUNT_NAME)-kubeconfig"
 
 k8s-clean: ### Clean Kubernetes files
 	find $(K8S_DIR) -type f -name '*.yaml' -print | grep -v "/template/" | xargs rm -fv
 	find $(K8S_DIR)/$(STACK)/base ! -path $(K8S_DIR)/$(STACK)/base -type d -print | \
 		grep -v "/template" | \
 		xargs rm -rfv
-	rm -rf $(ETC_DIR)/kubeconfig-*
-
-k8s-undeploy: ### Remove Kubernetes resources
-	eval "$$(make -s k8s-kubeconfig-export)"
-	if kubectl get namespaces | grep -o "$(NAME) "; then
-		kubectl delete namespace $(K8S_APP_NAMESPACE)
-	fi
-
-k8s-undeploy-job: ### Remove Kubernetes resources from job namespace
-	eval "$$(make -s k8s-kubeconfig-export)"
-	if kubectl get namespaces | grep -o "$(NAME) "; then
-		kubectl delete namespace $(K8S_JOB_NAMESPACE)
-	fi
 
 # ==============================================================================
 
