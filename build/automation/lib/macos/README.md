@@ -12,7 +12,7 @@
   1. Run from the command-line `sudo spctl --master-disable` to disable the Gatekeeper
   2. Open the application again (e.g. DBeaver), which now should open normally
   3. Run from the command-line `sudo spctl --master-enable` to enable the Gatekeeper again
-- Always check if your macOS is up-to-date
+- Always check if your operating system is up-to-date an in the latest major version
 - Clone git projects to the `~/projects` directory
 - Your AWS profiles are stored in `~/.aws/config`, check it
 - Your AWS credentials are stored in `~/.aws/credentials`, check it
@@ -23,6 +23,7 @@
   - Python
   - Java
   - Go
+- Run the `curl -L bit.ly/make-devops | bash` script at least once a month to make sure your macOS is up-to-date
 
 ## Useful commands
 
