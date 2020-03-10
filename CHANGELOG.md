@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 ## [Unreleased]
 
+## [0.6.6] - 2020-03-10
+
+### Changed
+
+- Refactor k8s module
+- Update documentation
+
 ## [0.6.5] - 2020-03-04
 
 ### Changed
@@ -209,7 +216,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 - Initial release of the DevOps automation toolchain scripts
 
-[unreleased]: https://github.com/nhsd-ddce/make-devops/compare/v0.6.5...master
+[unreleased]: https://github.com/nhsd-ddce/make-devops/compare/v0.6.6...master
+[0.6.6]: https://github.com/nhsd-ddce/make-devops/compare/v0.6.5...v0.6.6
 [0.6.5]: https://github.com/nhsd-ddce/make-devops/compare/v0.6.0...v0.6.5
 [0.6.0]: https://gitlab.mgmt.texasplatform.uk/uec/tools/make-devops/compare/v0.5.6...v0.6.0
 [0.5.6]: https://gitlab.mgmt.texasplatform.uk/uec/tools/make-devops/compare/v0.5.5...v0.5.6
