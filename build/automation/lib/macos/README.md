@@ -18,6 +18,7 @@
 - Your AWS credentials are stored in `~/.aws/credentials`, check it
 - Edit `~/.dotfiles/oh-my-zsh/plugins/make-devops/aws-platform.zsh` to include correct AWS platform variables, i.e. `AWS_ACCOUNT_ID_LIVE_PARENT`, `AWS_ACCOUNT_ID_MGMT`, `AWS_ACCOUNT_ID_NONPROD`, `AWS_ACCOUNT_ID_PROD`
 - Place the Kubernetes NONPROD configuration as `~/.kube/configs/lk8s-nonprod-kubeconfig` file and the `KUBECONFIG` environment variable will be set automatically when your shell session reloads
+- Follow [this](https://github.com/nhsd-ddce/make-devops/blob/master/CONTRIBUTING.md#signing-your-git-commitss) manual to set up signing your Git commits
 - From now on use `iTerm` as your terminal, `Visual Studio Code` as your IDE and `Firefox` for web development. These tools have been configured to support development in
   - Node
   - Python
