@@ -474,6 +474,9 @@ docker-run-tools: ### Run tools (Python) container - mandatory: CMD; optional: S
 			--volume $(HOME)/.aws:/tmp/.aws \
 			--volume $(HOME)/.python/pip/cache:/tmp/.cache/pip \
 			--volume $(HOME)/.python/pip/packages:/tmp/.packages \
+			--volume $(HOME)/bin:/tmp/bin \
+			--volume $(HOME)/etc:/tmp/etc \
+			--volume $(HOME)/usr:/tmp/usr \
 			--network $(DOCKER_NETWORK) \
 			--workdir /project/$(DIR) \
 			$(ARGS) \
@@ -499,6 +502,9 @@ docker-run-tools: ### Run tools (Python) container - mandatory: CMD; optional: S
 			--volume $(HOME)/.aws:/tmp/.aws \
 			--volume $(HOME)/.python/pip/cache:/tmp/.cache/pip \
 			--volume $(HOME)/.python/pip/packages:/tmp/.packages \
+			--volume $(HOME)/bin:/tmp/bin \
+			--volume $(HOME)/etc:/tmp/etc \
+			--volume $(HOME)/usr:/tmp/usr \
 			--network $(DOCKER_NETWORK) \
 			--workdir /project/$(DIR) \
 			$(ARGS) \

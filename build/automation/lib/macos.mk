@@ -404,7 +404,7 @@ _dev-config-command-line:
 	# configure Git
 	make git-config
 	# configure shell
-	mkdir -p ~/{.aws,.kube/configs,.ssh,bin,tmp,usr,projects}
+	mkdir -p ~/{.aws,.kube/configs,.ssh,bin,etc,tmp,usr,projects}
 	[ ! -f ~/.aws/config ] && echo -e "[default]\noutput = json\nregion = eu-west-2\n\n# TODO: Add AWS accounts\n" > ~/.aws/config
 	[ ! -f ~/.aws/credentials ] && echo -e "[default]\naws_access_key_id = xxx\naws_secret_access_key = xxx\n\n# TODO: Add AWS credentials" > ~/.aws/credentials
 	cp $(BIN_DIR)/* ~/bin

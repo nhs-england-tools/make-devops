@@ -21,9 +21,9 @@
 
 The following software packages must be installed on your MacBook before proceeding
 
-* [Xcode Command Line Tools](https://apps.apple.com/gb/app/xcode/id497799835?mt=12)
-* [Brew](https://brew.sh/)
-* [GNU make](https://formulae.brew.sh/formula/make)
+- [Xcode Command Line Tools](https://apps.apple.com/gb/app/xcode/id497799835?mt=12)
+- [Brew](https://brew.sh/)
+- [GNU make](https://formulae.brew.sh/formula/make)
 
 ### Configuration
 
@@ -33,9 +33,9 @@ From within the root directory of your project, please run the following command
 
 The above make target ensures that your MacBook is configured correctly for development and the setup is consistent across the whole team. In a nutshell it will
 
-* Update all the installed software packages
-* Install any missing essential, additional and corporate software packages
-* Configure shell (zsh), terminal (iTerm2) and IDE (Visual Studio Code) along with its extensions
+- Update all the installed software packages
+- Install any missing essential, additional and corporate software packages
+- Configure shell (zsh), terminal (iTerm2) and IDE (Visual Studio Code) along with its extensions
 
 This gives a head start and enables anyone complying with that configuration to focus on development straight away. After the command runs successfully, please restart your iTerm2 and Visual Studio Code sessions to fully apply the changes.
 
@@ -109,8 +109,8 @@ Configure Git to use the new key.
 
 Upload the public key to your GitHub and GitLab accounts using the links below.
 
-* https://github.com/settings/keys
-* https://gitlab.mgmt.texasplatform.uk/profile/gpg_keys
+- [GitHub](https://github.com/settings/keys)
+- [GitLab](https://gitlab.mgmt.texasplatform.uk/profile/gpg_keys)
 
 ### Git usage
 
@@ -167,13 +167,13 @@ If JIRA is currently not in use to track project changes, please drop any refere
 
 ### GitLab web interface
 
-* Set the title to `JIRA-XXX Descriptive name of the task`, where `JIRA-XXX` is the ticket reference number
-* Check `Remove source branch when merge request is accepted`
-* Check `Squash commits when merge request is accepted`
-* Merge only if
-  * Peer review has been done
-  * At least one thumbs up have been given
-  * All discussions are resolved
+- Set the title to `JIRA-XXX Descriptive name of the task`, where `JIRA-XXX` is the ticket reference number
+- Check `Remove source branch when merge request is accepted`
+- Check `Squash commits when merge request is accepted`
+- Merge only if
+  - Peer review has been done
+  - At least one thumbs up have been given
+  - All discussions are resolved
 
 ## Code review
 
