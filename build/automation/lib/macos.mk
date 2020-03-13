@@ -206,10 +206,10 @@ dev-config:: ## Configure development dependencies
 		_dev-config-mac \
 		_dev-config-zsh \
 		_dev-config-oh-my-zsh \
+		_dev-config-command-line \
 		_dev-config-iterm2 \
 		_dev-config-visual-studio-code \
-		_dev-config-firefox \
-		_dev-config-command-line
+		_dev-config-firefox
 	make dev-info
 
 dev-fix:: ## Fix development dependencies
@@ -235,6 +235,7 @@ _dev-config-mac:
 	networksetup -setdnsservers Wi-Fi 8.8.8.8
 	defaults write -g com.apple.trackpad.scaling -float 5.0
 	defaults write -g com.apple.mouse.scaling -float 5.0
+	# defaults write -g com.apple.mouse.scaling -1 # Disable mouse scaling
 	defaults write -g InitialKeyRepeat -int 15
 	defaults write -g KeyRepeat -int 2
 	sudo mdutil -i off /
@@ -284,6 +285,91 @@ _dev-config-oh-my-zsh:
 	echo "ZSH_THEME=powerlevel10k/powerlevel10k" >> ~/.zshrc
 	echo "source \$$ZSH/oh-my-zsh.sh" >> ~/.zshrc
 	echo "# END: Custom configuration" >> ~/.zshrc
+
+_dev-config-command-line:
+	sudo chown -R $$(id -u) $$(brew --prefix)/*
+	# configure Python
+	brew link python
+	rm -f $$(brew --prefix)/bin/python
+	ln $$(brew --prefix)/bin/python3 $$(brew --prefix)/bin/python
+	curl -s https://bootstrap.pypa.io/get-pip.py | sudo $$(brew --prefix)/bin/python3
+	$$(brew --prefix)/bin/pip3 install \
+		black \
+		boto3 \
+		bpython \
+		configparser \
+		flake8 \
+		mypy \
+		pygments \
+		pylint
+	# configure Go
+	curl -sSL https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer | bash ||:
+	# configure Java
+	eval "$$(jenv init -)"
+	jenv enable-plugin export
+	jenv add $$(/usr/libexec/java_home)
+	jenv versions # ls -1 /Library/Java/JavaVirtualMachines
+	jenv global $$(jenv versions | sed 's/*//' | sed 's/^[ \t]*//;s/[ \t]*$$//' | grep '^[0-9]' | awk '{ print $$1 }' | sort -n | head -n 1)
+	# configure Git
+	make git-config
+	# configure shell
+	mkdir -p ~/{.aws,.kube/configs,.ssh,bin,etc,tmp,usr,projects}
+	[ ! -f ~/.aws/config ] && echo -e "[default]\noutput = json\nregion = eu-west-2\n\n# TODO: Add AWS accounts\n" > ~/.aws/config
+	[ ! -f ~/.aws/credentials ] && echo -e "[default]\naws_access_key_id = xxx\naws_secret_access_key = xxx\n\n# TODO: Add AWS credentials" > ~/.aws/credentials
+	cp $(BIN_DIR)/* ~/bin
+	cp $(USR_DIR)/* ~/usr
+	chmod 700 ~/.ssh
+	rm -f ~/.zcompdump*
+	mkdir -p $(DEV_OHMYZSH_DIR)/plugins/$(DEVOPS_PROJECT_NAME)
+	(
+		echo
+		echo "# Completion"
+		echo "zstyle ':completion:*:make:*:targets' call-command true"
+		echo "zstyle ':completion:*:make:*' tag-order targets variables"
+		echo "zstyle ':completion:*' group-name ''"
+		echo "zstyle ':completion:*:descriptions' format '%B%d%b'"
+		echo
+		echo "# Alises"
+		echo "for file in \$$HOME/usr/*-aliases; do source \$$file; done"
+		echo
+		echo "# Variables"
+		echo "export PATH=\$$HOME/bin:/usr/local/opt/coreutils/libexec/gnubin:/usr/local/opt/findutils/libexec/gnubin:/usr/local/opt/gnu-sed/libexec/gnubin:/usr/local/opt/gnu-tar/libexec/gnubin:/usr/local/opt/grep/libexec/gnubin:/usr/local/opt/make/libexec/gnubin:/usr/local/Cellar/python/$$(python3 --version | grep -Eo '[0-9.]*')/Frameworks/Python.framework/Versions/Current/bin:\$$PATH"
+		echo "export GPG_TTY=\$$(tty)"
+		echo "export KUBECONFIG=\$$(ls -1 ~/.kube/configs/lk8s-nonprod-kubeconfig) 2> /dev/null"
+		echo
+		echo "# env: Python"
+		echo "export PATH=\$$HOME/.pyenv/bin:\$$PATH"
+		echo "export MYPY_CACHE_DIR=\$$HOME/.mypy_cache"
+		echo "eval \"\$$(pyenv init -)\""
+		echo "eval \"\$$(pyenv virtualenv-init -)\""
+		echo "# env: Go"
+		echo ". $$HOME/.gvm/scripts/gvm"
+		echo "# env: Java"
+		echo "export PATH=\$$HOME/.jenv/bin:\$$PATH"
+		echo "eval \"\$$(jenv init -)\""
+		echo "# env: Node"
+		echo "export NVM_DIR=\$$HOME/.nvm"
+		echo ". /usr/local/opt/nvm/nvm.sh"
+		echo ". /usr/local/opt/nvm/etc/bash_completion.d/nvm"
+		echo
+		echo "# AWS platform"
+		echo ". $(DEV_OHMYZSH_DIR)/plugins/$(DEVOPS_PROJECT_NAME)/aws-platform.zsh"
+		echo
+	) > $(DEV_OHMYZSH_DIR)/plugins/$(DEVOPS_PROJECT_NAME)/$(DEVOPS_PROJECT_NAME).plugin.zsh
+	if [ ! -f $(DEV_OHMYZSH_DIR)/plugins/$(DEVOPS_PROJECT_NAME)/aws-platform.zsh ]; then
+		(
+			echo
+			echo "# export: AWS platform variables"
+			echo "export AWS_ACCOUNT_ID_LIVE_PARENT=123456789"
+			echo "export AWS_ACCOUNT_ID_MGMT=123456789"
+			echo "export AWS_ACCOUNT_ID_NONPROD=123456789"
+			echo "export AWS_ACCOUNT_ID_PROD=123456789"
+			echo
+		) > $(DEV_OHMYZSH_DIR)/plugins/$(DEVOPS_PROJECT_NAME)/aws-platform.zsh
+	fi
+	if [ -f $(PROJECT_DIR)/*.code-workspace.template ] && [ ! -f $(PROJECT_DIR)/$(PROJECT_NAME).code-workspace ]; then
+		cp $(PROJECT_DIR)/*.code-workspace.template $(PROJECT_DIR)/$(PROJECT_NAME).code-workspace
+	fi
 
 _dev-config-iterm2:
 	curl -fsSL https://raw.githubusercontent.com/stefaniuk/dotfiles/master/lib/resources/iterm/com.googlecode.iterm2.plist -o /tmp/com.googlecode.iterm2.plist
@@ -376,91 +462,6 @@ _dev-config-firefox:
 	firefox_install_extension \
 		https://addons.mozilla.org/firefox/downloads/file/1509811/redux_devtools-2.17.1-fx.xpi \
 		redux_devtools.xpi ||:
-
-_dev-config-command-line:
-	sudo chown -R $$(id -u) $$(brew --prefix)/*
-	# configure Python
-	brew link python
-	rm -f $$(brew --prefix)/bin/python
-	ln $$(brew --prefix)/bin/python3 $$(brew --prefix)/bin/python
-	curl -s https://bootstrap.pypa.io/get-pip.py | sudo $$(brew --prefix)/bin/python3
-	$$(brew --prefix)/bin/pip3 install \
-		black \
-		boto3 \
-		bpython \
-		configparser \
-		flake8 \
-		mypy \
-		pygments \
-		pylint
-	# configure Go
-	curl -sSL https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer | bash ||:
-	# configure Java
-	eval "$$(jenv init -)"
-	jenv enable-plugin export
-	jenv add $$(/usr/libexec/java_home)
-	jenv versions # ls -1 /Library/Java/JavaVirtualMachines
-	jenv global $$(jenv versions | sed 's/*//' | sed 's/^[ \t]*//;s/[ \t]*$$//' | grep '^[0-9]' | awk '{ print $$1 }' | sort -n | head -n 1)
-	# configure Git
-	make git-config
-	# configure shell
-	mkdir -p ~/{.aws,.kube/configs,.ssh,bin,etc,tmp,usr,projects}
-	[ ! -f ~/.aws/config ] && echo -e "[default]\noutput = json\nregion = eu-west-2\n\n# TODO: Add AWS accounts\n" > ~/.aws/config
-	[ ! -f ~/.aws/credentials ] && echo -e "[default]\naws_access_key_id = xxx\naws_secret_access_key = xxx\n\n# TODO: Add AWS credentials" > ~/.aws/credentials
-	cp $(BIN_DIR)/* ~/bin
-	cp $(USR_DIR)/* ~/usr
-	chmod 700 ~/.ssh
-	rm -f ~/.zcompdump*
-	mkdir -p $(DEV_OHMYZSH_DIR)/plugins/$(DEVOPS_PROJECT_NAME)
-	(
-		echo
-		echo "# Completion"
-		echo "zstyle ':completion:*:make:*:targets' call-command true"
-		echo "zstyle ':completion:*:make:*' tag-order targets variables"
-		echo "zstyle ':completion:*' group-name ''"
-		echo "zstyle ':completion:*:descriptions' format '%B%d%b'"
-		echo
-		echo "# Alises"
-		echo "for file in \$$HOME/usr/*-aliases; do source \$$file; done"
-		echo
-		echo "# Variables"
-		echo "export PATH=\$$HOME/bin:/usr/local/opt/coreutils/libexec/gnubin:/usr/local/opt/findutils/libexec/gnubin:/usr/local/opt/gnu-sed/libexec/gnubin:/usr/local/opt/gnu-tar/libexec/gnubin:/usr/local/opt/grep/libexec/gnubin:/usr/local/opt/make/libexec/gnubin:/usr/local/Cellar/python/$$(python3 --version | grep -Eo '[0-9.]*')/Frameworks/Python.framework/Versions/Current/bin:\$$PATH"
-		echo "export GPG_TTY=\$$(tty)"
-		echo "export KUBECONFIG=\$$(ls -1 ~/.kube/configs/lk8s-nonprod-kubeconfig) 2> /dev/null"
-		echo
-		echo "# env: Python"
-		echo "export PATH=\$$HOME/.pyenv/bin:\$$PATH"
-		echo "export MYPY_CACHE_DIR=\$$HOME/.mypy_cache"
-		echo "eval \"\$$(pyenv init -)\""
-		echo "eval \"\$$(pyenv virtualenv-init -)\""
-		echo "# env: Go"
-		echo ". $$HOME/.gvm/scripts/gvm"
-		echo "# env: Java"
-		echo "export PATH=\$$HOME/.jenv/bin:\$$PATH"
-		echo "eval \"\$$(jenv init -)\""
-		echo "# env: Node"
-		echo "export NVM_DIR=\$$HOME/.nvm"
-		echo ". /usr/local/opt/nvm/nvm.sh"
-		echo ". /usr/local/opt/nvm/etc/bash_completion.d/nvm"
-		echo
-		echo "# AWS platform"
-		echo ". $(DEV_OHMYZSH_DIR)/plugins/$(DEVOPS_PROJECT_NAME)/aws-platform.zsh"
-		echo
-	) > $(DEV_OHMYZSH_DIR)/plugins/$(DEVOPS_PROJECT_NAME)/$(DEVOPS_PROJECT_NAME).plugin.zsh
-	if [ ! -f $(DEV_OHMYZSH_DIR)/plugins/$(DEVOPS_PROJECT_NAME)/aws-platform.zsh ]; then
-		(
-			echo
-			echo "# export: AWS platform variables"
-			echo "export AWS_ACCOUNT_ID_LIVE_PARENT=123456789"
-			echo "export AWS_ACCOUNT_ID_MGMT=123456789"
-			echo "export AWS_ACCOUNT_ID_NONPROD=123456789"
-			echo "export AWS_ACCOUNT_ID_PROD=123456789"
-			echo
-		) > $(DEV_OHMYZSH_DIR)/plugins/$(DEVOPS_PROJECT_NAME)/aws-platform.zsh
-	fi
-	if [ -f $(PROJECT_DIR)/*.code-workspace.template ] && [ ! -f $(PROJECT_DIR)/$(PROJECT_NAME).code-workspace ]; then
-		cp $(PROJECT_DIR)/*.code-workspace.template $(PROJECT_DIR)/$(PROJECT_NAME).code-workspace
-	fi
 
 _dev-fix-vagrant-virtualbox:
 	plugin=/opt/vagrant/embedded/gems/2.2.6/gems/vagrant-2.2.6/plugins/providers/virtualbox/plugin.rb
