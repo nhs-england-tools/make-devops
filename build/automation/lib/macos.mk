@@ -393,6 +393,8 @@ _dev-config-visual-studio-code:
 	code --force --install-extension eg2.vscode-npm-script
 	code --force --install-extension emeraldwalk.runonsave
 	code --force --install-extension esbenp.prettier-vscode
+	code --force --install-extension felixfbecker.php-debug
+	code --force --install-extension felixfbecker.php-intellisense
 	code --force --install-extension gabrielbb.vscode-lombok
 	code --force --install-extension humao.rest-client
 	code --force --install-extension johnpapa.vscode-peacock
