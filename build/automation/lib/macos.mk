@@ -282,6 +282,7 @@ _dev-config-oh-my-zsh:
 	echo "POWERLEVEL9K_CUSTOM_TEXAS_FOREGROUND=yellow" >> ~/.zshrc
 	echo "POWERLEVEL9K_MODE=nerdfont-complete" >> ~/.zshrc
 	echo "POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(context dir vcs)" >> ~/.zshrc
+	echo "POWERLEVEL9K_SHORTEN_DIR_LENGTH=3" >> ~/.zshrc
 	echo "POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status custom_texas virtualenv root_indicator background_jobs time)" >> ~/.zshrc
 	echo "POWERLEVEL9K_PROMPT_ON_NEWLINE=true" >> ~/.zshrc
 	echo "POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true" >> ~/.zshrc
