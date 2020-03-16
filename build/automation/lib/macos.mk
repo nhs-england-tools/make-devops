@@ -37,6 +37,7 @@ dev-install-essential:: ## Install essential development dependencies - optional
 	brew tap buo/cask-upgrade
 	brew tap homebrew/cask-fonts
 	brew tap homebrew/cask-versions
+	brew tap johanhaleby/kubetail
 	brew $$install ack ||:
 	brew $$install aws-iam-authenticator ||:
 	brew $$install awscli ||:
@@ -59,6 +60,7 @@ dev-install-essential:: ## Install essential development dependencies - optional
 	brew $$install jenv ||:
 	brew $$install jq ||:
 	brew $$install kns ||:
+	brew $$install kubetail ||:
 	brew $$install kustomize ||:
 	brew $$install make ||:
 	brew $$install mas ||:
@@ -163,6 +165,7 @@ dev-check:: ## Check if the development dependencies are installed
 	brew list jenv ||:
 	brew list jq ||:
 	brew list kns ||:
+	brew list kubetail ||:
 	brew list kustomize ||:
 	brew list make ||:
 	brew list mas ||:
