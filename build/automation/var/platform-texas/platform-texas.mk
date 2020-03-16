@@ -10,6 +10,8 @@ AWS_ROLE := $(if $(HUDSON_URL),$(AWS_ROLE_JENKINS),Developer)
 TEXAS_TERRAFORM_STATE_LOCK = nhsd-texasplatform-terraform-service-state-lock-texas-lk8s-$(AWS_ACCOUNT_NAME)
 TEXAS_TERRAFORM_STATE_STORE = nhsd-texasplatform-terraform-service-state-store-lk8s-$(AWS_ACCOUNT_NAME)
 
+JENKINS_WORKSPACE_BUCKET := $(PROJECT_GROUP_SHORT)-jenkins-workspace
+
 # ==============================================================================
 
 TF_VAR_aws_profile := nhsd-ddc-exeter-texas-live-lk8s-$(AWS_ACCOUNT_NAME)
