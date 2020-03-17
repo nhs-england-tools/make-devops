@@ -108,18 +108,20 @@ aws-s3-create: ### Create secure bucket - mandatory: NAME=[bucket name]
 			--versioning-configuration "Status=Enabled" \
 	"
 
-aws-s3-upload: ### Upload file to bucket - mandatory: FILE=[local path (inside container)],URI=[remote path]
+aws-s3-upload: ### Upload file to bucket - mandatory: FILE=[local path (inside container)],URI=[remote path]; optional: ARGS=[S3 cp options]
 	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=localstack' ||:)" CMD=" \
 		$(AWSCLI) s3 cp \
 			$(FILE) \
 			s3://$(URI) \
+			$(ARGS) \
 	"
 
-aws-s3-download: ### Download file from bucket - mandatory: URI=[remote path],FILE=[local path (inside container)]
+aws-s3-download: ### Download file from bucket - mandatory: URI=[remote path],FILE=[local path (inside container)]; optional: ARGS=[S3 cp options]
 	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=localstack' ||:)" CMD=" \
 		$(AWSCLI) s3 cp \
 			s3://$(URI) \
 			$(FILE) \
+			$(ARGS) \
 	"
 
 aws-s3-exists: ### Check if bucket exists - mandatory: NAME=[bucket name]
