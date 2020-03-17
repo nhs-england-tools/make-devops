@@ -67,16 +67,25 @@ docker-login: ### Log into the Docker registry
 	make aws-ecr-get-login-password | docker login --username AWS --password-stdin $(AWS_ECR)
 
 docker-create-repository: ### Create Docker repository to store an image - mandatory: NAME
-	# TODO: Use Docker tools image to run the AWS CLI command
-	aws ecr create-repository \
-		--repository-name $(PROJECT_GROUP)/$(PROJECT_NAME)/$(NAME) \
-		--tags Key=Service,Value=$(PROJECT_NAME)
-	aws ecr set-repository-policy \
-		--repository-name $(PROJECT_GROUP)/$(PROJECT_NAME)/$(NAME) \
-		--policy-text file://$(LIB_DIR)/aws/ecr-policy.json
+	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=localstack' ||:)" CMD=" \
+		$(AWSCLI) ecr create-repository \
+			--repository-name $(PROJECT_GROUP)/$(PROJECT_NAME)/$(NAME) \
+			--tags Key=Service,Value=$(PROJECT_NAME) \
+	"
+	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=localstack' ||:)" CMD=" \
+		$(AWSCLI) ecr set-repository-policy \
+			--repository-name $(PROJECT_GROUP)/$(PROJECT_NAME)/$(NAME) \
+			--policy-text file://$(LIB_DIR_REL)/aws/ecr-policy.json \
+	"
 
-docker-push: ### Push Docker image - mandatory: NAME
-	docker push $(DOCKER_REGISTRY)/$(NAME):$$(cat $(DOCKER_DIR)/$(NAME)/.version)
+# TODO: VERSION vs. TAG
+
+docker-push: ### Push Docker image - mandatory: NAME; optional: VERSION
+	if [ -n "$(VERSION)" ]; then
+		docker push $(DOCKER_REGISTRY)/$(NAME):$(VERSION)
+	else
+		docker push $(DOCKER_REGISTRY)/$(NAME):$$(cat $(DOCKER_DIR)/$(NAME)/.version)
+	fi
 	docker push $(DOCKER_REGISTRY)/$(NAME):latest
 
 docker-pull: ### Pull Docker image - mandatory: NAME,TAG
