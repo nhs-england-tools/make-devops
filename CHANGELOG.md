@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 ## [Unreleased]
 
+## [0.6.7] - 2020-03-19
+
+### Added
+
+- Jenkins module
+
+### Fixed
+
+- K8s deployment targets
+- Setup script failing if Python path is broken
+
+### Changed
+
+- Refactoring
+
 ## [0.6.6] - 2020-03-10
 
 ### Changed
@@ -216,7 +231,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 - Initial release of the DevOps automation toolchain scripts
 
-[unreleased]: https://github.com/nhsd-ddce/make-devops/compare/v0.6.6...master
+[unreleased]: https://github.com/nhsd-ddce/make-devops/compare/v0.6.7...master
+[0.6.7]: https://github.com/nhsd-ddce/make-devops/compare/v0.6.6...v0.6.7
 [0.6.6]: https://github.com/nhsd-ddce/make-devops/compare/v0.6.5...v0.6.6
 [0.6.5]: https://github.com/nhsd-ddce/make-devops/compare/v0.6.0...v0.6.5
 [0.6.0]: https://gitlab.mgmt.texasplatform.uk/uec/tools/make-devops/compare/v0.5.6...v0.6.0
