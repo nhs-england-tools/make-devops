@@ -10,7 +10,7 @@ k8s-deploy: ### Deploy application to the Kubernetes cluster - mandatory: STACK=
 	make k8s-replace-variables STACK=$(STACK) PROFILE=$(PROFILE)
 	eval "$$(make -s k8s-kubeconfig-export)"
 	kubectl apply -k $$(make -s _k8s-get-deployment-directory)
-	k8s-clean # TODO: Create a flag to switch it off
+	make k8s-clean # TODO: Create a flag to switch it off
 	make k8s-sts
 
 k8s-undeploy: ### Remove Kubernetes resources
@@ -24,7 +24,7 @@ k8s-deploy-job: ### Deploy job to the Kubernetes cluster - mandatory: STACK=[nam
 	eval "$$(make -s k8s-kubeconfig-export)"
 	kubectl delete jobs --all -n $(K8S_JOB_NAMESPACE)
 	kubectl apply -k $$(make -s _k8s-get-deployment-directory)
-	k8s-clean # TODO: Create a flag to switch it off
+	make k8s-clean # TODO: Create a flag to switch it off
 	make k8s-job
 	make k8s-wait-for-job-to-complete
 
