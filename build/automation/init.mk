@@ -231,32 +231,35 @@ endif
 # Check if all the required variables are set
 
 ifndef PROJECT_DIR
-$(error PROJECT_DIR is not set)
+$(error PROJECT_DIR is not set in the main Makefile)
 endif
 ifndef PROJECT_GROUP
-$(error PROJECT_GROUP is not set)
+$(error PROJECT_GROUP is not set in build/automation/var/project.mk)
 endif
 ifndef PROJECT_GROUP_SHORT
-$(error PROJECT_GROUP_SHORT is not set)
+$(error PROJECT_GROUP_SHORT is not set in build/automation/var/project.mk)
 endif
 ifndef PROJECT_NAME
-$(error PROJECT_NAME is not set)
+$(error PROJECT_NAME is not set in build/automation/var/project.mk)
 endif
 ifndef PROJECT_NAME_SHORT
-$(error PROJECT_NAME_SHORT is not set)
+$(error PROJECT_NAME_SHORT is not set in build/automation/var/project.mk)
+endif
+ifndef PROGRAMME
+$(error PROGRAMME is not set in build/automation/var/project.mk)
 endif
 
 ifndef AWS_ACCOUNT_ID_LIVE_PARENT
-$(info AWS_ACCOUNT_ID_LIVE_PARENT is not set)
+$(info AWS_ACCOUNT_ID_LIVE_PARENT is not set in ~/.dotfiles/oh-my-zsh/plugins/make-devops/aws-platform.zsh or in your CI config)
 endif
 ifndef AWS_ACCOUNT_ID_MGMT
-$(info AWS_ACCOUNT_ID_MGMT is not set)
+$(info AWS_ACCOUNT_ID_MGMT is not set in ~/.dotfiles/oh-my-zsh/plugins/make-devops/aws-platform.zsh or in your CI config)
 endif
 ifndef AWS_ACCOUNT_ID_NONPROD
-$(info AWS_ACCOUNT_ID_NONPROD is not set)
+$(info AWS_ACCOUNT_ID_NONPROD is not set in ~/.dotfiles/oh-my-zsh/plugins/make-devops/aws-platform.zsh or in your CI config)
 endif
 ifndef AWS_ACCOUNT_ID_PROD
-$(info AWS_ACCOUNT_ID_PROD is not set)
+$(info AWS_ACCOUNT_ID_PROD is not set in ~/.dotfiles/oh-my-zsh/plugins/make-devops/aws-platform.zsh or in your CI config)
 endif
 
 # ==============================================================================

@@ -79,8 +79,9 @@ If you hear your teams or individuals saying _"It will take days to onboard a ne
   - Never modify library files, except the `Makefile` and files that are in the `build/automation/var` directory which are project-specific
   - Always use a single tab character for code indentations
   - Naming
-    - ECR: `$(PROJECT_GROUP)/$(PROJECT_NAME)/$(NAME)`
-    - K8s namespace: `$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)-$(PROFILE)` or `$(PROJECT_GROUP_SHORT)-$(PROFILE)`
+    - ECR image: `$(AWS_ECR)/$(PROJECT_GROUP)/$(PROJECT_NAME)/$(NAME)`
+    - K8s namespace: `$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)-$(PROFILE)` or `$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)-job-$(PROFILE)`
+    - AWS tags: `TagSet=[{Key=Programme,Value=$(PROGRAMME)},{Key=Service,Value=$(PROJECT_NAME),{Key=Environment,Value=$(PROFILE)}]`
 
 ## Design
 

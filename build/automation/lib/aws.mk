@@ -84,7 +84,6 @@ aws-secret-exists: ### Check if AWS secret exists - mandatory: NAME=[secret name
 	[ 0 -eq $$count ] && echo false || echo true
 
 aws-s3-create: ### Create secure bucket - mandatory: NAME=[bucket name]
-	json='{"Rules": [{"ApplyServerSideEncryptionByDefault": {"SSEAlgorithm": "AES256"}}]}'
 	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=localstack' ||:)" CMD=" \
 		$(AWSCLI) s3api create-bucket \
 			--bucket $(NAME) \
@@ -97,6 +96,7 @@ aws-s3-create: ### Create secure bucket - mandatory: NAME=[bucket name]
 			--bucket $(NAME) \
 			--public-access-block-configuration "BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true" \
 	"
+	json='{"Rules": [{"ApplyServerSideEncryptionByDefault": {"SSEAlgorithm": "AES256"}}]}'
 	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=localstack' ||:)" CMD=" \
 		$(AWSCLI) s3api put-bucket-encryption \
 			--bucket $(NAME) \
@@ -106,6 +106,12 @@ aws-s3-create: ### Create secure bucket - mandatory: NAME=[bucket name]
 		$(AWSCLI) s3api put-bucket-versioning \
 			--bucket $(NAME) \
 			--versioning-configuration "Status=Enabled" \
+	"
+	json='TagSet=[{Key=Programme,Value=$(PROGRAMME)},{Key=Service,Value=$(PROJECT_NAME)},{Key=Environment,Value=$(PROFILE)}]'
+	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=localstack' ||:)" CMD=" \
+		$(AWSCLI) s3api put-bucket-tagging \
+			--bucket $(NAME) \
+			--tagging '$$json' \
 	"
 
 aws-s3-upload: ### Upload file to bucket - mandatory: FILE=[local path (inside container)],URI=[remote path]; optional: ARGS=[S3 cp options]
