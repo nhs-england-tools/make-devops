@@ -108,6 +108,7 @@ dev-install-additional:: ## Install additional development dependencies - option
 	brew cask $$install istat-menus ||:
 	brew cask $$install karabiner-elements ||:
 	brew cask $$install keepingyouawake ||:
+	brew cask $$install microsoft-remote-desktop-beta ||:
 	brew cask $$install postman ||:
 	brew cask $$install pycharm ||:
 	brew cask $$install sourcetree ||:
@@ -198,6 +199,7 @@ dev-check:: ## Check if the development dependencies are installed
 	brew cask list intellij-idea-ce ||:
 	brew cask list java ||:
 	brew cask list keepingyouawake ||:
+	brew cask list microsoft-remote-desktop-beta ||:
 	brew cask list postman ||:
 	brew cask list pycharm ||:
 	brew cask list sourcetree ||:
