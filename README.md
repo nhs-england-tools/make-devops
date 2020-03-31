@@ -81,7 +81,8 @@ If you hear your teams or individuals saying _"It will take days to onboard a ne
   - Naming
     - ECR image: `$(AWS_ECR)/$(PROJECT_GROUP)/$(PROJECT_NAME)/$(NAME)`
     - K8s namespace: `$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)-$(PROFILE)` or `$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)-job-$(PROFILE)`
-    - AWS tags: `TagSet=[{Key=Programme,Value=$(PROGRAMME)},{Key=Service,Value=$(PROJECT_NAME),{Key=Environment,Value=$(PROFILE)}]`
+    - AWS tags: `TagSet=[{Key=Programme,Value=$(PROGRAMME)},{Key=Service,Value=$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT),{Key=Environment,Value=$(PROFILE)}]`
+    - AWS Secret name for deployment: `$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)-$(PROFILE)`
 
 ## Design
 
