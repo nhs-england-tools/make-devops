@@ -249,6 +249,13 @@ ifndef PROGRAMME
 $(error PROGRAMME is not set in build/automation/var/project.mk)
 endif
 
+ifndef TEXAS_SERVICE_TAG
+$(error TEXAS_SERVICE_TAG is not set in build/automation/var/project.mk)
+endif
+ifndef TEXAS_ROLE_PREFIX
+$(error TEXAS_ROLE_PREFIX is not set in build/automation/var/project.mk)
+endif
+
 ifndef AWS_ACCOUNT_ID_LIVE_PARENT
 $(info AWS_ACCOUNT_ID_LIVE_PARENT is not set in ~/.dotfiles/oh-my-zsh/plugins/make-devops/aws-platform.zsh or in your CI config)
 endif
