@@ -6,6 +6,6 @@
 # ==============================================================================
 # Infrastructure variables
 
-STACKS := service
+STACKS = service
 
-TF_VAR_profile := $(PROFILE) # This evaluates to 'remote'
+TF_VAR_profile = $(PROFILE)

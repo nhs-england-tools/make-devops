@@ -114,10 +114,9 @@ test-docker-set-get-image-version:
 	# arrange
 	cp -rf $(DOCKER_DIR)/$(TEST_DOCKER_IMAGE) $(TMP_DIR)
 	echo "YYYYmmddHHMM-hash" > $(TMP_DIR)/$(TEST_DOCKER_IMAGE)/VERSION
-	export DOCKER_DIR=$(TMP_DIR)
 	# act
-	make docker-set-image-version NAME=$(TEST_DOCKER_IMAGE)
-	version=$$(make docker-get-image-version NAME=$(TEST_DOCKER_IMAGE))
+	make docker-set-image-version NAME=$(TEST_DOCKER_IMAGE) DOCKER_DIR=$(TMP_DIR)
+	version=$$(make docker-get-image-version NAME=$(TEST_DOCKER_IMAGE) DOCKER_DIR=$(TMP_DIR))
 	# assert
 	mk_test $(@) "$$(date --date=$(BUILD_DATE) -u +"%Y%m%d%H%M")-$$(git rev-parse --short HEAD)" = $$version
 

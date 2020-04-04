@@ -1,5 +1,5 @@
-TERRAFORM_DIR := $(or $(TERRAFORM_DIR), infrastructure/stacks)
-TERRAFORM_STATE_KEY = $(PROJECT_GROUP_SHORT)-$(PROJECT_NAME)
+TERRAFORM_DIR = $(PROJECT_DIR)/infrastructure/stacks
+TERRAFORM_STATE_KEY = $(PROJECT_GROUP)-$(PROJECT_NAME)/$(PROFILE)
 TERRAFORM_STATE_LOCK = $(or $(TEXAS_TERRAFORM_STATE_LOCK), terraform-service-state-lock-$(PROFILE))
 TERRAFORM_STATE_STORE = $(or $(TEXAS_TERRAFORM_STATE_STORE), terraform-service-state-store-$(PROFILE))
 
@@ -116,14 +116,14 @@ terraform-delete-state: ### Delete the Terraform state - mandatory: STACKS=[comm
 _terraform-delete-state-store: ### Delete Terraform state store - mandatory: STACK=[name]; optional: PROFILE=[name]
 	# TODO: Use Docker tools image to run the AWS CLI command
 	aws s3 rm \
-		s3://$(TERRAFORM_STATE_STORE)/$(TERRAFORM_STATE_KEY)-$(STACK)-$(PROFILE) \
+		s3://$(TERRAFORM_STATE_STORE)/$(TERRAFORM_STATE_KEY)/$(STACK) \
 		--recursive
 
 _terraform-delete-state-lock: ### Delete Terraform state lock - mandatory: STACK=[name]; optional: PROFILE=[name]
 	# TODO: Use Docker tools image to run the AWS CLI command
 	aws dynamodb delete-item \
 		--table-name $(TERRAFORM_STATE_LOCK) \
-		--key '{"LockID": {"S": "$(TERRAFORM_STATE_STORE)/$(TERRAFORM_STATE_KEY)-$(STACK)-$(PROFILE)/terraform.state-md5"}}'
+		--key '{"LockID": {"S": "$(TERRAFORM_STATE_STORE)/$(TERRAFORM_STATE_KEY)/$(STACK)/terraform.state-md5"}}'
 
 terraform-clean: ### Clean Terraform files
 	find $(TERRAFORM_DIR) -type d -name '.terraform' -print0 | xargs -0 rm -rfv

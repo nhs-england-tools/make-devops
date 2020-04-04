@@ -78,9 +78,11 @@ If you hear your teams or individuals saying _"It will take days to onboard a ne
   - Sort a group of variables alphabetically if there is no direct correlation between them, e.g. `TF_VAR_route53_terraform_state_key`, `TF_VAR_vpc_terraform_state_key`
   - Never modify library files, except the `Makefile` and files that are in the `build/automation/var` directory which are project-specific
   - Always use a single tab character for code indentations
+  - Follow the variables assignment [rules](https://www.gnu.org/software/make/manual/html_node/Flavors.html#Flavors) to avoid an unexpected result
   - Naming
-    - ECR image: `$(AWS_ECR)/$(PROJECT_GROUP)/$(PROJECT_NAME)/$(NAME)`
-    - K8s namespace: `$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)-$(PROFILE)` or `$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)-job-$(PROFILE)`
+    - ECR image: `$(PROJECT_GROUP)/$(PROJECT_NAME)/$(NAME)`
+    - K8s namespace: `$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)-$(PROFILE)` or `$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)-$(PROFILE)-job`
+    - Terraform state: `$(PROJECT_GROUP)-$(PROJECT_NAME)/$(PROFILE)/$(STACK)`
     - AWS tags: `TagSet=[{Key=Programme,Value=$(PROGRAMME)},{Key=Service,Value=$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT),{Key=Environment,Value=$(PROFILE)}]`
     - AWS Secret name for deployment: `$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)-$(PROFILE)`
 

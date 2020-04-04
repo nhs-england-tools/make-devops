@@ -20,10 +20,6 @@ devops-print-variables: ### Print all the variables
 	)
 
 devops-test-suite: ### Run the DevOps unit test suite - optional: DEBUG=true
-	[ "$(AWS_ACCOUNT_ID_LIVE_PARENT)" == 123456789 ] && echo "AWS_ACCOUNT_ID_LIVE_PARENT is not set correctly"
-	[ "$(AWS_ACCOUNT_ID_MGMT)" == 123456789 ] && echo "AWS_ACCOUNT_ID_MGMT is not set correctly"
-	[ "$(AWS_ACCOUNT_ID_NONPROD)" == 123456789 ] && echo "AWS_ACCOUNT_ID_NONPROD is not set correctly"
-	[ "$(AWS_ACCOUNT_ID_PROD)" == 123456789 ] && echo "AWS_ACCOUNT_ID_PROD is not set correctly"
 	make _devops-test DEBUG=$(DEBUG) TESTS=" \
 		test-file \
 		test-ssl \
@@ -41,6 +37,10 @@ devops-test-single: ### Run a DevOps single test - mandatory NAME=[test target n
 	make _devops-test DEBUG=$(DEBUG) TESTS="$(NAME)"
 
 _devops-test:
+	[ "$(AWS_ACCOUNT_ID_LIVE_PARENT)" == 123456789 ] && echo "AWS_ACCOUNT_ID_LIVE_PARENT is not set correctly"
+	[ "$(AWS_ACCOUNT_ID_MGMT)" == 123456789 ] && echo "AWS_ACCOUNT_ID_MGMT is not set correctly"
+	[ "$(AWS_ACCOUNT_ID_NONPROD)" == 123456789 ] && echo "AWS_ACCOUNT_ID_NONPROD is not set correctly"
+	[ "$(AWS_ACCOUNT_ID_PROD)" == 123456789 ] && echo "AWS_ACCOUNT_ID_PROD is not set correctly"
 	export _DEVOPS_RUN_TEST=true
 	if [[ "$(DEBUG)" =~ ^(true|yes|y|on|1|TRUE|YES|Y|ON)$$ ]]; then
 		exec 3>&1
@@ -173,8 +173,6 @@ APPLICATION_TEST_DIR := $(abspath $(or $(APPLICATION_TEST_DIR), $(PROJECT_DIR)/t
 CONFIG_DIR := $(abspath $(or $(CONFIG_DIR), $(PROJECT_DIR)/config))
 DATA_DIR := $(abspath $(or $(DATA_DIR), $(PROJECT_DIR)/data))
 DEPLOYMENT_DIR := $(abspath $(or $(DEPLOYMENT_DIR), $(PROJECT_DIR)/deployment))
-DOCKER_COMPOSE_YML := $(abspath $(or $(DOCKER_COMPOSE_YML), $(DEVOPS_PROJECT_DIR)/../docker/docker-compose.yml))
-DOCKER_DIR := $(abspath $(or $(DOCKER_DIR), $(DEVOPS_PROJECT_DIR)/../docker))
 GITHOOKS_DIR_REL := $(shell echo $(abspath $(ETC_DIR)/githooks) | sed "s;$(PROJECT_DIR);;g")
 INFRASTRUCTURE_DIR := $(abspath $(or $(INFRASTRUCTURE_DIR), $(PROJECT_DIR)/infrastructure))
 JQ_PROGS_DIR_REL := $(shell echo $(abspath $(LIB_DIR)/jq) | sed "s;$(PROJECT_DIR);;g")

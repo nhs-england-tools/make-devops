@@ -1,21 +1,22 @@
-DOCKER_ALPINE_VERSION := $(or $(DOCKER_ALPINE_VERSION), 3.11.3)
-DOCKER_COMPOSER_VERSION := $(or $(DOCKER_COMPOSER_VERSION), 1.9.3)
-DOCKER_DATA_VERSION := $(or $(DOCKER_DATA_VERSION), $(shell cat $(DOCKER_DIR)/data/.version 2> /dev/null || cat $(DOCKER_DIR)/data/VERSION 2> /dev/null || echo unknown))
-DOCKER_DOTNET_VERSION := $(or $(DOCKER_DOTNET_VERSION), 3.1.102)
-DOCKER_ELASTICSEARCH_VERSION := $(or $(DOCKER_ELASTICSEARCH_VERSION), 7.6.0)
-DOCKER_GRADLE_VERSION := $(or $(DOCKER_GRADLE_VERSION), 6.2.0-jdk13) # JDK version for Java, Mave and Gradle should be in sync
-DOCKER_MAVEN_VERSION := $(or $(DOCKER_MAVEN_VERSION), 3.6.3-jdk-13) # JDK version for Java, Mave and Gradle should be in sync
-DOCKER_NGINX_VERSION := $(or $(DOCKER_NGINX_VERSION), 1.17.8)
-DOCKER_NODE_VERSION := $(or $(DOCKER_NODE_VERSION), 13.8.0) # Non-LTS version should be used
-DOCKER_OPENJDK_VERSION := $(or $(DOCKER_OPENJDK_VERSION), 13-jdk) # JDK version for Java, Mave and Gradle should be in sync
-DOCKER_POSTGRES_VERSION := $(or $(DOCKER_POSTGRES_VERSION), 12.2)
-DOCKER_PYTHON_VERSION := $(or $(DOCKER_PYTHON_VERSION), 3.8.1-slim) # Do not use Alpine image
-DOCKER_TERRAFORM_VERSION := $(or $(or $(TEXAS_TERRAFORM_VERSION), $(DOCKER_TERRAFORM_VERSION)), 0.12.20) # Maintained by the platform
-DOCKER_TOOLS_VERSION := $(or $(DOCKER_TOOLS_VERSION), $(shell cat $(DOCKER_DIR)/tools/.version 2> /dev/null || cat $(DOCKER_DIR)/tools/VERSION 2> /dev/null || echo unknown))
-
-DOCKER_BROWSER_DEBUG := $(or $(DOCKER_BROWSER_DEBUG), -debug)
-DOCKER_NETWORK = $(PROJECT_GROUP)/$(BUILD_ID)
+DOCKER_COMPOSE_YML = $(DOCKER_DIR)/docker-compose.yml
+DOCKER_DIR = $(PROJECT_DIR)/build/docker
+DOCKER_NETWORK = $(PROJECT_GROUP)/$(PROJECT_NAME)/$(BUILD_ID)
 DOCKER_REGISTRY = $(AWS_ECR)/$(PROJECT_GROUP)/$(PROJECT_NAME)
+
+DOCKER_ALPINE_VERSION = 3.11.3
+DOCKER_COMPOSER_VERSION = 1.9.3
+DOCKER_DATA_VERSION = $(shell cat $(DOCKER_DIR)/data/.version 2> /dev/null || cat $(DOCKER_DIR)/data/VERSION 2> /dev/null || echo unknown)
+DOCKER_DOTNET_VERSION = 3.1.102
+DOCKER_ELASTICSEARCH_VERSION = 7.6.0
+DOCKER_GRADLE_VERSION = 6.2.0-jdk13
+DOCKER_MAVEN_VERSION = 3.6.3-jdk-13
+DOCKER_NGINX_VERSION = 1.17.8
+DOCKER_NODE_VERSION = 13.8.0
+DOCKER_OPENJDK_VERSION = 13-jdk
+DOCKER_POSTGRES_VERSION = 12.2
+DOCKER_PYTHON_VERSION = 3.8.1-slim
+DOCKER_TERRAFORM_VERSION = $(or $(TEXAS_TERRAFORM_VERSION), 0.12.20)
+DOCKER_TOOLS_VERSION = $(shell cat $(DOCKER_DIR)/tools/.version 2> /dev/null || cat $(DOCKER_DIR)/tools/VERSION 2> /dev/null || echo unknown)
 
 COMPOSE_HTTP_TIMEOUT := $(or $(COMPOSE_HTTP_TIMEOUT), 6000)
 DOCKER_CLIENT_TIMEOUT := $(or $(DOCKER_CLIENT_TIMEOUT), 6000)
@@ -162,7 +163,7 @@ docker-image-start: ### Start container - mandatory: NAME; optional: CMD,DIR,ARG
 		--env PROFILE=$(PROFILE) \
 		--volume $(PROJECT_DIR):/project \
 		--network $(DOCKER_NETWORK) \
-		--workdir /project/$(DIR) \
+		--workdir /project/$(shell echo $(abspath $(DIR)) | sed "s;$(PROJECT_DIR);;g") \
 		$$(echo $(ARGS) | sed -e "s/--attach//g") \
 		$(DOCKER_REGISTRY)/$(NAME):latest \
 		$(CMD)
@@ -242,7 +243,7 @@ docker-run-composer: ### Run composer container - mandatory: CMD; optional: DIR,
 		--volume $(PROJECT_DIR):/project \
 		--volume $(HOME)/.composer:/tmp \
 		--network $(DOCKER_NETWORK) \
-		--workdir /project/$(DIR) \
+		--workdir /project/$(shell echo $(abspath $(DIR)) | sed "s;$(PROJECT_DIR);;g") \
 		$(ARGS) \
 		$$image \
 			$(CMD)
@@ -276,7 +277,7 @@ docker-run-data: ### Run data container - mandatory: CMD; optional: ENGINE=postg
 			--env PROFILE=$(PROFILE) \
 			--volume $(PROJECT_DIR):/project \
 			--network $(DOCKER_NETWORK) \
-			--workdir /project/$(DIR) \
+			--workdir /project/$(shell echo $(abspath $(DIR)) | sed "s;$(PROJECT_DIR);;g") \
 			$(ARGS) \
 			$$image \
 				$(CMD)
@@ -298,7 +299,7 @@ docker-run-dotnet: ### Run dotnet container - mandatory: CMD; optional: DIR,ARGS
 		--env PROFILE=$(PROFILE) \
 		--volume $(PROJECT_DIR):/project \
 		--network $(DOCKER_NETWORK) \
-		--workdir /project/$(DIR) \
+		--workdir /project/$(shell echo $(abspath $(DIR)) | sed "s;$(PROJECT_DIR);;g") \
 		$(ARGS) \
 		$$image \
 			dotnet $(CMD)
@@ -322,7 +323,7 @@ docker-run-gradle: ### Run gradle container - mandatory: CMD; optional: DIR,ARGS
 		--volume $(PROJECT_DIR):/project \
 		--volume $(HOME)/.gradle:/home/gradle/.gradle \
 		--network $(DOCKER_NETWORK) \
-		--workdir /project/$(DIR) \
+		--workdir /project/$(shell echo $(abspath $(DIR)) | sed "s;$(PROJECT_DIR);;g") \
 		$(ARGS) \
 		$$image \
 			$(CMD)
@@ -346,7 +347,7 @@ docker-run-mvn: ### Run maven container - mandatory: CMD; optional: DIR,ARGS=[Do
 		--volume $(PROJECT_DIR):/project \
 		--volume $(HOME)/.m2:/var/maven/.m2 \
 		--network $(DOCKER_NETWORK) \
-		--workdir /project/$(DIR) \
+		--workdir /project/$(shell echo $(abspath $(DIR)) | sed "s;$(PROJECT_DIR);;g") \
 		$(ARGS) \
 		$$image \
 			/bin/sh -c " \
@@ -370,7 +371,7 @@ docker-run-node: ### Run node container - mandatory: CMD; optional: DIR,ARGS=[Do
 		--volume $(PROJECT_DIR):/project \
 		--volume $(HOME)/.cache:/home/default/.cache \
 		--network $(DOCKER_NETWORK) \
-		--workdir /project/$(DIR) \
+		--workdir /project/$(shell echo $(abspath $(DIR)) | sed "s;$(PROJECT_DIR);;g") \
 		$(ARGS) \
 		$$image \
 			/bin/sh -c " \
@@ -403,7 +404,7 @@ docker-run-python: ### Run python container - mandatory: CMD; optional: SH=true,
 			--volume $(HOME)/.python/pip/cache:/tmp/.cache/pip \
 			--volume $(HOME)/.python/pip/packages:/tmp/.packages \
 			--network $(DOCKER_NETWORK) \
-			--workdir /project/$(DIR) \
+			--workdir /project/$(shell echo $(abspath $(DIR)) | sed "s;$(PROJECT_DIR);;g") \
 			$(ARGS) \
 			$$image \
 				$(CMD)
@@ -426,7 +427,7 @@ docker-run-python: ### Run python container - mandatory: CMD; optional: SH=true,
 			--volume $(HOME)/.python/pip/cache:/tmp/.cache/pip \
 			--volume $(HOME)/.python/pip/packages:/tmp/.packages \
 			--network $(DOCKER_NETWORK) \
-			--workdir /project/$(DIR) \
+			--workdir /project/$(shell echo $(abspath $(DIR)) | sed "s;$(PROJECT_DIR);;g") \
 			$(ARGS) \
 			$$image \
 				/bin/sh -c " \
@@ -450,7 +451,7 @@ docker-run-terraform: ### Run terraform container - mandatory: CMD; optional: DI
 		--env PROFILE=$(PROFILE) \
 		--volume $(PROJECT_DIR):/project \
 		--network $(DOCKER_NETWORK) \
-		--workdir /project/$(DIR) \
+		--workdir /project/$(shell echo $(abspath $(DIR)) | sed "s;$(PROJECT_DIR);;g") \
 		$(ARGS) \
 		$$image \
 			$(CMD)
@@ -487,7 +488,7 @@ docker-run-tools: ### Run tools (Python) container - mandatory: CMD; optional: S
 			--volume $(HOME)/etc:/tmp/etc \
 			--volume $(HOME)/usr:/tmp/usr \
 			--network $(DOCKER_NETWORK) \
-			--workdir /project/$(DIR) \
+			--workdir /project/$(shell echo $(abspath $(DIR)) | sed "s;$(PROJECT_DIR);;g") \
 			$(ARGS) \
 			$$image \
 				$(CMD)
@@ -515,7 +516,7 @@ docker-run-tools: ### Run tools (Python) container - mandatory: CMD; optional: S
 			--volume $(HOME)/etc:/tmp/etc \
 			--volume $(HOME)/usr:/tmp/usr \
 			--network $(DOCKER_NETWORK) \
-			--workdir /project/$(DIR) \
+			--workdir /project/$(shell echo $(abspath $(DIR)) | sed "s;$(PROJECT_DIR);;g") \
 			$(ARGS) \
 			$$image \
 				/bin/sh -c " \

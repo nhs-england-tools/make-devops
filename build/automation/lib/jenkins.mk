@@ -1,4 +1,4 @@
-JENKINS_JOB_NAME := $(shell echo "$(JOB_NAME)" | sed "s/[^a-zA-Z0-9]/-/g" | sed 's/--*/-/g')
+JENKINS_JOB_NAME = $(shell echo "$(JOB_NAME)" | sed "s/[^a-zA-Z0-9]/-/g" | sed 's/--*/-/g')
 JENKINS_WORKSPACE_BUCKET_NAME = $(PROJECT_GROUP_SHORT)-$(PROJECT_NAME)-jenkins-workspace
 JENKINS_WORKSPACE_BUCKET_URI = $(JENKINS_WORKSPACE_BUCKET_NAME)/$(or $(JENKINS_JOB_NAME), local)/$(BUILD_BRANCH)
 

@@ -1,15 +1,15 @@
 -include $(VAR_DIR)/platform-texas/account-live-k8s-prod.mk
 
 # It is a Texas requirement that production namespaces end with `-prod`
-K8S_APP_NAMESPACE = $(PROJECT_GROUP_SHORT)-demo-prod
-K8S_JOB_NAMESPACE = $(PROJECT_GROUP_SHORT)-demo-job-prod
+K8S_APP_NAMESPACE := $(K8S_APP_NAMESPACE)-prod
+K8S_JOB_NAMESPACE := $(K8S_JOB_NAMESPACE)-prod
 
 # ==============================================================================
 # Service variables
 
-STACKS := service
-
 # ==============================================================================
 # Infrastructure variables
 
-TF_VAR_profile := $(PROFILE) # This evaluates to 'demo'
+STACKS = service
+
+TF_VAR_profile = $(PROFILE)
