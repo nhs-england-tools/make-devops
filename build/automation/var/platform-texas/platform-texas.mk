@@ -9,7 +9,7 @@ AWS_ROLE := $(if $(HUDSON_URL),$(AWS_ROLE_JENKINS),Developer)
 
 # ==============================================================================
 
-TEXAS_HOSTED_ZONE = k8s-$(AWS_ACCOUNT_NAME).$(TEXAS_HOSTED_ZONE)
+TEXAS_HOSTED_ZONE = k8s-$(AWS_ACCOUNT_NAME).texasplatform.uk
 TEXAS_K8S_KUBECONFIG_FILE = nhsd-texasplatform-kubeconfig-lk8s-$(AWS_ACCOUNT_NAME)/live-leks-cluster_kubeconfig
 TEXAS_TERRAFORM_STATE_LOCK = nhsd-texasplatform-terraform-service-state-lock-texas-lk8s-$(AWS_ACCOUNT_NAME)
 TEXAS_TERRAFORM_STATE_STORE = nhsd-texasplatform-terraform-service-state-store-lk8s-$(AWS_ACCOUNT_NAME)
