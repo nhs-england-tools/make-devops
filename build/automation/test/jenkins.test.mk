@@ -7,6 +7,9 @@ test-jenkins: \
 test-jenkins-setup:
 	make docker-config
 	make docker-compose-start YML=$(TEST_DIR)/docker-compose.localstack.yml
+	sleep 3
+	# Prerequisites
+	make docker-image NAME=tools
 
 test-jenkins-teardown:
 	make docker-compose-stop YML=$(TEST_DIR)/docker-compose.localstack.yml

@@ -9,6 +9,8 @@ test-secret: \
 test-secret-setup:
 	make docker-config
 	make docker-compose-start YML=$(TEST_DIR)/docker-compose.localstack.yml
+	sleep 3
+	# Prerequisites
 	make docker-image NAME=tools
 
 test-secret-teardown:
