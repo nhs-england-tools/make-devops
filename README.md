@@ -104,6 +104,7 @@ Here is a list of guiding principles to extend the library as well as to build p
 
 ## Todo
 
+- Add `proxy` image definition based on Nginx
 - Update Git usage instructions
 - Add `git publish` alias and other, see [Useful Git aliases](https://gist.github.com/robmiller/6018582)
 - Issue with the JS file formatting, see [Jsx indentation conflict vscode and eslint](https://stackoverflow.com/questions/48674208/jsx-indentation-conflict-vscode-and-eslint)
