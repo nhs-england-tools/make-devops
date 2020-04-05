@@ -9,3 +9,6 @@ for file in /sbin/init.d/*; do
             ;;
     esac
 done
+
+# run main process
+exec nginx -c /etc/nginx/nginx.conf -g 'daemon off;'

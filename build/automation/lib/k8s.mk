@@ -35,12 +35,12 @@ k8s-undeploy-job: ### Remove Kubernetes resources from job namespace
 	fi
 
 k8s-replace-variables: ### Replace variables in base and overlay of a stack - mandatory: STACK=[name],PROFILE=[name]
-	function replace_variables {
+	function replace_variables() {
 		file=$$1
 		for str in $$(cat $$file | grep -Eo "[A-Za-z0-9_]*_TO_REPLACE" | sort | uniq); do
 			key=$$(cut -d "=" -f1 <<<"$$str" | sed "s/_TO_REPLACE//g")
 			value=$$(echo $$(eval echo "\$$$$key"))
-			[ -z "$$value" ] && echo "WARNING: Variable $$key has no value" || sed -i \
+			[ -z "$$value" ] && echo "WARNING: Variable $$key has no value in '$$file'" || sed -i \
 				"s;$${key}_TO_REPLACE;$${value//&/\\&};g" \
 				$$file ||:
 		done
