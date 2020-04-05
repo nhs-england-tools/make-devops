@@ -148,6 +148,10 @@ k8s-sts: ### Show status of pods and services
 	kubectl get services \
 		--namespace=$(K8S_APP_NAMESPACE) \
 		--selector "env=$(PROFILE)"
+	echo -e "\nDisplay ingress"
+	kubectl get ingress \
+		--namespace=$(K8S_APP_NAMESPACE) \
+		--selector "env=$(PROFILE)"
 	echo -e "\nDisplay events"
 	kubectl get events \
 		--namespace=$(K8S_APP_NAMESPACE)
