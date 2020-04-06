@@ -48,10 +48,12 @@ dev-install-essential:: ## Install essential development dependencies - optional
 	brew $$install findutils ||:
 	brew $$install gawk ||:
 	brew $$install git ||:
+	brew $$install git-crypt ||:
 	brew $$install gnu-sed ||:
 	brew $$install gnu-tar ||:
 	brew $$install gnutls ||:
 	brew $$install go ||:
+	brew $$install google-authenticator-libpam ||:
 	brew $$install google-java-format ||:
 	brew $$install gpg ||:
 	brew $$install gradle ||:
@@ -154,10 +156,12 @@ dev-check:: ## Check if the development dependencies are installed
 	brew list findutils ||:
 	brew list gawk ||:
 	brew list git ||:
+	brew list git-crypt ||:
 	brew list gnu-sed ||:
 	brew list gnu-tar ||:
 	brew list gnutls ||:
 	brew list go ||:
+	brew list google-authenticator-libpam ||:
 	brew list google-java-format ||:
 	brew list gpg ||:
 	brew list gradle ||:
