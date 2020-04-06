@@ -26,7 +26,7 @@ DOCKER_CLIENT_TIMEOUT := $(or $(DOCKER_CLIENT_TIMEOUT), 6000)
 docker-config: ### Configure Docker networking
 	docker network create $(DOCKER_NETWORK) 2> /dev/null ||:
 
-docker-image: ### Build Docker image - mandatory: NAME; optional: VERSION,NAME_AS=[new name]
+docker-build docker-image: ### Build Docker image - mandatory: NAME; optional: VERSION,NAME_AS=[new name]
 	make NAME=$(NAME) \
 		docker-create-dockerfile \
 		docker-set-image-version VERSION=$(VERSION)
@@ -58,11 +58,8 @@ docker-image: ### Build Docker image - mandatory: NAME; optional: VERSION,NAME_A
 	fi
 	docker image inspect $(DOCKER_REGISTRY)/$(NAME):latest --format='{{.Size}}'
 
-docker-image-keep-latest-only: ### Remove other images than latest - mandatory: NAME
-	docker rmi --force $$( \
-		docker images --filter=reference="$(DOCKER_REGISTRY)/$(NAME):*" --quiet | \
-			grep -v $$(docker images --filter=reference="$(DOCKER_REGISTRY)/$(NAME):latest" --quiet) \
-	) 2> /dev/null ||:
+docker-test: ### Test image - mandatory: NAME; optional: ARGS,CMD,GOSS_OPTS
+	GOSS_FILES_PATH=$(DOCKER_DIR)/$(NAME) $(GOSS_OPTS) dgoss run --interactive $(_TTY) $(ARGS) $(DOCKER_REGISTRY)/$(NAME):latest $(CMD)
 
 docker-login: ### Log into the Docker registry
 	make aws-ecr-get-login-password | docker login --username AWS --password-stdin $(AWS_ECR)
@@ -149,6 +146,12 @@ docker-set-image-version: ### Set effective Docker image version - mandatory: NA
 	fi
 
 # ==============================================================================
+
+docker-image-keep-latest-only: ### Remove other images than latest - mandatory: NAME
+	docker rmi --force $$( \
+		docker images --filter=reference="$(DOCKER_REGISTRY)/$(NAME):*" --quiet | \
+			grep -v $$(docker images --filter=reference="$(DOCKER_REGISTRY)/$(NAME):latest" --quiet) \
+	) 2> /dev/null ||:
 
 docker-image-start: ### Start container - mandatory: NAME; optional: CMD,DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file]
 	docker run --interactive $(_TTY) $$(echo $(ARGS) | grep -- "--attach" > /dev/null 2>&1 && : || echo "--detach") \
@@ -255,7 +258,7 @@ docker-run-data: ### Run data container - mandatory: CMD; optional: ENGINE=postg
 	if [ "$$engine" == postgres ]; then
 		if [ -z "$$(docker images --filter=reference="$$image" --quiet)" ]; then
 			# TODO: Try to pull the image first
-			make docker-image NAME=data > /dev/null 2>&1
+			make docker-build NAME=data > /dev/null 2>&1
 		fi
 		docker run --interactive $(_TTY) --rm \
 			--name $$container \
@@ -462,7 +465,7 @@ docker-run-tools: ### Run tools (Python) container - mandatory: CMD; optional: S
 	container=$$([ -n "$(CONTAINER)" ] && echo $(CONTAINER) || echo tools-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7))
 	if [ -z "$$(docker images --filter=reference="$$image" --quiet)" ]; then
 		# TODO: Try to pull the image first
-		make docker-image NAME=tools > /dev/null 2>&1
+		make docker-build NAME=tools > /dev/null 2>&1
 	fi
 	if [[ ! "$(SH)" =~ ^(true|yes|y|on|1|TRUE|YES|Y|ON)$$ ]]; then
 		docker run --interactive $(_TTY) --rm \
