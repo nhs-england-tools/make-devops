@@ -1,6 +1,6 @@
 DEV_OHMYZSH_DIR := ~/.dotfiles/oh-my-zsh
 
-dev-setup: ## Provision your MacBook (and become a DevOps ninja) - optional: REINSTALL=true
+dev-setup devops-setup: ## Provision your MacBook (and become a DevOps ninja) - optional: REINSTALL=true
 	rm -f $(SETUP_COMPLETE_FLAG_FILE)
 	make dev-disable-gatekeeper
 	make \
