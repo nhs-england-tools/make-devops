@@ -33,6 +33,7 @@ dev-install-essential:: ## Install essential development dependencies - optional
 		install="reinstall --force"
 	fi
 	brew update
+	brew tap adoptopenjdk/openjdk
 	brew tap blendle/blendle
 	brew tap buo/cask-upgrade
 	brew tap homebrew/cask-fonts
@@ -79,10 +80,10 @@ dev-install-essential:: ## Install essential development dependencies - optional
 	brew $$install zsh-autosuggestions ||:
 	brew $$install zsh-completions ||:
 	brew $$install zsh-syntax-highlighting ||:
+	brew cask $$install adoptopenjdk13 ||:
 	brew cask $$install docker ||:
 	brew cask $$install font-hack-nerd-font ||:
 	brew cask $$install iterm2 ||:
-	brew cask $$install java ||:
 	brew cask $$install visual-studio-code ||:
 	# maven depends on java
 	brew $$install maven ||:
@@ -188,6 +189,7 @@ dev-check:: ## Check if the development dependencies are installed
 	brew list zsh-autosuggestions ||:
 	brew list zsh-completions ||:
 	brew list zsh-syntax-highlighting ||:
+	brew cask list adoptopenjdk13 ||:
 	brew cask list docker ||:
 	brew cask list font-hack-nerd-font ||:
 	brew cask list iterm2 ||:
@@ -201,7 +203,6 @@ dev-check:: ## Check if the development dependencies are installed
 	brew cask list gitkraken ||:
 	brew cask list google-chrome ||:
 	brew cask list intellij-idea-ce ||:
-	brew cask list java ||:
 	brew cask list keepingyouawake ||:
 	brew cask list microsoft-remote-desktop-beta ||:
 	brew cask list postman ||:
