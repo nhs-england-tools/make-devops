@@ -3,7 +3,7 @@ DOCKER_DIR = $(PROJECT_DIR)/build/docker
 DOCKER_NETWORK = $(PROJECT_GROUP)/$(PROJECT_NAME)/$(BUILD_ID)
 DOCKER_REGISTRY = $(AWS_ECR)/$(PROJECT_GROUP)/$(PROJECT_NAME)
 
-DOCKER_ALPINE_VERSION = 3.11.3
+DOCKER_ALPINE_VERSION = 3.11.5
 DOCKER_COMPOSER_VERSION = 1.9.3
 DOCKER_DATA_VERSION = $(shell cat $(DOCKER_DIR)/data/.version 2> /dev/null || cat $(DOCKER_DIR)/data/VERSION 2> /dev/null || echo unknown)
 DOCKER_DOTNET_VERSION = 3.1.102
@@ -46,7 +46,6 @@ docker-build docker-image: ### Build Docker image - mandatory: NAME; optional: V
 		$(DOCKER_REGISTRY)/$(NAME):latest
 	docker rmi --force $$(docker images | grep "<none>" | awk '{ print $$3 }') 2> /dev/null ||:
 	make docker-image-keep-latest-only NAME=$(NAME)
-	make techradar-inspect-image NAME=$(NAME)
 	if [ -n "$(NAME_AS)" ]; then
 		docker tag \
 			$(DOCKER_REGISTRY)/$(NAME):$$(cat $(DOCKER_DIR)/$(NAME)/.version) \
