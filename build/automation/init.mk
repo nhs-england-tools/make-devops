@@ -30,6 +30,7 @@ devops-test-suite: ### Run the DevOps unit test suite - optional: DEBUG=true
 		test-terraform \
 		test-k8s \
 		test-jenkins \
+		test-python \
 		test-techradar \
 	"
 
