@@ -29,7 +29,7 @@ The following software packages must be installed on your MacBook before proceed
 
 From within the root directory of your project, please run the following command
 
-    make dev-setup
+    make macos-setup
 
 The above make target ensures that your MacBook is configured correctly for development and the setup is consistent across the whole team. In a nutshell it will
 

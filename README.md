@@ -50,7 +50,7 @@ If you hear your teams or individuals saying _"It will take days to onboard a ne
 - Update the toolchain scripts to the most recent version by executing `make devops-synchronise`
 - Use `make devops-print-variables` to print out all the effective variables. Include `PROFILE=[name]` to evaluate profile specific variables
 - To run unit test suite use `make devops-test-suite` or alternatively to run a single one execute `make devops-test-single NAME=[test target name]`. Set the `DEBUG=true` flag to run the tests in the verbose mode
-- To provision your macOS run `make dev-setup` or alternatively update configuration `make dev-config`
+- To provision your macOS run `make macos-setup` or alternatively update configuration `make macos-config`
 
 ## Conventions
 
