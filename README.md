@@ -63,6 +63,9 @@ If you hear your teams or individuals saying _"It will take days to onboard a ne
   - Override the make target by creating it with the same name in the `build/automation/var/override.mk` file
 - Target name convention
   - Use `descriptive-name`
+  - Create `project-*` targets for the ops work flow or production usage, e.g. `project-build`, `project-deploy`
+  - Create `dev-*` targets for the dev work flow, e.g. `dev-build`
+  - Create `[component]-[activity]` complementary targets
   - Prefix target with the underscore i.e. `_descriptive-name` to indicate that it is a 'private' target
   - Do not exceed 40 characters
 - Target help convention
@@ -101,15 +104,6 @@ Here is a list of guiding principles to extend the library as well as to build p
 - Technology agnostic and universal design that can support Java, .NET, Python, Go, Node and others
 - Elements of the pipeline can be executed locally as one-liners, e.g. `'run' build` or `'run' test`
 - Pipeline runs anywhere, e.g. any \*NIX like system
-
-## Todo
-
-- Update Git usage instructions
-- Add `git publish` alias and other, see [Useful Git aliases](https://gist.github.com/robmiller/6018582)
-- Issue with the JS file formatting, see [Jsx indentation conflict vscode and eslint](https://stackoverflow.com/questions/48674208/jsx-indentation-conflict-vscode-and-eslint)
-- Why `git checkout -b branch` forces then `git push origin`
-- Run `make devops-synchronise` from the downloaded submodule
-- Move iTerm2 config file into the repository
 
 ## Gotchas
 
