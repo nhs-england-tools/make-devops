@@ -23,6 +23,7 @@ test-docker: \
 	test-docker-image-load \
 	test-docker-tag \
 	test-docker-compose \
+	test-docker-compose-single-service \
 	test-docker-get-variables-from-file \
 	test-docker-run-data \
 	test-docker-run-dotnet \
@@ -189,6 +190,17 @@ test-docker-compose:
 	make TEST_DOCKER_COMPOSE_YML
 	# act & assert
 	make docker-compose-stop docker-compose-start YML=$(TEST_DOCKER_COMPOSE_YML) && \
+		mk_test_pass "$(@) start" || mk_test_fail "$(@) start"
+	make docker-compose-log YML=$(TEST_DOCKER_COMPOSE_YML) DO_NOT_FOLLOW=true && \
+		mk_test_pass "$(@) log" || mk_test_fail "$(@) log"
+	make docker-compose-stop YML=$(TEST_DOCKER_COMPOSE_YML) && \
+		mk_test_pass "$(@) stop" || mk_test_fail "$(@) stop"
+
+test-docker-compose-single-service:
+	# arrange
+	make TEST_DOCKER_COMPOSE_YML
+	# act & assert
+	make docker-compose-stop docker-compose-start-single-service NAME=alpine YML=$(TEST_DOCKER_COMPOSE_YML) && \
 		mk_test_pass "$(@) start" || mk_test_fail "$(@) start"
 	make docker-compose-log YML=$(TEST_DOCKER_COMPOSE_YML) DO_NOT_FOLLOW=true && \
 		mk_test_pass "$(@) log" || mk_test_fail "$(@) log"

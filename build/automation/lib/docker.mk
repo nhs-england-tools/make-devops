@@ -208,21 +208,27 @@ docker-image-load: ### Load image from a flat file - mandatory: NAME; optional: 
 
 # ==============================================================================
 
-docker-compose-start: ### Start Docker Compose - mandatory: YML=[docker-compose.yml]
+docker-compose-start: ### Start Docker Compose - optional: YML=[docker-compose.yml, defaults to $(DOCKER_COMPOSE_YML)]
 	make docker-config
 	docker-compose \
-		--file $(YML) \
+		--file $(or $(YML), $(DOCKER_COMPOSE_YML)) \
 		up --no-build --remove-orphans --detach
 
-docker-compose-stop: ### Stop Docker Compose - mandatory: YML=[docker-compose.yml]
+docker-compose-start-single-service: ### Start Docker Compose - mandatory: NAME=[service name]; optional: YML=[docker-compose.yml, defaults to $(DOCKER_COMPOSE_YML)]
+	make docker-config
 	docker-compose \
-		--file $(YML) \
+		--file $(or $(YML), $(DOCKER_COMPOSE_YML)) \
+		up --no-build --remove-orphans --detach $(NAME)
+
+docker-compose-stop: ### Stop Docker Compose - optional: YML=[docker-compose.yml, defaults to $(DOCKER_COMPOSE_YML)]
+	docker-compose \
+		--file $(or $(YML), $(DOCKER_COMPOSE_YML)) \
 		stop
 	docker rm --force --volumes $$(docker ps --all --quiet) 2> /dev/null ||:
 
-docker-compose-log: ### Log Docker Compose output - mandatory: YML=[docker-compose.yml]; optional: DO_NOT_FOLLOW=true
+docker-compose-log: ### Log Docker Compose output - optional: DO_NOT_FOLLOW=true,YML=[docker-compose.yml, defaults to $(DOCKER_COMPOSE_YML)]
 	docker-compose \
-		--file $(YML) \
+		--file $(or $(YML), $(DOCKER_COMPOSE_YML)) \
 		logs $$(echo $(DO_NOT_FOLLOW) | grep -E 'true|yes|y|on|1|TRUE|YES|Y|ON' > /dev/null 2>&1 && : || echo "--follow")
 
 # ==============================================================================

@@ -229,6 +229,13 @@ endif
 # ==============================================================================
 # Check if all the required variables are set
 
+ifeq (true, $(shell [ "local" == "$(PROFILE)" ] && echo true))
+AWS_ACCOUNT_ID_LIVE_PARENT := $(or $(AWS_ACCOUNT_ID_LIVE_PARENT), 123456789)
+AWS_ACCOUNT_ID_MGMT := $(or $(AWS_ACCOUNT_ID_MGMT), 123456789)
+AWS_ACCOUNT_ID_NONPROD := $(or $(AWS_ACCOUNT_ID_NONPROD), 123456789)
+AWS_ACCOUNT_ID_PROD := $(or $(AWS_ACCOUNT_ID_PROD), 123456789)
+endif
+
 ifndef PROJECT_DIR
 $(error PROJECT_DIR is not set in the main Makefile)
 endif

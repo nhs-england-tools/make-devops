@@ -9,13 +9,13 @@ project-config:
 project-build: project-config
 
 project-start:
-	make docker-compose-start YML=$(DOCKER_COMPOSE_YML)
+	make docker-compose-start
 
 project-stop:
-	make docker-compose-stop YML=$(DOCKER_COMPOSE_YML)
+	make docker-compose-stop
 
 project-log:
-	make docker-compose-log YML=$(DOCKER_COMPOSE_YML)
+	make docker-compose-log
 
 # ==============================================================================
 
