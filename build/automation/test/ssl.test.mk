@@ -3,14 +3,17 @@ TEST_CERT := custom-domain.com
 test-ssl: \
 	test-ssl-generate-certificate-single-domain \
 	test-ssl-generate-certificate-multiple-domains \
+	test-ssl-generate-certificate-project \
 	test-ssl-trust-certificate \
 	test-ssl-teardown
 
 test-ssl-teardown:
 	mk_test_proceed_if_macos && \
-		sudo security find-certificate -c $(TEST_CERT) -a -Z | \
+		sudo security find-certificate -c $(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT) -a -Z | \
 		sudo awk '/SHA-1/{system("security delete-certificate -Z "$$NF)}'
-	rm -rf $(TMP_DIR)/*.{crt,key,p12,pem}
+	rm -rf \
+		$(CERTIFICATE_DIR)/certificate.{crt,key,p12,pem} \
+		$(TMP_DIR)/*.{crt,key,p12,pem}
 
 # ==============================================================================
 
@@ -18,7 +21,8 @@ test-ssl-generate-certificate-single-domain:
 	# act
 	make ssl-generate-certificate \
 		DIR=$(TMP_DIR) \
-		NAME=$(TEST_CERT)
+		NAME=$(TEST_CERT) \
+		DOMAINS=single-$(TEST_CERT)
 	# assert
 	mk_test $(@) -f $(TMP_DIR)/$(TEST_CERT).pem
 
@@ -31,6 +35,12 @@ test-ssl-generate-certificate-multiple-domains:
 	# assert
 	mk_test $(@) -f $(TMP_DIR)/multi-$(TEST_CERT).pem
 
+test-ssl-generate-certificate-project:
+	# act
+	make ssl-generate-certificate-project DOMAINS=platform.com,*.platform.com
+	# assert
+	mk_test $(@) -f $(CERTIFICATE_DIR)/certificate.pem
+
 test-ssl-trust-certificate:
 	mk_test_skip_if_not_macos $(@) && exit ||:
 	# arrange
@@ -42,4 +52,4 @@ test-ssl-trust-certificate:
 	make ssl-trust-certificate \
 		FILE=$(TMP_DIR)/$(TEST_CERT).pem
 	# assert
-	mk_test $(@) 0 -lt "$$(sudo security find-certificate -a -c $(TEST_CERT) | grep -Eo 'alis(.*)$(TEST_CERT)' | wc -l)"
+	mk_test $(@) 0 -lt "$$(sudo security find-certificate -a -c $(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT) | grep -Eo 'alis(.*)$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)' | wc -l)"
