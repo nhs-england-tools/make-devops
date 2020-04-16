@@ -26,7 +26,7 @@ test-aws: \
 test-aws-setup:
 	make docker-config
 	make docker-compose-start YML=$(TEST_DIR)/docker-compose.localstack.yml
-	sleep 3
+	sleep 5
 	# Prerequisites
 	make docker-image NAME=tools
 
