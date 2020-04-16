@@ -1,7 +1,9 @@
 CERTIFICATE_DIR = $(ETC_DIR)/certificate
 
 ssl-generate-certificate-project: ### Generate self-signed certificate for the project - optional: DOMAINS='*.domain1,*.domain2'
-	domains="localhost,DNS:$(PROJECT_NAME_SHORT).$(PROJECT_GROUP_SHORT),DNS:*.$(PROJECT_NAME_SHORT).$(PROJECT_GROUP_SHORT),DNS:*.$(TEXAS_HOSTED_ZONE_NONPROD),DNS:*.$(TEXAS_HOSTED_ZONE_PROD),"
+	domains="localhost,DNS:$(PROJECT_NAME_SHORT).local,DNS:*.$(PROJECT_NAME_SHORT).local,DNS:$(PROJECT_NAME).local,DNS:*.$(PROJECT_NAME).local,"
+	domains+="DNS:$(PROJECT_NAME_SHORT).$(PROJECT_GROUP_SHORT),DNS:*.$(PROJECT_NAME_SHORT).$(PROJECT_GROUP_SHORT),"
+	domains+="DNS:*.$(TEXAS_HOSTED_ZONE_NONPROD),DNS:*.$(TEXAS_HOSTED_ZONE_PROD),"
 	for domain in $$(echo $(DOMAINS) | tr "," "\n"); do
 		domains+="DNS:$${domain},"
 	done
@@ -37,3 +39,11 @@ ssl-trust-certificate: ### Trust self-signed certificate - mandatory: FILE=[path
 		-r trustRoot \
 		-k /Library/Keychains/System.keychain \
 		$(FILE)
+	file=/etc/hosts
+	sudo make file-remove-content \
+		FILE=$$file \
+		CONTENT="\n# BEGIN: $(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)(.)*# END: $(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)\n"
+	echo -e "\n# BEGIN: $(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)" | sudo tee -a $$file
+	echo "127.0.0.1 $(PROJECT_NAME_SHORT).local" | sudo tee -a $$file
+	echo "127.0.0.1 $(PROJECT_NAME).local" | sudo tee -a $$file
+	echo "# END: $(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)" | sudo tee -a $$file

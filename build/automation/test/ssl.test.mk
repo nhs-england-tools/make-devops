@@ -8,12 +8,17 @@ test-ssl: \
 	test-ssl-teardown
 
 test-ssl-teardown:
-	mk_test_proceed_if_macos && \
-		sudo security find-certificate -c $(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT) -a -Z | \
-		sudo awk '/SHA-1/{system("security delete-certificate -Z "$$NF)}'
-	rm -rf \
-		$(CERTIFICATE_DIR)/certificate.{crt,key,p12,pem} \
-		$(TMP_DIR)/*.{crt,key,p12,pem}
+	rm -rf $(TMP_DIR)/*.{crt,key,p12,pem}
+	if [ $(PROJECT_NAME) == $(DEVOPS_PROJECT_NAME) ]; then
+		mk_test_proceed_if_macos && (
+			sudo security find-certificate -c $(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT) -a -Z | \
+			sudo awk '/SHA-1/{system("security delete-certificate -Z "$$NF)}' && \
+			sudo make file-remove-content \
+				FILE=/etc/hosts \
+				CONTENT="\n# BEGIN: $(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)(.)*# END: $(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)\n" \
+		)
+		rm -rf $(CERTIFICATE_DIR)/certificate.{crt,key,p12,pem}
+	fi
 
 # ==============================================================================
 
@@ -52,4 +57,5 @@ test-ssl-trust-certificate:
 	make ssl-trust-certificate \
 		FILE=$(TMP_DIR)/$(TEST_CERT).pem
 	# assert
-	mk_test $(@) 0 -lt "$$(sudo security find-certificate -a -c $(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT) | grep -Eo 'alis(.*)$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)' | wc -l)"
+	mk_test "$(@) keychain" 0 -lt "$$(sudo security find-certificate -a -c $(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT) | grep -Eo 'alis(.*)$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)' | wc -l)"
+	mk_test "$(@) hosts file" 2 -eq "$$(cat /etc/hosts | grep -E '$(PROJECT_NAME_SHORT).local|$(PROJECT_NAME).local' | wc -l)"
