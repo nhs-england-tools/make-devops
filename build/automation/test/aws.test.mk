@@ -19,6 +19,9 @@ test-aws: \
 	test-aws-s3-exists \
 	test-aws-s3-create \
 	test-aws-s3-upload-download \
+	test-aws-rds-create-snapshot \
+	test-aws-rds-get-snapshot-status \
+	test-aws-rds-wait-for-snapshot \
 	test-aws-ecr-get-login-password \
 	test-aws-ses-verify-email-identity \
 	test-aws-teardown
@@ -154,6 +157,15 @@ test-aws-s3-upload-download:
 	hash1=$$(md5sum $(TEST_AWS_BUCKET_FILE_PATH).upload | awk '{ print $$1 }')
 	hash2=$$(md5sum $(TEST_AWS_BUCKET_FILE_PATH).download | awk '{ print $$1 }')
 	mk_test $(@) "$$hash1" = "$$hash2"
+
+test-aws-rds-create-snapshot:
+	mk_test_skip $(@) ||:
+
+test-aws-rds-get-snapshot-status:
+	mk_test_skip $(@) ||:
+
+test-aws-rds-wait-for-snapshot:
+	mk_test_skip $(@) ||:
 
 test-aws-ecr-get-login-password:
 	mk_test_skip $(@) ||:

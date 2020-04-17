@@ -9,8 +9,8 @@ aws-assume-role-export-variables: ### Get assume AWS role export for the Jenkins
 				$(AWSCLI) sts assume-role \
 					--role-arn arn:aws:iam::$(AWS_ACCOUNT_ID):role/$(AWS_ROLE) \
 					--role-session-name $(AWS_ROLE_SESSION) \
-					--output text \
 					--query=Credentials.[AccessKeyId,SecretAccessKey,SessionToken] \
+					--output text \
 				| sed -E 's/[[:blank:]]+/ /g' \
 			"
 		))
@@ -66,8 +66,8 @@ aws-secret-get: ### Get AWS secret - mandatory: NAME=[secret name]; optional: AW
 			--secret-id $(NAME) \
 			--version-stage AWSCURRENT \
 			--region $(AWS_REGION) \
-			--output text \
 			--query '{SecretString: SecretString}' \
+			--output text \
 	" | tr -d '\r' | tr -d '\n'
 
 aws-secret-get-and-format: ### Get AWS secret - mandatory: NAME=[secret name]; optional: AWS_REGION=[AWS region]
@@ -78,8 +78,8 @@ aws-secret-exists: ### Check if AWS secret exists - mandatory: NAME=[secret name
 	count=$$(make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=localstack' ||:)" CMD=" \
 		$(AWSCLI) secretsmanager list-secrets \
 			--region $(AWS_REGION) \
-			--output text \
 			--query 'SecretList[*].Name' \
+			--output text \
 	" | grep $(NAME) | wc -l)
 	[ 0 -eq $$count ] && echo false || echo true
 
@@ -136,6 +136,37 @@ aws-s3-exists: ### Check if bucket exists - mandatory: NAME=[bucket name]
 			s3://$(NAME) \
 		2>&1 | grep -q NoSuchBucket \
 	" > /dev/null 2>&1 && echo false || echo true
+
+aws-rds-create-snapshot: ### Create RDS instance snapshot - mandatory: DB_INSTANCE,SNAPSHOT_NAME
+	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=localstack' ||:)" CMD=" \
+		aws rds create-db-snapshot \
+			--region $(AWS_REGION) \
+			--db-instance-identifier $(DB_INSTANCE) \
+			--db-snapshot-identifier $(SNAPSHOT_NAME) \
+	"
+
+aws-rds-get-snapshot-status: ### Get RDS snapshot status - mandatory: SNAPSHOT_NAME
+	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=localstack' ||:)" CMD=" \
+		$(AWSCLI) rds describe-db-snapshots \
+			--region $(AWS_REGION) \
+			--db-snapshot-identifier $(SNAPSHOT_NAME) \
+			--query "DBSnapshots[].Status" \
+			--output text \
+	" | tr -d '\r' | tr -d '\n'
+
+aws-rds-wait-for-snapshot: ### Wait for snapshot to become available - mandatory: SNAPSHOT_NAME
+	echo "Waiting for the snapshot to become available"
+	count=0
+	until [ $$count -ge 1800 ]; do
+		if [ "$$(make -s aws-rds-get-snapshot-status SNAPSHOT_NAME=$(SNAPSHOT_NAME))" == "available" ]; then
+			echo "The snapshot is available"
+			exit 0
+		fi
+		sleep 1s
+		((count++))
+	done
+	echo "ERROR: The snapshot has not become available"
+	exit 1
 
 aws-ecr-get-login-password: ### Get the ECR user login password
 	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=localstack' ||:)" CMD=" \
