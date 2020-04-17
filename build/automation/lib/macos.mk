@@ -59,6 +59,7 @@ macos-install-essential:: ## Install essential development dependencies - option
 	brew $$install gpg ||:
 	brew $$install gradle ||:
 	brew $$install grep ||:
+	brew $$install helm ||:
 	brew $$install httpie ||:
 	brew $$install jenv ||:
 	brew $$install jq ||:
@@ -139,7 +140,6 @@ macos-install-corporate:: ## Install corporate dependencies - optional: REINSTAL
 	brew update
 	brew cask $$install microsoft-office ||:
 	brew cask $$install microsoft-teams ||:
-	brew cask $$install skype-for-business ||:
 	brew cask $$install slack ||:
 	brew cask $$install vmware-horizon-client ||:
 	brew cask $$install avast-security ||:
@@ -167,6 +167,7 @@ macos-check:: ## Check if the development dependencies are installed
 	brew list gpg ||:
 	brew list gradle ||:
 	brew list grep ||:
+	brew list helm ||:
 	brew list httpie ||:
 	brew list jenv ||:
 	brew list jq ||:
