@@ -83,6 +83,27 @@ aws-secret-exists: ### Check if AWS secret exists - mandatory: NAME=[secret name
 	" | grep $(NAME) | wc -l)
 	[ 0 -eq $$count ] && echo false || echo true
 
+aws-iam-policy-create: ### Create IAM policy - mandatory: NAME=[policy name],DESCRIPTION=[policy description],FILE=[path to json file]
+	function replace_variables() {
+		file=$$1
+		for str in $$(cat $$file | grep -Eo "[A-Za-z0-9_]*_TO_REPLACE" | sort | uniq); do
+			key=$$(cut -d "=" -f1 <<<"$$str" | sed "s/_TO_REPLACE//g")
+			value=$$(echo $$(eval echo "\$$$$key"))
+			[ -z "$$value" ] && echo "WARNING: Variable $$key has no value in '$$file'" || sed -i \
+				"s;$${key}_TO_REPLACE;$${value//&/\\&};g" \
+				$$file ||:
+		done
+	}
+	cp $(FILE) $(TMP_DIR_REL)/$(@).json
+	replace_variables $(TMP_DIR_REL)/$(@).json
+	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=localstack' ||:)" CMD=" \
+		$(AWSCLI) iam create-policy \
+			--policy-name $(NAME) \
+			--policy-document file://$(TMP_DIR_REL)/$(@).json \
+			--description '$(DESCRIPTION)' \
+	"
+	rm $(TMP_DIR_REL)/$(@).json
+
 aws-s3-create: ### Create secure bucket - mandatory: NAME=[bucket name]
 	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=localstack' ||:)" CMD=" \
 		$(AWSCLI) s3api create-bucket \
@@ -150,15 +171,15 @@ aws-rds-get-snapshot-status: ### Get RDS snapshot status - mandatory: SNAPSHOT_N
 		$(AWSCLI) rds describe-db-snapshots \
 			--region $(AWS_REGION) \
 			--db-snapshot-identifier $(SNAPSHOT_NAME) \
-			--query "DBSnapshots[].Status" \
+			--query 'DBSnapshots[].Status' \
 			--output text \
 	" | tr -d '\r' | tr -d '\n'
 
-aws-rds-wait-for-snapshot: ### Wait for snapshot to become available - mandatory: SNAPSHOT_NAME
+aws-rds-wait-for-snapshot: ### Wait for RDS snapshot to become available - mandatory: SNAPSHOT_NAME
 	echo "Waiting for the snapshot to become available"
 	count=0
 	until [ $$count -ge 1800 ]; do
-		if [ "$$(make -s aws-rds-get-snapshot-status SNAPSHOT_NAME=$(SNAPSHOT_NAME))" == "available" ]; then
+		if [ "$$(make aws-rds-get-snapshot-status SNAPSHOT_NAME=$(SNAPSHOT_NAME))" == "available" ]; then
 			echo "The snapshot is available"
 			exit 0
 		fi
@@ -218,6 +239,7 @@ aws-get-cognito-client-secret: ### Get Cognito client secret - mandatory: NAME; 
 	aws-account-get-id \
 	aws-assume-role-export-variables \
 	aws-ecr-get-login-password \
+	aws-rds-get-snapshot-status \
 	aws-s3-exists \
 	aws-secret-create \
 	aws-secret-exists \

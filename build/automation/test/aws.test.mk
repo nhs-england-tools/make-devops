@@ -16,6 +16,7 @@ test-aws: \
 	test-aws-secret-put-get-and-format \
 	test-aws-secret-exists-false \
 	test-aws-secret-exists-true \
+	test-aws-iam-policy-create \
 	test-aws-s3-exists \
 	test-aws-s3-create \
 	test-aws-s3-upload-download \
@@ -117,17 +118,27 @@ test-aws-secret-put-get-and-format:
 
 test-aws-secret-exists-false:
 	# act
-	reponse="$$(make aws-secret-exists NAME=service/deployment-$(@))"
+	output="$$(make aws-secret-exists NAME=service/deployment-$(@))"
 	# assert
-	mk_test $(@) "false" = "$$reponse"
+	mk_test $(@) "false" = "$$output"
 
 test-aws-secret-exists-true:
 	# arrange
 	make aws-secret-create NAME=service/deployment-$(@) VALUE=value
 	# act
-	reponse="$$(make aws-secret-exists NAME=service/deployment-$(@))"
+	output="$$(make aws-secret-exists NAME=service/deployment-$(@))"
 	# assert
-	mk_test $(@) "true" = "$$reponse"
+	mk_test $(@) "true" = "$$output"
+
+test-aws-iam-policy-create:
+	# act
+	output=$$(make aws-iam-policy-create \
+		NAME=test-policy \
+		DESCRIPTION="This is a test" \
+		FILE=build/automation/lib/aws/elasticsearch-s3-snapshot-policy-template.json \
+		BUCKET_NAME=test-bucket)
+	# assert
+	mk_test $(@) 1 -eq $$(echo "$$output" | grep -E '"PolicyName".*"test-policy"' | wc -l)
 
 test-aws-s3-exists:
 	# act

@@ -186,7 +186,8 @@ BUILD_REPO := $(or $(shell git config --get remote.origin.url 2> /dev/null ||:),
 BUILD_BRANCH := $(or $(shell git rev-parse --abbrev-ref HEAD 2> /dev/null ||:), unknown)
 USER_ID := $(shell id -u)
 GROUP_ID := $(shell id -g)
-_TTY := $$([ -t 0 ] && echo "--tty")
+TTY_ENABLE := false
+_TTY := $$([ -t 0 ] && [ $(TTY_ENABLE) == true ] && echo "--tty")
 
 GOSS_PATH := $(BIN_DIR)/goss-linux-amd64
 SETUP_COMPLETE_FLAG_FILE := $(TMP_DIR)/.make-devops-setup-complete
