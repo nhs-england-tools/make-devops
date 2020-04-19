@@ -18,10 +18,10 @@ pipeline {
             steps {
                 script {
                     sh '''
-                        export AWS_ACCOUNT_ID_LIVE_PARENT=123456789
-                        export AWS_ACCOUNT_ID_MGMT=123456789
-                        export AWS_ACCOUNT_ID_NONPROD=123456789
-                        export AWS_ACCOUNT_ID_PROD=123456789
+                        export AWS_ACCOUNT_ID_LIVE_PARENT=000000000000
+                        export AWS_ACCOUNT_ID_MGMT=000000000000
+                        export AWS_ACCOUNT_ID_NONPROD=000000000000
+                        export AWS_ACCOUNT_ID_PROD=000000000000
                         make devops-test-suite || make devops-test-suite DEBUG=1
                     '''
                 }

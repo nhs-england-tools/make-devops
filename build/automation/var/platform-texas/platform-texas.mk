@@ -1,4 +1,4 @@
-AWS_ECR := $(or $(AWS_ACCOUNT_ID_MGMT), 123456789).dkr.ecr.eu-west-2.amazonaws.com
+AWS_ECR := $(or $(AWS_ACCOUNT_ID_MGMT), 000000000000).dkr.ecr.eu-west-2.amazonaws.com
 AWS_REGION := eu-west-2
 AWS_DEFAULT_REGION := $(AWS_REGION)
 AWS_SES_REGION := eu-west-1

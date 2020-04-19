@@ -17,6 +17,12 @@ test-aws: \
 	test-aws-secret-exists-false \
 	test-aws-secret-exists-true \
 	test-aws-iam-policy-create \
+	test-aws-iam-policy-exists-true \
+	test-aws-iam-policy-exists-false \
+	test-aws-iam-role-create \
+	test-aws-iam-role-exists-true \
+	test-aws-iam-role-exists-false \
+	test-aws-iam-role-attach-policy \
 	test-aws-s3-exists \
 	test-aws-s3-create \
 	test-aws-s3-upload-download \
@@ -120,7 +126,7 @@ test-aws-secret-exists-false:
 	# act
 	output="$$(make aws-secret-exists NAME=service/deployment-$(@))"
 	# assert
-	mk_test $(@) "false" = "$$output"
+	mk_test $(@) false = "$$output"
 
 test-aws-secret-exists-true:
 	# arrange
@@ -128,30 +134,91 @@ test-aws-secret-exists-true:
 	# act
 	output="$$(make aws-secret-exists NAME=service/deployment-$(@))"
 	# assert
-	mk_test $(@) "true" = "$$output"
+	mk_test $(@) true = "$$output"
 
 test-aws-iam-policy-create:
 	# act
 	output=$$(make aws-iam-policy-create \
-		NAME=test-policy \
+		NAME=$(@)-test-policy \
 		DESCRIPTION="This is a test" \
 		FILE=build/automation/lib/aws/elasticsearch-s3-snapshot-policy-template.json \
 		BUCKET_NAME=test-bucket)
 	# assert
-	mk_test $(@) 1 -eq $$(echo "$$output" | grep -E '"PolicyName".*"test-policy"' | wc -l)
+	mk_test $(@) 1 -eq $$(echo "$$output" | grep -E '"PolicyName".*"$(@)-test-policy"' | wc -l)
+
+test-aws-iam-policy-exists-true:
+	# arrange
+	make aws-iam-policy-create \
+		NAME=$(@)-test-policy \
+		DESCRIPTION="This is a test" \
+		FILE=build/automation/lib/aws/elasticsearch-s3-snapshot-policy-template.json
+	# act
+	output=$$(make aws-iam-policy-exists NAME=$(@)-test-policy)
+	# assert
+	mk_test $(@) true = "$$output"
+
+test-aws-iam-policy-exists-false:
+	# act
+	output=$$(make aws-iam-policy-exists NAME=$(@)-test-policy-non-existent)
+	# assert
+	mk_test $(@) false = "$$output"
+
+test-aws-iam-role-create:
+	# act
+	output=$$(make aws-iam-role-create \
+		NAME=$(@)-test-role \
+		DESCRIPTION="This is a test" \
+		FILE=build/automation/lib/aws/elasticsearch-s3-snapshot-role.json)
+	# assert
+	mk_test $(@) 1 -eq $$(echo "$$output" | grep -E '"RoleName".*"$(@)-test-role"' | wc -l)
+
+test-aws-iam-role-exists-true:
+	# arrange
+	make aws-iam-role-create \
+		NAME=$(@)-test-role \
+		DESCRIPTION="This is a test" \
+		FILE=build/automation/lib/aws/elasticsearch-s3-snapshot-role.json
+	# act
+	output=$$(make aws-iam-role-exists NAME=$(@)-test-role)
+	# assert
+	mk_test $(@) true = "$$output"
+
+test-aws-iam-role-exists-false:
+	# act
+	output=$$(make aws-iam-role-exists NAME=$(@)-test-role-non-existent)
+	# assert
+	mk_test $(@) false = "$$output"
+
+test-aws-iam-role-attach-policy:
+	# arrange
+	make aws-iam-policy-create \
+		NAME=$(@)-test-policy \
+		DESCRIPTION="This is a test" \
+		FILE=build/automation/lib/aws/elasticsearch-s3-snapshot-policy-template.json
+	make aws-iam-role-create \
+		NAME=$(@)-test-role \
+		DESCRIPTION="This is a test" \
+		FILE=build/automation/lib/aws/elasticsearch-s3-snapshot-role.json
+	# act
+	make aws-iam-role-attach-policy \
+		ROLE_NAME=$(@)-test-role \
+		POLICY_NAME=$(@)-test-policy
+	code=$$?
+	# assert
+	mk_test $(@) 0 -eq $$code
 
 test-aws-s3-exists:
 	# act
 	output=$$(make aws-s3-exists NAME=$(@)-bucket)
 	# assert
-	mk_test $(@) "false" = "$$output"
+	mk_test $(@) false = "$$output"
 
 test-aws-s3-create:
 	# act
 	make aws-s3-create NAME=$(@)-bucket
 	# assert
 	output=$$(make aws-s3-exists NAME=$(@)-bucket)
-	mk_test $(@) "true" = "$$output"
+	mk_test $(@) true = "$$output"
 
 test-aws-s3-upload-download:
 	# arrange

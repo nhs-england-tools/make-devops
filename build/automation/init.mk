@@ -38,10 +38,10 @@ devops-test-single: ### Run a DevOps single test - mandatory NAME=[test target n
 	make _devops-test DEBUG=$(DEBUG) TESTS="$(NAME)"
 
 _devops-test:
-	[ "$(AWS_ACCOUNT_ID_LIVE_PARENT)" == 123456789 ] && echo "AWS_ACCOUNT_ID_LIVE_PARENT is not set correctly"
-	[ "$(AWS_ACCOUNT_ID_MGMT)" == 123456789 ] && echo "AWS_ACCOUNT_ID_MGMT is not set correctly"
-	[ "$(AWS_ACCOUNT_ID_NONPROD)" == 123456789 ] && echo "AWS_ACCOUNT_ID_NONPROD is not set correctly"
-	[ "$(AWS_ACCOUNT_ID_PROD)" == 123456789 ] && echo "AWS_ACCOUNT_ID_PROD is not set correctly"
+	[ "$(AWS_ACCOUNT_ID_LIVE_PARENT)" == 000000000000 ] && echo "AWS_ACCOUNT_ID_LIVE_PARENT is not set correctly"
+	[ "$(AWS_ACCOUNT_ID_MGMT)" == 000000000000 ] && echo "AWS_ACCOUNT_ID_MGMT is not set correctly"
+	[ "$(AWS_ACCOUNT_ID_NONPROD)" == 000000000000 ] && echo "AWS_ACCOUNT_ID_NONPROD is not set correctly"
+	[ "$(AWS_ACCOUNT_ID_PROD)" == 000000000000 ] && echo "AWS_ACCOUNT_ID_PROD is not set correctly"
 	export _DEVOPS_RUN_TEST=true
 	if [[ "$(DEBUG)" =~ ^(true|yes|y|on|1|TRUE|YES|Y|ON)$$ ]]; then
 		exec 3>&1
@@ -53,7 +53,7 @@ _devops-test:
 		config="-s"
 	fi
 	source $(TEST_DIR)/test.sh
-	make $$config \
+	make $$config AWS_ACCOUNT_ID=000000000000 \
 		$(TESTS) \
 	>&3 2>&3
 
@@ -232,10 +232,10 @@ endif
 # Check if all the required variables are set
 
 ifeq (true, $(shell [ "local" == "$(PROFILE)" ] && echo true))
-AWS_ACCOUNT_ID_LIVE_PARENT := $(or $(AWS_ACCOUNT_ID_LIVE_PARENT), 123456789)
-AWS_ACCOUNT_ID_MGMT := $(or $(AWS_ACCOUNT_ID_MGMT), 123456789)
-AWS_ACCOUNT_ID_NONPROD := $(or $(AWS_ACCOUNT_ID_NONPROD), 123456789)
-AWS_ACCOUNT_ID_PROD := $(or $(AWS_ACCOUNT_ID_PROD), 123456789)
+AWS_ACCOUNT_ID_LIVE_PARENT := $(or $(AWS_ACCOUNT_ID_LIVE_PARENT), 000000000000)
+AWS_ACCOUNT_ID_MGMT := $(or $(AWS_ACCOUNT_ID_MGMT), 000000000000)
+AWS_ACCOUNT_ID_NONPROD := $(or $(AWS_ACCOUNT_ID_NONPROD), 000000000000)
+AWS_ACCOUNT_ID_PROD := $(or $(AWS_ACCOUNT_ID_PROD), 000000000000)
 endif
 
 ifndef PROJECT_DIR

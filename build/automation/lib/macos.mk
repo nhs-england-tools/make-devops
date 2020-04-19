@@ -33,12 +33,12 @@ macos-install-essential:: ## Install essential development dependencies - option
 		install="reinstall --force"
 	fi
 	brew update
-	brew tap adoptopenjdk/openjdk
-	brew tap blendle/blendle
-	brew tap buo/cask-upgrade
-	brew tap homebrew/cask-fonts
-	brew tap homebrew/cask-versions
-	brew tap johanhaleby/kubetail
+	brew tap adoptopenjdk/openjdk ||:
+	brew tap blendle/blendle ||:
+	brew tap buo/cask-upgrade ||:
+	brew tap homebrew/cask-fonts ||:
+	brew tap homebrew/cask-versions ||:
+	brew tap johanhaleby/kubetail ||:
 	brew $$install ack ||:
 	brew $$install aws-iam-authenticator ||:
 	brew $$install awscli ||:
@@ -95,7 +95,9 @@ macos-install-additional:: ## Install additional development dependencies - opti
 		install="reinstall --force"
 	fi
 	brew update
-	brew $$install github/gh/gh
+	#brew tap weaveworks/tap ||:
+	brew $$install github/gh/gh ||:
+	#brew $$install weaveworks/tap/eksctl ||:
 	brew cask $$install appcleaner ||:
 	brew cask $$install atom ||:
 	brew cask $$install bettertouchtool ||:
@@ -196,7 +198,8 @@ macos-check:: ## Check if the development dependencies are installed
 	brew cask list iterm2 ||:
 	brew cask list visual-studio-code ||:
 	# Additional dependencies
-	brew list github/gh/gh
+	brew list github/gh/gh ||:
+	#brew list weaveworks/tap/eksctl ||:
 	brew cask list atom ||:
 	brew cask list cheatsheet ||:
 	brew cask list dbeaver-community ||:
@@ -372,10 +375,10 @@ _macos-config-command-line:
 		(
 			echo
 			echo "# export: AWS platform variables"
-			echo "export AWS_ACCOUNT_ID_LIVE_PARENT=123456789"
-			echo "export AWS_ACCOUNT_ID_MGMT=123456789"
-			echo "export AWS_ACCOUNT_ID_NONPROD=123456789"
-			echo "export AWS_ACCOUNT_ID_PROD=123456789"
+			echo "export AWS_ACCOUNT_ID_LIVE_PARENT=000000000000"
+			echo "export AWS_ACCOUNT_ID_MGMT=000000000000"
+			echo "export AWS_ACCOUNT_ID_NONPROD=000000000000"
+			echo "export AWS_ACCOUNT_ID_PROD=000000000000"
 			echo
 		) > $(DEV_OHMYZSH_DIR)/plugins/$(DEVOPS_PROJECT_NAME)/aws-platform.zsh
 	fi
