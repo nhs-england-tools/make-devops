@@ -1,17 +1,13 @@
 [*]
 charset = utf-8
 end_of_line = lf
+indent_size = 2
+indent_style = space
 insert_final_newline = true
 trim_trailing_whitespace = true
 
-[*.{go,groovy,java,js,json,py,tf,ts,md,xml,yaml,yml}]
-indent_size = 2
-indent_style = space
-
 [*.mk,Makefile]
-indent_size = 2
 indent_style = tab
 
 [Dockerfile]
 indent_size = 4
-indent_style = space
