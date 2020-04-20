@@ -77,12 +77,15 @@ devops-synchronise: ### Synchronise the DevOps automation toolchain scripts used
 	}
 	function sync() {
 		cd $(TMP_DIR)/$(DEVOPS_PROJECT_NAME)
+		# Do not copy these files
 		rsync -rav \
 			--include=build/ \
+			--exclude=automation/etc/githooks/scripts/*-pre-commit.sh \
 			--exclude=docker/docker-compose.yml \
 			--exclude=Jenkinsfile \
 			build/* \
 			$(PROJECT_DIR)/build
+		# Copy these files
 		mkdir -p \
 			$(PROJECT_DIR)/documentation/adr
 		cp -fv documentation/adr/README.md $(PROJECT_DIR)/documentation/adr/README.md
