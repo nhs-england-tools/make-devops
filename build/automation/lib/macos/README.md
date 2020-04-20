@@ -59,7 +59,12 @@
 - Perform all system updates
 - Go to System Preferences > Software Update > [ Tick all the checkboxes ]
 - Go to System Preferences > Sharing > Computer Name > [ Set name to macos-xxxxxx ]
-- Run Make DevOps script by executing `curl -L bit.ly/make-devops | bash` in the Terminal
+- Run Make DevOps script by executing `curl -L bit.ly/make-devops | bash` in the Terminal. This script may ask you to install the following packages
+  - Xcode Command Line Tools
+  - Homebrew
+  - GNU Make
+
+Please, follow the instructions provided by the script and execute them from the command-line to satisfy the dependencies.
 
 ---
 
