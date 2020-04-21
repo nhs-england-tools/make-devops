@@ -23,8 +23,23 @@ alias gr+="git reset --hard HEAD"
 alias gr="git reset HEAD"
 alias gs="git status --short"
 
+function git-pull {
+  current=$(git rev-parse --abbrev-ref HEAD)
+  for branch in $(git branch | cut -c 3-); do
+    if [ $branch != $current ]; then
+      git fetch origin $branch:$branch
+    else
+      git pull
+    fi
+  done
+}
+
 function git-prune {
-    git fetch -p && for branch in $(git for-each-ref --format '%(refname) %(upstream:track)' refs/heads | awk '$2 == "[gone]" {sub("refs/heads/", "", $1); print $1}'); do
-        git branch -D $branch
-    done
+  git fetch --prune
+  for branch in $(git for-each-ref --format '%(refname) %(upstream:track)' refs/heads | awk '$2 == "[gone]" {sub("refs/heads/", "", $1); print $1}'); do
+    git branch -D $branch
+  done
+  for branch in $(git branch -vv | cut -c 3- | awk '$3 !~/\[origin/ { print $1 }'); do
+    git branch -D $branch
+  done
 }
