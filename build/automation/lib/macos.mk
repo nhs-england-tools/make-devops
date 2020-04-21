@@ -254,6 +254,8 @@ _macos-config-mac:
 	defaults write -g KeyRepeat -int 2
 	sudo mdutil -i off /
 	sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.metadata.mds.plist
+	# Add images as attachments in Mail
+	defaults write com.apple.mail DisableInlineAttachmentViewing -bool yes
 
 _macos-config-zsh:
 	cat /etc/shells | grep $$(brew --prefix)/bin/zsh > /dev/null 2>&1 || sudo sh -c "echo $$(brew --prefix)/bin/zsh >> /etc/shells"
