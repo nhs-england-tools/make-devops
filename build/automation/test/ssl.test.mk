@@ -58,4 +58,4 @@ test-ssl-trust-certificate:
 		FILE=$(TMP_DIR)/$(TEST_CERT).pem
 	# assert
 	mk_test "$(@) keychain" 0 -lt "$$(sudo security find-certificate -a -c $(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT) | grep -Eo 'alis(.*)$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)' | wc -l)"
-	mk_test "$(@) hosts file" 2 -eq "$$(cat /etc/hosts | grep -E '$(PROJECT_NAME_SHORT).local|$(PROJECT_NAME).local' | wc -l)"
+	mk_test "$(@) hosts file" 3 -eq "$$(cat /etc/hosts | grep -E '$(PROJECT_NAME_SHORT).local|$(PROJECT_NAME).local|$(PROJECT_NAME_SHORT)-$(PROJECT_GROUP_SHORT).local' | wc -l)"

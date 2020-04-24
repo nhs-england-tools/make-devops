@@ -1,0 +1,46 @@
+file:
+  /var/log/nginx/access.log:
+    exists: true
+    filetype: symlink
+    linked-to: /dev/stdout
+  /var/log/nginx/error.log:
+    exists: true
+    filetype: symlink
+    linked-to: /dev/stderr
+  /certificate/nginx.mdo-uec-tools.pem:
+    exists: true
+    filetype: file
+    mode: "0400"
+  /application/index.html:
+    exists: true
+    filetype: file
+
+package:
+  ca-certificates:
+    installed: true
+
+process:
+  nginx:
+    running: true
+
+port:
+  tcp:8080:
+    listening: true
+    ip:
+      - 0.0.0.0
+  tcp:8443:
+    listening: true
+    ip:
+      - 0.0.0.0
+
+http:
+  http://localhost:8080:
+    status: 200
+    timeout: 1000
+    body:
+      - Welcome to Make DevOps!
+  https://localhost:8443:
+    status: 200
+    timeout: 1000
+    body:
+      - Welcome to Make DevOps!

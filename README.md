@@ -88,6 +88,7 @@ If you hear your teams or individuals saying _"It will take days to onboard a ne
     - Terraform state: `$(PROJECT_GROUP)-$(PROJECT_NAME)/$(PROFILE)/$(STACK)`
     - AWS tags: `TagSet=[{Key=Programme,Value=$(PROGRAMME)},{Key=Service,Value=$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT),{Key=Environment,Value=$(PROFILE)}]`
     - AWS Secret name for deployment: `$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)-$(PROFILE)`
+    - Local domain names: `$(PROJECT_NAME_SHORT).local`, `$(PROJECT_NAME).local`, `$(PROJECT_NAME_SHORT)-$(PROJECT_GROUP_SHORT).local`
 
 ## Design
 

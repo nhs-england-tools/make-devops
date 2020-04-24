@@ -25,6 +25,7 @@ test-docker: \
 	test-docker-compose \
 	test-docker-compose-single-service \
 	test-docker-get-variables-from-file \
+	test-docker-nginx-image \
 	test-docker-run-data \
 	test-docker-run-dotnet \
 	test-docker-run-gradle \
@@ -212,6 +213,16 @@ test-docker-get-variables-from-file:
 	vars=$$(make _docker-get-variables-from-file VARS_FILE=$(VAR_DIR)/project.mk.default)
 	# assert
 	mk_test $(@) "PROJECT_NAME=" = $$(echo "$$vars" | grep -o PROJECT_NAME=)
+
+test-docker-nginx-image:
+	# arrange
+	cd $(DOCKER_DIR)/nginx
+	# act
+	make build test
+	# assert
+	mk_test $(@) true
+	# clean up
+	make clean
 
 test-docker-run-data:
 	# arrange

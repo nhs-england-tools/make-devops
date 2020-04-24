@@ -1,18 +1,18 @@
 CERTIFICATE_DIR = $(ETC_DIR)/certificate
 
-ssl-generate-certificate-project: ### Generate self-signed certificate for the project - optional: DOMAINS='*.domain1,*.domain2'
+ssl-generate-certificate-project: ### Generate self-signed certificate for the project - optional: DIR=[path to certificate],NAME=[certificate file name],DOMAINS='*.domain1,*.domain2'
 	domains="localhost,DNS:$(PROJECT_NAME_SHORT).local,DNS:*.$(PROJECT_NAME_SHORT).local,DNS:$(PROJECT_NAME).local,DNS:*.$(PROJECT_NAME).local,"
-	domains+="DNS:$(PROJECT_NAME_SHORT).$(PROJECT_GROUP_SHORT),DNS:*.$(PROJECT_NAME_SHORT).$(PROJECT_GROUP_SHORT),"
+	domains+="DNS:$(PROJECT_NAME_SHORT)-$(PROJECT_GROUP_SHORT).local,DNS:*.$(PROJECT_NAME_SHORT)-$(PROJECT_GROUP_SHORT).local,"
 	domains+="DNS:*.$(TEXAS_HOSTED_ZONE_NONPROD),DNS:*.$(TEXAS_HOSTED_ZONE_PROD),"
 	for domain in $$(echo $(DOMAINS) | tr "," "\n"); do
 		domains+="DNS:$${domain},"
 	done
 	make ssl-generate-certificate \
-		DIR=$(CERTIFICATE_DIR) \
-		NAME=certificate \
+		DIR=$(or $(DIR), $(CERTIFICATE_DIR)) \
+		NAME=$(or $(NAME), certificate) \
 		DOMAINS=$$(printf "$$domains" | head -c -1)
 
-ssl-generate-certificate: ### Generate self-signed certificate - mandatory: DIR,NAME=[file name],DOMAINS='*.domain1,DNS:*.domain2'
+ssl-generate-certificate: ### Generate self-signed certificate - mandatory: DIR=[path to certificate],NAME=[certificate file name],DOMAINS='*.domain1,DNS:*.domain2'
 	rm -f $(DIR)/$(NAME).{crt,key,pem,p12}
 	openssl req \
 		-new -x509 -nodes -sha256 \
@@ -46,4 +46,5 @@ ssl-trust-certificate: ### Trust self-signed certificate - mandatory: FILE=[path
 	echo -e "\n# BEGIN: $(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)" | sudo tee -a $$file
 	echo "127.0.0.1 $(PROJECT_NAME_SHORT).local" | sudo tee -a $$file
 	echo "127.0.0.1 $(PROJECT_NAME).local" | sudo tee -a $$file
+	echo "127.0.0.1 $(PROJECT_NAME_SHORT)-$(PROJECT_GROUP_SHORT).local" | sudo tee -a $$file
 	echo "# END: $(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)" | sudo tee -a $$file

@@ -58,7 +58,13 @@ docker-build docker-image: ### Build Docker image - mandatory: NAME; optional: V
 	docker image inspect $(DOCKER_REGISTRY)/$(NAME):latest --format='{{.Size}}'
 
 docker-test: ### Test image - mandatory: NAME; optional: ARGS,CMD,GOSS_OPTS
-	GOSS_FILES_PATH=$(DOCKER_DIR)/$(NAME) $(GOSS_OPTS) dgoss run --interactive $(_TTY) $(ARGS) $(DOCKER_REGISTRY)/$(NAME):latest $(CMD)
+	GOSS_FILES_PATH=$(DOCKER_DIR)/$(NAME)/test \
+	CONTAINER_LOG_OUTPUT=$(TMP_DIR)/container-$(NAME)-$(BUILD_HASH)-$(BUILD_ID).log \
+	$(GOSS_OPTS) \
+	dgoss run --interactive $(_TTY) \
+		$(ARGS) \
+		$(DOCKER_REGISTRY)/$(NAME):latest \
+		$(CMD)
 
 docker-login: ### Log into the Docker registry
 	make aws-ecr-get-login-password | docker login --username AWS --password-stdin $(AWS_ECR)
