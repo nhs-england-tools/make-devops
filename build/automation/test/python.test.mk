@@ -5,14 +5,14 @@ test-python: \
 # ==============================================================================
 
 test-python-virtualenv:
-	mk_test_skip_if_not_macos $(@) ||:
+	mk_test_skip_if_not_macos $(@) && exit ||:
 	# act
 	make python-virtualenv
 	# assert
 	mk_test $(@) "$(PYTHON_VERSION)" = "$$(python --version | awk '{ print $$2 }')"
 
 test-python-virtualenv-clean:
-	mk_test_skip_if_not_macos $(@) ||:
+	mk_test_skip_if_not_macos $(@) && exit ||:
 	# act
 	make python-virtualenv-clean
 	# assert
