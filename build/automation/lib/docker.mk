@@ -5,7 +5,6 @@ DOCKER_REGISTRY = $(AWS_ECR)/$(PROJECT_GROUP)/$(PROJECT_NAME)
 
 DOCKER_ALPINE_VERSION = 3.11.5
 DOCKER_COMPOSER_VERSION = 1.9.3
-DOCKER_DATA_VERSION = $(shell cat $(DOCKER_DIR)/data/.version 2> /dev/null || cat $(DOCKER_DIR)/data/VERSION 2> /dev/null || echo unknown)
 DOCKER_DOTNET_VERSION = 3.1.102
 DOCKER_ELASTICSEARCH_VERSION = 7.6.0
 DOCKER_GRADLE_VERSION = 6.2.0-jdk13
@@ -16,7 +15,10 @@ DOCKER_OPENJDK_VERSION = 13-jdk
 DOCKER_POSTGRES_VERSION = 12.2
 DOCKER_PYTHON_VERSION = $(PYTHON_VERSION)-slim
 DOCKER_TERRAFORM_VERSION = $(or $(TEXAS_TERRAFORM_VERSION), 0.12.20)
-DOCKER_TOOLS_VERSION = $(shell cat $(DOCKER_DIR)/tools/.version 2> /dev/null || cat $(DOCKER_DIR)/tools/VERSION 2> /dev/null || echo unknown)
+
+DOCKER_LIBRARY_NGINX_VERSION = $(shell cat $(DOCKER_DIR)/nginx/.version 2> /dev/null || cat $(DOCKER_DIR)/nginx/VERSION 2> /dev/null || echo unknown)
+DOCKER_LIBRARY_POSTGRES_VERSION = $(shell cat $(DOCKER_DIR)/postgres/.version 2> /dev/null || cat $(DOCKER_DIR)/postgres/VERSION 2> /dev/null || echo unknown)
+DOCKER_LIBRARY_TOOLS_VERSION = $(shell cat $(DOCKER_DIR)/tools/.version 2> /dev/null || cat $(DOCKER_DIR)/tools/VERSION 2> /dev/null || echo unknown)
 
 COMPOSE_HTTP_TIMEOUT := $(or $(COMPOSE_HTTP_TIMEOUT), 6000)
 DOCKER_CLIENT_TIMEOUT := $(or $(DOCKER_CLIENT_TIMEOUT), 6000)
@@ -262,41 +264,6 @@ docker-run-composer: ### Run composer container - mandatory: CMD; optional: DIR,
 		$$image \
 			$(CMD)
 
-docker-run-data: ### Run data container - mandatory: CMD; optional: ENGINE=postgres|msslq|mysql,DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file],IMAGE=[image name],CONTAINER=[container name]
-	image=$$([ -n "$(IMAGE)" ] && echo $(IMAGE) || echo $(DOCKER_REGISTRY)/data:$(DOCKER_DATA_VERSION))
-	container=$$([ -n "$(CONTAINER)" ] && echo $(CONTAINER) || echo data-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7))
-	engine=$$([ -z "$(ENGINE)" ] && echo postgres || echo "$(ENGINE)")
-	if [ "$$engine" == postgres ]; then
-		if [ -z "$$(docker images --filter=reference="$$image" --quiet)" ]; then
-			# TODO: Try to pull the image first
-			make docker-build NAME=data > /dev/null 2>&1
-		fi
-		docker run --interactive $(_TTY) --rm \
-			--name $$container \
-			--user $$(id -u):$$(id -g) \
-			--env-file <(env | grep "^AWS_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
-			--env-file <(env | grep "^TF_VAR_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
-			--env-file <(env | grep "^SERV[A-Z]*_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
-			--env-file <(env | grep "^APP[A-Z]*_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
-			--env-file <(env | grep "^PROJ[A-Z]*_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
-			--env-file <(env | grep "^TEXAS_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
-			--env-file <(make _docker-get-variables-from-file VARS_FILE=$(VARS_FILE)) \
-			--env DB_HOST=$(DB_HOST) \
-			--env DB_PORT=$(DB_PORT) \
-			--env DB_NAME=$(DB_NAME) \
-			--env DB_MASTER_USERNAME=$(DB_MASTER_USERNAME) \
-			--env DB_MASTER_PASSWORD=$(DB_MASTER_PASSWORD) \
-			--env DB_USERNAME=$(DB_USERNAME) \
-			--env DB_PASSWORD=$(DB_PASSWORD) \
-			--env PROFILE=$(PROFILE) \
-			--volume $(PROJECT_DIR):/project \
-			--network $(DOCKER_NETWORK) \
-			--workdir /project/$(shell echo $(abspath $(DIR)) | sed "s;$(PROJECT_DIR);;g") \
-			$(ARGS) \
-			$$image \
-				$(CMD)
-	fi
-
 docker-run-dotnet: ### Run dotnet container - mandatory: CMD; optional: DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file],IMAGE=[image name],CONTAINER=[container name]
 	image=$$([ -n "$(IMAGE)" ] && echo $(IMAGE) || echo mcr.microsoft.com/dotnet/core/sdk:$(DOCKER_DOTNET_VERSION))
 	container=$$([ -n "$(CONTAINER)" ] && echo $(CONTAINER) || echo dotnet-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7))
@@ -470,9 +437,43 @@ docker-run-terraform: ### Run terraform container - mandatory: CMD; optional: DI
 		$$image \
 			$(CMD)
 
+# ==============================================================================
+
+docker-run-postgres: ### Run postgres container - mandatory: CMD; optional: DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file],IMAGE=[image name],CONTAINER=[container name]
+	image=$$([ -n "$(IMAGE)" ] && echo $(IMAGE) || echo $(DOCKER_REGISTRY)/postgres:$(DOCKER_LIBRARY_POSTGRES_VERSION))
+	container=$$([ -n "$(CONTAINER)" ] && echo $(CONTAINER) || echo postgres-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7))
+	if [ -z "$$(docker images --filter=reference="$$image" --quiet)" ]; then
+		# TODO: Try to pull the image first
+		make docker-build NAME=postgres > /dev/null 2>&1
+	fi
+	docker run --interactive $(_TTY) --rm \
+		--name $$container \
+		--user $$(id -u):$$(id -g) \
+		--env-file <(env | grep "^AWS_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
+		--env-file <(env | grep "^TF_VAR_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
+		--env-file <(env | grep "^SERV[A-Z]*_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
+		--env-file <(env | grep "^APP[A-Z]*_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
+		--env-file <(env | grep "^PROJ[A-Z]*_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
+		--env-file <(env | grep "^TEXAS_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
+		--env-file <(make _docker-get-variables-from-file VARS_FILE=$(VARS_FILE)) \
+		--env DB_HOST=$(DB_HOST) \
+		--env DB_PORT=$(DB_PORT) \
+		--env DB_NAME=$(DB_NAME) \
+		--env DB_MASTER_USERNAME=$(DB_MASTER_USERNAME) \
+		--env DB_MASTER_PASSWORD=$(DB_MASTER_PASSWORD) \
+		--env DB_USERNAME=$(DB_USERNAME) \
+		--env DB_PASSWORD=$(DB_PASSWORD) \
+		--env PROFILE=$(PROFILE) \
+		--volume $(PROJECT_DIR):/project \
+		--network $(DOCKER_NETWORK) \
+		--workdir /project/$(shell echo $(abspath $(DIR)) | sed "s;$(PROJECT_DIR);;g") \
+		$(ARGS) \
+		$$image \
+			$(CMD)
+
 docker-run-tools: ### Run tools (Python) container - mandatory: CMD; optional: SH=true,DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file],IMAGE=[image name],CONTAINER=[container name]
 	mkdir -p $(HOME)/{.aws,.python/pip/{cache,packages}}
-	image=$$([ -n "$(IMAGE)" ] && echo $(IMAGE) || echo $(DOCKER_REGISTRY)/tools:$(DOCKER_TOOLS_VERSION))
+	image=$$([ -n "$(IMAGE)" ] && echo $(IMAGE) || echo $(DOCKER_REGISTRY)/tools:$(DOCKER_LIBRARY_TOOLS_VERSION))
 	container=$$([ -n "$(CONTAINER)" ] && echo $(CONTAINER) || echo tools-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7))
 	if [ -z "$$(docker images --filter=reference="$$image" --quiet)" ]; then
 		# TODO: Try to pull the image first

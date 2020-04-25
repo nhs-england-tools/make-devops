@@ -1,0 +1,9 @@
+process:
+  postgres:
+    running: true
+
+port:
+  tcp:5432:
+    listening: true
+    ip:
+      - 0.0.0.0

@@ -1,11 +1,10 @@
-TEST_DOCKER_IMAGE := data
+TEST_DOCKER_IMAGE := postgres
 TEST_DOCKER_COMPOSE_YML := $(TMP_DIR)/docker-compose.yml
-TEST_DOCKER_DATA_SQL := $(TMP_DIR)/00-select-version.sql
 
 test-docker: \
 	test-docker-setup \
 	test-docker-config \
-	test-docker-image \
+	test-docker-build \
 	test-docker-image-name-as \
 	test-docker-image-keep-latest-only \
 	test-docker-login \
@@ -25,8 +24,6 @@ test-docker: \
 	test-docker-compose \
 	test-docker-compose-single-service \
 	test-docker-get-variables-from-file \
-	test-docker-nginx-image \
-	test-docker-run-data \
 	test-docker-run-dotnet \
 	test-docker-run-gradle \
 	test-docker-run-mvn \
@@ -40,6 +37,8 @@ test-docker: \
 	test-docker-run-pass-variables \
 	test-docker-run-do-not-pass-empty-variables \
 	test-docker-run-specify-image \
+	test-docker-nginx-image \
+	test-docker-postgres-image \
 	test-docker-clean \
 	test-docker-prune \
 	test-docker-teardown
@@ -48,9 +47,7 @@ test-docker-setup:
 	docker rm -f $(docker ps -a -q) 2> /dev/null ||:
 
 test-docker-teardown:
-	rm -rf \
-		$(TEST_DOCKER_COMPOSE_YML) \
-		$(TEST_DOCKER_DATA_SQL)
+	rm -rf $(TEST_DOCKER_COMPOSE_YML)
 	make docker-prune
 
 # ==============================================================================
@@ -61,23 +58,23 @@ test-docker-config:
 	# assert
 	mk_test $(@) $(DOCKER_NETWORK) = $$(docker network ls | grep -Eo $(DOCKER_NETWORK))
 
-test-docker-image:
+test-docker-build:
 	# act
-	make docker-image NAME=$(TEST_DOCKER_IMAGE)
+	make docker-build NAME=$(TEST_DOCKER_IMAGE)
 	# assert
 	mk_test $(@) 1 -eq $$(docker images --filter=reference="$(DOCKER_REGISTRY)/$(TEST_DOCKER_IMAGE):latest" -q | wc -l)
 
 test-docker-image-name-as:
 	# act
-	make docker-image NAME=$(TEST_DOCKER_IMAGE) NAME_AS=$(TEST_DOCKER_IMAGE)-copy
+	make docker-build NAME=$(TEST_DOCKER_IMAGE) NAME_AS=$(TEST_DOCKER_IMAGE)-copy
 	# assert
 	mk_test $(@) 2 -eq $$(docker images --filter=reference="$(DOCKER_REGISTRY)/$(TEST_DOCKER_IMAGE)-copy:*" --quiet | wc -l)
 
 test-docker-image-keep-latest-only:
 	# act
-	make docker-image NAME=$(TEST_DOCKER_IMAGE)
-	make docker-image NAME=$(TEST_DOCKER_IMAGE)
-	make docker-image NAME=$(TEST_DOCKER_IMAGE)
+	make docker-build NAME=$(TEST_DOCKER_IMAGE)
+	make docker-build NAME=$(TEST_DOCKER_IMAGE)
+	make docker-build NAME=$(TEST_DOCKER_IMAGE)
 	# assert
 	mk_test $(@) 2 -eq $$(docker images --filter=reference="$(DOCKER_REGISTRY)/$(TEST_DOCKER_IMAGE):*" -q | wc -l)
 
@@ -125,9 +122,11 @@ test-docker-set-get-image-version:
 test-docker-image-start:
 	# arrange
 	docker rm --force postgres-$(BUILD_HASH)-$(BUILD_ID) 2> /dev/null ||:
-	make docker-image NAME=postgres
+	make docker-build NAME=postgres
 	# act
-	make docker-image-start NAME=postgres ARGS="--env POSTGRES_HOST_AUTH_METHOD=trust"
+	make docker-image-start NAME=postgres \
+		ARGS="--env POSTGRES_PASSWORD=postgres" \
+		CMD="postgres"
 	sleep 1
 	# assert
 	mk_test $(@) 1 -eq $$(docker ps | grep postgres-$(BUILD_HASH)-$(BUILD_ID) | wc -l)
@@ -135,8 +134,10 @@ test-docker-image-start:
 test-docker-image-stop:
 	# arrange
 	docker rm --force postgres-$(BUILD_HASH)-$(BUILD_ID) 2> /dev/null ||:
-	make docker-image NAME=postgres
-	make docker-image-start NAME=postgres ARGS="--env POSTGRES_HOST_AUTH_METHOD=trust"
+	make docker-build NAME=postgres
+	make docker-image-start NAME=postgres \
+		ARGS="--env POSTGRES_PASSWORD=postgres" \
+		CMD="postgres"
 	sleep 1
 	# act
 	make docker-image-stop NAME=postgres
@@ -151,7 +152,7 @@ test-docker-image-bash:
 
 test-docker-image-clean:
 	# arrange
-	make docker-image NAME=postgres
+	make docker-build NAME=postgres
 	# act
 	make docker-image-clean NAME=postgres
 	# assert
@@ -160,7 +161,7 @@ test-docker-image-clean:
 test-docker-image-save:
 	# arrange
 	make docker-image-clean NAME=postgres
-	make docker-image NAME=postgres
+	make docker-build NAME=postgres
 	# act
 	make docker-image-save NAME=postgres
 	# assert
@@ -169,7 +170,7 @@ test-docker-image-save:
 test-docker-image-load:
 	# arrange
 	make docker-image-clean NAME=postgres
-	make docker-image NAME=postgres
+	make docker-build NAME=postgres
 	make docker-image-save NAME=postgres
 	docker rmi --force $$(docker images --filter=reference="$(DOCKER_REGISTRY)/postgres:*" --quiet) 2> /dev/null ||:
 	# act
@@ -180,7 +181,7 @@ test-docker-image-load:
 test-docker-tag:
 	# arrange
 	make docker-image-clean NAME=postgres
-	make docker-image NAME=postgres
+	make docker-build NAME=postgres
 	# act
 	make docker-tag NAME=postgres TAG=version
 	# assert
@@ -213,37 +214,6 @@ test-docker-get-variables-from-file:
 	vars=$$(make _docker-get-variables-from-file VARS_FILE=$(VAR_DIR)/project.mk.default)
 	# assert
 	mk_test $(@) "PROJECT_NAME=" = $$(echo "$$vars" | grep -o PROJECT_NAME=)
-
-test-docker-nginx-image:
-	# arrange
-	cd $(DOCKER_DIR)/nginx
-	# act
-	make build test
-	# assert
-	mk_test $(@) true
-	# clean up
-	make clean
-
-test-docker-run-data:
-	# arrange
-	make TEST_DOCKER_DATA_SQL
-	make docker-image NAME=postgres
-	make docker-compose-stop docker-compose-start YML=$(TEST_DIR)/docker-compose.postgres.yml
-	sleep 1
-	export DOCKER_DATA_VERSION=$$(make docker-get-image-version NAME=data)
-	# act & assert
-	output=$$(
-		make docker-run-data \
-			CMD='-c "select version();"' \
-		| grep -Eo "PostgreSQL")
-	mk_test "$(@) sql statement" "$$output" = "PostgreSQL"
-	output=$$(
-		make docker-run-data ARGS="--volume $(TEST_DOCKER_DATA_SQL):/sql/ad-hoc/00-select-version.sql" \
-			CMD="ad-hoc *\00-select-version.sql" \
-		| grep -Eo "PostgreSQL")
-	mk_test "$(@) sql script" "$$output" = "PostgreSQL"
-	# clean up
-	make docker-compose-stop YML=$(TEST_DIR)/docker-compose.postgres.yml
 
 test-docker-run-dotnet:
 	# arrange
@@ -381,6 +351,26 @@ test-docker-run-specify-image:
 	# assert
 	mk_test $(@) 1 -eq "$$output"
 
+test-docker-nginx-image:
+	# arrange
+	cd $(DOCKER_DIR)/nginx
+	# act
+	make build test
+	# assert
+	mk_test $(@) true
+	# clean up
+	make clean
+
+test-docker-postgres-image:
+	# arrange
+	cd $(DOCKER_DIR)/postgres
+	# act
+	make build test
+	# assert
+	mk_test $(@) true
+	# clean up
+	make clean
+
 # ==============================================================================
 # Supporting files
 
@@ -396,6 +386,3 @@ TEST_DOCKER_COMPOSE_YML:
 	echo "  default:" >> $(TEST_DOCKER_COMPOSE_YML)
 	echo "    external:" >> $(TEST_DOCKER_COMPOSE_YML)
 	echo "      name: $(DOCKER_NETWORK)" >> $(TEST_DOCKER_COMPOSE_YML)
-
-TEST_DOCKER_DATA_SQL:
-	echo "select version();" > $(TEST_DOCKER_DATA_SQL)
