@@ -1,0 +1,25 @@
+package:
+  curl:
+    installed: true
+  netcat:
+    installed: true
+  wget:
+    installed: true
+
+command:
+  pip list | grep -E 'awscli.*1.18.46':
+    exit-status: 0
+  pip list | grep -E 'awscli-local.*0.6':
+    exit-status: 0
+  pip list | grep -E 'boto3.*1.12.46':
+    exit-status: 0
+  pip list | grep -E 'requests.*2.23.0':
+    exit-status: 0
+
+file:
+  /usr/local/bin/aws-iam-authenticator:
+    exists: true
+  /usr/local/bin/jq:
+    exists: true
+  /usr/local/bin/kubectl:
+    exists: true

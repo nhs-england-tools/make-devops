@@ -1,6 +1,6 @@
 # TODO
 
-- Refactor the `tools` image to be consistent with the others
+- Move library images to a different directory
 - Push images to the Docker hub registry
 - Create reverse proxy configuration for `nginx`
 - 'Untexify' the project, e.g. in the `ssl.mk` module we can find references to the `$(TEXAS_HOSTED_ZONE_NONPROD)` and `$(TEXAS_HOSTED_ZONE_PROD)` variables

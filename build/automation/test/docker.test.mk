@@ -39,6 +39,7 @@ test-docker: \
 	test-docker-run-specify-image \
 	test-docker-nginx-image \
 	test-docker-postgres-image \
+	test-docker-tools-image \
 	test-docker-clean \
 	test-docker-prune \
 	test-docker-teardown
@@ -364,6 +365,16 @@ test-docker-nginx-image:
 test-docker-postgres-image:
 	# arrange
 	cd $(DOCKER_DIR)/postgres
+	# act
+	make build test
+	# assert
+	mk_test $(@) true
+	# clean up
+	make clean
+
+test-docker-tools-image:
+	# arrange
+	cd $(DOCKER_DIR)/tools
 	# act
 	make build test
 	# assert
