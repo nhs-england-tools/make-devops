@@ -20,16 +20,17 @@ _test-sql:
 		CMD='sql "select version();"'
 	make _test-prerequisites-teardown
 
+_test-scripts-image:
+	make _test-prerequisites-setup
+	make docker-run-postgres \
+		CMD="scripts /sql"
+	make _test-prerequisites-teardown
+
 _test-scripts-mount:
 	make _test-prerequisites-setup
 	make docker-run-postgres \
 		ARGS="--volume $(DOCKER_DIR)/postgres/assets/sql:/sql" \
 		CMD="scripts /sql"
-	make _test-prerequisites-teardown
-
-_test-scripts-image:
-	make _test-prerequisites-setup
-	# TODO: Scripts image test
 	make _test-prerequisites-teardown
 
 _test-postgres:
