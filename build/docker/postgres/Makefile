@@ -56,7 +56,6 @@ _generate_ssl_certificate:
 	fi
 
 _test-prerequisites-setup:
-	make _postgres_script
 	make docker-compose-stop docker-compose-start \
 		YML=$(DOCKER_DIR)/postgres/test/docker-compose.postgres.yml
 	sleep 1
@@ -66,5 +65,4 @@ _test-prerequisites-teardown:
 		YML=$(DOCKER_DIR)/postgres/test/docker-compose.postgres.yml
 
 _POSTGRES_SCRIPT := $(DOCKER_DIR)/postgres/assets/sql/00-version.sql
-_postgres_script:
-	echo "select version();" > $(_POSTGRES_SCRIPT)
+
