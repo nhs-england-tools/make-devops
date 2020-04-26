@@ -28,6 +28,7 @@ function git-pull {
   for branch in $(git branch | cut -c 3-); do
     if [ $branch != $current ]; then
       git fetch origin $branch:$branch
+      #git rebase origin $branch:$branch
     else
       git pull
     fi

@@ -1,7 +1,15 @@
 version: 2
 jobs:
   build:
-    machine: true
+    machine:
+      image: ubuntu-1604:202004-01
     steps:
       - checkout
-      - run: make --version
+      - run:
+          name: Show Variables
+          command: |
+            make devops-print-variables
+      - run:
+          name: Run Test Suite
+          command: |
+            make devops-test-suite || make devops-test-suite DEBUG=1

@@ -61,6 +61,7 @@ docker-build docker-image: ### Build Docker image - mandatory: NAME; optional: V
 
 docker-test: ### Test image - mandatory: NAME; optional: ARGS,CMD,GOSS_OPTS
 	GOSS_FILES_PATH=$(DOCKER_DIR)/$(NAME)/test \
+	GOSS_FILES_STRATEGY=cp \
 	CONTAINER_LOG_OUTPUT=$(TMP_DIR)/container-$(NAME)-$(BUILD_HASH)-$(BUILD_ID).log \
 	$(GOSS_OPTS) \
 	dgoss run --interactive $(_TTY) \
@@ -358,7 +359,7 @@ docker-run-node: ### Run node container - mandatory: CMD; optional: DIR,ARGS=[Do
 			/bin/sh -c " \
 				groupadd default -g $$(id -g) 2> /dev/null ||: && \
 				useradd default -u $$(id -u) -g $$(id -g) 2> /dev/null ||: && \
-				chown $$(id -u):$$(id -g) /home/\$$(id -nu $$(id -u)) && \
+				chown $$(id -u):$$(id -g) /home/\$$(id -nu $$(id -u)) ||: && \
 				su \$$(id -nu $$(id -u)) -c 'cd /project/$(DIR); $(CMD)' \
 			"
 
