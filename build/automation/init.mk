@@ -82,6 +82,7 @@ devops-synchronise: ### Synchronise the DevOps automation toolchain scripts used
 		rsync -rav \
 			--include=build/ \
 			--exclude=automation/etc/githooks/scripts/*-pre-commit.sh \
+			--exclude=automation/var/project.mk \
 			--exclude=docker/docker-compose.yml \
 			--exclude=Jenkinsfile \
 			build/* \

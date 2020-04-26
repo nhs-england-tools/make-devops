@@ -69,8 +69,12 @@ docker-test: ### Test image - mandatory: NAME; optional: ARGS,CMD,GOSS_OPTS
 		$(DOCKER_REGISTRY)/$(NAME):latest \
 		$(CMD)
 
-docker-login: ### Log into the Docker registry
-	make aws-ecr-get-login-password | docker login --username AWS --password-stdin $(AWS_ECR)
+docker-login: ### Log into the Docker registry - optional: DOCKER_USERNAME,DOCKER_PASSWORD
+	if [ -n "$(DOCKER_USERNAME)" ] && [ -n "$(DOCKER_PASSWORD)" ]; then
+		make _docker-get-login-password | docker login --username "$(DOCKER_USERNAME)" --password-stdin
+	else
+		make aws-ecr-get-login-password | docker login --username AWS --password-stdin $(AWS_ECR)
+	fi
 
 docker-create-repository: ### Create Docker repository to store an image - mandatory: NAME
 	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=localstack' ||:)" CMD=" \
@@ -542,6 +546,9 @@ docker-run-tools: ### Run tools (Python) container - mandatory: CMD; optional: S
 
 # ==============================================================================
 
+_docker-get-login-password:
+	echo $(DOCKER_PASSWORD)
+
 _docker-get-variables-from-file:
 	if [ -f "$(VARS_FILE)" ]; then
 		vars=$$(cat $(VARS_FILE) | grep -Eo "^[A-Za-z0-9_]*")
@@ -554,6 +561,7 @@ _docker-get-variables-from-file:
 # ==============================================================================
 
 .SILENT: \
+	_docker-get-login-password \
 	_docker-get-variables-from-file \
 	docker-get-image-version \
 	docker-set-image-version
