@@ -1,7 +1,7 @@
 # TODO
 
+- Conditional push to the Docker Hub registry
 - Move library images to a different directory
-- Push images to the Docker hub registry
 - Create reverse proxy configuration for `nginx`
 - 'Untexify' the project, e.g. in the `ssl.mk` module we can find references to the `$(TEXAS_HOSTED_ZONE_NONPROD)` and `$(TEXAS_HOSTED_ZONE_PROD)` variables
 - Add `git publish` alias and other, see [Useful Git aliases](https://gist.github.com/robmiller/6018582)

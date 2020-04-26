@@ -29,6 +29,7 @@ docker-config: ### Configure Docker networking
 	docker network create $(DOCKER_NETWORK) 2> /dev/null ||:
 
 docker-build docker-image: ### Build Docker image - mandatory: NAME; optional: VERSION,NAME_AS=[new name]
+	make _docker-build-library-image
 	make NAME=$(NAME) \
 		docker-create-dockerfile \
 		docker-set-image-version VERSION=$(VERSION)
@@ -58,6 +59,13 @@ docker-build docker-image: ### Build Docker image - mandatory: NAME; optional: V
 		make docker-image-keep-latest-only NAME=$(NAME_AS)
 	fi
 	docker image inspect $(DOCKER_REGISTRY)/$(NAME):latest --format='{{.Size}}'
+
+_docker-build-library-image:
+	if [ -z "$(_DOCKER_BUILD_LIBRARY_IMAGE)" ] && [ -d $(DOCKER_DIR)/$(NAME) ]; then
+		cd $(DOCKER_DIR)/$(NAME)
+		make build _DOCKER_BUILD_LIBRARY_IMAGE=true
+		exit
+	fi
 
 docker-test: ### Test image - mandatory: NAME; optional: ARGS,CMD,GOSS_OPTS
 	GOSS_FILES_PATH=$(DOCKER_DIR)/$(NAME)/test \
