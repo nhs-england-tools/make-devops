@@ -62,8 +62,10 @@ docker-build docker-image: ### Build Docker image - mandatory: NAME; optional: V
 
 _docker-build-library-image:
 	if [ -z "$(_DOCKER_BUILD_LIBRARY_IMAGE)" ] && [ -d $(DOCKER_DIR)/$(NAME) ]; then
-		cd $(DOCKER_DIR)/$(NAME)
-		make build _DOCKER_BUILD_LIBRARY_IMAGE=true
+		(
+			cd $(DOCKER_DIR)/$(NAME)
+			make build _DOCKER_BUILD_LIBRARY_IMAGE=true
+		)
 		exit
 	fi
 

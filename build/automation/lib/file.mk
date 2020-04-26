@@ -7,6 +7,7 @@ file-remove-content: ### Remove multiline content from given file - mandatory: F
 	chmod $$permissions $(FILE)
 
 file-replace-variables: ### Replace all variables in given file - mandatory: FILE
+	echo "Replace variables in '$(FILE)'"
 	for str in $$(cat $(FILE) | grep -Eo "[A-Za-z0-9_]*_TO_REPLACE" | sort | uniq); do
 		key=$$(cut -d "=" -f1 <<<"$$str" | sed "s/_TO_REPLACE//g")
 		value=$$(echo $$(eval echo "\$$$$key"))

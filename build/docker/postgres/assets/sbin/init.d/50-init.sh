@@ -45,6 +45,7 @@ function run_postgres() {
 
 function _replace_variables() {
   file=$1
+  echo "Replace variables in '$file'"
   for str in $(cat $file | grep -Eo "[A-Za-z0-9_]*_TO_REPLACE" | sort | uniq); do
     key=$(cut -d "=" -f1 <<<"$str" | sed "s/_TO_REPLACE//g")
     value=$(echo $(eval echo "\$$key"))

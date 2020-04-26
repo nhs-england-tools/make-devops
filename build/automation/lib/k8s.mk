@@ -35,16 +35,6 @@ k8s-undeploy-job: ### Remove Kubernetes resources from job namespace
 	fi
 
 k8s-replace-variables: ### Replace variables in base and overlay of a stack - mandatory: STACK=[name],PROFILE=[name]
-	function _replace_variables() {
-		file=$$1
-		for str in $$(cat $$file | grep -Eo "[A-Za-z0-9_]*_TO_REPLACE" | sort | uniq); do
-			key=$$(cut -d "=" -f1 <<<"$$str" | sed "s/_TO_REPLACE//g")
-			value=$$(echo $$(eval echo "\$$$$key"))
-			[ -z "$$value" ] && echo "WARNING: Variable $$key has no value in '$$file'" || sed -i \
-				"s;$${key}_TO_REPLACE;$${value//&/\\&};g" \
-				$$file ||:
-		done
-	}
 	rsync -rav \
 		--include=*.yaml \
 		$(K8S_DIR)/$(STACK)/base/template/* \
@@ -61,7 +51,7 @@ k8s-replace-variables: ### Replace variables in base and overlay of a stack - ma
 	)
 	export K8S_TTL=$$(make k8s-get-namespace-ttl)
 	for file in $${files[@]}; do
-		_replace_variables $$file
+		make file-replace-variables FILE=$$file
 	done
 
 k8s-get-namespace-ttl: ### Get the length of time for the namespace to live
