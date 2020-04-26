@@ -43,8 +43,6 @@ push:
 
 clean:
 	make docker-image-clean NAME=postgres
-	find $(DOCKER_DIR)/postgres/assets/etc/postgresql -mindepth 1 -maxdepth 1 -not -name '.gitignore' -not -name 'postgresql.conf' -print | xargs rm -rfv
-	find $(DOCKER_DIR)/postgres/assets/sql -mindepth 1 -maxdepth 1 -not -name '.gitignore' -print | xargs rm -rfv
 
 # ==============================================================================
 
@@ -63,6 +61,3 @@ _test-prerequisites-setup:
 _test-prerequisites-teardown:
 	make docker-compose-stop \
 		YML=$(DOCKER_DIR)/postgres/test/docker-compose.postgres.yml
-
-_POSTGRES_SCRIPT := $(DOCKER_DIR)/postgres/assets/sql/00-version.sql
-
