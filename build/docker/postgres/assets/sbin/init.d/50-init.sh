@@ -31,19 +31,19 @@ function run_scripts() {
   dir=${1:-/sql}
   for file in $dir/*; do
     echo "Running script: '$file'"
-    replace_variables $file
+    _replace_variables $file
     psql "postgres://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}" -f $file
   done
 }
 
 function run_postgres() {
   for file in /docker-entrypoint-initdb.d/*; do
-    replace_variables $file
+    _replace_variables $file
   done
   exec /usr/local/bin/docker-entrypoint.sh postgres -c config_file=/etc/postgresql/postgresql.conf
 }
 
-function replace_variables() {
+function _replace_variables() {
   file=$1
   for str in $(cat $file | grep -Eo "[A-Za-z0-9_]*_TO_REPLACE" | sort | uniq); do
     key=$(cut -d "=" -f1 <<<"$str" | sed "s/_TO_REPLACE//g")

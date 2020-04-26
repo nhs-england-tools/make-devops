@@ -61,7 +61,6 @@ docker-build docker-image: ### Build Docker image - mandatory: NAME; optional: V
 
 docker-test: ### Test image - mandatory: NAME; optional: ARGS,CMD,GOSS_OPTS
 	GOSS_FILES_PATH=$(DOCKER_DIR)/$(NAME)/test \
-	GOSS_FILES_STRATEGY=cp \
 	CONTAINER_LOG_OUTPUT=$(TMP_DIR)/container-$(NAME)-$(BUILD_HASH)-$(BUILD_ID).log \
 	$(GOSS_OPTS) \
 	dgoss run --interactive $(_TTY) \

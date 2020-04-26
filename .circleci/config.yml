@@ -16,24 +16,27 @@ jobs:
       - run:
           name: Push 'nginx' image
           command: |
-            make NAME=nginx DOCKER_USERNAME=$DOCKER_USERNAME DOCKER_PASSWORD=$DOCKER_PASSWORD \
-              docker-build \
-              docker-test \
-              docker-login \
-              docker-push
+            make docker-login DOCKER_USERNAME=$DOCKER_USERNAME DOCKER_PASSWORD=$DOCKER_PASSWORD
+            cd build/docker/nginx
+            make \
+              build \
+              test \
+              push
       - run:
           name: Push 'postgres' image
           command: |
-            make NAME=postgres DOCKER_USERNAME=$DOCKER_USERNAME DOCKER_PASSWORD=$DOCKER_PASSWORD \
-              docker-build \
-              docker-test \
-              docker-login \
-              docker-push
+            make docker-login DOCKER_USERNAME=$DOCKER_USERNAME DOCKER_PASSWORD=$DOCKER_PASSWORD
+            cd build/docker/postgres
+            make \
+              build \
+              test \
+              push
       - run:
           name: Push 'tools' image
           command: |
-            make NAME=tools DOCKER_USERNAME=$DOCKER_USERNAME DOCKER_PASSWORD=$DOCKER_PASSWORD \
-              docker-build \
-              docker-test \
-              docker-login \
-              docker-push
+            make docker-login DOCKER_USERNAME=$DOCKER_USERNAME DOCKER_PASSWORD=$DOCKER_PASSWORD
+            cd build/docker/tools
+            make \
+              build \
+              test \
+              push

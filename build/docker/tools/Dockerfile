@@ -1,14 +1,17 @@
 FROM python:latest
 
-ENV DEBIAN_FRONTEND="noninteractive"
+ENV \
+    DEBIAN_FRONTEND="noninteractive" \
+    TZ="Europe/London" \
+    LANG="C.UTF-8" \
+    LC_ALL="C.UTF-8"
 
 RUN set -ex && \
     \
     # Install base packages
-    echo "APT::Install-Recommends 0;\nAPT::Install-Suggests 0;" > /etc/apt/apt.conf.d/99config && \
-    apt-get --yes update && \
-    apt-get --yes upgrade && \
-    apt-get --yes install \
+    apt-get update --yes && \
+    apt-get upgrade --yes && \
+    apt-get install --yes --no-install-recommends \
         curl \
         netcat \
         wget \

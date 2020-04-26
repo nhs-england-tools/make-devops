@@ -9,5 +9,8 @@ build:
 test:
 	make docker-test NAME=tools
 
+push:
+	make docker-push NAME=tools
+
 clean:
 	make docker-image-clean NAME=tools
