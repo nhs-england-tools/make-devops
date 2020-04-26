@@ -28,11 +28,16 @@ DOCKER_CLIENT_TIMEOUT := $(or $(DOCKER_CLIENT_TIMEOUT), 6000)
 docker-config: ### Configure Docker networking
 	docker network create $(DOCKER_NETWORK) 2> /dev/null ||:
 
-docker-build docker-image: ### Build Docker image - mandatory: NAME; optional: VERSION,NAME_AS=[new name]
+docker-build docker-image: ### Build Docker image - mandatory: NAME; optional: VERSION,NAME_AS=[new name],CACHE_FROM=true
 	make _docker-build-library-image
 	make NAME=$(NAME) \
 		docker-create-dockerfile \
 		docker-set-image-version VERSION=$(VERSION)
+	cache_from=
+	if [[ "$(CACHE_FROM)" =~ ^(true|yes|y|on|1|TRUE|YES|Y|ON)$$ ]]; then
+		make docker-pull NAME=$(NAME) TAG=latest
+		cache_from="--cache-from $(DOCKER_REGISTRY)/$(NAME):latest"
+	fi
 	docker build --rm \
 		--build-arg IMAGE=$(DOCKER_REGISTRY)/$(NAME) \
 		--build-arg VERSION=$$(cat $(DOCKER_DIR)/$(NAME)/.version) \
@@ -40,7 +45,7 @@ docker-build docker-image: ### Build Docker image - mandatory: NAME; optional: V
 		--build-arg BUILD_DATE=$(BUILD_DATE) \
 		--build-arg BUILD_HASH=$(BUILD_HASH) \
 		--build-arg BUILD_REPO=$(BUILD_REPO) \
-		$(BUILD_OPTS) \
+		$(BUILD_OPTS) $$cache_from \
 		--file $(DOCKER_DIR)/$(NAME)/Dockerfile.effective \
 		--tag $(DOCKER_REGISTRY)/$(NAME):$$(cat $(DOCKER_DIR)/$(NAME)/.version) \
 		$(DOCKER_DIR)/$(NAME)
@@ -108,7 +113,7 @@ docker-push: ### Push Docker image - mandatory: NAME; optional: VERSION
 	docker push $(DOCKER_REGISTRY)/$(NAME):latest
 
 docker-pull: ### Pull Docker image - mandatory: NAME,TAG
-	docker pull $(DOCKER_REGISTRY)/$(NAME):$(TAG)
+	docker pull $(DOCKER_REGISTRY)/$(NAME):$(TAG) ||:
 
 docker-tag: ### Tag latest or provide arguments - mandatory: NAME,TAG|[SOURCE,TARGET]
 	if [ -n "$(SOURCE)" ] && [ -n "$(TARGET)" ]; then

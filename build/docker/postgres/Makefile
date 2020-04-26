@@ -5,7 +5,7 @@ include $(abspath $(lastword $(MAKEFILE_LIST))/../../../automation/init.mk)
 
 build:
 	make _generate_ssl_certificate
-	make docker-build NAME=postgres
+	make docker-build NAME=postgres CACHE_FROM=true
 
 test:
 	make \

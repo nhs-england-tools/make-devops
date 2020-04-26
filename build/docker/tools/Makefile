@@ -4,7 +4,7 @@ include $(abspath $(lastword $(MAKEFILE_LIST))/../../../automation/init.mk)
 # ==============================================================================
 
 build:
-	make docker-build NAME=tools
+	make docker-build NAME=tools CACHE_FROM=true
 
 test:
 	make docker-test NAME=tools

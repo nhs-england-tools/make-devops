@@ -7,7 +7,7 @@ build:
 	make \
 		_generate_ssl_certificate \
 		_nginx_index_html_file
-	make docker-build NAME=nginx
+	make docker-build NAME=nginx CACHE_FROM=true
 
 test:
 	make docker-test NAME=nginx ARGS=" \
