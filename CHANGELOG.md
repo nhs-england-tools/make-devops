@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 ## [Unreleased]
 
+## [0.7.0] - 2020-04-27
+
+### Changed
+
+- Refactoring
+
 ## [0.6.7] - 2020-03-19
 
 ### Added
@@ -231,7 +237,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 - Initial release of the DevOps automation toolchain scripts
 
-[unreleased]: https://github.com/nhsd-ddce/make-devops/compare/v0.6.7...master
+[unreleased]: https://github.com/nhsd-ddce/make-devops/compare/v0.7.0...master
+[0.7.0]: https://github.com/nhsd-ddce/make-devops/compare/v0.6.7...v0.7.0
 [0.6.7]: https://github.com/nhsd-ddce/make-devops/compare/v0.6.6...v0.6.7
 [0.6.6]: https://github.com/nhsd-ddce/make-devops/compare/v0.6.5...v0.6.6
 [0.6.5]: https://github.com/nhsd-ddce/make-devops/compare/v0.6.0...v0.6.5
