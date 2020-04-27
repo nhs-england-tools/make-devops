@@ -71,7 +71,7 @@ terraform-export-variables-from-shell: ### Convert environment variables as TF_V
 	fi
 
 terraform-export-variables-from-json: ### Convert JSON to Terraform input exported as TF_VAR_[name] variables - mandatory: JSON='{"key":"value"}'|JSON="$$(echo '$(JSON)')"; returns: [variables export]
-	for str in $$(echo '$(JSON)' | make -s docker-run-tools CMD="jq -rf $(JQ_PROGS_DIR_REL)/json-to-env-vars.jq"); do
+	for str in $$(echo '$(JSON)' | make -s docker-run-tools CMD="jq -rf $(JSON_DIR_REL)/json-to-env-vars.jq"); do
 		key=$$(cut -d "=" -f1 <<<"$$str" | tr '[:upper:]' '[:lower:]')
 		value=$$(cut -d "=" -f2- <<<"$$str")
 		echo "export TF_VAR_$${key}=$${value}"
