@@ -37,7 +37,7 @@ docker-build docker-image: ### Build Docker image - mandatory: NAME; optional: V
 	# Cache
 	cache_from=
 	if [[ "$(CACHE_FROM)" =~ ^(true|yes|y|on|1|TRUE|YES|Y|ON)$$ ]]; then
-		make docker-pull NAME=$(NAME) TAG=latest
+		make docker-pull NAME=$(NAME) VERSION=latest
 		cache_from="--cache-from $(DOCKER_REGISTRY)/$(NAME):latest"
 	fi
 	# Build
@@ -97,8 +97,6 @@ docker-create-repository: ### Create Docker repository to store an image - manda
 			--policy-text file://$(LIB_DIR_REL)/aws/ecr-policy.json \
 	"
 
-# TODO: VERSION vs. TAG
-
 docker-push: ### Push Docker image - mandatory: NAME; optional: VERSION
 	if [ -n "$(VERSION)" ]; then
 		docker push $(DOCKER_REGISTRY)/$(NAME):$(VERSION)
@@ -107,18 +105,18 @@ docker-push: ### Push Docker image - mandatory: NAME; optional: VERSION
 	fi
 	docker push $(DOCKER_REGISTRY)/$(NAME):latest
 
-docker-pull: ### Pull Docker image - mandatory: NAME,TAG
-	docker pull $(DOCKER_REGISTRY)/$(NAME):$(TAG) ||:
+docker-pull: ### Pull Docker image - mandatory: NAME,VERSION|TAG
+	docker pull $(DOCKER_REGISTRY)/$(NAME):$(or $(VERSION), $(TAG)) ||:
 
-docker-tag: ### Tag latest or provide arguments - mandatory: NAME,TAG|[SOURCE,TARGET]
+docker-tag: ### Tag latest or provide arguments - mandatory: NAME,VERSION|TAG|[SOURCE,TARGET]
 	if [ -n "$(SOURCE)" ] && [ -n "$(TARGET)" ]; then
 		docker tag \
 			$(DOCKER_REGISTRY)/$(NAME):$(SOURCE) \
 			$(DOCKER_REGISTRY)/$(NAME):$(TARGET)
-	elif [ -n "$(TAG)" ]; then
+	elif [ -n "$(or $(VERSION), $(TAG))" ]; then
 		docker tag \
 			$(DOCKER_REGISTRY)/$(NAME):latest \
-			$(DOCKER_REGISTRY)/$(NAME):$(TAG)
+			$(DOCKER_REGISTRY)/$(NAME):$(or $(VERSION), $(TAG))
 	fi
 
 docker-clean: ### Clean Docker files
@@ -216,19 +214,19 @@ docker-image-clean: docker-image-stop ### Clean up container and image resources
 		$$(make _docker-get-dir)/$(NAME)-*-image.tar.gz \
 		$$(make _docker-get-dir)/Dockerfile.effective
 
-docker-image-save: ### Save image as a flat file - mandatory: NAME; optional: TAG
-	tag=$(TAG)
-	if [ -z "$$tag" ]; then
-		tag=$$(make docker-get-image-version)
+docker-image-save: ### Save image as a flat file - mandatory: NAME; optional: VERSION|TAG
+	version=$(or $(VERSION), $(TAG))
+	if [ -z "$$version" ]; then
+		version=$$(make docker-get-image-version)
 	fi
-	docker save $(DOCKER_REGISTRY)/$(NAME):$$tag | gzip > $$(make _docker-get-dir)/$(NAME)-$$tag-image.tar.gz
+	docker save $(DOCKER_REGISTRY)/$(NAME):$$version | gzip > $$(make _docker-get-dir)/$(NAME)-$$version-image.tar.gz
 
-docker-image-load: ### Load image from a flat file - mandatory: NAME; optional: TAG
-	tag=$(TAG)
-	if [ -z "$$tag" ]; then
-		tag=$$(make docker-get-image-version)
+docker-image-load: ### Load image from a flat file - mandatory: NAME; optional: VERSION|TAG
+	version=$(or $(VERSION), $(TAG))
+	if [ -z "$$version" ]; then
+		version=$$(make docker-get-image-version)
 	fi
-	gunzip -c $$(make _docker-get-dir)/$(NAME)-$$tag-image.tar.gz | docker load
+	gunzip -c $$(make _docker-get-dir)/$(NAME)-$$version-image.tar.gz | docker load
 
 # ==============================================================================
 
@@ -459,7 +457,7 @@ docker-run-postgres: ### Run postgres container - mandatory: CMD; optional: DIR,
 	image=$$([ -n "$(IMAGE)" ] && echo $(IMAGE) || echo $(DOCKER_REGISTRY)/postgres:$(DOCKER_LIBRARY_POSTGRES_VERSION))
 	container=$$([ -n "$(CONTAINER)" ] && echo $(CONTAINER) || echo postgres-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7))
 	if [ -z "$$(docker images --filter=reference="$$image" --quiet)" ]; then
-		make docker-pull NAME=postgres TAG=$(DOCKER_LIBRARY_POSTGRES_VERSION) > /dev/null 2>&1
+		make docker-pull NAME=postgres VERSION=$(DOCKER_LIBRARY_POSTGRES_VERSION) > /dev/null 2>&1
 		make docker-build NAME=postgres CACHE_FROM=true > /dev/null 2>&1
 	fi
 	docker run --interactive $(_TTY) --rm \
@@ -492,7 +490,7 @@ docker-run-tools: ### Run tools (Python) container - mandatory: CMD; optional: S
 	image=$$([ -n "$(IMAGE)" ] && echo $(IMAGE) || echo $(DOCKER_REGISTRY)/tools:$(DOCKER_LIBRARY_TOOLS_VERSION))
 	container=$$([ -n "$(CONTAINER)" ] && echo $(CONTAINER) || echo tools-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7))
 	if [ -z "$$(docker images --filter=reference="$$image" --quiet)" ]; then
-		make docker-pull NAME=tools TAG=$(DOCKER_LIBRARY_TOOLS_VERSION) > /dev/null 2>&1
+		make docker-pull NAME=tools VERSION=$(DOCKER_LIBRARY_TOOLS_VERSION) > /dev/null 2>&1
 		make docker-build NAME=tools CACHE_FROM=true > /dev/null 2>&1
 	fi
 	if [[ ! "$(SH)" =~ ^(true|yes|y|on|1|TRUE|YES|Y|ON)$$ ]]; then

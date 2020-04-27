@@ -184,7 +184,7 @@ test-docker-tag:
 	make docker-image-clean NAME=postgres
 	make docker-build NAME=postgres
 	# act
-	make docker-tag NAME=postgres TAG=version
+	make docker-tag NAME=postgres VERSION=version
 	# assert
 	mk_test $(@) 1 -eq $$(docker images --filter=reference="$(DOCKER_REGISTRY)/postgres:version" --quiet | wc -l)
 
