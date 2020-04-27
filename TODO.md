@@ -1,5 +1,6 @@
 # TODO
 
+- Confirm `--cache-from` for building Docker images works
 - Conditional push to the Docker Hub registry
 - Move library images to a different directory
 - Create reverse proxy configuration for `nginx`

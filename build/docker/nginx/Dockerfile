@@ -6,8 +6,6 @@ ENV \
     LANG="C.UTF-8" \
     LC_ALL="C.UTF-8"
 
-COPY assets/ /
-
 RUN set -ex && \
     \
     # Install base packages
@@ -16,13 +14,17 @@ RUN set -ex && \
     apt-get install --yes --no-install-recommends \
         ca-certificates && \
     \
+    # Clean up
+    rm -rf /tmp/* /var/tmp/* /var/lib/apt/lists/* /var/cache/apt/*
+
+COPY assets/ /
+
+RUN set -ex && \
+    \
     # Trust certificate
     chmod 400 /certificate/* && \
     cp /certificate/*.crt /usr/local/share/ca-certificates && \
-    update-ca-certificates && \
-    \
-    # Clean up
-    rm -rf /tmp/* /var/tmp/* /var/lib/apt/lists/* /var/cache/apt/*
+    update-ca-certificates
 
 WORKDIR /application
 EXPOSE 8080 8443
