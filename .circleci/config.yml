@@ -23,6 +23,7 @@ jobs:
               test \
               push \
               clean
+            curl --request POST "https://hooks.microbadger.com/images/nhsd/nginx/Yig4ioTnvCL1zCIJnBTypPLR1ic="
       - run:
           name: Push 'postgres' image
           command: |
@@ -33,6 +34,7 @@ jobs:
               test \
               push \
               clean
+            curl --request POST "https://hooks.microbadger.com/images/nhsd/postgres/ei_kYbqtiwOtONIc5PV9_ZB-ANQ="
       - run:
           name: Push 'tools' image
           command: |
@@ -43,3 +45,4 @@ jobs:
               test \
               push \
               clean
+            curl --request POST "https://hooks.microbadger.com/images/nhsd/tools/D3mmi11C-dT0VlRZZv2vqimdYJ0="

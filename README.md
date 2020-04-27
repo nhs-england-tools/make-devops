@@ -2,7 +2,14 @@
 
 If you hear your teams or individuals saying _"It will take days to onboard a new member..."_, _"It works on my machine..."_ or _"Our pipeline is to complex and no one really understands how it all works..."_ then perhaps you need to take an interest in this project.
 
-[![CircleCI](https://circleci.com/gh/nhsd-ddce/make-devops.svg?style=shield)](https://circleci.com/gh/nhsd-ddce/make-devops)
+## Status
+
+| Category                | Badges                                                                                                                                                                                                                                          |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Automated Test          | [![CircleCI](https://circleci.com/gh/nhsd-ddce/make-devops.svg?style=shield)](https://circleci.com/gh/nhsd-ddce/make-devops)                                                                                                                    |
+| Docker `nginx` image    | [![Version](https://images.microbadger.com/badges/version/nhsd/nginx.svg)](http://microbadger.com/images/nhsd/nginx)&nbsp;[![Docker Hub](https://img.shields.io/docker/pulls/nhsd/nginx.svg)](https://hub.docker.com/r/nhsd/nginx/)             |
+| Docker `postgres` image | [![Version](https://images.microbadger.com/badges/version/nhsd/postgres.svg)](http://microbadger.com/images/nhsd/postgres)&nbsp;[![Docker Hub](https://img.shields.io/docker/pulls/nhsd/postgres.svg)](https://hub.docker.com/r/nhsd/postgres/) |
+| Docker `tools` image    | [![Version](https://images.microbadger.com/badges/version/nhsd/tools.svg)](http://microbadger.com/images/nhsd/tools)&nbsp;[![Docker Hub](https://img.shields.io/docker/pulls/nhsd/tools.svg)](https://hub.docker.com/r/nhsd/tools/)             |
 
 ## Use cases
 
