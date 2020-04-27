@@ -1,5 +1,5 @@
-PROJECT_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))/../../..))
-include $(abspath $(lastword $(MAKEFILE_LIST))/../../../automation/init.mk)
+PROJECT_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))/../../../../..))
+include $(abspath $(lastword $(MAKEFILE_LIST))/../../../../init.mk)
 
 # ==============================================================================
 

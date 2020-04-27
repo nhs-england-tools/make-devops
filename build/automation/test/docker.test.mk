@@ -95,7 +95,7 @@ test-docker-clean:
 	# act
 	make docker-clean
 	# assert
-	mk_test $(@) 0 -eq $$(find $(DOCKER_DIR) -type f -name '.version' | wc -l)
+	mk_test $(@) 0 -eq $$(find $(DOCKER_LIBRARY_DIR) -type f -name '.version' | wc -l)
 
 test-docker-prune:
 	# act
@@ -108,15 +108,15 @@ test-docker-create-dockerfile:
 	# act
 	make docker-create-dockerfile NAME=$(TEST_DOCKER_IMAGE)
 	# assert
-	mk_test $(@) -n "$$(cat $(DOCKER_DIR)/$(TEST_DOCKER_IMAGE)/Dockerfile.effective | grep -Eo METADATA | wc -l)"
+	mk_test $(@) -n "$$(cat $(DOCKER_LIBRARY_DIR)/$(TEST_DOCKER_IMAGE)/Dockerfile.effective | grep -Eo METADATA | wc -l)"
 
 test-docker-set-get-image-version:
 	# arrange
-	cp -rf $(DOCKER_DIR)/$(TEST_DOCKER_IMAGE) $(TMP_DIR)
+	cp -rf $(DOCKER_LIBRARY_DIR)/$(TEST_DOCKER_IMAGE) $(TMP_DIR)
 	echo "YYYYmmddHHMM-hash" > $(TMP_DIR)/$(TEST_DOCKER_IMAGE)/VERSION
 	# act
-	make docker-set-image-version NAME=$(TEST_DOCKER_IMAGE) DOCKER_DIR=$(TMP_DIR)
-	version=$$(make docker-get-image-version NAME=$(TEST_DOCKER_IMAGE) DOCKER_DIR=$(TMP_DIR))
+	make docker-set-image-version NAME=$(TEST_DOCKER_IMAGE) DOCKER_CUSTOM_DIR=$(TMP_DIR)
+	version=$$(make docker-get-image-version NAME=$(TEST_DOCKER_IMAGE) DOCKER_CUSTOM_DIR=$(TMP_DIR))
 	# assert
 	mk_test $(@) "$$(date --date=$(BUILD_DATE) -u +"%Y%m%d%H%M")-$$(git rev-parse --short HEAD)" = $$version
 
@@ -166,7 +166,7 @@ test-docker-image-save:
 	# act
 	make docker-image-save NAME=postgres
 	# assert
-	mk_test $(@) 1 -eq $$(ls $(DOCKER_DIR)/postgres/postgres-*-image.tar.gz | wc -l)
+	mk_test $(@) 1 -eq $$(ls $(DOCKER_LIBRARY_DIR)/postgres/postgres-*-image.tar.gz | wc -l)
 
 test-docker-image-load:
 	# arrange
@@ -354,7 +354,7 @@ test-docker-run-specify-image:
 
 test-docker-nginx-image:
 	# arrange
-	cd $(DOCKER_DIR)/nginx
+	cd $(DOCKER_LIBRARY_DIR)/nginx
 	# act
 	make build test
 	# assert
@@ -364,7 +364,7 @@ test-docker-nginx-image:
 
 test-docker-postgres-image:
 	# arrange
-	cd $(DOCKER_DIR)/postgres
+	cd $(DOCKER_LIBRARY_DIR)/postgres
 	# act
 	make build test
 	# assert
@@ -374,7 +374,7 @@ test-docker-postgres-image:
 
 test-docker-tools-image:
 	# arrange
-	cd $(DOCKER_DIR)/tools
+	cd $(DOCKER_LIBRARY_DIR)/tools
 	# act
 	make build test
 	# assert

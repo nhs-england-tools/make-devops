@@ -1,5 +1,5 @@
-PROJECT_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))/../../..))
-include $(abspath $(lastword $(MAKEFILE_LIST))/../../../automation/init.mk)
+PROJECT_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))/../../../../..))
+include $(abspath $(lastword $(MAKEFILE_LIST))/../../../../init.mk)
 
 # ==============================================================================
 
@@ -29,7 +29,7 @@ _test-scripts-image:
 _test-scripts-mount:
 	make _test-prerequisites-setup
 	make docker-run-postgres \
-		ARGS="--volume $(DOCKER_DIR)/postgres/assets/sql:/sql" \
+		ARGS="--volume $(DOCKER_LIBRARY_DIR)/postgres/assets/sql:/sql" \
 		CMD="scripts /sql"
 	make _test-prerequisites-teardown
 
@@ -48,17 +48,17 @@ clean:
 # ==============================================================================
 
 _generate_ssl_certificate:
-	if [ ! -f $(DOCKER_DIR)/postgres/assets/etc/postgresql/certificate.pem ]; then
+	if [ ! -f $(DOCKER_LIBRARY_DIR)/postgres/assets/etc/postgresql/certificate.pem ]; then
 		make ssl-generate-certificate-project \
-			DIR=$(DOCKER_DIR)/postgres/assets/etc/postgresql \
+			DIR=$(DOCKER_LIBRARY_DIR)/postgres/assets/etc/postgresql \
 			NAME=certificate
 	fi
 
 _test-prerequisites-setup:
 	make docker-compose-stop docker-compose-start \
-		YML=$(DOCKER_DIR)/postgres/test/docker-compose.postgres.yml
+		YML=$(DOCKER_LIBRARY_DIR)/postgres/test/docker-compose.postgres.yml
 	sleep 1
 
 _test-prerequisites-teardown:
 	make docker-compose-stop \
-		YML=$(DOCKER_DIR)/postgres/test/docker-compose.postgres.yml
+		YML=$(DOCKER_LIBRARY_DIR)/postgres/test/docker-compose.postgres.yml

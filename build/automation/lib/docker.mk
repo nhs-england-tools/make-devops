@@ -1,5 +1,6 @@
 DOCKER_COMPOSE_YML = $(DOCKER_DIR)/docker-compose.yml
 DOCKER_DIR = $(PROJECT_DIR)/build/docker
+DOCKER_LIBRARY_DIR = $(LIB_DIR)/docker
 DOCKER_NETWORK = $(PROJECT_GROUP)/$(PROJECT_NAME)/$(BUILD_ID)
 DOCKER_REGISTRY = $(AWS_ECR)/$(PROJECT_GROUP)/$(PROJECT_NAME)
 
@@ -16,9 +17,9 @@ DOCKER_POSTGRES_VERSION = 12.2
 DOCKER_PYTHON_VERSION = $(PYTHON_VERSION)-slim
 DOCKER_TERRAFORM_VERSION = $(or $(TEXAS_TERRAFORM_VERSION), 0.12.20)
 
-DOCKER_LIBRARY_NGINX_VERSION = $(shell cat $(DOCKER_DIR)/nginx/.version 2> /dev/null || cat $(DOCKER_DIR)/nginx/VERSION 2> /dev/null || echo unknown)
-DOCKER_LIBRARY_POSTGRES_VERSION = $(shell cat $(DOCKER_DIR)/postgres/.version 2> /dev/null || cat $(DOCKER_DIR)/postgres/VERSION 2> /dev/null || echo unknown)
-DOCKER_LIBRARY_TOOLS_VERSION = $(shell cat $(DOCKER_DIR)/tools/.version 2> /dev/null || cat $(DOCKER_DIR)/tools/VERSION 2> /dev/null || echo unknown)
+DOCKER_LIBRARY_NGINX_VERSION = $(shell cat $(DOCKER_LIBRARY_DIR)/nginx/.version 2> /dev/null || cat $(DOCKER_LIBRARY_DIR)/nginx/VERSION 2> /dev/null || echo unknown)
+DOCKER_LIBRARY_POSTGRES_VERSION = $(shell cat $(DOCKER_LIBRARY_DIR)/postgres/.version 2> /dev/null || cat $(DOCKER_LIBRARY_DIR)/postgres/VERSION 2> /dev/null || echo unknown)
+DOCKER_LIBRARY_TOOLS_VERSION = $(shell cat $(DOCKER_LIBRARY_DIR)/tools/.version 2> /dev/null || cat $(DOCKER_LIBRARY_DIR)/tools/VERSION 2> /dev/null || echo unknown)
 
 COMPOSE_HTTP_TIMEOUT := $(or $(COMPOSE_HTTP_TIMEOUT), 6000)
 DOCKER_CLIENT_TIMEOUT := $(or $(DOCKER_CLIENT_TIMEOUT), 6000)
@@ -29,34 +30,38 @@ docker-config: ### Configure Docker networking
 	docker network create $(DOCKER_NETWORK) 2> /dev/null ||:
 
 docker-build docker-image: ### Build Docker image - mandatory: NAME; optional: VERSION,NAME_AS=[new name],CACHE_FROM=true
+	# Dockerfile
 	make NAME=$(NAME) \
 		docker-create-dockerfile \
 		docker-set-image-version VERSION=$(VERSION)
+	# Cache
 	cache_from=
 	if [[ "$(CACHE_FROM)" =~ ^(true|yes|y|on|1|TRUE|YES|Y|ON)$$ ]]; then
 		make docker-pull NAME=$(NAME) TAG=latest
 		cache_from="--cache-from $(DOCKER_REGISTRY)/$(NAME):latest"
 	fi
+	# Build
 	docker build --rm \
 		--build-arg IMAGE=$(DOCKER_REGISTRY)/$(NAME) \
-		--build-arg VERSION=$$(cat $(DOCKER_DIR)/$(NAME)/.version) \
+		--build-arg VERSION=$$(make docker-get-image-version) \
 		--build-arg BUILD_ID=$(BUILD_ID) \
 		--build-arg BUILD_DATE=$(BUILD_DATE) \
 		--build-arg BUILD_HASH=$(BUILD_HASH) \
 		--build-arg BUILD_REPO=$(BUILD_REPO) \
 		$(BUILD_OPTS) $$cache_from \
-		--file $(DOCKER_DIR)/$(NAME)/Dockerfile.effective \
-		--tag $(DOCKER_REGISTRY)/$(NAME):$$(cat $(DOCKER_DIR)/$(NAME)/.version) \
-		$(DOCKER_DIR)/$(NAME)
+		--file $$(make _docker-get-dir)/Dockerfile.effective \
+		--tag $(DOCKER_REGISTRY)/$(NAME):$$(make docker-get-image-version) \
+		$$(make _docker-get-dir)
+	# Tag
 	docker tag \
-		$(DOCKER_REGISTRY)/$(NAME):$$(cat $(DOCKER_DIR)/$(NAME)/.version) \
+		$(DOCKER_REGISTRY)/$(NAME):$$(make docker-get-image-version) \
 		$(DOCKER_REGISTRY)/$(NAME):latest
 	docker rmi --force $$(docker images | grep "<none>" | awk '{ print $$3 }') 2> /dev/null ||:
 	make docker-image-keep-latest-only NAME=$(NAME)
 	if [ -n "$(NAME_AS)" ]; then
 		docker tag \
-			$(DOCKER_REGISTRY)/$(NAME):$$(cat $(DOCKER_DIR)/$(NAME)/.version) \
-			$(DOCKER_REGISTRY)/$(NAME_AS):$$(cat $(DOCKER_DIR)/$(NAME)/.version)
+			$(DOCKER_REGISTRY)/$(NAME):$$(make docker-get-image-version) \
+			$(DOCKER_REGISTRY)/$(NAME_AS):$$(make docker-get-image-version)
 		docker tag \
 			$(DOCKER_REGISTRY)/$(NAME):latest \
 			$(DOCKER_REGISTRY)/$(NAME_AS):latest
@@ -65,7 +70,7 @@ docker-build docker-image: ### Build Docker image - mandatory: NAME; optional: V
 	docker image inspect $(DOCKER_REGISTRY)/$(NAME):latest --format='{{.Size}}'
 
 docker-test: ### Test image - mandatory: NAME; optional: ARGS,CMD,GOSS_OPTS
-	GOSS_FILES_PATH=$(DOCKER_DIR)/$(NAME)/test \
+	GOSS_FILES_PATH=$$(make _docker-get-dir)/test \
 	CONTAINER_LOG_OUTPUT=$(TMP_DIR)/container-$(NAME)-$(BUILD_HASH)-$(BUILD_ID).log \
 	$(GOSS_OPTS) \
 	dgoss run --interactive $(_TTY) \
@@ -98,7 +103,7 @@ docker-push: ### Push Docker image - mandatory: NAME; optional: VERSION
 	if [ -n "$(VERSION)" ]; then
 		docker push $(DOCKER_REGISTRY)/$(NAME):$(VERSION)
 	else
-		docker push $(DOCKER_REGISTRY)/$(NAME):$$(cat $(DOCKER_DIR)/$(NAME)/.version)
+		docker push $(DOCKER_REGISTRY)/$(NAME):$$(make docker-get-image-version)
 	fi
 	docker push $(DOCKER_REGISTRY)/$(NAME):latest
 
@@ -119,6 +124,8 @@ docker-tag: ### Tag latest or provide arguments - mandatory: NAME,TAG|[SOURCE,TA
 docker-clean: ### Clean Docker files
 	find $(DOCKER_DIR) -type f -name '.version' -print0 | xargs -0 rm -v 2> /dev/null ||:
 	find $(DOCKER_DIR) -type f -name 'Dockerfile.effective' -print0 | xargs -0 rm -v 2> /dev/null ||:
+	find $(DOCKER_LIBRARY_DIR) -type f -name '.version' -print0 | xargs -0 rm -v 2> /dev/null ||:
+	find $(DOCKER_LIBRARY_DIR) -type f -name 'Dockerfile.effective' -print0 | xargs -0 rm -v 2> /dev/null ||:
 
 docker-prune: docker-clean ### Clean Docker resources - optional: ALL=true
 	docker rmi --force $$(docker images | grep $(DOCKER_REGISTRY) | awk '{ print $$3 }') 2> /dev/null ||:
@@ -129,8 +136,8 @@ docker-prune: docker-clean ### Clean Docker resources - optional: ALL=true
 
 docker-create-dockerfile: ### Create effective Dockerfile - mandatory: NAME
 	dir=$$(pwd)
-	cd $(DOCKER_DIR)/$(NAME)
-	cat Dockerfile $(LIB_DIR)/docker/Dockerfile.metadata > Dockerfile.effective
+	cd $$(make _docker-get-dir)
+	cat Dockerfile $(DOCKER_LIBRARY_DIR)/Dockerfile.metadata > Dockerfile.effective
 	sed -i " \
 		s#FROM alpine:latest#FROM alpine:${DOCKER_ALPINE_VERSION}#g; \
 		s#FROM elasticsearch:latest#FROM elasticsearch:${DOCKER_ELASTICSEARCH_VERSION}#g; \
@@ -144,13 +151,13 @@ docker-create-dockerfile: ### Create effective Dockerfile - mandatory: NAME
 	cd $$dir
 
 docker-get-image-version: ### Get effective Docker image version - mandatory: NAME
-	cat $(DOCKER_DIR)/$(NAME)/.version
+	cat $$(make _docker-get-dir)/.version 2> /dev/null || cat $$(make _docker-get-dir)/VERSION 2> /dev/null || echo unknown
 
 docker-set-image-version: ### Set effective Docker image version - mandatory: NAME; optional: VERSION
 	if [ -n "$(VERSION)" ]; then
-		echo $(VERSION) > $(DOCKER_DIR)/$(NAME)/.version
+		echo $(VERSION) > $$(make _docker-get-dir)/.version
 	else
-		echo $$(cat $(DOCKER_DIR)/$(NAME)/VERSION) | \
+		echo $$(cat $$(make _docker-get-dir)/VERSION) | \
 			sed "s/YYYY/$$(date --date=$(BUILD_DATE) -u +"%Y")/g" | \
 			sed "s/mm/$$(date --date=$(BUILD_DATE) -u +"%m")/g" | \
 			sed "s/dd/$$(date --date=$(BUILD_DATE) -u +"%d")/g" | \
@@ -158,7 +165,7 @@ docker-set-image-version: ### Set effective Docker image version - mandatory: NA
 			sed "s/MM/$$(date --date=$(BUILD_DATE) -u +"%M")/g" | \
 			sed "s/ss/$$(date --date=$(BUILD_DATE) -u +"%S")/g" | \
 			sed "s/hash/$$(git rev-parse --short HEAD)/g" \
-		> $(DOCKER_DIR)/$(NAME)/.version
+		> $$(make _docker-get-dir)/.version
 	fi
 
 # ==============================================================================
@@ -205,23 +212,23 @@ docker-image-bash: ### Bash into a container - mandatory: NAME
 docker-image-clean: docker-image-stop ### Clean up container and image resources - mandatory: NAME
 	docker rmi --force $$(docker images --filter=reference="$(DOCKER_REGISTRY)/$(NAME):*" --quiet) 2> /dev/null ||:
 	rm -fv \
-		$(DOCKER_DIR)/$(NAME)/.version \
-		$(DOCKER_DIR)/$(NAME)/$(NAME)-*-image.tar.gz \
-		$(DOCKER_DIR)/$(NAME)/Dockerfile.effective
+		$$(make _docker-get-dir)/.version \
+		$$(make _docker-get-dir)/$(NAME)-*-image.tar.gz \
+		$$(make _docker-get-dir)/Dockerfile.effective
 
 docker-image-save: ### Save image as a flat file - mandatory: NAME; optional: TAG
 	tag=$(TAG)
 	if [ -z "$$tag" ]; then
-		tag=$$(cat $(DOCKER_DIR)/$(NAME)/.version)
+		tag=$$(make docker-get-image-version)
 	fi
-	docker save $(DOCKER_REGISTRY)/$(NAME):$$tag | gzip > $(DOCKER_DIR)/$(NAME)/$(NAME)-$$tag-image.tar.gz
+	docker save $(DOCKER_REGISTRY)/$(NAME):$$tag | gzip > $$(make _docker-get-dir)/$(NAME)-$$tag-image.tar.gz
 
 docker-image-load: ### Load image from a flat file - mandatory: NAME; optional: TAG
 	tag=$(TAG)
 	if [ -z "$$tag" ]; then
-		tag=$$(cat $(DOCKER_DIR)/$(NAME)/.version)
+		tag=$$(make docker-get-image-version)
 	fi
-	gunzip -c $(DOCKER_DIR)/$(NAME)/$(NAME)-$$tag-image.tar.gz | docker load
+	gunzip -c $$(make _docker-get-dir)/$(NAME)-$$tag-image.tar.gz | docker load
 
 # ==============================================================================
 
@@ -550,8 +557,14 @@ docker-run-tools: ### Run tools (Python) container - mandatory: CMD; optional: S
 
 # ==============================================================================
 
-_docker-get-login-password:
-	echo $(DOCKER_PASSWORD)
+_docker-get-dir:
+	if [ -d $(DOCKER_CUSTOM_DIR)/$(NAME) ]; then
+		echo $(DOCKER_CUSTOM_DIR)/$(NAME)
+	elif [ -d $(DOCKER_LIBRARY_DIR)/$(NAME) ]; then
+		echo $(DOCKER_LIBRARY_DIR)/$(NAME)
+	else
+		echo $(DOCKER_DIR)/$(NAME)
+	fi
 
 _docker-get-variables-from-file:
 	if [ -f "$(VARS_FILE)" ]; then
@@ -562,9 +575,13 @@ _docker-get-variables-from-file:
 		done
 	fi
 
+_docker-get-login-password:
+	echo $(DOCKER_PASSWORD)
+
 # ==============================================================================
 
 .SILENT: \
+	_docker-get-dir \
 	_docker-get-login-password \
 	_docker-get-variables-from-file \
 	docker-get-image-version \

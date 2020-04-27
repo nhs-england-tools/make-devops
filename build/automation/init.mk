@@ -114,7 +114,7 @@ devops-synchronise: ### Synchronise the DevOps automation toolchain scripts used
 			~/bin/texas-mfa.py \
 			~/bin/toggle-natural-scrolling.sh \
 			$(BIN_DIR)/markdown.pl \
-			$(DOCKER_DIR)/Dockerfile.metadata \
+			$(DOCKER_LIBRARY_DIR)/Dockerfile.metadata \
 			$(ETC_DIR)/platform-texas* \
 			$(LIB_DIR)/dev.mk \
 			$(LIB_DIR)/fix

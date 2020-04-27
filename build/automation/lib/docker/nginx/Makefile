@@ -1,5 +1,5 @@
-PROJECT_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))/../../..))
-include $(abspath $(lastword $(MAKEFILE_LIST))/../../../automation/init.mk)
+PROJECT_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))/../../../../..))
+include $(abspath $(lastword $(MAKEFILE_LIST))/../../../../init.mk)
 
 # ==============================================================================
 
@@ -22,9 +22,9 @@ clean:
 # ==============================================================================
 
 _generate_ssl_certificate:
-	if [ ! -f $(DOCKER_DIR)/nginx/assets/certificate/nginx.$(PROJECT_NAME_SHORT)-$(PROJECT_GROUP_SHORT).pem ]; then
+	if [ ! -f $(DOCKER_LIBRARY_DIR)/nginx/assets/certificate/nginx.$(PROJECT_NAME_SHORT)-$(PROJECT_GROUP_SHORT).pem ]; then
 		make ssl-generate-certificate-project \
-			DIR=$(DOCKER_DIR)/nginx/assets/certificate \
+			DIR=$(DOCKER_LIBRARY_DIR)/nginx/assets/certificate \
 			NAME=nginx.$(PROJECT_NAME_SHORT)-$(PROJECT_GROUP_SHORT) \
 			DOMAINS=nginx.$(PROJECT_NAME_SHORT)-$(PROJECT_GROUP_SHORT).local
 	fi
