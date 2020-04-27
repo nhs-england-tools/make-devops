@@ -17,7 +17,7 @@ jobs:
           name: Push 'nginx' image
           command: |
             make docker-login DOCKER_USERNAME=$DOCKER_USERNAME DOCKER_PASSWORD=$DOCKER_PASSWORD
-            cd build/docker/nginx
+            cd build/automation/lib/docker/nginx
             make \
               build \
               test \
@@ -28,7 +28,7 @@ jobs:
           name: Push 'postgres' image
           command: |
             make docker-login DOCKER_USERNAME=$DOCKER_USERNAME DOCKER_PASSWORD=$DOCKER_PASSWORD
-            cd build/docker/postgres
+            cd build/automation/lib/docker/postgres
             make \
               build \
               test \
@@ -39,7 +39,7 @@ jobs:
           name: Push 'tools' image
           command: |
             make docker-login DOCKER_USERNAME=$DOCKER_USERNAME DOCKER_PASSWORD=$DOCKER_PASSWORD
-            cd build/docker/tools
+            cd build/automation/lib/docker/tools
             make \
               build \
               test \
