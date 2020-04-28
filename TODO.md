@@ -1,6 +1,6 @@
 # TODO
 
-- Confirm `--cache-from` for building Docker images works
+- Confirm `--cache-from` for building Docker images works - the problem is with changing file permissions, use `gosu` instead
 - Conditional push to the Docker Hub registry
 - Create reverse proxy configuration for `nginx`
 - 'Untexify' the project, e.g. in the `ssl.mk` module we can find references to the `$(TEXAS_HOSTED_ZONE_NONPROD)` and `$(TEXAS_HOSTED_ZONE_PROD)` variables
