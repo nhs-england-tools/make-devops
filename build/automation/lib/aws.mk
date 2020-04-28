@@ -211,6 +211,33 @@ aws-rds-wait-for-snapshot: ### Wait for RDS snapshot to become available - manda
 	echo "ERROR: The snapshot has not become available"
 	exit 1
 
+aws-cognito-get-userpool-id: ### Get Cognito userpool ID - mandatory: NAME=[user pool name]; optional: AWS_REGION=[AWS region]
+	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=localstack' ||:)" CMD=" \
+		$(AWSCLI) cognito-idp list-user-pools \
+			--region $(AWS_REGION) \
+			--max-results 60 \
+			--output text \
+	" | grep $(NAME) | awk '{ print $$3 }'
+
+aws-cognito-get-client-id: ### Get Cognito client ID - mandatory: NAME=[user pool name]; optional: AWS_REGION=[AWS region]
+	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=localstack' ||:)" CMD=" \
+		$(AWSCLI) cognito-idp list-user-pool-clients \
+			--user-pool-id $$(make -s aws-cognito-get-userpool-id NAME=$(NAME)) \
+			--region $(AWS_REGION) \
+			--query 'UserPoolClients[].ClientId' \
+			--output text \
+	"
+
+aws-cognito-get-client-secret: ### Get Cognito client secret - mandatory: NAME=[user pool name]; optional: AWS_REGION=[AWS region]
+	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=localstack' ||:)" CMD=" \
+		$(AWSCLI) cognito-idp describe-user-pool-client \
+			--user-pool-id $$(make -s aws-cognito-get-userpool-id NAME=$(NAME)) \
+			--client-id $$(make -s aws-cognito-get-client-id NAME=$(NAME)) \
+			--region $(AWS_REGION) \
+			--query 'UserPoolClient.ClientSecret' \
+			--output text \
+	"
+
 aws-ecr-get-login-password: ### Get the ECR user login password
 	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=localstack' ||:)" CMD=" \
 		$(AWSCLI) ecr get-login-password --region $(AWS_REGION) \
@@ -262,35 +289,14 @@ _aws-elasticsearch-register-snapshot-repository: ### Register Elasticsearch snap
 
 # ==============================================================================
 
-aws-get-cognito-userpool-id: ### Get Cognito userpool ID - mandatory: NAME; optional: AWS_REGION
-	aws cognito-idp list-user-pools \
-		--query "UserPools[?Name=='$(NAME)'].Id" \
-		--region $(AWS_REGION) \
-		--max-results 60 \
-		--output text
-
-aws-get-cognito-client-id: ### Get Cognito client ID - mandatory: NAME; optional: AWS_REGION
-	aws cognito-idp list-user-pool-clients \
-		--user-pool-id $$(make -s aws-get-cognito-userpool-id NAME=$(NAME)) \
-		--region $(AWS_REGION) \
-		--query 'UserPoolClients[].ClientId' \
-		--output text
-
-aws-get-cognito-client-secret: ### Get Cognito client secret - mandatory: NAME; optional: AWS_REGION
-	aws cognito-idp describe-user-pool-client \
-		--user-pool-id $$(make -s aws-get-cognito-userpool-id NAME=$(NAME)) \
-		--client-id $$(make -s aws-get-cognito-client-id NAME=$(NAME)) \
-		--region $(AWS_REGION) \
-		--query 'UserPoolClient.ClientSecret' \
-		--output text
-
-# ==============================================================================
-
 .SILENT: \
 	_aws-elasticsearch-get-endpoint \
 	aws-account-check-id \
 	aws-account-get-id \
 	aws-assume-role-export-variables \
+	aws-cognito-get-client-id \
+	aws-cognito-get-client-secret \
+	aws-cognito-get-userpool-id \
 	aws-ecr-get-login-password \
 	aws-iam-policy-exists \
 	aws-iam-role-exists \

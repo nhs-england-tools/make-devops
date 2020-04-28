@@ -29,6 +29,9 @@ test-aws: \
 	test-aws-rds-create-snapshot \
 	test-aws-rds-get-snapshot-status \
 	test-aws-rds-wait-for-snapshot \
+	test-aws-cognito-get-userpool-id \
+	test-aws-cognito-get-client-id \
+	test-aws-cognito-get-client-secret \
 	test-aws-ecr-get-login-password \
 	test-aws-ses-verify-email-identity \
 	test-aws-teardown
@@ -243,6 +246,15 @@ test-aws-rds-get-snapshot-status:
 	mk_test_skip $(@) ||:
 
 test-aws-rds-wait-for-snapshot:
+	mk_test_skip $(@) ||:
+
+test-aws-cognito-get-userpool-id:
+	mk_test_skip $(@) ||:
+
+test-aws-cognito-get-client-id:
+	mk_test_skip $(@) ||:
+
+test-aws-cognito-get-client-secret:
 	mk_test_skip $(@) ||:
 
 test-aws-ecr-get-login-password:
