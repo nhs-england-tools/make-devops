@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
   postgres:
-    image: $DOCKER_REGISTRY/postgres:latest
+    image: $DOCKER_LIBRARY_REGISTRY/postgres:latest
     container_name: postgres
     hostname: postgres
     environment:

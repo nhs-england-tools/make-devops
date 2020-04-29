@@ -3,6 +3,7 @@ DOCKER_DIR = $(PROJECT_DIR)/build/docker
 DOCKER_LIBRARY_DIR = $(LIB_DIR)/docker
 DOCKER_NETWORK = $(PROJECT_GROUP)/$(PROJECT_NAME)/$(BUILD_ID)
 DOCKER_REGISTRY = $(AWS_ECR)/$(PROJECT_GROUP)/$(PROJECT_NAME)
+DOCKER_LIBRARY_REGISTRY = nhsd
 
 DOCKER_ALPINE_VERSION = 3.11.5
 DOCKER_COMPOSER_VERSION = 1.9.3
@@ -30,6 +31,14 @@ docker-config: ### Configure Docker networking
 	docker network create $(DOCKER_NETWORK) 2> /dev/null ||:
 
 docker-build docker-image: ### Build Docker image - mandatory: NAME; optional: VERSION,NAME_AS=[new name],CACHE_FROM=true
+	if [ ! -d $(DOCKER_CUSTOM_DIR)/$(NAME) ] && [ -d $(DOCKER_LIBRARY_DIR)/$(NAME) ] && [ -z "$(__DOCKER_BUILD)" ]; then
+		cd $(DOCKER_LIBRARY_DIR)/$(NAME)
+		make docker-build \
+			__DOCKER_BUILD=true \
+			DOCKER_REGISTRY=$(DOCKER_LIBRARY_REGISTRY)
+		exit
+	fi
+	reg=$$(make _docker-get-reg)
 	# Dockerfile
 	make NAME=$(NAME) \
 		docker-create-dockerfile \
@@ -38,44 +47,47 @@ docker-build docker-image: ### Build Docker image - mandatory: NAME; optional: V
 	cache_from=
 	if [[ "$(CACHE_FROM)" =~ ^(true|yes|y|on|1|TRUE|YES|Y|ON)$$ ]]; then
 		make docker-pull NAME=$(NAME) VERSION=latest
-		cache_from="--cache-from $(DOCKER_REGISTRY)/$(NAME):latest"
+		cache_from="--cache-from $$reg/$(NAME):latest"
 	fi
 	# Build
+	dir=$$(make _docker-get-dir)
 	docker build --rm \
-		--build-arg IMAGE=$(DOCKER_REGISTRY)/$(NAME) \
+		--build-arg IMAGE=$$reg/$(NAME) \
 		--build-arg VERSION=$$(make docker-get-image-version) \
 		--build-arg BUILD_ID=$(BUILD_ID) \
 		--build-arg BUILD_DATE=$(BUILD_DATE) \
 		--build-arg BUILD_HASH=$(BUILD_HASH) \
 		--build-arg BUILD_REPO=$(BUILD_REPO) \
 		$(BUILD_OPTS) $$cache_from \
-		--file $$(make _docker-get-dir)/Dockerfile.effective \
-		--tag $(DOCKER_REGISTRY)/$(NAME):$$(make docker-get-image-version) \
-		$$(make _docker-get-dir)
+		--file $$dir/Dockerfile.effective \
+		--tag $$reg/$(NAME):$$(make docker-get-image-version) \
+		$$dir
 	# Tag
 	docker tag \
-		$(DOCKER_REGISTRY)/$(NAME):$$(make docker-get-image-version) \
-		$(DOCKER_REGISTRY)/$(NAME):latest
+		$$reg/$(NAME):$$(make docker-get-image-version) \
+		$$reg/$(NAME):latest
 	docker rmi --force $$(docker images | grep "<none>" | awk '{ print $$3 }') 2> /dev/null ||:
 	make docker-image-keep-latest-only NAME=$(NAME)
 	if [ -n "$(NAME_AS)" ]; then
 		docker tag \
-			$(DOCKER_REGISTRY)/$(NAME):$$(make docker-get-image-version) \
-			$(DOCKER_REGISTRY)/$(NAME_AS):$$(make docker-get-image-version)
+			$$reg/$(NAME):$$(make docker-get-image-version) \
+			$$reg/$(NAME_AS):$$(make docker-get-image-version)
 		docker tag \
-			$(DOCKER_REGISTRY)/$(NAME):latest \
-			$(DOCKER_REGISTRY)/$(NAME_AS):latest
+			$$reg/$(NAME):latest \
+			$$reg/$(NAME_AS):latest
 		make docker-image-keep-latest-only NAME=$(NAME_AS)
 	fi
-	docker image inspect $(DOCKER_REGISTRY)/$(NAME):latest --format='{{.Size}}'
+	docker image inspect $$reg/$(NAME):latest --format='{{.Size}}'
 
 docker-test: ### Test image - mandatory: NAME; optional: ARGS,CMD,GOSS_OPTS
-	GOSS_FILES_PATH=$$(make _docker-get-dir)/test \
+	dir=$$(make _docker-get-dir)
+	reg=$$(make _docker-get-reg)
+	GOSS_FILES_PATH=$$dir/test \
 	CONTAINER_LOG_OUTPUT=$(TMP_DIR)/container-$(NAME)-$(BUILD_HASH)-$(BUILD_ID).log \
 	$(GOSS_OPTS) \
 	dgoss run --interactive $(_TTY) \
 		$(ARGS) \
-		$(DOCKER_REGISTRY)/$(NAME):latest \
+		$$reg/$(NAME):latest \
 		$(CMD)
 
 docker-login: ### Log into the Docker registry - optional: DOCKER_USERNAME,DOCKER_PASSWORD
@@ -98,25 +110,28 @@ docker-create-repository: ### Create Docker repository to store an image - manda
 	"
 
 docker-push: ### Push Docker image - mandatory: NAME; optional: VERSION
+	reg=$$(make _docker-get-reg)
 	if [ -n "$(VERSION)" ]; then
-		docker push $(DOCKER_REGISTRY)/$(NAME):$(VERSION)
+		docker push $$reg/$(NAME):$(VERSION)
 	else
-		docker push $(DOCKER_REGISTRY)/$(NAME):$$(make docker-get-image-version)
+		docker push $$reg/$(NAME):$$(make docker-get-image-version)
 	fi
-	docker push $(DOCKER_REGISTRY)/$(NAME):latest
+	docker push $$reg/$(NAME):latest
 
 docker-pull: ### Pull Docker image - mandatory: NAME,VERSION|TAG
-	docker pull $(DOCKER_REGISTRY)/$(NAME):$(or $(VERSION), $(TAG)) ||:
+	reg=$$(make _docker-get-reg)
+	docker pull $$reg/$(NAME):$(or $(VERSION), $(TAG)) ||:
 
 docker-tag: ### Tag latest or provide arguments - mandatory: NAME,VERSION|TAG|[SOURCE,TARGET]
+	reg=$$(make _docker-get-reg)
 	if [ -n "$(SOURCE)" ] && [ -n "$(TARGET)" ]; then
 		docker tag \
-			$(DOCKER_REGISTRY)/$(NAME):$(SOURCE) \
-			$(DOCKER_REGISTRY)/$(NAME):$(TARGET)
+			$$reg/$(NAME):$(SOURCE) \
+			$$reg/$(NAME):$(TARGET)
 	elif [ -n "$(or $(VERSION), $(TAG))" ]; then
 		docker tag \
-			$(DOCKER_REGISTRY)/$(NAME):latest \
-			$(DOCKER_REGISTRY)/$(NAME):$(or $(VERSION), $(TAG))
+			$$reg/$(NAME):latest \
+			$$reg/$(NAME):$(or $(VERSION), $(TAG))
 	fi
 
 docker-clean: ### Clean Docker files
@@ -127,6 +142,7 @@ docker-clean: ### Clean Docker files
 
 docker-prune: docker-clean ### Clean Docker resources - optional: ALL=true
 	docker rmi --force $$(docker images | grep $(DOCKER_REGISTRY) | awk '{ print $$3 }') 2> /dev/null ||:
+	docker rmi --force $$(docker images | grep $(DOCKER_LIBRARY_REGISTRY) | awk '{ print $$3 }') 2> /dev/null ||:
 	docker network rm $(DOCKER_NETWORK) 2> /dev/null ||:
 	[[ "$(ALL)" =~ ^(true|yes|y|on|1|TRUE|YES|Y|ON)$$ ]] && docker system prune --volumes --all --force ||:
 
@@ -149,13 +165,15 @@ docker-create-dockerfile: ### Create effective Dockerfile - mandatory: NAME
 	cd $$dir
 
 docker-get-image-version: ### Get effective Docker image version - mandatory: NAME
-	cat $$(make _docker-get-dir)/.version 2> /dev/null || cat $$(make _docker-get-dir)/VERSION 2> /dev/null || echo unknown
+	dir=$$(make _docker-get-dir)
+	cat $$dir/.version 2> /dev/null || cat $$dir/VERSION 2> /dev/null || echo unknown
 
 docker-set-image-version: ### Set effective Docker image version - mandatory: NAME; optional: VERSION
+	dir=$$(make _docker-get-dir)
 	if [ -n "$(VERSION)" ]; then
-		echo $(VERSION) > $$(make _docker-get-dir)/.version
+		echo $(VERSION) > $$dir/.version
 	else
-		echo $$(cat $$(make _docker-get-dir)/VERSION) | \
+		echo $$(cat $$dir/VERSION) | \
 			sed "s/YYYY/$$(date --date=$(BUILD_DATE) -u +"%Y")/g" | \
 			sed "s/mm/$$(date --date=$(BUILD_DATE) -u +"%m")/g" | \
 			sed "s/dd/$$(date --date=$(BUILD_DATE) -u +"%d")/g" | \
@@ -163,18 +181,20 @@ docker-set-image-version: ### Set effective Docker image version - mandatory: NA
 			sed "s/MM/$$(date --date=$(BUILD_DATE) -u +"%M")/g" | \
 			sed "s/ss/$$(date --date=$(BUILD_DATE) -u +"%S")/g" | \
 			sed "s/hash/$$(git rev-parse --short HEAD)/g" \
-		> $$(make _docker-get-dir)/.version
+		> $$dir/.version
 	fi
 
 # ==============================================================================
 
 docker-image-keep-latest-only: ### Remove other images than latest - mandatory: NAME
+	reg=$$(make _docker-get-reg)
 	docker rmi --force $$( \
-		docker images --filter=reference="$(DOCKER_REGISTRY)/$(NAME):*" --quiet | \
-			grep -v $$(docker images --filter=reference="$(DOCKER_REGISTRY)/$(NAME):latest" --quiet) \
+		docker images --filter=reference="$$reg/$(NAME):*" --quiet | \
+			grep -v $$(docker images --filter=reference="$$reg/$(NAME):latest" --quiet) \
 	) 2> /dev/null ||:
 
 docker-image-start: ### Start container - mandatory: NAME; optional: CMD,DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file]
+	reg=$$(make _docker-get-reg)
 	docker run --interactive $(_TTY) $$(echo $(ARGS) | grep -- "--attach" > /dev/null 2>&1 && : || echo "--detach") \
 		--name $(NAME)-$(BUILD_HASH)-$(BUILD_ID) \
 		--env-file <(env | grep "^AWS_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
@@ -190,7 +210,7 @@ docker-image-start: ### Start container - mandatory: NAME; optional: CMD,DIR,ARG
 		--network $(DOCKER_NETWORK) \
 		--workdir /project/$(shell echo $(abspath $(DIR)) | sed "s;$(PROJECT_DIR);;g") \
 		$$(echo $(ARGS) | sed -e "s/--attach//g") \
-		$(DOCKER_REGISTRY)/$(NAME):latest \
+		$$reg/$(NAME):latest \
 		$(CMD)
 
 docker-image-stop: ### Stop container - mandatory: NAME
@@ -209,25 +229,30 @@ docker-image-bash: ### Bash into a container - mandatory: NAME
 		sh --login ||:
 
 docker-image-clean: docker-image-stop ### Clean up container and image resources - mandatory: NAME
-	docker rmi --force $$(docker images --filter=reference="$(DOCKER_REGISTRY)/$(NAME):*" --quiet) 2> /dev/null ||:
+	dir=$$(make _docker-get-dir)
+	reg=$$(make _docker-get-reg)
+	docker rmi --force $$(docker images --filter=reference="$$reg/$(NAME):*" --quiet) 2> /dev/null ||:
 	rm -fv \
-		$$(make _docker-get-dir)/.version \
-		$$(make _docker-get-dir)/$(NAME)-*-image.tar.gz \
-		$$(make _docker-get-dir)/Dockerfile.effective
+		$$dir/.version \
+		$$dir/$(NAME)-*-image.tar.gz \
+		$$dir/Dockerfile.effective
 
 docker-image-save: ### Save image as a flat file - mandatory: NAME; optional: VERSION|TAG
+	dir=$$(make _docker-get-dir)
+	reg=$$(make _docker-get-reg)
 	version=$(or $(VERSION), $(TAG))
 	if [ -z "$$version" ]; then
 		version=$$(make docker-get-image-version)
 	fi
-	docker save $(DOCKER_REGISTRY)/$(NAME):$$version | gzip > $$(make _docker-get-dir)/$(NAME)-$$version-image.tar.gz
+	docker save $$reg/$(NAME):$$version | gzip > $$dir/$(NAME)-$$version-image.tar.gz
 
 docker-image-load: ### Load image from a flat file - mandatory: NAME; optional: VERSION|TAG
+	dir=$$(make _docker-get-dir)
 	version=$(or $(VERSION), $(TAG))
 	if [ -z "$$version" ]; then
 		version=$$(make docker-get-image-version)
 	fi
-	gunzip -c $$(make _docker-get-dir)/$(NAME)-$$version-image.tar.gz | docker load
+	gunzip -c $$dir/$(NAME)-$$version-image.tar.gz | docker load
 
 # ==============================================================================
 
@@ -463,7 +488,7 @@ docker-run-terraform: ### Run terraform container - mandatory: CMD; optional: DI
 # ==============================================================================
 
 docker-run-postgres: ### Run postgres container - mandatory: CMD; optional: DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file],IMAGE=[image name],CONTAINER=[container name]
-	image=$$([ -n "$(IMAGE)" ] && echo $(IMAGE) || echo $(DOCKER_REGISTRY)/postgres:$(DOCKER_LIBRARY_POSTGRES_VERSION))
+	image=$$([ -n "$(IMAGE)" ] && echo $(IMAGE) || echo $(DOCKER_LIBRARY_REGISTRY)/postgres:$(DOCKER_LIBRARY_POSTGRES_VERSION))
 	container=$$([ -n "$(CONTAINER)" ] && echo $(CONTAINER) || echo postgres-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7))
 	if [ -z "$$(docker images --filter=reference="$$image" --quiet)" ]; then
 		make docker-pull NAME=postgres VERSION=$(DOCKER_LIBRARY_POSTGRES_VERSION) > /dev/null 2>&1
@@ -490,7 +515,7 @@ docker-run-postgres: ### Run postgres container - mandatory: CMD; optional: DIR,
 
 docker-run-tools: ### Run tools (Python) container - mandatory: CMD; optional: SH=true,DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file],IMAGE=[image name],CONTAINER=[container name]
 	mkdir -p $(HOME)/{.aws,.python/pip/{cache,packages}}
-	image=$$([ -n "$(IMAGE)" ] && echo $(IMAGE) || echo $(DOCKER_REGISTRY)/tools:$(DOCKER_LIBRARY_TOOLS_VERSION))
+	image=$$([ -n "$(IMAGE)" ] && echo $(IMAGE) || echo $(DOCKER_LIBRARY_REGISTRY)/tools:$(DOCKER_LIBRARY_TOOLS_VERSION))
 	container=$$([ -n "$(CONTAINER)" ] && echo $(CONTAINER) || echo tools-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7))
 	if [ -z "$$(docker images --filter=reference="$$image" --quiet)" ]; then
 		make docker-pull NAME=tools VERSION=$(DOCKER_LIBRARY_TOOLS_VERSION) > /dev/null 2>&1
@@ -569,6 +594,13 @@ _docker-get-dir:
 		echo $(DOCKER_DIR)/$(NAME)
 	fi
 
+_docker-get-reg:
+	if [ -d $(DOCKER_CUSTOM_DIR)/$(NAME) ] || [ -d $(DOCKER_LIBRARY_DIR)/$(NAME) ]; then
+		echo $(DOCKER_LIBRARY_REGISTRY)
+	else
+		echo $(DOCKER_REGISTRY)
+	fi
+
 _docker-get-variables-from-file:
 	if [ -f "$(VARS_FILE)" ]; then
 		vars=$$(cat $(VARS_FILE) | grep -Eo "^[A-Za-z0-9_]*")
@@ -585,6 +617,7 @@ _docker-get-login-password:
 
 .SILENT: \
 	_docker-get-dir \
+	_docker-get-reg \
 	_docker-get-login-password \
 	_docker-get-variables-from-file \
 	docker-get-image-version \

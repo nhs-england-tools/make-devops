@@ -63,13 +63,13 @@ test-docker-build:
 	# act
 	make docker-build NAME=$(TEST_DOCKER_IMAGE)
 	# assert
-	mk_test $(@) 1 -eq $$(docker images --filter=reference="$(DOCKER_REGISTRY)/$(TEST_DOCKER_IMAGE):latest" -q | wc -l)
+	mk_test $(@) 1 -eq $$(docker images --filter=reference="$(DOCKER_LIBRARY_REGISTRY)/$(TEST_DOCKER_IMAGE):latest" -q | wc -l)
 
 test-docker-image-name-as:
 	# act
 	make docker-build NAME=$(TEST_DOCKER_IMAGE) NAME_AS=$(TEST_DOCKER_IMAGE)-copy
 	# assert
-	mk_test $(@) 2 -eq $$(docker images --filter=reference="$(DOCKER_REGISTRY)/$(TEST_DOCKER_IMAGE)-copy:*" --quiet | wc -l)
+	mk_test $(@) 2 -eq $$(docker images --filter=reference="$(DOCKER_LIBRARY_REGISTRY)/$(TEST_DOCKER_IMAGE)-copy:*" --quiet | wc -l)
 
 test-docker-image-keep-latest-only:
 	# act
@@ -77,7 +77,7 @@ test-docker-image-keep-latest-only:
 	make docker-build NAME=$(TEST_DOCKER_IMAGE)
 	make docker-build NAME=$(TEST_DOCKER_IMAGE)
 	# assert
-	mk_test $(@) 2 -eq $$(docker images --filter=reference="$(DOCKER_REGISTRY)/$(TEST_DOCKER_IMAGE):*" -q | wc -l)
+	mk_test $(@) 2 -eq $$(docker images --filter=reference="$(DOCKER_LIBRARY_REGISTRY)/$(TEST_DOCKER_IMAGE):*" -q | wc -l)
 
 test-docker-login:
 	mk_test_skip $(@) ||:
@@ -101,7 +101,7 @@ test-docker-prune:
 	# act
 	make docker-prune
 	# assert
-	mk_test "$(@) images" 0 -eq $$(docker images | grep $(DOCKER_REGISTRY) 2> /dev/null | wc -l)
+	mk_test "$(@) images" 0 -eq $$(docker images | grep $(DOCKER_LIBRARY_REGISTRY) 2> /dev/null | wc -l)
 	mk_test "$(@) network" 0 -eq $$(docker network ls | grep $(DOCKER_NETOWRK) 2> /dev/null | wc -l)
 
 test-docker-create-dockerfile:
@@ -157,7 +157,7 @@ test-docker-image-clean:
 	# act
 	make docker-image-clean NAME=postgres
 	# assert
-	mk_test $(@) 0 -eq $$(docker images --filter=reference="$(DOCKER_REGISTRY)/postgres:*" --quiet | wc -l)
+	mk_test $(@) 0 -eq $$(docker images --filter=reference="$(DOCKER_LIBRARY_REGISTRY)/postgres:*" --quiet | wc -l)
 
 test-docker-image-save:
 	# arrange
@@ -173,11 +173,11 @@ test-docker-image-load:
 	make docker-image-clean NAME=postgres
 	make docker-build NAME=postgres
 	make docker-image-save NAME=postgres
-	docker rmi --force $$(docker images --filter=reference="$(DOCKER_REGISTRY)/postgres:*" --quiet) 2> /dev/null ||:
+	docker rmi --force $$(docker images --filter=reference="$(DOCKER_LIBRARY_REGISTRY)/postgres:*" --quiet) 2> /dev/null ||:
 	# act
 	make docker-image-load NAME=postgres
 	# assert
-	mk_test $(@) 1 -eq $$(docker images --filter=reference="$(DOCKER_REGISTRY)/postgres:*" --quiet | wc -l)
+	mk_test $(@) 1 -eq $$(docker images --filter=reference="$(DOCKER_LIBRARY_REGISTRY)/postgres:*" --quiet | wc -l)
 
 test-docker-tag:
 	# arrange
@@ -186,7 +186,7 @@ test-docker-tag:
 	# act
 	make docker-tag NAME=postgres VERSION=version
 	# assert
-	mk_test $(@) 1 -eq $$(docker images --filter=reference="$(DOCKER_REGISTRY)/postgres:version" --quiet | wc -l)
+	mk_test $(@) 1 -eq $$(docker images --filter=reference="$(DOCKER_LIBRARY_REGISTRY)/postgres:version" --quiet | wc -l)
 
 test-docker-compose:
 	# arrange
