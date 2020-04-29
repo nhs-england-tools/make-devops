@@ -13,4 +13,6 @@ git-config: ### Configure local git repository
 		git config push.followTags true
 		git config rebase.autoStash true
 		git config remote.origin.prune true
+		echo "build/automation/etc/githooks/pre-commit" > $(PROJECT_DIR)/.git/hooks/pre-commit
+		chmod +x $(PROJECT_DIR)/.git/hooks/pre-commit
 	fi
