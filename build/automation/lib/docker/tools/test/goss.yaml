@@ -1,6 +1,8 @@
 package:
   curl:
     installed: true
+  make:
+    installed: true
   netcat:
     installed: true
   wget:
