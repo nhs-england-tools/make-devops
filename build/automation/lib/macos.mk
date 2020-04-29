@@ -310,15 +310,7 @@ _macos-config-command-line:
 	rm -f $$(brew --prefix)/bin/python
 	ln $$(brew --prefix)/bin/python3 $$(brew --prefix)/bin/python
 	curl -s https://bootstrap.pypa.io/get-pip.py | sudo $$(brew --prefix)/bin/python3
-	$$(brew --prefix)/bin/pip3 install \
-		black \
-		boto3 \
-		bpython \
-		configparser \
-		flake8 \
-		mypy \
-		pygments \
-		pylint
+	$$(brew --prefix)/bin/pip3 install $(PYTHON_BASE_PACKAGES)
 	# configure Go
 	curl -sSL https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer | bash ||:
 	# configure Java
