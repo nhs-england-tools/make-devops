@@ -179,6 +179,7 @@ docker-image-start: ### Start container - mandatory: NAME; optional: CMD,DIR,ARG
 		--name $(NAME)-$(BUILD_HASH)-$(BUILD_ID) \
 		--env-file <(env | grep "^AWS_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(env | grep "^TF_VAR_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
+		--env-file <(env | grep "^DB_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(env | grep "^SERV[A-Z]*_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(env | grep "^APP[A-Z]*_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(env | grep "^PROJ[A-Z]*_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
@@ -264,6 +265,7 @@ docker-run-composer: ### Run composer container - mandatory: CMD; optional: DIR,
 		--user $$(id -u):$$(id -g) \
 		--env-file <(env | grep "^AWS_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(env | grep "^TF_VAR_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
+		--env-file <(env | grep "^DB_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(env | grep "^SERV[A-Z]*_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(env | grep "^APP[A-Z]*_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(env | grep "^PROJ[A-Z]*_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
@@ -286,6 +288,7 @@ docker-run-dotnet: ### Run dotnet container - mandatory: CMD; optional: DIR,ARGS
 		--user $$(id -u):$$(id -g) \
 		--env-file <(env | grep "^AWS_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(env | grep "^TF_VAR_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
+		--env-file <(env | grep "^DB_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(env | grep "^SERV[A-Z]*_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(env | grep "^APP[A-Z]*_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(env | grep "^PROJ[A-Z]*_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
@@ -308,6 +311,7 @@ docker-run-gradle: ### Run gradle container - mandatory: CMD; optional: DIR,ARGS
 		--user $$(id -u):$$(id -g) \
 		--env-file <(env | grep "^AWS_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(env | grep "^TF_VAR_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
+		--env-file <(env | grep "^DB_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(env | grep "^SERV[A-Z]*_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(env | grep "^APP[A-Z]*_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(env | grep "^PROJ[A-Z]*_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
@@ -332,6 +336,7 @@ docker-run-mvn: ### Run maven container - mandatory: CMD; optional: DIR,ARGS=[Do
 		--user $$(id -u):$$(id -g) \
 		--env-file <(env | grep "^AWS_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(env | grep "^TF_VAR_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
+		--env-file <(env | grep "^DB_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(env | grep "^SERV[A-Z]*_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(env | grep "^APP[A-Z]*_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(env | grep "^PROJ[A-Z]*_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
@@ -357,6 +362,7 @@ docker-run-node: ### Run node container - mandatory: CMD; optional: DIR,ARGS=[Do
 		--name $$container \
 		--env-file <(env | grep "^AWS_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(env | grep "^TF_VAR_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
+		--env-file <(env | grep "^DB_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(env | grep "^SERV[A-Z]*_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(env | grep "^APP[A-Z]*_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(env | grep "^PROJ[A-Z]*_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
@@ -386,6 +392,7 @@ docker-run-python: ### Run python container - mandatory: CMD; optional: SH=true,
 			--user $$(id -u):$$(id -g) \
 			--env-file <(env | grep "^AWS_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 			--env-file <(env | grep "^TF_VAR_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
+			--env-file <(env | grep "^DB_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 			--env-file <(env | grep "^SERV[A-Z]*_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 			--env-file <(env | grep "^APP[A-Z]*_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 			--env-file <(env | grep "^PROJ[A-Z]*_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
@@ -409,6 +416,7 @@ docker-run-python: ### Run python container - mandatory: CMD; optional: SH=true,
 			--user $$(id -u):$$(id -g) \
 			--env-file <(env | grep "^AWS_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 			--env-file <(env | grep "^TF_VAR_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
+			--env-file <(env | grep "^DB_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 			--env-file <(env | grep "^SERV[A-Z]*_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 			--env-file <(env | grep "^APP[A-Z]*_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 			--env-file <(env | grep "^PROJ[A-Z]*_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
@@ -438,6 +446,7 @@ docker-run-terraform: ### Run terraform container - mandatory: CMD; optional: DI
 		--user $$(id -u):$$(id -g) \
 		--env-file <(env | grep "^AWS_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(env | grep "^TF_VAR_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
+		--env-file <(env | grep "^DB_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(env | grep "^SERV[A-Z]*_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(env | grep "^APP[A-Z]*_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(env | grep "^PROJ[A-Z]*_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
@@ -465,18 +474,12 @@ docker-run-postgres: ### Run postgres container - mandatory: CMD; optional: DIR,
 		--user $$(id -u):$$(id -g) \
 		--env-file <(env | grep "^AWS_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(env | grep "^TF_VAR_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
+		--env-file <(env | grep "^DB_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(env | grep "^SERV[A-Z]*_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(env | grep "^APP[A-Z]*_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(env | grep "^PROJ[A-Z]*_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(env | grep "^TEXAS_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(make _docker-get-variables-from-file VARS_FILE=$(VARS_FILE)) \
-		--env DB_HOST=$(DB_HOST) \
-		--env DB_PORT=$(DB_PORT) \
-		--env DB_NAME=$(DB_NAME) \
-		--env DB_MASTER_USERNAME=$(DB_MASTER_USERNAME) \
-		--env DB_MASTER_PASSWORD=$(DB_MASTER_PASSWORD) \
-		--env DB_USERNAME=$(DB_USERNAME) \
-		--env DB_PASSWORD=$(DB_PASSWORD) \
 		--env PROFILE=$(PROFILE) \
 		--volume $(PROJECT_DIR):/project \
 		--network $(DOCKER_NETWORK) \
@@ -499,6 +502,7 @@ docker-run-tools: ### Run tools (Python) container - mandatory: CMD; optional: S
 			--user $$(id -u):$$(id -g) \
 			--env-file <(env | grep "^AWS_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 			--env-file <(env | grep "^TF_VAR_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
+			--env-file <(env | grep "^DB_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 			--env-file <(env | grep "^SERV[A-Z]*_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 			--env-file <(env | grep "^APP[A-Z]*_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 			--env-file <(env | grep "^PROJ[A-Z]*_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
@@ -527,6 +531,7 @@ docker-run-tools: ### Run tools (Python) container - mandatory: CMD; optional: S
 			--user $$(id -u):$$(id -g) \
 			--env-file <(env | grep "^AWS_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 			--env-file <(env | grep "^TF_VAR_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
+			--env-file <(env | grep "^DB_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 			--env-file <(env | grep "^SERV[A-Z]*_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 			--env-file <(env | grep "^APP[A-Z]*_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 			--env-file <(env | grep "^PROJ[A-Z]*_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
