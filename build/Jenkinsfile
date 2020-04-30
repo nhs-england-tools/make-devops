@@ -1,36 +1,36 @@
 pipeline {
-    agent {
-        label 'jenkins-slave'
-    }
-    options {
-        buildDiscarder(logRotator(numToKeepStr: '13'))
-        disableConcurrentBuilds()
-    }
-    stages {
-        stage("Show Variables") {
-            steps {
-                script {
-                    sh 'make devops-print-variables'
-                }
-            }
+  agent {
+    label 'jenkins-slave'
+  }
+  options {
+    buildDiscarder(logRotator(numToKeepStr: '13'))
+    disableConcurrentBuilds()
+  }
+  stages {
+    stage("Show Variables") {
+      steps {
+        script {
+          sh 'make devops-print-variables'
         }
-        stage("Run Test Suite") {
-            steps {
-                script {
-                    sh '''
-                        export AWS_ACCOUNT_ID_LIVE_PARENT=000000000000
-                        export AWS_ACCOUNT_ID_MGMT=000000000000
-                        export AWS_ACCOUNT_ID_NONPROD=000000000000
-                        export AWS_ACCOUNT_ID_PROD=000000000000
-                        make devops-test-suite || make devops-test-suite DEBUG=1
-                    '''
-                }
-            }
-        }
+      }
     }
-    post {
-        always {
-            sh 'make devops-test-cleanup'
+    stage("Run Test Suite") {
+      steps {
+        script {
+          sh '''
+            export AWS_ACCOUNT_ID_LIVE_PARENT=000000000000
+            export AWS_ACCOUNT_ID_MGMT=000000000000
+            export AWS_ACCOUNT_ID_NONPROD=000000000000
+            export AWS_ACCOUNT_ID_PROD=000000000000
+            make devops-test-suite || make devops-test-suite DEBUG=1
+          '''
         }
+      }
     }
+  }
+  post {
+    always {
+      sh 'make devops-test-cleanup'
+    }
+  }
 }
