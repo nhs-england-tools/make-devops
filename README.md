@@ -2,20 +2,17 @@
 
 If you hear your teams or individuals saying _"It will take days to onboard a new member..."_, _"It works on my machine..."_ or _"Our pipeline is to complex and no one really understands how it all works..."_ then perhaps you need to take an interest in this project.
 
-## Status
-
-| Category                | Badges                                                                                                                                                                                                                                          |
-| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Automated Test          | [![CircleCI](https://circleci.com/gh/nhsd-ddce/make-devops.svg?style=shield)](https://circleci.com/gh/nhsd-ddce/make-devops)                                                                                                                    |
-| Docker `nginx` image    | [![Version](https://images.microbadger.com/badges/version/nhsd/nginx.svg)](http://microbadger.com/images/nhsd/nginx)&nbsp;[![Docker Hub](https://img.shields.io/docker/pulls/nhsd/nginx.svg)](https://hub.docker.com/r/nhsd/nginx/)             |
-| Docker `postgres` image | [![Version](https://images.microbadger.com/badges/version/nhsd/postgres.svg)](http://microbadger.com/images/nhsd/postgres)&nbsp;[![Docker Hub](https://img.shields.io/docker/pulls/nhsd/postgres.svg)](https://hub.docker.com/r/nhsd/postgres/) |
-| Docker `tools` image    | [![Version](https://images.microbadger.com/badges/version/nhsd/tools.svg)](http://microbadger.com/images/nhsd/tools)&nbsp;[![Docker Hub](https://img.shields.io/docker/pulls/nhsd/tools.svg)](https://hub.docker.com/r/nhsd/tools/)             |
-
 ## Use cases
 
-- Fully automated development environment setup for macOS
-- Highly customisable project toolchain (inspired by dotfiles) for advanced \*nix shell scripting
-- Building blocks to support a clean implementation of CI/CD pipelines
+- CI/CD building blocks to support a clean implementation of your pipelines
+- Development workflow with highly customisable project toolchain (inspired by dotfiles) for advanced \*NIX shell scripting
+- macOS setup to complement the above and fully automate development environment provisioning
+
+## Installation
+
+- To set up your development environment on a macOS run `curl -L bit.ly/make-devops | bash`
+- For a project toolchain integration, copy the content of the `build` directory and the top-level `Makefile` file to your project, commit your changes then run `make devops-synchronise`
+- Use make targets to support your CI/CD flow
 
 ## Features
 
@@ -46,12 +43,6 @@ If you hear your teams or individuals saying _"It will take days to onboard a ne
 - AWS MFA [script](build/automation/bin/texas-mfa)
 - Toggle natural scrolling [script](build/automation/bin/toggle-natural-scrolling)
 - Remote pair programming and [live collaboration](https://marketplace.visualstudio.com/items?itemName=MS-vsliveshare.vsliveshare)
-
-## Installation
-
-- To set up your development environment on a MacBook run `curl -L bit.ly/make-devops | bash`
-- For a project toolchain integration, copy the content of this repository to your project's root directory, commit your changes then run `make devops-synchronise`
-- Use make targets to support your CI/CD flow
 
 ## Usage
 
@@ -104,27 +95,25 @@ If you hear your teams or individuals saying _"It will take days to onboard a ne
     - Application Docker images: `YYYYmmddHHMMss` - dynamic, set during the build process
     - Release: `YYYYmmddHHMMss-release` - dynamic, set by the deployment process
 
-## Design
+## Guiding Principles
 
-Here is a list of guiding principles to extend the library as well as to build project specific CI/CD pipeline
-
-- Usability and simplicity
-- Principle of least surprise
-- Low coupling high cohesion
-- A product team has full control over their pipeline execution and owns the pipeline code
-- Pipeline implementation has to meet requirements specified by the platform
-- Adoption of the clean code best practices
-- Common pipeline is a template pipeline that consists of building blocks
-- Implementation is independent from the CI/CD system, we need just a 'scheduler'
+- Simplicity and usability
+- Do one thing well
+- Clear intent, principle of least surprise
+- Non-enforcing and supporting role
+- Well documented, documentation as code
+- A pipeline can run anywhere, e.g. any \*NIX like system
 - Technology agnostic and universal design that can support Java, .NET, Python, Go, Node and others
-- Elements of the pipeline can be executed locally as one-liners, e.g. `'run' build` or `'run' test`
-- Pipeline runs anywhere, e.g. any \*NIX like system
 
-## Gotchas
+## CI/CD Design
 
-- Bash
-  - [Escape single quotes](https://stackoverflow.com/questions/1250079/how-to-escape-single-quotes-within-single-quoted-strings)
-  - [Export JSON to environment variables](https://stackoverflow.com/questions/48512914/exporting-json-to-environment-variables)
-  - [Remove colours from output](https://stackoverflow.com/questions/17998978/removing-colors-from-output)
-- Docker
-  - [Python Docker base image](https://pythonspeed.com/articles/alpine-docker-python/)
+![DevOps CI Diagram](documentation/DevOps_CI_Diagram.png)
+
+## Status
+
+| Category                | Badges                                                                                                                                                                                                                                          |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Automated Test          | [![CircleCI](https://circleci.com/gh/nhsd-ddce/make-devops.svg?style=shield)](https://circleci.com/gh/nhsd-ddce/make-devops)                                                                                                                    |
+| Docker `nginx` image    | [![Version](https://images.microbadger.com/badges/version/nhsd/nginx.svg)](http://microbadger.com/images/nhsd/nginx)&nbsp;[![Docker Hub](https://img.shields.io/docker/pulls/nhsd/nginx.svg)](https://hub.docker.com/r/nhsd/nginx/)             |
+| Docker `postgres` image | [![Version](https://images.microbadger.com/badges/version/nhsd/postgres.svg)](http://microbadger.com/images/nhsd/postgres)&nbsp;[![Docker Hub](https://img.shields.io/docker/pulls/nhsd/postgres.svg)](https://hub.docker.com/r/nhsd/postgres/) |
+| Docker `tools` image    | [![Version](https://images.microbadger.com/badges/version/nhsd/tools.svg)](http://microbadger.com/images/nhsd/tools)&nbsp;[![Docker Hub](https://img.shields.io/docker/pulls/nhsd/tools.svg)](https://hub.docker.com/r/nhsd/tools/)             |
