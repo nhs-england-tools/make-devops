@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e
 
+DOMAIN=${DOMAIN:-localhost}
+SSL_CERTIFICATE_NAME=${SSL_CERTIFICATE_NAME:-certificate}
+
 function main() {
   prepare_configuration_files
 }

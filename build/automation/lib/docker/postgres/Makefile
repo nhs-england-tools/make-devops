@@ -4,7 +4,7 @@ include $(abspath $(lastword $(MAKEFILE_LIST))/../../../../init.mk)
 # ==============================================================================
 
 build:
-	make _generate_ssl_certificate
+	make _generate-ssl-certificate
 	make docker-build NAME=postgres CACHE_FROM=true
 
 test:
@@ -47,7 +47,7 @@ clean:
 
 # ==============================================================================
 
-_generate_ssl_certificate:
+_generate-ssl-certificate:
 	if [ ! -f $(DOCKER_LIBRARY_DIR)/postgres/assets/etc/postgresql/certificate.pem ]; then
 		make ssl-generate-certificate-project \
 			DIR=$(DOCKER_LIBRARY_DIR)/postgres/assets/etc/postgresql \

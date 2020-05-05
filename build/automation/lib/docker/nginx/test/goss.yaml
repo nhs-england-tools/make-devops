@@ -7,7 +7,7 @@ file:
     exists: true
     filetype: symlink
     linked-to: /dev/stderr
-  /certificate/nginx.mdo-uec-tools.pem:
+  /certificate/certificate.pem:
     exists: true
     filetype: file
     mode: "0400"
