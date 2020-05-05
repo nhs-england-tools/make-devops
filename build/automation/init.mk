@@ -62,7 +62,7 @@ devops-test-cleanup: ### Clean up adter the tests
 	docker network rm $(DOCKER_NETWORK) 2> /dev/null ||:
 	# TODO: Remove older networks that remained after unsuccessful builds
 
-devops-synchronise: ### Synchronise the DevOps automation toolchain scripts used by this project - optional: ALL=true
+devops-synchronise: ### Synchronise the DevOps automation toolchain scripts used by this project - optional: LATEST=true,ALL=true
 	function download() {
 		cd $(PROJECT_DIR)
 		rm -rf \
@@ -72,9 +72,11 @@ devops-synchronise: ### Synchronise the DevOps automation toolchain scripts used
 		git submodule add --force \
 			https://github.com/$(DEVOPS_PROJECT_ORG)/$(DEVOPS_PROJECT_NAME).git \
 			$$(echo $(abspath $(TMP_DIR)/$(DEVOPS_PROJECT_NAME)) | sed "s;$(PROJECT_DIR);;g")
-		tag=$$(make _devops-synchronise-select-tag-to-install)
-		cd $(TMP_DIR)/$(DEVOPS_PROJECT_NAME)
-		git checkout $$tag
+		if [[ ! "$(LATEST)" =~ ^(true|yes|y|on|1|TRUE|YES|Y|ON)$$ ]]; then
+			tag=$$(make _devops-synchronise-select-tag-to-install)
+			cd $(TMP_DIR)/$(DEVOPS_PROJECT_NAME)
+			git checkout $$tag
+		fi
 	}
 	function sync() {
 		cd $(TMP_DIR)/$(DEVOPS_PROJECT_NAME)
