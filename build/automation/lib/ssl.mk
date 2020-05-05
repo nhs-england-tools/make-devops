@@ -1,4 +1,4 @@
-CERTIFICATE_DIR = $(ETC_DIR)/certificate
+SSL_CERTIFICATE_DIR = $(ETC_DIR)/certificate
 
 ssl-generate-certificate-project: ### Generate self-signed certificate for the project - optional: DIR=[path to certificate],NAME=[certificate file name],DOMAINS='*.domain1,*.domain2'
 	domains="localhost,DNS:$(PROJECT_NAME_SHORT).local,DNS:*.$(PROJECT_NAME_SHORT).local,DNS:$(PROJECT_NAME).local,DNS:*.$(PROJECT_NAME).local,"
@@ -8,7 +8,7 @@ ssl-generate-certificate-project: ### Generate self-signed certificate for the p
 		domains+="DNS:$${domain},"
 	done
 	make ssl-generate-certificate \
-		DIR=$(or $(DIR), $(CERTIFICATE_DIR)) \
+		DIR=$(or $(DIR), $(SSL_CERTIFICATE_DIR)) \
 		NAME=$(or $(NAME), certificate) \
 		DOMAINS=$$(printf "$$domains" | head -c -1)
 
@@ -33,6 +33,10 @@ ssl-generate-certificate: ### Generate self-signed certificate - mandatory: DIR=
 		-inkey $(DIR)/$(NAME).key \
 		-out $(DIR)/$(NAME).p12
 	openssl x509 -text < $(DIR)/$(NAME).crt
+
+ssl-trust-certificate-project: ### Trust self-signed certificate for the project - optional: FILE=[path to .pem file]
+	make ssl-trust-certificate \
+		FILE=$(SSL_CERTIFICATE_DIR)/certificate.pem
 
 ssl-trust-certificate: ### Trust self-signed certificate - mandatory: FILE=[path to .pem file]
 	sudo security add-trusted-cert -d \
