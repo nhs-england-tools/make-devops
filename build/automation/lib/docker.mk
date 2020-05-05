@@ -101,7 +101,7 @@ docker-create-repository: ### Create Docker repository to store an image - manda
 	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=localstack' ||:)" CMD=" \
 		$(AWSCLI) ecr create-repository \
 			--repository-name $(PROJECT_GROUP)/$(PROJECT_NAME)/$(NAME) \
-			--tags Key=Service,Value=$(PROJECT_NAME) \
+			--tags Key=Service,Value=$(TEXAS_SERVICE_TAG) \
 	"
 	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=localstack' ||:)" CMD=" \
 		$(AWSCLI) ecr set-repository-policy \
