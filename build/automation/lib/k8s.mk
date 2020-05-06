@@ -6,22 +6,28 @@ K8S_TTL_LENGTH = $(or $(TEXAS_K8S_TTL_LENGTH), 2 days)
 
 # ==============================================================================
 
+k8s-deploy-service: ### Deploy application service stack to the Kubernetes cluster - mandatory: PROFILE=[name]
+	make k8s-deploy STACK=service
+
 k8s-deploy: ### Deploy application to the Kubernetes cluster - mandatory: STACK=[name],PROFILE=[name]
 	make k8s-replace-variables STACK=$(STACK) PROFILE=$(PROFILE)
-	eval "$$(make -s k8s-kubeconfig-export)"
+	make k8s-kubeconfig-get
+	eval "$$(make k8s-kubeconfig-export)"
 	kubectl apply -k $$(make -s _k8s-get-deployment-directory)
 	make k8s-clean # TODO: Create a flag to switch it off
 	make k8s-sts
 
 k8s-undeploy: ### Remove Kubernetes resources
-	eval "$$(make -s k8s-kubeconfig-export)"
+	make k8s-kubeconfig-get
+	eval "$$(make k8s-kubeconfig-export)"
 	if kubectl get namespaces | grep -o "$(K8S_APP_NAMESPACE) "; then
 		kubectl delete namespace $(K8S_APP_NAMESPACE)
 	fi
 
 k8s-deploy-job: ### Deploy job to the Kubernetes cluster - mandatory: STACK=[name],PROFILE=[name]
 	make k8s-replace-variables STACK=$(STACK) PROFILE=$(PROFILE)
-	eval "$$(make -s k8s-kubeconfig-export)"
+	make k8s-kubeconfig-get
+	eval "$$(make k8s-kubeconfig-export)"
 	kubectl delete jobs --all -n $(K8S_JOB_NAMESPACE)
 	kubectl apply -k $$(make -s _k8s-get-deployment-directory)
 	make k8s-clean # TODO: Create a flag to switch it off
@@ -29,7 +35,8 @@ k8s-deploy-job: ### Deploy job to the Kubernetes cluster - mandatory: STACK=[nam
 	make k8s-wait-for-job-to-complete
 
 k8s-undeploy-job: ### Remove Kubernetes resources from job namespace
-	eval "$$(make -s k8s-kubeconfig-export)"
+	make k8s-kubeconfig-get
+	eval "$$(make k8s-kubeconfig-export)"
 	if kubectl get namespaces | grep -o "$(K8S_JOB_NAMESPACEss) "; then
 		kubectl delete namespace $(K8S_JOB_NAMESPACE)
 	fi
@@ -80,13 +87,6 @@ _k8s-get-deployment-directory:
 	else
 		echo $(K8S_DIR)/$(STACK)/base
 	fi
-
-# ==============================================================================
-
-.SILENT: \
-	_k8s-get-deployment-directory \
-	k8s-get-namespace-ttl \
-	k8s-kubeconfig-export
 
 # ==============================================================================
 
@@ -226,14 +226,14 @@ k8s-job: ### Show status of jobs
 # ==============================================================================
 
 .SILENT: \
+	_k8s-get-deployment-directory \
 	k8s-cnf \
-	k8s-log \
-	k8s-sts \
-	k8s-export-kubeconfig \
 	k8s-get-namespace-ttl \
+	k8s-job-complete \
 	k8s-job-failed \
 	k8s-job-log \
 	k8s-job-name \
-	k8s-job-failed \
-	k8s-job-complete \
+	k8s-kubeconfig-export
+	k8s-log \
+	k8s-sts \
 	k8s-wait-for-job-to-complete
