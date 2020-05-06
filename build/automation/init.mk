@@ -118,7 +118,9 @@ devops-synchronise: ### Synchronise the DevOps automation toolchain scripts used
 			$(DOCKER_DIR)/Dockerfile.metadata \
 			$(ETC_DIR)/platform-texas* \
 			$(LIB_DIR)/dev.mk \
-			$(LIB_DIR)/fix
+			$(LIB_DIR)/fix \
+			$(VAR_DIR)/helpers.mk.default \
+			$(VAR_DIR)/override.mk.default
 		rm -rf \
 			$(TMP_DIR)/$(DEVOPS_PROJECT_NAME) \
 			.git/modules/build \

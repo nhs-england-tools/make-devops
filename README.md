@@ -57,10 +57,10 @@ If you hear your teams or individuals saying _"It will take days to onboard a ne
 - Set all the profile specific information in a `build/automation/var/profile/[name].mk` file
 - Set all the project specific information in the `build/automation/var/project.mk` file. There is set of mandatory variables that must be defined for the library to function correctly. For more details, please refer to the `build/automation/var/project.mk.default` file
 - Your development flow should be described in the main `Makefile` in the root directory of the project. Content of that file must meet certain implementation requirements and include some predefined sections
-- Create custom helper targets in the `build/automation/var/helpers.mk` file. These targets should be lower-level targets supporting your project's development flow
+- Create custom helper targets in the `Makefile` file or in the individual sub-project directories. These targets should be lower-level targets supporting your project's development flow
 - If a library target does not work in the expected way there are two ways of solving that issue
   - Create a patch, raise an MR and assign it to one of the library maintainers
-  - Override the make target by creating it with the same name in the `build/automation/var/override.mk` file
+  - Override the make target by creating it with the same name in the `build/automation/var/project.mk` file
 - Target name convention
   - Use `descriptive-name`
   - Create `project-*` targets for the ops work flow or production usage, e.g. `project-build`, `project-deploy`
