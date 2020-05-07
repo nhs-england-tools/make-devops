@@ -79,7 +79,7 @@ devops-synchronise: ### Synchronise the DevOps automation toolchain scripts used
 		fi
 	}
 	function sync() {
-		cd $(TMP_DIR)/$(DEVOPS_PROJECT_NAME)
+		cd $(PROJECT_DIR)
 		rsync -rav \
 			--include=build/ \
 			--exclude=automation/etc/githooks/scripts/*-pre-commit.sh \
@@ -87,59 +87,68 @@ devops-synchronise: ### Synchronise the DevOps automation toolchain scripts used
 			--exclude=docker/docker-compose.yml \
 			--exclude=Jenkinsfile \
 			build/* \
-			$(PROJECT_DIR)/build
-		[ -f $(SSL_CERTIFICATE_DIR)/*.pem ] && rm -fv $(SSL_CERTIFICATE_DIR)/.gitignore
+			$(PARENT_PROJECT_DIR)/build
+		[ -f $(PARENT_PROJECT_DIR)/$(SSL_CERTIFICATE_DIR_REL)/*.pem ] && rm -fv $(PARENT_PROJECT_DIR)/$(SSL_CERTIFICATE_DIR_REL)/.gitignore
 		mkdir -p \
-			$(PROJECT_DIR)/documentation/adr
-		cp -fv documentation/adr/README.md $(PROJECT_DIR)/documentation/adr/README.md
-		cp -fv CONTRIBUTING.md $(PROJECT_DIR)/CONTRIBUTING.md
-		cp -fv LICENSE.md $(PROJECT_DIR)/build/automation/LICENSE.md
-		cp -fv $(DEVOPS_PROJECT_NAME).code-workspace.template $(PROJECT_DIR)/$(PROJECT_NAME).code-workspace.template
-		[ ! -f $(PROJECT_DIR)/build/docker/docker-compose.yml ] && cp -v \
+			$(PARENT_PROJECT_DIR)/documentation/adr
+		cp -fv documentation/adr/README.md $(PARENT_PROJECT_DIR)/documentation/adr/README.md
+		cp -fv CONTRIBUTING.md $(PARENT_PROJECT_DIR)/CONTRIBUTING.md
+		cp -fv LICENSE.md $(PARENT_PROJECT_DIR)/build/automation/LICENSE.md
+		cp -fv $(DEVOPS_PROJECT_NAME).code-workspace.template $(PARENT_PROJECT_DIR)/$(PARENT_PROJECT_NAME).code-workspace.template
+		[ ! -f $(PARENT_PROJECT_DIR)/build/docker/docker-compose.yml ] && cp -v \
 			build/docker/docker-compose.yml \
-			$(PROJECT_DIR)/build/docker/docker-compose.yml ||:
-		[ ! -f $(PROJECT_DIR)/build/Jenkinsfile ] && cp -v \
+			$(PARENT_PROJECT_DIR)/build/docker/docker-compose.yml ||:
+		[ ! -f $(PARENT_PROJECT_DIR)/build/Jenkinsfile ] && cp -v \
 			build/Jenkinsfile \
-			$(PROJECT_DIR)/build/Jenkinsfile ||:
+			$(PARENT_PROJECT_DIR)/build/Jenkinsfile ||:
 	}
 	function version() {
-		cd $(TMP_DIR)/$(DEVOPS_PROJECT_NAME)
+		cd $(PROJECT_DIR)
 		tag=$$([ -n "$$(git tag --points-at HEAD)" ] && echo $$(git tag --points-at HEAD) || echo vcommit)
 		hash=$$(git rev-parse --short HEAD)
-		echo "$${tag:1}-$${hash}" > $(PROJECT_DIR)/build/automation/VERSION
+		echo "$${tag:1}-$${hash}" > $(PARENT_PROJECT_DIR)/build/automation/VERSION
 	}
 	function cleanup() {
-		cd $(PROJECT_DIR)
+		cd $(PARENT_PROJECT_DIR)
 		rm -rf \
 			~/bin/texas-mfa-clear.sh \
 			~/bin/texas-mfa.py \
 			~/bin/toggle-natural-scrolling.sh \
-			$(BIN_DIR)/markdown.pl \
-			$(DOCKER_DIR)/Dockerfile.metadata \
-			$(ETC_DIR)/platform-texas* \
-			$(LIB_DIR)/dev.mk \
-			$(LIB_DIR)/fix \
-			$(VAR_DIR)/helpers.mk.default \
-			$(VAR_DIR)/override.mk.default
+			$(PARENT_PROJECT_DIR)/$(BIN_DIR_REL)/markdown.pl \
+			$(PARENT_PROJECT_DIR)/$(DOCKER_DIR_REL)/Dockerfile.metadata \
+			$(PARENT_PROJECT_DIR)/$(ETC_DIR_REL)/platform-texas* \
+			$(PARENT_PROJECT_DIR)/$(LIB_DIR_REL)/dev.mk \
+			$(PARENT_PROJECT_DIR)/$(LIB_DIR_REL)/fix \
+			$(PARENT_PROJECT_DIR)/$(VAR_DIR_REL)/helpers.mk.default \
+			$(PARENT_PROJECT_DIR)/$(VAR_DIR_REL)/override.mk.default
 		rm -rf \
-			$(TMP_DIR)/$(DEVOPS_PROJECT_NAME) \
+			$(PROJECT_DIR) \
 			.git/modules/build \
 			.gitmodules
 		git reset -- .gitmodules
 		git reset -- build/automation/tmp/$(DEVOPS_PROJECT_NAME)
 	}
 	function commit() {
-		cd $(PROJECT_DIR)
+		cd $(PARENT_PROJECT_DIR)
 		if [ 0 -lt $$(git status -s | wc -l) ]; then
 			git add .
 			git commit -S -m "Update the DevOps automation toolchain scripts"
 		fi
 	}
-	if [ 0 -lt $$(git status -s | wc -l) ]; then
-		echo "ERROR: Please, commit your changes first"
-		exit 1
+	if [ -z "$(__DEVOPS_SYNCHRONISE)" ]; then
+		download
+		cd $(TMP_DIR)/$(DEVOPS_PROJECT_NAME)
+		make devops-synchronise \
+			PARENT_PROJECT_DIR=$(PROJECT_DIR) \
+			PARENT_PROJECT_NAME=$(PROJECT_NAME) \
+			__DEVOPS_SYNCHRONISE=true
+	else
+		if [ 0 -lt $$(git status -s | wc -l) ]; then
+			echo "ERROR: Please, commit your changes first"
+			exit 1
+		fi
+		cleanup && sync && version && cleanup && commit
 	fi
-	cleanup && download && sync && version && cleanup && commit
 
 _devops-synchronise-select-tag-to-install: ### TODO: This is WIP
 	cd $(TMP_DIR)/$(DEVOPS_PROJECT_NAME)

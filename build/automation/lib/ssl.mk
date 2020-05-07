@@ -1,4 +1,5 @@
 SSL_CERTIFICATE_DIR = $(ETC_DIR)/certificate
+SSL_CERTIFICATE_DIR_REL = $(shell echo $(SSL_CERTIFICATE_DIR) | sed "s;$(PROJECT_DIR);;g")
 
 ssl-generate-certificate-project: ### Generate self-signed certificate for the project - optional: DIR=[path to certificate],NAME=[certificate file name],DOMAINS='*.domain1,*.domain2'
 	domains="localhost,DNS:$(PROJECT_NAME_SHORT).local,DNS:*.$(PROJECT_NAME_SHORT).local,DNS:$(PROJECT_NAME).local,DNS:*.$(PROJECT_NAME).local,"

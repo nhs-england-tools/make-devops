@@ -1,6 +1,5 @@
 # TODO
 
-- Run `make devops-synchronise` from the downloaded submodule
 - Confirm `--cache-from` for building Docker images works - the problem is with changing file permissions, use `gosu` instead
 - Conditional push to the Docker Hub registry
 - Create reverse proxy configuration for `nginx`

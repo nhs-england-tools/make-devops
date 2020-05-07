@@ -1,4 +1,5 @@
 TERRAFORM_DIR = $(PROJECT_DIR)/infrastructure/stacks
+TERRAFORM_DIR_REL = $(shell echo $(TERRAFORM_DIR) | sed "s;$(PROJECT_DIR);;g")
 TERRAFORM_STATE_KEY = $(PROJECT_GROUP)-$(PROJECT_NAME)/$(PROFILE)
 TERRAFORM_STATE_LOCK = $(or $(TEXAS_TERRAFORM_STATE_LOCK), terraform-service-state-lock-$(PROFILE))
 TERRAFORM_STATE_STORE = $(or $(TEXAS_TERRAFORM_STATE_STORE), terraform-service-state-store-$(PROFILE))
