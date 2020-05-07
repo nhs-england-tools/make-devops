@@ -1,1 +1,1 @@
-to_entries|map("\(.key)=\(.value)")|.[]
+to_entries|map("\(.key)=\(.value|tostring)")|.[]

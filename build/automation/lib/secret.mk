@@ -28,7 +28,7 @@ secret-random: ### Generate random secret string - optional: LENGTH=[integer]
 # ==============================================================================
 
 _secret-export-variables-from-json: ### Convert JSON to environment variables - mandatory: JSON='{"key":"value"}'|JSON="$$(echo '$(JSON)')"; returns: [variables export]
-	for str in $$(echo '$(JSON)' | jq -r "to_entries|map(\"\(.key)=\(.value|tostring)\")|.[]"); do
+	for str in $$(echo '$(JSON)' | make -s docker-run-tools CMD="jq -rf $(JSON_DIR_REL)/json-to-env-vars.jq"); do
 		key=$$(cut -d "=" -f1 <<<"$$str")
 		value=$$(cut -d "=" -f2- <<<"$$str")
 		echo "export $${key}=$${value}"

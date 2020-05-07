@@ -17,8 +17,8 @@ test-techradar-inspect-filesystem:
 	docker pull alpine:$(DOCKER_ALPINE_VERSION)
 	# act
 	output=$$(make techradar-inspect IMAGE=alpine:$(DOCKER_ALPINE_VERSION))
-	name=$$(echo $$output | jq '.filesystem.name' --raw-output)
-	version=$$(echo $$output | jq '.filesystem.version' --raw-output)
+	name=$$(echo $$output | make -s docker-run-tools CMD="jq -r '.filesystem.name'")
+	version=$$(echo $$output | make -s docker-run-tools CMD="jq -r '.filesystem.version'")
 	# assert
 	mk_test "$(@) name" alpine = "$$name"
 	mk_test "$(@) version" $(DOCKER_ALPINE_VERSION) = "$$version"
@@ -28,10 +28,10 @@ test-techradar-inspect-image:
 	docker pull alpine:$(DOCKER_ALPINE_VERSION)
 	# act
 	output=$$(make techradar-inspect IMAGE=alpine:$(DOCKER_ALPINE_VERSION))
-	hash=$$(echo $$output | jq '.image.hash' --raw-output)
-	date=$$(echo $$output | jq '.image.date' --raw-output)
-	size=$$(echo $$output | jq '.image.size' --raw-output)
-	trace=$$(echo $$output | jq '.image.trace' --raw-output)
+	hash=$$(echo $$output | make -s docker-run-tools CMD="jq -r '.image.hash'")
+	date=$$(echo $$output | make -s docker-run-tools CMD="jq -r '.image.date'")
+	size=$$(echo $$output | make -s docker-run-tools CMD="jq -r '.image.size'")
+	trace=$$(echo $$output | make -s docker-run-tools CMD="jq -r '.image.trace'")
 	# assert
 	mk_test "$(@) hash" -n $$hash
 	mk_test "$(@) date" -n $$date
@@ -43,10 +43,10 @@ test-techradar-inspect-build:
 	docker pull alpine:$(DOCKER_ALPINE_VERSION)
 	# act
 	output=$$(make techradar-inspect IMAGE=alpine:$(DOCKER_ALPINE_VERSION))
-	id=$$(echo $$output | jq '.build.id' --raw-output)
-	date=$$(echo $$output | jq '.build.date' --raw-output)
-	hash=$$(echo $$output | jq '.build.hash' --raw-output)
-	repo=$$(echo $$output | jq '.build.repo' --raw-output)
+	id=$$(echo $$output | make -s docker-run-tools CMD="jq -r '.build.id'")
+	date=$$(echo $$output | make -s docker-run-tools CMD="jq -r '.build.date'")
+	hash=$$(echo $$output | make -s docker-run-tools CMD="jq -r '.build.hash'")
+	repo=$$(echo $$output | make -s docker-run-tools CMD="jq -r '.build.repo'")
 	# assert
 	mk_test "$(@) id" -n $$id
 	mk_test "$(@) date" -n $$date
