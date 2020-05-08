@@ -14,9 +14,9 @@ function main() {
   elif [ "scripts" == "$1" ]; then
     shift
     run_scripts "$@"
-  elif [ "postgres" == "$1" ]; then
+  elif [ "postgres" == "$1" ] || [ $# -eq 0 ]; then
     run_postgres
-  else
+  elif [ $# -gt 0 ]; then
     exec "$@"
   fi
 }

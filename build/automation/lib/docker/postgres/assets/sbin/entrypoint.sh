@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-# run init scripts
+# Run init scripts
 for file in /sbin/init.d/*; do
   case "$file" in
     *.sh)

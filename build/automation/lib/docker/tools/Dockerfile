@@ -2,27 +2,37 @@ FROM python:latest
 
 ENV \
     DEBIAN_FRONTEND="noninteractive" \
-    TZ="Europe/London" \
+    GOSU_VERSION="1.12" \
     LANG="C.UTF-8" \
-    LC_ALL="C.UTF-8"
+    LC_ALL="C.UTF-8" \
+    SYSTEM_USER_GID="999" \
+    SYSTEM_USER_UID="999" \
+    SYSTEM_USER="tools" \
+    TZ="Europe/London"
 
-RUN set -ex && \
+RUN set -eux && \
     \
     # Install base packages
     apt-get update --yes && \
-    apt-get upgrade --yes && \
     apt-get install --yes --no-install-recommends \
+        ca-certificates \
         curl \
+        dnsutils \
+        git \
+        gnupg \
+        iputils-ping \
         make \
+        net-tools \
         netcat \
+        traceroute \
         wget \
     && \
     \
     # Install Python packages
     pip install \
-        awscli==1.18.46 \
+        awscli==1.18.55 \
         awscli-local==0.6 \
-        boto3==1.12.46 \
+        boto3==1.13.5 \
         requests==2.23.0 \
     && \
     \
@@ -40,6 +50,23 @@ RUN set -ex && \
     curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.18.2/bin/linux/amd64/kubectl && \
     chmod +x ./kubectl && \
     mv ./kubectl /usr/local/bin/kubectl && \
+    \
+    # Install gosu
+    dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')" && \
+    wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch" && \
+    wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch.asc" && \
+    export GNUPGHOME="$(mktemp -d)" && \
+    gpg --batch --keyserver hkps://keys.openpgp.org --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 && \
+    gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu && \
+    gpgconf --kill all && \
+    rm -rf "$GNUPGHOME" /usr/local/bin/gosu.asc && \
+    chmod +x /usr/local/bin/gosu && \
+    gosu nobody true && \
+    \
+    # Configure system user
+    userdel --remove --force $SYSTEM_USER ||: && \
+    groupadd --system --gid $SYSTEM_USER_GID $SYSTEM_USER && \
+    useradd --system --create-home --home-dir /tmp --shell=/bin/false --uid $SYSTEM_USER_UID --gid $SYSTEM_USER_GID $SYSTEM_USER && \
     \
     # Clean up
     rm -rf /tmp/* /var/tmp/* /var/lib/apt/lists/* /var/cache/apt/*

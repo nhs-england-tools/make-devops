@@ -1,3 +1,21 @@
+user:
+  nginx:
+    exists: true
+    uid: 999
+    gid: 999
+    home: /tmp
+    shell: /bin/false
+
+package:
+  ca-certificates:
+    installed: true
+  curl:
+    installed: true
+  gnupg:
+    installed: true
+  wget:
+    installed: true
+
 file:
   /var/log/nginx/access.log:
     exists: true
@@ -14,10 +32,9 @@ file:
   /application/index.html:
     exists: true
     filetype: file
-
-package:
-  ca-certificates:
-    installed: true
+  /usr/local/bin/gosu:
+    exists: true
+    mode: "0755"
 
 process:
   nginx:
