@@ -6,6 +6,7 @@ SSL_CERTIFICATE_NAME=${SSL_CERTIFICATE_NAME:-certificate}
 
 function main() {
   prepare_configuration_files
+  set_file_permissions
 }
 
 function prepare_configuration_files() {
@@ -26,6 +27,17 @@ function _replace_variables() {
       "s;${key}_TO_REPLACE;${value//&/\\&};g" \
       $file ||:
   done
+}
+
+function set_file_permissions() {
+  chown $SYSTEM_USER_UID:$SYSTEM_USER_GID \
+    "$(readlink /dev/stderr)" \
+    "$(readlink /dev/stdout)"
+  chown $SYSTEM_USER_UID /var/run
+  chown -R $SYSTEM_USER_UID:$SYSTEM_USER_GID \
+    /certificate \
+    /var/cache/nginx
+  chmod 400 /certificate/*
 }
 
 main "$@"

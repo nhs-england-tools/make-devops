@@ -1,6 +1,10 @@
 #!/bin/bash
 set -e
 
+[[ "$DEBUG" =~ ^(true|yes|on|1|TRUE|YES|ON)$ ]] && set -x
+[[ "$TRACE" =~ ^(true|yes|on|1|TRUE|YES|ON)$ ]] && trace="strace -tt -T -v -s 65536 -f"
+[[ "$GOSU" =~ ^(false|no|off|0|FALSE|NO|OFF)$ ]] && gosu="" || gosu="gosu $SYSTEM_USER"
+
 if [ $# -gt 0 ]; then
   # Run command
   exec "$@"
@@ -14,5 +18,5 @@ else
     esac
   done
   # Run main process
-  exec nginx -c /etc/nginx/nginx.conf -g 'daemon off;'
+  exec $trace $gosu nginx -c /etc/nginx/nginx.conf -g 'daemon off;'
 fi

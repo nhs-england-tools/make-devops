@@ -46,7 +46,6 @@ COPY assets/ /
 RUN set -eux && \
     \
     # Trust certificate
-    chmod 400 /certificate/* && \
     cp /certificate/*.crt /usr/local/share/ca-certificates && \
     update-ca-certificates
 
