@@ -80,6 +80,7 @@ devops-synchronise: ### Synchronise the DevOps automation toolchain scripts used
 	}
 	function sync() {
 		cd $(PROJECT_DIR)
+		# Copy essentials
 		rsync -rav \
 			--include=build/ \
 			--exclude=automation/etc/githooks/scripts/*-pre-commit.sh \
@@ -88,19 +89,17 @@ devops-synchronise: ### Synchronise the DevOps automation toolchain scripts used
 			--exclude=Jenkinsfile \
 			build/* \
 			$(PARENT_PROJECT_DIR)/build
-		[ -f $(PARENT_PROJECT_DIR)/$(SSL_CERTIFICATE_DIR_REL)/*.pem ] && rm -fv $(PARENT_PROJECT_DIR)/$(SSL_CERTIFICATE_DIR_REL)/.gitignore
-		mkdir -p \
-			$(PARENT_PROJECT_DIR)/documentation/adr
-		cp -fv documentation/adr/README.md $(PARENT_PROJECT_DIR)/documentation/adr/README.md
-		cp -fv CONTRIBUTING.md $(PARENT_PROJECT_DIR)/CONTRIBUTING.md
+		[ -f $(PARENT_PROJECT_DIR)/build/automation/etc/certificate/*.pem ] && rm -fv $(PARENT_PROJECT_DIR)/build/automation/etc/certificate/.gitignore
+		[ ! -f $(PARENT_PROJECT_DIR)/build/docker/docker-compose.yml ] && cp -v build/docker/docker-compose.yml $(PARENT_PROJECT_DIR)/build/docker/docker-compose.yml ||:
+		[ ! -f $(PARENT_PROJECT_DIR)/build/Jenkinsfile ] && cp -v build/Jenkinsfile $(PARENT_PROJECT_DIR)/build/Jenkinsfile ||:
 		cp -fv LICENSE.md $(PARENT_PROJECT_DIR)/build/automation/LICENSE.md
-		cp -fv $(DEVOPS_PROJECT_NAME).code-workspace.template $(PARENT_PROJECT_DIR)/$(PARENT_PROJECT_NAME).code-workspace.template
-		[ ! -f $(PARENT_PROJECT_DIR)/build/docker/docker-compose.yml ] && cp -v \
-			build/docker/docker-compose.yml \
-			$(PARENT_PROJECT_DIR)/build/docker/docker-compose.yml ||:
-		[ ! -f $(PARENT_PROJECT_DIR)/build/Jenkinsfile ] && cp -v \
-			build/Jenkinsfile \
-			$(PARENT_PROJECT_DIR)/build/Jenkinsfile ||:
+		# Copy additionals
+		if [[ "$(ALL)" =~ ^(true|yes|y|on|1|TRUE|YES|Y|ON)$$ ]]; then
+			mkdir -p $(PARENT_PROJECT_DIR)/documentation/adr
+			cp -fv documentation/adr/README.md $(PARENT_PROJECT_DIR)/documentation/adr/README.md
+			cp -fv CONTRIBUTING.md $(PARENT_PROJECT_DIR)/CONTRIBUTING.md
+			cp -fv $(DEVOPS_PROJECT_NAME).code-workspace.template $(PARENT_PROJECT_DIR)/$(PARENT_PROJECT_NAME).code-workspace.template
+		fi
 	}
 	function version() {
 		cd $(PROJECT_DIR)
@@ -110,17 +109,18 @@ devops-synchronise: ### Synchronise the DevOps automation toolchain scripts used
 	}
 	function cleanup() {
 		cd $(PARENT_PROJECT_DIR)
+		# Clean up old project files
 		rm -rf \
 			~/bin/texas-mfa-clear.sh \
 			~/bin/texas-mfa.py \
 			~/bin/toggle-natural-scrolling.sh \
-			$(PARENT_PROJECT_DIR)/$(BIN_DIR_REL)/markdown.pl \
-			$(PARENT_PROJECT_DIR)/$(DOCKER_DIR_REL)/Dockerfile.metadata \
-			$(PARENT_PROJECT_DIR)/$(ETC_DIR_REL)/platform-texas* \
-			$(PARENT_PROJECT_DIR)/$(LIB_DIR_REL)/dev.mk \
-			$(PARENT_PROJECT_DIR)/$(LIB_DIR_REL)/fix \
-			$(PARENT_PROJECT_DIR)/$(VAR_DIR_REL)/helpers.mk.default \
-			$(PARENT_PROJECT_DIR)/$(VAR_DIR_REL)/override.mk.default
+			$(PARENT_PROJECT_DIR)/build/automation/bin/markdown.pl \
+			$(PARENT_PROJECT_DIR)/build/automation/etc/platform-texas* \
+			$(PARENT_PROJECT_DIR)/build/automation/lib/dev.mk \
+			$(PARENT_PROJECT_DIR)/build/automation/lib/fix \
+			$(PARENT_PROJECT_DIR)/build/automation/var/helpers.mk.default \
+			$(PARENT_PROJECT_DIR)/build/automation/var/override.mk.default \
+			$(PARENT_PROJECT_DIR)/build/docker/Dockerfile.metadata
 		rm -rf \
 			$(PROJECT_DIR) \
 			.git/modules/build \
@@ -147,7 +147,7 @@ devops-synchronise: ### Synchronise the DevOps automation toolchain scripts used
 			echo "ERROR: Please, commit your changes first"
 			exit 1
 		fi
-		cleanup && sync && version && cleanup && commit
+		sync && version && cleanup && commit
 	fi
 
 _devops-synchronise-select-tag-to-install: ### TODO: This is WIP
