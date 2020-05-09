@@ -8,39 +8,32 @@ DB_USERNAME=${DB_USERNAME:-postgres}
 DB_PASSWORD=${DB_PASSWORD:-postgres}
 
 function main() {
-  if [ "sql" == "$1" ]; then
-    shift
-    run_sql "$@"
-  elif [ "scripts" == "$1" ]; then
-    shift
-    run_scripts "$@"
+  if [ "scripts" == "$1" ]; then
+    replace_variables_in_scripts "$@"
   elif [ "postgres" == "$1" ] || [ $# -eq 0 ]; then
-    run_postgres
-  elif [ $# -gt 0 ]; then
-    exec "$@"
+    replace_variables_in_postgres
   fi
+  set_file_permissions
 }
 
-function run_sql() {
-  sql="$1"
-  echo "Running SQL: $sql"
-  psql "postgres://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}" -c "$sql"
-}
-
-function run_scripts() {
-  dir=${1:-/sql}
+function replace_variables_in_scripts() {
+  dir=${2:-/sql}
   for file in $dir/*; do
-    echo "Running script: '$file'"
-    _replace_variables $file
-    psql "postgres://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}" -f $file
+    [ -f $file ] && _replace_variables $file ||:
   done
 }
 
-function run_postgres() {
+function replace_variables_in_postgres() {
   for file in /docker-entrypoint-initdb.d/*; do
-    _replace_variables $file
+    [ -f $file ] && _replace_variables $file ||:
   done
-  exec /usr/local/bin/docker-entrypoint.sh postgres -c config_file=/etc/postgresql/postgresql.conf
+}
+
+function set_file_permissions() {
+  chmod 0600 /etc/postgresql/certificate.*
+  chown -R $SYSTEM_USER_UID:$SYSTEM_USER_GID /etc/postgresql
+  find /sql -type d -exec chmod 777 {} \;
+  find /sql -type f -exec chmod 666 {} \;
 }
 
 function _replace_variables() {

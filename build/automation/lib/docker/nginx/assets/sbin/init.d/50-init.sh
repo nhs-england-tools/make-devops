@@ -17,6 +17,17 @@ function prepare_configuration_files() {
   done
 }
 
+function set_file_permissions() {
+  chown $SYSTEM_USER_UID:$SYSTEM_USER_GID \
+    "$(readlink /dev/stderr)" \
+    "$(readlink /dev/stdout)"
+  chown $SYSTEM_USER_UID /var/run
+  chown -R $SYSTEM_USER_UID:$SYSTEM_USER_GID \
+    /certificate \
+    /var/cache/nginx
+  chmod 400 /certificate/*
+}
+
 function _replace_variables() {
   file=$1
   echo "Replace variables in '$file'"
@@ -27,17 +38,6 @@ function _replace_variables() {
       "s;${key}_TO_REPLACE;${value//&/\\&};g" \
       $file ||:
   done
-}
-
-function set_file_permissions() {
-  chown $SYSTEM_USER_UID:$SYSTEM_USER_GID \
-    "$(readlink /dev/stderr)" \
-    "$(readlink /dev/stdout)"
-  chown $SYSTEM_USER_UID /var/run
-  chown -R $SYSTEM_USER_UID:$SYSTEM_USER_GID \
-    /certificate \
-    /var/cache/nginx
-  chmod 400 /certificate/*
 }
 
 main "$@"

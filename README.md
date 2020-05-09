@@ -1,6 +1,6 @@
 # Make DevOps
 
-If you hear your teams or individuals saying _"It will take days to onboard a new member..."_, _"It works on my machine..."_ or _"Our pipeline is to complex and no one really understands how it all works..."_ then perhaps you need to take an interest in this project.
+If you hear your teams or individuals saying _"It will take days to onboard a new member..."_, _"It works on my machine..."_ or _"Our pipeline is to complex and no one really understands how it all works..."_ then you need to invest more in automation and perhaps take an interest in this project. This project will help you to make your deploys boring!
 
 ## Use cases
 

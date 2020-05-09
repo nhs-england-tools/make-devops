@@ -43,14 +43,6 @@ RUN set -eux && \
 
 COPY assets/ /
 
-RUN set -eux && \
-    \
-    # Set file permissions
-    chmod 0600 /etc/postgresql/certificate.* && \
-    chown -R postgres:postgres /etc/postgresql && \
-    find /sql -type d -exec chmod 777 {} \; && \
-    find /sql -type f -exec chmod 666 {} \;
-
 WORKDIR /sql
 EXPOSE 5432
 ENTRYPOINT [ "/sbin/entrypoint.sh" ]
