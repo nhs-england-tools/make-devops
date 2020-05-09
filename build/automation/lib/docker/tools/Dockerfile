@@ -71,4 +71,7 @@ RUN set -eux && \
     # Clean up
     rm -rf /tmp/* /var/tmp/* /var/lib/apt/lists/* /var/cache/apt/*
 
-CMD [ "sh" ]
+COPY assets/ /
+
+ENTRYPOINT [ "/sbin/entrypoint.sh" ]
+CMD [ "/bin/bash" ]
