@@ -1,5 +1,6 @@
 # TODO
 
+- Should `_replace_variables()` be moved to `libfile.sh`?
 - Move away from `openjdk` in favour of `adoptopenjdk`
 - Conditional push to the Docker Hub registry
 - Create reverse proxy configuration for `nginx`

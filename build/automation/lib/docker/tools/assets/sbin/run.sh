@@ -1,4 +1,6 @@
 #!/bin/bash
 set -e
 
-exec "$@"
+if [ $# -gt 0 ]; then
+  exec $trace $gosu "$@"
+fi
