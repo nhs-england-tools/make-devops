@@ -7,7 +7,11 @@ function mk_test_initialise() {
   TEST_PASS_COUNT=0
   TEST_FAIL_COUNT=0
   (
-    mk_test_print "$(echo $1 | sed -e s/^test-//) "
+    if [[ "$DEBUG" =~ ^(true|yes|y|on|1|TRUE|YES|Y|ON)$ ]]; then
+      mk_test_print_red_on_yellow "$(echo $1 | sed -e s/^test-//) >>> "
+    else
+      mk_test_print "$(echo $1 | sed -e s/^test-//) "
+    fi
   ) >&5
 }
 
@@ -79,18 +83,21 @@ function mk_test_print_blue() {
 }
 
 function mk_test_print_red_on_yellow() {
-  mk_test_print "$*" 190 196
+  mk_test_print "$*" 196 190
 }
 
 function mk_test_print() {
-  if test -t 1 && [ -n "$TERM" ] && [ "$TERM" != "dumb" ]; then
-    [ -n "$3" ] && tput setab $3
-    [ -n "$2" ] && tput setaf $2
-  fi
-  printf "$1"
-  if test -t 1 && [ -n "$TERM" ] && [ "$TERM" != "dumb" ]; then
-    tput sgr 0
-  fi
+  (
+    set +x
+    if test -t 1 && [ -n "$TERM" ] && [ "$TERM" != "dumb" ]; then
+      [ -n "$3" ] && tput setab $3
+      [ -n "$2" ] && tput setaf $2
+    fi
+    printf "$1"
+    if test -t 1 && [ -n "$TERM" ] && [ "$TERM" != "dumb" ]; then
+      tput sgr 0
+    fi
+  )
 }
 
 # ==============================================================================
