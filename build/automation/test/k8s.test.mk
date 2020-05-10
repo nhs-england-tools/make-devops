@@ -6,6 +6,7 @@ test-k8s:
 		test-k8s-kubeconfig-get \
 		test-k8s-kubeconfig-export \
 		test-k8s-clean \
+		test-k8s-alb-get-ingress-endpoint \
 	)
 	for test in $${tests[*]}; do
 		mk_test_initialise $$test
@@ -52,3 +53,6 @@ test-k8s-clean:
 	# assert
 	count=$$(find $(K8S_DIR) -type f -name '*.yaml' -print | grep '/effective/' | wc -l)
 	mk_test "0 -eq $$count"
+
+test-k8s-alb-get-ingress-endpoint:
+	mk_test_skip

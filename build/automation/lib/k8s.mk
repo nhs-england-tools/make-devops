@@ -80,6 +80,13 @@ k8s-clean: ### Clean Kubernetes files
 		grep -v "/template" | \
 		xargs rm -rfv
 
+k8s-alb-get-ingress-endpoint:
+	kubectl get ingress \
+		--namespace=$(K8S_APP_NAMESPACE) \
+		--selector="env=$(PROFILE)" \
+		--output=json \
+	| make -s docker-run-tools CMD="jq -rf $(JQ_DIR)/k8s-alb-get-ingress-endpoint.jq"
+
 # ==============================================================================
 
 _k8s-get-deployment-directory:
