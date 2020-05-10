@@ -20,9 +20,9 @@ DOCKER_POSTGRES_VERSION = 12.2
 DOCKER_PYTHON_VERSION = $(PYTHON_VERSION)-slim
 DOCKER_TERRAFORM_VERSION = $(or $(TEXAS_TERRAFORM_VERSION), 0.12.23)
 
-DOCKER_LIBRARY_NGINX_VERSION = $(shell cat $(DOCKER_LIBRARY_DIR)/nginx/.version 2> /dev/null || cat $(DOCKER_LIBRARY_DIR)/nginx/VERSION 2> /dev/null || echo unknown)
-DOCKER_LIBRARY_POSTGRES_VERSION = $(shell cat $(DOCKER_LIBRARY_DIR)/postgres/.version 2> /dev/null || cat $(DOCKER_LIBRARY_DIR)/postgres/VERSION 2> /dev/null || echo unknown)
-DOCKER_LIBRARY_TOOLS_VERSION = $(shell cat $(DOCKER_LIBRARY_DIR)/tools/.version 2> /dev/null || cat $(DOCKER_LIBRARY_DIR)/tools/VERSION 2> /dev/null || echo unknown)
+DOCKER_LIBRARY_NGINX_VERSION = $(shell cat $(DOCKER_LIBRARY_DIR)/nginx/VERSION 2> /dev/null)
+DOCKER_LIBRARY_POSTGRES_VERSION = $(shell cat $(DOCKER_LIBRARY_DIR)/postgres/VERSION 2> /dev/null)
+DOCKER_LIBRARY_TOOLS_VERSION = $(shell cat $(DOCKER_LIBRARY_DIR)/tools/VERSION 2> /dev/null)
 
 COMPOSE_HTTP_TIMEOUT := $(or $(COMPOSE_HTTP_TIMEOUT), 6000)
 DOCKER_CLIENT_TIMEOUT := $(or $(DOCKER_CLIENT_TIMEOUT), 6000)
@@ -33,12 +33,12 @@ docker-config: ### Configure Docker networking
 	docker network create $(DOCKER_NETWORK) 2> /dev/null ||:
 
 docker-build docker-image: ### Build Docker image - mandatory: NAME; optional: VERSION,NAME_AS=[new name],FROM_CACHE=true
-	if [ ! -d $(DOCKER_CUSTOM_DIR)/$(NAME) ] && [ -d $(DOCKER_LIBRARY_DIR)/$(NAME) ] && [ -z "$(__DOCKER_BUILD)" ]; then
+	if [ -d $(DOCKER_LIBRARY_DIR)/$(NAME) ] && [ -z "$(__DOCKER_BUILD)" ]; then
 		cd $(DOCKER_LIBRARY_DIR)/$(NAME)
-		make docker-build \
-			__DOCKER_BUILD=true \
-			DOCKER_REGISTRY=$(DOCKER_LIBRARY_REGISTRY)
-		exit
+		make build __DOCKER_BUILD=true DOCKER_REGISTRY=$(DOCKER_LIBRARY_REGISTRY) && exit
+	elif ([ -d $(DOCKER_LIBRARY_DIR)/$(NAME) ] || [ -d $(DOCKER_CUSTOM_DIR)/$(NAME) ]) && [ -z "$(__DOCKER_BUILD)" ]; then
+		cd $(DOCKER_CUSTOM_DIR)/$(NAME)
+		make build __DOCKER_BUILD=true && exit
 	fi
 	reg=$$(make _docker-get-reg)
 	# Dockerfile
@@ -169,7 +169,7 @@ docker-create-dockerfile: ### Create effective Dockerfile - mandatory: NAME
 	" Dockerfile.effective
 	cd $$dir
 
-docker-get-image-version: ### Get effective Docker image version - mandatory: NAME
+docker-get-image-version: ### Get effective Docker image version - mandatory: NAMEdim
 	dir=$$(make _docker-get-dir)
 	cat $$dir/.version 2> /dev/null || cat $$dir/VERSION 2> /dev/null || echo unknown
 

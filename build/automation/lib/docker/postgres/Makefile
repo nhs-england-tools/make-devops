@@ -6,6 +6,7 @@ include $(abspath $(lastword $(MAKEFILE_LIST))/../../../../init.mk)
 build:
 	make _generate-ssl-certificate
 	make docker-build NAME=postgres FROM_CACHE=$(or $(FROM_CACHE), true)
+	rm -f $(DOCKER_LIBRARY_DIR)/nginx/.version
 
 test:
 	make \
