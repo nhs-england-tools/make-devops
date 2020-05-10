@@ -1,7 +1,6 @@
 test-secret:
 	make test-secret-setup
 	tests=( \
-		test-secret-setup \
 		test-secret-random \
 		test-secret-create \
 		test-secret-fetch \

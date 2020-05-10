@@ -15,6 +15,7 @@ test-techradar-setup:
 	make docker-config
 
 test-techradar-teardown:
+	:
 
 # ==============================================================================
 
