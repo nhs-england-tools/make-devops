@@ -9,7 +9,6 @@
   - Refactor the execution logic for the `postgres` Docker image
   - Should the `_replace_variables()` and `am_i_root()` functions be moved to `libinit.sh` script? E.g. https://github.com/bitnami/bitnami-docker-nginx/tree/master/1.18/debian-10/prebuildfs/opt/bitnami/scripts
   - Move away from `openjdk` in favour of `adoptopenjdk`
-  - Conditional push to the Docker Hub registry
   - Create reverse proxy configuration for `nginx`
   - Add `redis` for local Amazon ElastiCache
   - Add `elasticsearch` for local Amazon Elasticsearch
