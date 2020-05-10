@@ -18,18 +18,15 @@ test-terraform: \
 	test-terraform-teardown
 
 test-terraform-setup:
-	make docker-config
-	make docker-compose-start YML=$(TEST_DIR)/docker-compose.localstack.yml
-	sleep 5
+	make localstack-start
 	# Prerequisites
 	make docker-build NAME=tools FROM_CACHE=true
 
 test-terraform-teardown:
+	make localstack-stop
 	rm -f \
 		$(TEST_TERRAFORM_FORMATTING_INPUT) \
 		$(TEST_TERRAFORM_FORMATTING_OUTPUT)
-	make docker-compose-stop YML=$(TEST_DIR)/docker-compose.localstack.yml
-	rm -rf $(TMP_DIR)/localstack
 
 # ==============================================================================
 

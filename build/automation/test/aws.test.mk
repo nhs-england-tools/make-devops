@@ -37,17 +37,15 @@ test-aws: \
 	test-aws-teardown
 
 test-aws-setup:
-	make docker-config
-	make docker-compose-start YML=$(TEST_DIR)/docker-compose.localstack.yml
-	sleep 5
+	make localstack-start
 	# Prerequisites
 	make docker-build NAME=tools FROM_CACHE=true
 
 test-aws-teardown:
-	rm -f $(TEST_AWS_SECRET_MANAGER_JSON)
-	rm -f $(TEST_AWS_BUCKET_FILE_PATH)*
-	make docker-compose-stop YML=$(TEST_DIR)/docker-compose.localstack.yml
-	rm -rf $(TMP_DIR)/localstack
+	make localstack-stop
+	rm -rf \
+		$(TEST_AWS_BUCKET_FILE_PATH)* \
+		$(TEST_AWS_SECRET_MANAGER_JSON)
 
 # ==============================================================================
 

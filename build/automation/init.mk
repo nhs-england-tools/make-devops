@@ -25,6 +25,7 @@ devops-test-suite: ### Run the DevOps unit test suite - optional: DEBUG=true
 		test-ssl \
 		test-git \
 		test-docker \
+		test-localstack \
 		test-aws \
 		test-secret \
 		test-terraform \

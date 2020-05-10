@@ -7,15 +7,12 @@ test-secret: \
 	test-secret-teardown
 
 test-secret-setup:
-	make docker-config
-	make docker-compose-start YML=$(TEST_DIR)/docker-compose.localstack.yml
-	sleep 5
+	make localstack-start
 	# Prerequisites
 	make docker-build NAME=tools FROM_CACHE=true
 
 test-secret-teardown:
-	make docker-compose-stop YML=$(TEST_DIR)/docker-compose.localstack.yml
-	rm -rf $(TMP_DIR)/localstack
+	make localstack-stop
 
 # ==============================================================================
 

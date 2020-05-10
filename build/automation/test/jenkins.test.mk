@@ -5,14 +5,12 @@ test-jenkins: \
 	test-jenkins-teardown
 
 test-jenkins-setup:
-	make docker-config
-	make docker-compose-start YML=$(TEST_DIR)/docker-compose.localstack.yml
-	sleep 5
+	make localstack-start
 	# Prerequisites
 	make docker-build NAME=tools FROM_CACHE=true
 
 test-jenkins-teardown:
-	make docker-compose-stop YML=$(TEST_DIR)/docker-compose.localstack.yml
+	make localstack-stop
 	rm -rf \
 		$(TMP_DIR)/localstack \
 		$(TMP_DIR)/workspace-*.download
