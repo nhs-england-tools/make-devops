@@ -3,11 +3,10 @@
 - Infrastructure
   - Create AWS RDS PostgreSQL infrastructure module
 - Testing
-  - Print target name before it runs in the normal mode
   - Print target name before it runs in the debug mode
   - Print target name in yellow bg and red fg in the debug mode
   - Measure time of test execution
-  - Redirect verbose/debug output to file but keep the stdout clean
+  - Redirect verbose/debug output to file but keep the stdout clean e.g. https://stackoverflow.com/questions/27397865/how-to-write-stdout-to-file-with-colors
 - Containers
   - Refactor the execution logic for the `postgres` Docker image
   - Should the `_replace_variables()` and `am_i_root()` functions be moved to `libinit.sh` script? E.g. https://github.com/bitnami/bitnami-docker-nginx/tree/master/1.18/debian-10/prebuildfs/opt/bitnami/scripts

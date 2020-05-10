@@ -1,60 +1,59 @@
 #!/bin/bash
 
+export TEST_PASS_COUNT=0
+export TEST_FAIL_COUNT=0
+
+function mk_test_initialise() {
+  TEST_PASS_COUNT=0
+  TEST_FAIL_COUNT=0
+  (
+    mk_test_print "$(echo $1 | sed -e s/^test-//) "
+  ) >&5
+}
+
 function mk_test() {
-  target=$1; shift
-  test $@ && \
-    mk_test_pass "$target" || \
-    mk_test_fail "$target"
-  # if ! mk_test_not_debugging; then
-  #   tput setaf 196 # red
-  #   tput setab 190 # yellow
-  #   printf "^^^ $target"
-  #   tput sgr 0
-  # fi
+  if [ $# -eq 2 ]; then
+    description="$1"; shift
+  fi
+  if test $1; then
+    TEST_PASS_COUNT=$((TEST_PASS_COUNT+1))
+    ( mk_test_print "." ) >&5
+  else
+    TEST_FAIL_COUNT=$((TEST_FAIL_COUNT+1))
+    ( mk_test_print "x" ) >&5
+  fi
+  if [ -z "$description" ]; then
+    mk_test_complete
+  fi
 }
 
-function mk_test_pass() {
+function mk_test_complete() {
   (
-    printf " ["
-    mk_test_not_debugging && tput setaf 64 # green
-    printf "pass"
-    mk_test_not_debugging && tput sgr 0
-    printf "] $*\n"
+    printf " $TEST_PASS_COUNT/$(((TEST_PASS_COUNT + TEST_FAIL_COUNT))) "
+    if [ $TEST_FAIL_COUNT -gt 0 ]; then
+      mk_test_print_red "fail"
+    else
+      mk_test_print_green "pass"
+    fi
+    printf "\n"
   ) >&5
 }
 
-function mk_test_fail() {
-  (
-    printf " ["
-    mk_test_not_debugging && tput setaf 196 # red
-    printf "fail"
-    mk_test_not_debugging && tput sgr 0
-    printf "] $*\n"
-  ) >&5
+# ==============================================================================
+
+function mk_test_skip_if_not_macos() {
+  if [ "$(uname)" != "Darwin" ]; then
+    mk_test_skip
+  else
+    return 1
+  fi
 }
 
 function mk_test_skip() {
   (
-    printf " ["
-    mk_test_not_debugging && tput setaf 21 # blue
-    printf "skip"
-    mk_test_not_debugging && tput sgr 0
-    printf "] $*\n"
+    mk_test_print_blue "skip"
+    printf "\n"
   ) >&5
-}
-
-function mk_test_skip_if_not_macos() {
-  if [ "$(uname)" != "Darwin" ]; then
-    (
-      printf " ["
-      mk_test_not_debugging && tput setaf 21 # blue
-      printf "skip"
-      mk_test_not_debugging && tput sgr 0
-      printf "] $*\n"
-    ) >&5
-  else
-    return 1
-  fi
 }
 
 function mk_test_proceed_if_macos() {
@@ -65,14 +64,45 @@ function mk_test_proceed_if_macos() {
   fi
 }
 
-function mk_test_not_debugging() {
-  [[ ! "$DEBUG" =~ ^(true|yes|y|on|1|TRUE|YES|Y|ON)$ ]] && return 0 || return 1
+# ==============================================================================
+
+function mk_test_print_green() {
+  mk_test_print "$*" 64
 }
 
+function mk_test_print_red() {
+  mk_test_print "$*" 196
+}
+
+function mk_test_print_blue() {
+  mk_test_print "$*" 21
+}
+
+function mk_test_print_red_on_yellow() {
+  mk_test_print "$*" 190 196
+}
+
+function mk_test_print() {
+  if test -t 1 && [ -n "$TERM" ] && [ "$TERM" != "dumb" ]; then
+    [ -n "$3" ] && tput setab $3
+    [ -n "$2" ] && tput setaf $2
+  fi
+  printf "$1"
+  if test -t 1 && [ -n "$TERM" ] && [ "$TERM" != "dumb" ]; then
+    tput sgr 0
+  fi
+}
+
+# ==============================================================================
+
+export -f mk_test_initialise
 export -f mk_test
-export -f mk_test_fail
-export -f mk_test_pass
-export -f mk_test_proceed_if_macos
-export -f mk_test_skip
+export -f mk_test_complete
 export -f mk_test_skip_if_not_macos
-export -f mk_test_not_debugging
+export -f mk_test_skip
+export -f mk_test_proceed_if_macos
+export -f mk_test_print_green
+export -f mk_test_print_red
+export -f mk_test_print_blue
+export -f mk_test_print_red_on_yellow
+export -f mk_test_print

@@ -1,48 +1,54 @@
 TEST_DOCKER_IMAGE := postgres
 TEST_DOCKER_COMPOSE_YML := $(TMP_DIR)/docker-compose.yml
 
-test-docker: \
-	test-docker-setup \
-	test-docker-config \
-	test-docker-build \
-	test-docker-image-name-as \
-	test-docker-image-keep-latest-only \
-	test-docker-login \
-	test-docker-create-repository \
-	test-docker-push \
-	test-docker-pull \
-	test-docker-create-dockerfile \
-	test-docker-set-get-image-version \
-	test-docker-image-start \
-	test-docker-image-stop \
-	test-docker-image-log \
-	test-docker-image-bash \
-	test-docker-image-clean \
-	test-docker-image-save \
-	test-docker-image-load \
-	test-docker-tag \
-	test-docker-compose \
-	test-docker-compose-single-service \
-	test-docker-get-variables-from-file \
-	test-docker-run-dotnet \
-	test-docker-run-gradle \
-	test-docker-run-mvn \
-	test-docker-run-node \
-	test-docker-run-python-single-cmd \
-	test-docker-run-python-multiple-cmd \
-	test-docker-run-python-multiple-cmd-pip-install \
-	test-docker-run-terraform \
-	test-docker-run-tools-single-cmd \
-	test-docker-run-tools-multiple-cmd \
-	test-docker-run-pass-variables \
-	test-docker-run-do-not-pass-empty-variables \
-	test-docker-run-specify-image \
-	test-docker-nginx-image \
-	test-docker-postgres-image \
-	test-docker-tools-image \
-	test-docker-clean \
-	test-docker-prune \
-	test-docker-teardown
+test-docker:
+	make test-docker-setup
+	tests=( \
+		test-docker-config \
+		test-docker-build \
+		test-docker-image-name-as \
+		test-docker-image-keep-latest-only \
+		test-docker-login \
+		test-docker-create-repository \
+		test-docker-push \
+		test-docker-pull \
+		test-docker-create-dockerfile \
+		test-docker-set-get-image-version \
+		test-docker-image-start \
+		test-docker-image-stop \
+		test-docker-image-log \
+		test-docker-image-bash \
+		test-docker-image-clean \
+		test-docker-image-save \
+		test-docker-image-load \
+		test-docker-tag \
+		test-docker-compose \
+		test-docker-compose-single-service \
+		test-docker-get-variables-from-file \
+		test-docker-run-dotnet \
+		test-docker-run-gradle \
+		test-docker-run-mvn \
+		test-docker-run-node \
+		test-docker-run-python-single-cmd \
+		test-docker-run-python-multiple-cmd \
+		test-docker-run-python-multiple-cmd-pip-install \
+		test-docker-run-terraform \
+		test-docker-run-tools-single-cmd \
+		test-docker-run-tools-multiple-cmd \
+		test-docker-run-pass-variables \
+		test-docker-run-do-not-pass-empty-variables \
+		test-docker-run-specify-image \
+		test-docker-nginx-image \
+		test-docker-postgres-image \
+		test-docker-tools-image \
+		test-docker-clean \
+		test-docker-prune \
+	)
+	for test in $${tests[*]}; do
+		mk_test_initialise $$test
+		make $$test
+	done
+	make test-docker-teardown
 
 test-docker-setup:
 	docker rm -f $(docker ps -a -q) 2> /dev/null ||:
@@ -57,19 +63,19 @@ test-docker-config:
 	# act
 	make docker-config
 	# assert
-	mk_test $(@) $(DOCKER_NETWORK) = $$(docker network ls | grep -Eo $(DOCKER_NETWORK))
+	mk_test "$(DOCKER_NETWORK) = $$(docker network ls | grep -Eo $(DOCKER_NETWORK))"
 
 test-docker-build:
 	# act
 	make docker-build NAME=$(TEST_DOCKER_IMAGE) FROM_CACHE=true
 	# assert
-	mk_test $(@) 1 -eq $$(docker images --filter=reference="$(DOCKER_LIBRARY_REGISTRY)/$(TEST_DOCKER_IMAGE):latest" -q | wc -l)
+	mk_test "1 -eq $$(docker images --filter=reference=$(DOCKER_LIBRARY_REGISTRY)/$(TEST_DOCKER_IMAGE):latest -q | wc -l)"
 
 test-docker-image-name-as:
 	# act
 	make docker-build NAME=$(TEST_DOCKER_IMAGE) NAME_AS=$(TEST_DOCKER_IMAGE)-copy FROM_CACHE=true
 	# assert
-	mk_test $(@) 2 -eq $$(docker images --filter=reference="$(DOCKER_LIBRARY_REGISTRY)/$(TEST_DOCKER_IMAGE)-copy:*" --quiet | wc -l)
+	mk_test "2 -eq $$(docker images --filter=reference=$(DOCKER_LIBRARY_REGISTRY)/$(TEST_DOCKER_IMAGE)-copy:* --quiet | wc -l)"
 
 test-docker-image-keep-latest-only:
 	# act
@@ -77,38 +83,39 @@ test-docker-image-keep-latest-only:
 	make docker-build NAME=$(TEST_DOCKER_IMAGE) FROM_CACHE=true
 	make docker-build NAME=$(TEST_DOCKER_IMAGE) FROM_CACHE=true
 	# assert
-	mk_test $(@) 2 -eq $$(docker images --filter=reference="$(DOCKER_LIBRARY_REGISTRY)/$(TEST_DOCKER_IMAGE):*" -q | wc -l)
+	mk_test "2 -eq $$(docker images --filter=reference=$(DOCKER_LIBRARY_REGISTRY)/$(TEST_DOCKER_IMAGE):* -q | wc -l)"
 
 test-docker-login:
-	mk_test_skip $(@) ||:
+	mk_test_skip
 
 test-docker-create-repository:
-	mk_test_skip $(@) ||:
+	mk_test_skip
 
 test-docker-push:
-	mk_test_skip $(@) ||:
+	mk_test_skip
 
 test-docker-pull:
-	mk_test_skip $(@) ||:
+	mk_test_skip
 
 test-docker-clean:
 	# act
 	make docker-clean
 	# assert
-	mk_test $(@) 0 -eq $$(find $(DOCKER_LIBRARY_DIR) -type f -name '.version' | wc -l)
+	mk_test "0 -eq $$(find $(DOCKER_LIBRARY_DIR) -type f -name '.version' | wc -l)"
 
 test-docker-prune:
 	# act
 	make docker-prune
 	# assert
-	mk_test "$(@) images" 0 -eq $$(docker images | grep $(DOCKER_LIBRARY_REGISTRY) 2> /dev/null | wc -l)
-	mk_test "$(@) network" 0 -eq $$(docker network ls | grep $(DOCKER_NETOWRK) 2> /dev/null | wc -l)
+	mk_test "images" "0 -eq $$(docker images | grep $(DOCKER_LIBRARY_REGISTRY) 2> /dev/null | wc -l)"
+	mk_test "network" "0 -eq $$(docker network ls | grep $(DOCKER_NETOWRK) 2> /dev/null | wc -l)"
+	mk_test_complete
 
 test-docker-create-dockerfile:
 	# act
 	make docker-create-dockerfile NAME=$(TEST_DOCKER_IMAGE)
 	# assert
-	mk_test $(@) -n "$$(cat $(DOCKER_LIBRARY_DIR)/$(TEST_DOCKER_IMAGE)/Dockerfile.effective | grep -Eo METADATA | wc -l)"
+	mk_test "-n \"$$(cat $(DOCKER_LIBRARY_DIR)/$(TEST_DOCKER_IMAGE)/Dockerfile.effective | grep -Eo METADATA | wc -l)\""
 
 test-docker-set-get-image-version:
 	# arrange
@@ -118,7 +125,7 @@ test-docker-set-get-image-version:
 	make docker-set-image-version NAME=$(TEST_DOCKER_IMAGE) DOCKER_CUSTOM_DIR=$(TMP_DIR)
 	version=$$(make docker-get-image-version NAME=$(TEST_DOCKER_IMAGE) DOCKER_CUSTOM_DIR=$(TMP_DIR))
 	# assert
-	mk_test $(@) "$$(date --date=$(BUILD_DATE) -u +"%Y%m%d%H%M")-$$(git rev-parse --short HEAD)" = $$version
+	mk_test "$$version = $$(date --date=$(BUILD_DATE) -u +%Y%m%d%H%M)-$$(git rev-parse --short HEAD)"
 
 test-docker-image-start:
 	# arrange
@@ -130,7 +137,7 @@ test-docker-image-start:
 		CMD="postgres"
 	sleep 1
 	# assert
-	mk_test $(@) 1 -eq $$(docker ps | grep postgres-$(BUILD_HASH)-$(BUILD_ID) | wc -l)
+	mk_test "1 -eq $$(docker ps | grep postgres-$(BUILD_HASH)-$(BUILD_ID) | wc -l)"
 
 test-docker-image-stop:
 	# arrange
@@ -143,13 +150,13 @@ test-docker-image-stop:
 	# act
 	make docker-image-stop NAME=postgres
 	# assert
-	mk_test $(@) 0 -eq $$(docker ps | grep postgres-$(BUILD_HASH)-$(BUILD_ID) | wc -l)
+	mk_test "0 -eq $$(docker ps | grep postgres-$(BUILD_HASH)-$(BUILD_ID) | wc -l)"
 
 test-docker-image-log:
-	mk_test_skip $(@) ||:
+	mk_test_skip
 
 test-docker-image-bash:
-	mk_test_skip $(@) ||:
+	mk_test_skip
 
 test-docker-image-clean:
 	# arrange
@@ -157,7 +164,7 @@ test-docker-image-clean:
 	# act
 	make docker-image-clean NAME=postgres
 	# assert
-	mk_test $(@) 0 -eq $$(docker images --filter=reference="$(DOCKER_LIBRARY_REGISTRY)/postgres:*" --quiet | wc -l)
+	mk_test "0 -eq $$(docker images --filter=reference=$(DOCKER_LIBRARY_REGISTRY)/postgres:* --quiet | wc -l)"
 
 test-docker-image-save:
 	# arrange
@@ -166,18 +173,18 @@ test-docker-image-save:
 	# act
 	make docker-image-save NAME=postgres
 	# assert
-	mk_test $(@) 1 -eq $$(ls $(DOCKER_LIBRARY_DIR)/postgres/postgres-*-image.tar.gz | wc -l)
+	mk_test "1 -eq $$(ls $(DOCKER_LIBRARY_DIR)/postgres/postgres-*-image.tar.gz | wc -l)"
 
 test-docker-image-load:
 	# arrange
 	make docker-image-clean NAME=postgres
 	make docker-build NAME=postgres FROM_CACHE=true
 	make docker-image-save NAME=postgres
-	docker rmi --force $$(docker images --filter=reference="$(DOCKER_LIBRARY_REGISTRY)/postgres:*" --quiet) 2> /dev/null ||:
+	docker rmi --force $$(docker images --filter=reference=$(DOCKER_LIBRARY_REGISTRY)/postgres:* --quiet) 2> /dev/null ||:
 	# act
 	make docker-image-load NAME=postgres
 	# assert
-	mk_test $(@) 1 -eq $$(docker images --filter=reference="$(DOCKER_LIBRARY_REGISTRY)/postgres:*" --quiet | wc -l)
+	mk_test "1 -eq $$(docker images --filter=reference=$(DOCKER_LIBRARY_REGISTRY)/postgres:* --quiet | wc -l)"
 
 test-docker-tag:
 	# arrange
@@ -186,35 +193,37 @@ test-docker-tag:
 	# act
 	make docker-tag NAME=postgres VERSION=version
 	# assert
-	mk_test $(@) 1 -eq $$(docker images --filter=reference="$(DOCKER_LIBRARY_REGISTRY)/postgres:version" --quiet | wc -l)
+	mk_test "1 -eq $$(docker images --filter=reference=$(DOCKER_LIBRARY_REGISTRY)/postgres:version --quiet | wc -l)"
 
 test-docker-compose:
 	# arrange
 	make TEST_DOCKER_COMPOSE_YML
 	# act & assert
 	make docker-compose-stop docker-compose-start YML=$(TEST_DOCKER_COMPOSE_YML) && \
-		mk_test_pass "$(@) start" || mk_test_fail "$(@) start"
+		mk_test "start" "true" || mk_test "start" "false"
 	make docker-compose-log YML=$(TEST_DOCKER_COMPOSE_YML) DO_NOT_FOLLOW=true && \
-		mk_test_pass "$(@) log" || mk_test_fail "$(@) log"
+		mk_test "log" "true" || mk_test "log" "false"
 	make docker-compose-stop YML=$(TEST_DOCKER_COMPOSE_YML) && \
-		mk_test_pass "$(@) stop" || mk_test_fail "$(@) stop"
+		mk_test "stop" "true" || mk_test "stop" "false"
+	mk_test_complete
 
 test-docker-compose-single-service:
 	# arrange
 	make TEST_DOCKER_COMPOSE_YML
 	# act & assert
 	make docker-compose-stop docker-compose-start-single-service NAME=alpine YML=$(TEST_DOCKER_COMPOSE_YML) && \
-		mk_test_pass "$(@) start" || mk_test_fail "$(@) start"
+		mk_test "start" "true" || mk_test "start" "false"
 	make docker-compose-log YML=$(TEST_DOCKER_COMPOSE_YML) DO_NOT_FOLLOW=true && \
-		mk_test_pass "$(@) log" || mk_test_fail "$(@) log"
+		mk_test "log" "true" || mk_test "log" "false"
 	make docker-compose-stop YML=$(TEST_DOCKER_COMPOSE_YML) && \
-		mk_test_pass "$(@) stop" || mk_test_fail "$(@) stop"
+		mk_test "stop" "true" || mk_test "stop" "false"
+	mk_test_complete
 
 test-docker-get-variables-from-file:
 	# act
 	vars=$$(make _docker-get-variables-from-file VARS_FILE=$(VAR_DIR)/project.mk.default)
 	# assert
-	mk_test $(@) "PROJECT_NAME=" = $$(echo "$$vars" | grep -o PROJECT_NAME=)
+	mk_test "PROJECT_NAME= = $$(echo \"$$vars\" | grep -o PROJECT_NAME=)"
 
 test-docker-run-dotnet:
 	# arrange
@@ -225,7 +234,7 @@ test-docker-run-dotnet:
 			CMD="--info" \
 		| grep -Eo ".NET Core SDK" | wc -l)
 	# assert
-	mk_test $(@) 0 -lt "$$output"
+	mk_test "0 -lt $$output"
 
 test-docker-run-gradle:
 	# arrange
@@ -236,7 +245,7 @@ test-docker-run-gradle:
 			CMD="gradle --version" \
 		| grep -Eo "Gradle" | wc -l)
 	# assert
-	mk_test $(@) 0 -lt "$$output"
+	mk_test "0 -lt $$output"
 
 test-docker-run-mvn:
 	# arrange
@@ -247,7 +256,7 @@ test-docker-run-mvn:
 			CMD="--version" \
 		| grep -Eo "Apache Maven" | wc -l)
 	# assert
-	mk_test $(@) 0 -lt "$$output"
+	mk_test "0 -lt $$output"
 
 test-docker-run-node:
 	# arrange
@@ -258,7 +267,7 @@ test-docker-run-node:
 			CMD="npm --version" \
 		| grep -Eo "[(0-9)]*.[(0-9)]*" | wc -l)
 	# assert
-	mk_test $(@) 0 -lt "$$output"
+	mk_test "0 -lt $$output"
 
 test-docker-run-python-single-cmd:
 	# arrange
@@ -269,7 +278,7 @@ test-docker-run-python-single-cmd:
 			CMD="python3 --version" \
 		| grep -Eo "Python" | wc -l)
 	# assert
-	mk_test $(@) 0 -lt "$$output"
+	mk_test "0 -lt $$output"
 
 test-docker-run-python-multiple-cmd:
 	# arrange
@@ -280,7 +289,7 @@ test-docker-run-python-multiple-cmd:
 			CMD="python3 --version && pip3 --version" \
 		| grep -Eo "Python" | wc -l)
 	# assert
-	mk_test $(@) 0 -lt "$$output"
+	mk_test "0 -lt $$output"
 
 test-docker-run-python-multiple-cmd-pip-install:
 	# arrange
@@ -291,7 +300,7 @@ test-docker-run-python-multiple-cmd-pip-install:
 			CMD="pip3 install django > /dev/null 2>&1 && pip3 list" \
 		| grep -i "django" | wc -l)
 	# assert
-	mk_test $(@) 0 -lt "$$output"
+	mk_test "0 -lt $$output"
 
 test-docker-run-terraform:
 	# arrange
@@ -302,7 +311,7 @@ test-docker-run-terraform:
 			CMD="terraform --version" \
 		| grep -Eo "Terraform" | wc -l)
 	# assert
-	mk_test $(@) 0 -lt "$$output"
+	mk_test "0 -lt $$output"
 
 test-docker-run-tools-single-cmd:
 	# arrange
@@ -313,7 +322,7 @@ test-docker-run-tools-single-cmd:
 			CMD="apt list --installed" \
 		| sed 's/\x1b\[[0-9;]*m//g' | grep -E -- '^curl/now' | wc -l)
 	# assert
-	mk_test $(@) 1 -eq "$$output"
+	mk_test "1 -eq $$output"
 
 test-docker-run-tools-multiple-cmd:
 	# arrange
@@ -324,7 +333,7 @@ test-docker-run-tools-multiple-cmd:
 			CMD="cat /etc/issue && apt list --installed" \
 		| sed 's/\x1b\[[0-9;]*m//g' | grep -Ei -- '^(debian gnu/linux|curl/now)' | wc -l)
 	# assert
-	mk_test $(@) 2 -eq "$$output"
+	mk_test "2 -eq $$output"
 
 test-docker-run-pass-variables:
 	# arrange
@@ -333,7 +342,7 @@ test-docker-run-pass-variables:
 	export PROJECT_NON_EMPTY_VAR=value
 	output=$$(make -s docker-run-tools CMD=env | grep PROJECT_NON_EMPTY_VAR | wc -l)
 	# assert
-	mk_test $(@) 1 -eq "$$output"
+	mk_test "1 -eq $$output"
 
 test-docker-run-do-not-pass-empty-variables:
 	# arrange
@@ -342,7 +351,7 @@ test-docker-run-do-not-pass-empty-variables:
 	export PROJECT_EMPTY_VAR=
 	output=$$(make -s docker-run-tools CMD=env | grep PROJECT_EMPTY_VAR | wc -l)
 	# assert
-	mk_test $(@) 0 -eq "$$output"
+	mk_test "0 -eq $$output"
 
 test-docker-run-specify-image:
 	# arrange
@@ -350,7 +359,7 @@ test-docker-run-specify-image:
 	# act
 	output=$$(make -s docker-run-python IMAGE=python:3.7.0 CMD="python --version" | grep "3.7.0" | wc -l)
 	# assert
-	mk_test $(@) 1 -eq "$$output"
+	mk_test "1 -eq $$output"
 
 test-docker-nginx-image:
 	# arrange
@@ -358,7 +367,7 @@ test-docker-nginx-image:
 	# act
 	make build test
 	# assert
-	mk_test $(@) true
+	mk_test true
 	# clean up
 	make clean
 
@@ -368,7 +377,7 @@ test-docker-postgres-image:
 	# act
 	make build test
 	# assert
-	mk_test $(@) true
+	mk_test true
 	# clean up
 	make clean
 
@@ -378,7 +387,7 @@ test-docker-tools-image:
 	# act
 	make build test
 	# assert
-	mk_test $(@) true
+	mk_test true
 	# clean up
 	make clean
 
