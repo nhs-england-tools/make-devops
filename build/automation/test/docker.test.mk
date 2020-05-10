@@ -61,21 +61,21 @@ test-docker-config:
 
 test-docker-build:
 	# act
-	make docker-build NAME=$(TEST_DOCKER_IMAGE)
+	make docker-build NAME=$(TEST_DOCKER_IMAGE) FROM_CACHE=true
 	# assert
 	mk_test $(@) 1 -eq $$(docker images --filter=reference="$(DOCKER_LIBRARY_REGISTRY)/$(TEST_DOCKER_IMAGE):latest" -q | wc -l)
 
 test-docker-image-name-as:
 	# act
-	make docker-build NAME=$(TEST_DOCKER_IMAGE) NAME_AS=$(TEST_DOCKER_IMAGE)-copy
+	make docker-build NAME=$(TEST_DOCKER_IMAGE) NAME_AS=$(TEST_DOCKER_IMAGE)-copy FROM_CACHE=true
 	# assert
 	mk_test $(@) 2 -eq $$(docker images --filter=reference="$(DOCKER_LIBRARY_REGISTRY)/$(TEST_DOCKER_IMAGE)-copy:*" --quiet | wc -l)
 
 test-docker-image-keep-latest-only:
 	# act
-	make docker-build NAME=$(TEST_DOCKER_IMAGE)
-	make docker-build NAME=$(TEST_DOCKER_IMAGE)
-	make docker-build NAME=$(TEST_DOCKER_IMAGE)
+	make docker-build NAME=$(TEST_DOCKER_IMAGE) FROM_CACHE=true
+	make docker-build NAME=$(TEST_DOCKER_IMAGE) FROM_CACHE=true
+	make docker-build NAME=$(TEST_DOCKER_IMAGE) FROM_CACHE=true
 	# assert
 	mk_test $(@) 2 -eq $$(docker images --filter=reference="$(DOCKER_LIBRARY_REGISTRY)/$(TEST_DOCKER_IMAGE):*" -q | wc -l)
 
@@ -123,7 +123,7 @@ test-docker-set-get-image-version:
 test-docker-image-start:
 	# arrange
 	docker rm --force postgres-$(BUILD_HASH)-$(BUILD_ID) 2> /dev/null ||:
-	make docker-build NAME=postgres
+	make docker-build NAME=postgres FROM_CACHE=true
 	# act
 	make docker-image-start NAME=postgres \
 		ARGS="--env POSTGRES_PASSWORD=postgres" \
@@ -135,7 +135,7 @@ test-docker-image-start:
 test-docker-image-stop:
 	# arrange
 	docker rm --force postgres-$(BUILD_HASH)-$(BUILD_ID) 2> /dev/null ||:
-	make docker-build NAME=postgres
+	make docker-build NAME=postgres FROM_CACHE=true
 	make docker-image-start NAME=postgres \
 		ARGS="--env POSTGRES_PASSWORD=postgres" \
 		CMD="postgres"
@@ -153,7 +153,7 @@ test-docker-image-bash:
 
 test-docker-image-clean:
 	# arrange
-	make docker-build NAME=postgres
+	make docker-build NAME=postgres FROM_CACHE=true
 	# act
 	make docker-image-clean NAME=postgres
 	# assert
@@ -162,7 +162,7 @@ test-docker-image-clean:
 test-docker-image-save:
 	# arrange
 	make docker-image-clean NAME=postgres
-	make docker-build NAME=postgres
+	make docker-build NAME=postgres FROM_CACHE=true
 	# act
 	make docker-image-save NAME=postgres
 	# assert
@@ -171,7 +171,7 @@ test-docker-image-save:
 test-docker-image-load:
 	# arrange
 	make docker-image-clean NAME=postgres
-	make docker-build NAME=postgres
+	make docker-build NAME=postgres FROM_CACHE=true
 	make docker-image-save NAME=postgres
 	docker rmi --force $$(docker images --filter=reference="$(DOCKER_LIBRARY_REGISTRY)/postgres:*" --quiet) 2> /dev/null ||:
 	# act
@@ -182,7 +182,7 @@ test-docker-image-load:
 test-docker-tag:
 	# arrange
 	make docker-image-clean NAME=postgres
-	make docker-build NAME=postgres
+	make docker-build NAME=postgres FROM_CACHE=true
 	# act
 	make docker-tag NAME=postgres VERSION=version
 	# assert

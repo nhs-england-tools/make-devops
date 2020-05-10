@@ -31,7 +31,7 @@ DOCKER_CLIENT_TIMEOUT := $(or $(DOCKER_CLIENT_TIMEOUT), 6000)
 docker-config: ### Configure Docker networking
 	docker network create $(DOCKER_NETWORK) 2> /dev/null ||:
 
-docker-build docker-image: ### Build Docker image - mandatory: NAME; optional: VERSION,NAME_AS=[new name],CACHE_FROM=true
+docker-build docker-image: ### Build Docker image - mandatory: NAME; optional: VERSION,NAME_AS=[new name],FROM_CACHE=true
 	if [ ! -d $(DOCKER_CUSTOM_DIR)/$(NAME) ] && [ -d $(DOCKER_LIBRARY_DIR)/$(NAME) ] && [ -z "$(__DOCKER_BUILD)" ]; then
 		cd $(DOCKER_LIBRARY_DIR)/$(NAME)
 		make docker-build \
@@ -46,7 +46,7 @@ docker-build docker-image: ### Build Docker image - mandatory: NAME; optional: V
 		docker-set-image-version VERSION=$(VERSION)
 	# Cache
 	cache_from=
-	if [[ "$(CACHE_FROM)" =~ ^(true|yes|y|on|1|TRUE|YES|Y|ON)$$ ]]; then
+	if [[ "$(FROM_CACHE)" =~ ^(true|yes|y|on|1|TRUE|YES|Y|ON)$$ ]]; then
 		make docker-pull NAME=$(NAME) VERSION=latest
 		cache_from="--cache-from $$reg/$(NAME):latest"
 	fi
@@ -496,10 +496,11 @@ docker-run-postgres: ### Run postgres container - mandatory: CMD; optional: DIR,
 	container=$$([ -n "$(CONTAINER)" ] && echo $(CONTAINER) || echo postgres-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7))
 	if [ -z "$$(docker images --filter=reference="$$image" --quiet)" ]; then
 		make docker-pull NAME=postgres VERSION=$(DOCKER_LIBRARY_POSTGRES_VERSION) > /dev/null 2>&1
-		make docker-build NAME=postgres CACHE_FROM=true > /dev/null 2>&1
+		make docker-build NAME=postgres FROM_CACHE=true > /dev/null 2>&1
 	fi
 	docker run --interactive $(_TTY) --rm \
 		--name $$container \
+		--user $$(id -u):$$(id -g) \
 		--env-file <(env | grep "^AWS_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(env | grep "^TF_VAR_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(env | grep "^DB_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
@@ -508,8 +509,6 @@ docker-run-postgres: ### Run postgres container - mandatory: CMD; optional: DIR,
 		--env-file <(env | grep "^PROJ[A-Z]*_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(env | grep "^TEXAS_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(make _docker-get-variables-from-file VARS_FILE=$(VARS_FILE)) \
-		--env DEV_USER_UID=$$(id -u) \
-		--env DEV_USER_GID=$$(id -g) \
 		--env PROFILE=$(PROFILE) \
 		--volume $(PROJECT_DIR):/project \
 		--network $(DOCKER_NETWORK) \
@@ -524,11 +523,12 @@ docker-run-tools: ### Run tools (Python) container - mandatory: CMD; optional: S
 	container=$$([ -n "$(CONTAINER)" ] && echo $(CONTAINER) || echo tools-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7))
 	if [ -z "$$(docker images --filter=reference="$$image" --quiet)" ]; then
 		make docker-pull NAME=tools VERSION=$(DOCKER_LIBRARY_TOOLS_VERSION) > /dev/null 2>&1
-		make docker-build NAME=tools CACHE_FROM=true > /dev/null 2>&1
+		make docker-build NAME=tools FROM_CACHE=true > /dev/null 2>&1
 	fi
 	if [[ ! "$(SH)" =~ ^(true|yes|y|on|1|TRUE|YES|Y|ON)$$ ]]; then
 		docker run --interactive $(_TTY) --rm \
 			--name $$container \
+			--user $$(id -u):$$(id -g) \
 			--env-file <(env | grep "^AWS_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 			--env-file <(env | grep "^TF_VAR_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 			--env-file <(env | grep "^DB_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
@@ -537,8 +537,6 @@ docker-run-tools: ### Run tools (Python) container - mandatory: CMD; optional: S
 			--env-file <(env | grep "^PROJ[A-Z]*_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 			--env-file <(env | grep "^TEXAS_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 			--env-file <(make _docker-get-variables-from-file VARS_FILE=$(VARS_FILE)) \
-			--env DEV_USER_UID=$$(id -u) \
-			--env DEV_USER_GID=$$(id -g) \
 			--env HOME=/tmp \
 			--env PIP_TARGET=/tmp/.packages \
 			--env PYTHONPATH=/tmp/.packages \
@@ -559,6 +557,7 @@ docker-run-tools: ### Run tools (Python) container - mandatory: CMD; optional: S
 	else
 		docker run --interactive $(_TTY) --rm \
 			--name $$container \
+			--user $$(id -u):$$(id -g) \
 			--env-file <(env | grep "^AWS_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 			--env-file <(env | grep "^TF_VAR_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 			--env-file <(env | grep "^DB_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
@@ -567,8 +566,6 @@ docker-run-tools: ### Run tools (Python) container - mandatory: CMD; optional: S
 			--env-file <(env | grep "^PROJ[A-Z]*_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 			--env-file <(env | grep "^TEXAS_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 			--env-file <(make _docker-get-variables-from-file VARS_FILE=$(VARS_FILE)) \
-			--env DEV_USER_UID=$$(id -u) \
-			--env DEV_USER_GID=$$(id -g) \
 			--env HOME=/tmp \
 			--env PIP_TARGET=/tmp/.packages \
 			--env PYTHONPATH=/tmp/.packages \

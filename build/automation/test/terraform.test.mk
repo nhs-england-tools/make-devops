@@ -22,7 +22,7 @@ test-terraform-setup:
 	make docker-compose-start YML=$(TEST_DIR)/docker-compose.localstack.yml
 	sleep 5
 	# Prerequisites
-	make docker-image NAME=tools
+	make docker-build NAME=tools FROM_CACHE=true
 
 test-terraform-teardown:
 	rm -f \

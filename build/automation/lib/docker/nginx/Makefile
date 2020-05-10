@@ -5,7 +5,7 @@ include $(abspath $(lastword $(MAKEFILE_LIST))/../../../../init.mk)
 
 build:
 	make _generate-ssl-certificate
-	make docker-build NAME=nginx CACHE_FROM=true
+	make docker-build NAME=nginx FROM_CACHE=$(or $(FROM_CACHE), true)
 
 test:
 	make docker-test NAME=nginx

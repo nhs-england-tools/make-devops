@@ -32,7 +32,7 @@ devops-test-suite: ### Run the DevOps unit test suite - optional: DEBUG=true
 		test-jenkins \
 		test-python \
 		test-techradar \
-	"
+	" | tee $(TMP_DIR)/$(@).last.log
 	find $(TMP_DIR) -mindepth 1 -maxdepth 1 -not -name '.gitignore' -print | xargs rm -rf
 
 devops-test-single: ### Run a DevOps single test - mandatory NAME=[test target name]; optional: DEBUG=true

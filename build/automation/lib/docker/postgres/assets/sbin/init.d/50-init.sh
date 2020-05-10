@@ -30,10 +30,8 @@ function replace_variables_in_postgres() {
 }
 
 function set_file_permissions() {
-  chmod 0600 /etc/postgresql/certificate.*
-  chown -R $SYSTEM_USER_UID:$SYSTEM_USER_GID /etc/postgresql
-  find /sql -type d -exec chmod 777 {} \;
-  find /sql -type f -exec chmod 666 {} \;
+  am_i_root && chmod 0600 /etc/postgresql/certificate.* ||:
+  am_i_root && chown -R $SYSTEM_USER_UID:$SYSTEM_USER_GID /etc/postgresql ||:
 }
 
 function _replace_variables() {
@@ -46,6 +44,14 @@ function _replace_variables() {
       "s;${key}_TO_REPLACE;${value//&/\\&};g" \
       $file ||:
   done
+}
+
+function am_i_root() {
+  if [ $(id -u) -eq 0 ]; then
+      true
+  else
+    false
+  fi
 }
 
 main "$@"

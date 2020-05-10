@@ -1,17 +1,25 @@
 # TODO
 
-- Create AWS RDS PostgreSQL infrastructure module
+- Infrastructure
+  - Create AWS RDS PostgreSQL infrastructure module
+- Testing
+  - Print target name before it runs in the normal mode
+  - Print target name before it runs in the debug mode
+  - Print target name in yellow bg and red fg in the debug mode
+  - Measure time of test execution
+  - Redirect verbose/debug output to file but keep the stdout clean
 - Containers
   - Refactor the execution logic for the `postgres` Docker image
-  - Should the `configure()` and `_replace_variables()` functions be moved to `libinit.sh` script?
+  - Should the `_replace_variables()` and `am_i_root()` functions be moved to `libinit.sh` script? E.g. https://github.com/bitnami/bitnami-docker-nginx/tree/master/1.18/debian-10/prebuildfs/opt/bitnami/scripts
   - Move away from `openjdk` in favour of `adoptopenjdk`
   - Conditional push to the Docker Hub registry
   - Create reverse proxy configuration for `nginx`
   - Add `redis` for local Amazon ElastiCache
   - Add `elasticsearch` for local Amazon Elasticsearch
   - Add `dynamodb` for local Amazon DynamoDB
-- 'Untexify' the project, e.g. in the `ssl.mk` module we can find references to the `$(TEXAS_HOSTED_ZONE_NONPROD)` and `$(TEXAS_HOSTED_ZONE_PROD)` variables
-- Add `git publish` alias and other, see [Useful Git aliases](https://gist.github.com/robmiller/6018582)
-- Issue with the JS file formatting, see [Jsx indentation conflict vscode and eslint](https://stackoverflow.com/questions/48674208/jsx-indentation-conflict-vscode-and-eslint)
-- Why `git checkout -b branch` forces then `git push origin`
-- Move iTerm2 config file into the repository
+- Others
+  - 'Untexify' the project, e.g. in the `ssl.mk` module we can find references to the `$(TEXAS_HOSTED_ZONE_NONPROD)` and `$(TEXAS_HOSTED_ZONE_PROD)` variables
+  - Add `git publish` alias and other, see [Useful Git aliases](https://gist.github.com/robmiller/6018582)
+  - Issue with the JS file formatting, see [Jsx indentation conflict vscode and eslint](https://stackoverflow.com/questions/48674208/jsx-indentation-conflict-vscode-and-eslint)
+  - Why `git checkout -b branch` forces then `git push origin`
+  - Move iTerm2 config file into the repository

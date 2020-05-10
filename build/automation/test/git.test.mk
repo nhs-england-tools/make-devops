@@ -20,4 +20,4 @@ test-git-config:
 	mk_test "$(@) push.followTags" true = $$(git config push.followTags)
 	mk_test "$(@) rebase.autoStash" true = $$(git config rebase.autoStash)
 	mk_test "$(@) remote.origin.prune" true = $$(git config remote.origin.prune)
-	mk_test "$(@) .git/hooks/pre-commit" -x .git/hooks/pre-commit
+	mk_test "$(@) .git/hooks/pre-commit" -x $(PROJECT_DIR)/.git/hooks/pre-commit
