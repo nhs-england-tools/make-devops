@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 ## [Unreleased]
 
+## [0.7.3] - 2020-05-10
+
+### Added
+
+- LocalStack module
+
+### Fixed
+
+- Project synchronisation target executes from the main repository
+
+### Changed
+
+- Up to date Docker image versions
+- Sandbox main process execution within library Docker image
+
 ## [0.7.2] - 2020-04-30
 
 ### Added
@@ -256,7 +271,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 - Initial release of the DevOps automation toolchain scripts
 
-[unreleased]: https://github.com/nhsd-ddce/make-devops/compare/v0.7.2...master
+[unreleased]: https://github.com/nhsd-ddce/make-devops/compare/v0.7.3...master
+[0.7.3]: https://github.com/nhsd-ddce/make-devops/compare/v0.7.2...v0.7.3
 [0.7.2]: https://github.com/nhsd-ddce/make-devops/compare/v0.7.1...v0.7.2
 [0.7.1]: https://github.com/nhsd-ddce/make-devops/compare/v0.7.0...v0.7.1
 [0.7.0]: https://github.com/nhsd-ddce/make-devops/compare/v0.6.7...v0.7.0
