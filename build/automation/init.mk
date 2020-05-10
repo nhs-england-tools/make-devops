@@ -195,7 +195,7 @@ DATA_DIR := $(abspath $(or $(DATA_DIR), $(PROJECT_DIR)/data))
 DEPLOYMENT_DIR := $(abspath $(or $(DEPLOYMENT_DIR), $(PROJECT_DIR)/deployment))
 GITHOOKS_DIR_REL := $(shell echo $(abspath $(ETC_DIR)/githooks) | sed "s;$(PROJECT_DIR);;g")
 INFRASTRUCTURE_DIR := $(abspath $(or $(INFRASTRUCTURE_DIR), $(PROJECT_DIR)/infrastructure))
-JSON_DIR_REL := $(shell echo $(abspath $(LIB_DIR)/json) | sed "s;$(PROJECT_DIR);;g")
+JQ_DIR_REL := $(shell echo $(abspath $(LIB_DIR)/jq) | sed "s;$(PROJECT_DIR);;g")
 
 PROFILE := $(or $(PROFILE), local)
 BUILD_ID := $(or $(BUILD_ID), 0)

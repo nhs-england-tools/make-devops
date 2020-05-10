@@ -38,7 +38,7 @@ docker-build docker-image: ### Build Docker image - mandatory: NAME; optional: V
 		make build __DOCKER_BUILD=true DOCKER_REGISTRY=$(DOCKER_LIBRARY_REGISTRY) && exit
 	elif ([ -d $(DOCKER_LIBRARY_DIR)/$(NAME) ] || [ -d $(DOCKER_CUSTOM_DIR)/$(NAME) ]) && [ -z "$(__DOCKER_BUILD)" ]; then
 		cd $(DOCKER_CUSTOM_DIR)/$(NAME)
-		make build __DOCKER_BUILD=true && exit
+		make build __DOCKER_BUILD=true && exit || cd $(PROJECT_DIR)
 	fi
 	reg=$$(make _docker-get-reg)
 	# Dockerfile
