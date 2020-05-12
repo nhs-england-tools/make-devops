@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 ## [Unreleased]
 
+## [0.7.4] - 2020-05-12
+
+### Added
+
+- Get ALB endpoint
+
+### Changed
+
+- Improve unit test output
+
 ## [0.7.3] - 2020-05-10
 
 ### Added
@@ -271,7 +281,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 - Initial release of the DevOps automation toolchain scripts
 
-[unreleased]: https://github.com/nhsd-ddce/make-devops/compare/v0.7.3...master
+[unreleased]: https://github.com/nhsd-ddce/make-devops/compare/v0.7.4...master
+[0.7.4]: https://github.com/nhsd-ddce/make-devops/compare/v0.7.3...v0.7.4
 [0.7.3]: https://github.com/nhsd-ddce/make-devops/compare/v0.7.2...v0.7.3
 [0.7.2]: https://github.com/nhsd-ddce/make-devops/compare/v0.7.1...v0.7.2
 [0.7.1]: https://github.com/nhsd-ddce/make-devops/compare/v0.7.0...v0.7.1
