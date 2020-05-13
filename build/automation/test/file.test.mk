@@ -4,6 +4,7 @@ test-file:
 	make test-file-setup
 	tests=( \
 		test-file-remove-multiline-content \
+		test-file-replace-multiline-content \
 		test-file-replace-variables \
 	)
 	for test in $${tests[*]}; do
@@ -29,6 +30,19 @@ test-file-remove-multiline-content:
 		CONTENT="this(.)*multiline\n"
 	# assert
 	mk_test "file = $$(cat $(TEST_FILE))"
+	# clean up
+	rm -f $(TEST_FILE)
+
+test-file-replace-multiline-content:
+	# arrange
+	echo -e "this\nis\na\nmultiline\nfile" > $(TEST_FILE)
+	# act
+	make file-replace-content \
+		FILE=$(TEST_FILE) \
+		OLD="this(.)*file\n" \
+		NEW="string"
+	# assert
+	mk_test "string = $$(cat $(TEST_FILE))"
 	# clean up
 	rm -f $(TEST_FILE)
 

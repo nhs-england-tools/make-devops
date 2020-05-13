@@ -2,7 +2,6 @@
   "Version": "2008-10-17",
   "Statement": [
     {
-      "Sid": "new statement",
       "Effect": "Allow",
       "Principal": "*",
       "Action": [
@@ -16,7 +15,6 @@
       ]
     },
     {
-      "Sid": "Prevent deletion",
       "Effect": "Deny",
       "Principal": "*",
       "Action": ["ecr:BatchDeleteImage", "ecr:DeleteRepository"]

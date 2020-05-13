@@ -83,6 +83,7 @@ If you hear your teams or individuals saying _"It will take days to onboard a ne
   - Always use a single tab character for code indentations
   - Follow the variables assignment [rules](https://www.gnu.org/software/make/manual/html_node/Flavors.html#Flavors) to avoid an unexpected result
   - Naming
+    - Service tag: `$(PROJECT_GROUP_SHORT)` or its prefix
     - ECR image: `$(PROJECT_GROUP)/$(PROJECT_NAME)/$(NAME)`
     - K8s namespace: `$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)-$(PROFILE)` or `$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)-$(PROFILE)-job`
     - Terraform state: `$(PROJECT_GROUP)-$(PROJECT_NAME)/$(PROFILE)/$(STACK)`
