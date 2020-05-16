@@ -50,6 +50,7 @@ macos-install-essential:: ## Install essential development dependencies - option
 	brew $$install gawk ||:
 	brew $$install git ||:
 	brew $$install git-crypt ||:
+	brew $$install git-secrets ||:
 	brew $$install gnu-sed ||:
 	brew $$install gnu-tar ||:
 	brew $$install gnutls ||:
@@ -160,6 +161,7 @@ macos-check:: ## Check if the development dependencies are installed
 	brew list gawk ||:
 	brew list git ||:
 	brew list git-crypt ||:
+	brew list git-secrets ||:
 	brew list gnu-sed ||:
 	brew list gnu-tar ||:
 	brew list gnutls ||:

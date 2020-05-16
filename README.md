@@ -37,7 +37,8 @@ If you hear your teams or individuals saying _"It will take days to onboard a ne
 - Deployment [profiles](build/automation/var/profile/README.md)
 - Data Docker image to [run SQL scripts](build/docker/data/assets/sbin/entrypoint.sh) against a database instance
 - Tools Docker image with [various command-line utilities](build/docker/tools/Dockerfile) pre-installed
-- Pre-commit [git hook](build/automation/etc/githooks/pre-commit) example
+- [Git hooks](build/automation/etc/githooks)
+- [Git secrets](https://github.com/awslabs/git-secrets)
 - Visual Studio Code and iTerm configuration
 - Virtual environments for Python, Go, Java and Node.js
 - AWS MFA [script](build/automation/bin/texas-mfa)

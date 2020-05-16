@@ -4,7 +4,9 @@ include $(abspath $(PROJECT_DIR)/build/automation/init.mk)
 # ==============================================================================
 
 project-config:
-	make docker-config
+	make \
+		git-config \
+		docker-config
 
 project-build: project-config
 

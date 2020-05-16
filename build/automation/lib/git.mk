@@ -13,6 +13,15 @@ git-config: ### Configure local git repository
 		git config push.followTags true
 		git config rebase.autoStash true
 		git config remote.origin.prune true
+		echo "build/automation/etc/githooks/commit-msg" > $(PROJECT_DIR)/.git/hooks/commit-msg
+		chmod +x $(PROJECT_DIR)/.git/hooks/commit-msg
 		echo "build/automation/etc/githooks/pre-commit" > $(PROJECT_DIR)/.git/hooks/pre-commit
 		chmod +x $(PROJECT_DIR)/.git/hooks/pre-commit
+		echo "build/automation/etc/githooks/prepare-commit-msg" > $(PROJECT_DIR)/.git/hooks/prepare-commit-msg
+		chmod +x $(PROJECT_DIR)/.git/hooks/prepare-commit-msg
+		git secrets --register-aws
+		git config --add secrets.allowed 000000000000
 	fi
+
+git-secrets-scan-history: ### Scan git histroy for any secrets
+	git secrets --scan-history

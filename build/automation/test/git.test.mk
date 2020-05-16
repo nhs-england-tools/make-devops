@@ -2,6 +2,7 @@ test-git:
 	make test-git-setup
 	tests=( \
 		test-git-config \
+		test-git-secrets-scan-history \
 	)
 	for test in $${tests[*]}; do
 		mk_test_initialise $$test
@@ -34,5 +35,13 @@ test-git-config:
 	mk_test "push.followTags" "true = $$(git config push.followTags)"
 	mk_test "rebase.autoStash" "true = $$(git config rebase.autoStash)"
 	mk_test "remote.origin.prune" "true = $$(git config remote.origin.prune)"
+	mk_test ".git/hooks/commit-msg" "-x $(PROJECT_DIR)/.git/hooks/commit-msg"
 	mk_test ".git/hooks/pre-commit" "-x $(PROJECT_DIR)/.git/hooks/pre-commit"
+	mk_test ".git/hooks/prepare-commit-msg" "-x $(PROJECT_DIR)/.git/hooks/prepare-commit-msg"
 	mk_test_complete
+
+test-git-secrets-scan-history:
+	# act
+	make git-secrets-scan-history
+	# assert
+	mk_test 0 -eq $$?
