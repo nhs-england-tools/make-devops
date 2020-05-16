@@ -1,6 +1,6 @@
 TERRAFORM_DIR = $(PROJECT_DIR)/infrastructure/stacks
 TERRAFORM_DIR_REL = $(shell echo $(TERRAFORM_DIR) | sed "s;$(PROJECT_DIR);;g")
-TERRAFORM_STATE_KEY = $(PROJECT_GROUP)-$(PROJECT_NAME)/$(PROFILE)
+TERRAFORM_STATE_KEY = $(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT/$(PROFILE)
 TERRAFORM_STATE_LOCK = $(or $(TEXAS_TERRAFORM_STATE_LOCK), terraform-service-state-lock-$(PROFILE))
 TERRAFORM_STATE_STORE = $(or $(TEXAS_TERRAFORM_STATE_STORE), terraform-service-state-store-$(PROFILE))
 
@@ -102,7 +102,7 @@ _terraform-initialise: ### Initialise infrastructure state - mandatory: STACK=[n
 			-backend-config="bucket=$(TERRAFORM_STATE_STORE)" \
 			-backend-config="dynamodb_table=$(TERRAFORM_STATE_LOCK)" \
 			-backend-config="encrypt=true" \
-			-backend-config="key=$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME)-$(STACK)-$(PROFILE)/terraform.state" \
+			-backend-config="key=$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)-$(STACK)-$(PROFILE)/terraform.state" \
 			-backend-config="region=$(AWS_REGION)" \
 	"
 

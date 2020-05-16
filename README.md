@@ -86,7 +86,7 @@ If you hear your teams or individuals saying _"It will take days to onboard a ne
     - Service tag: `$(PROJECT_GROUP_SHORT)` or its prefix
     - ECR image: `$(PROJECT_GROUP)/$(PROJECT_NAME)/$(NAME)`
     - K8s namespace: `$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)-$(PROFILE)` or `$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)-$(PROFILE)-job`
-    - Terraform state: `$(PROJECT_GROUP)-$(PROJECT_NAME)/$(PROFILE)/$(STACK)`
+    - Terraform state: `$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)/$(PROFILE)/$(STACK)`
     - AWS tags: `TagSet=[{Key=Programme,Value=$(PROGRAMME)},{Key=Service,Value=$(TEXAS_SERVICE_TAG),{Key=Environment,Value=$(PROFILE)}]`
     - AWS secret name for deployment: `$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)-$(PROFILE)`
     - AWS resources prefix: `$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)-*`

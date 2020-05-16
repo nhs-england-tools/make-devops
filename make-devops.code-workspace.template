@@ -41,7 +41,7 @@
     "telemetry.enableTelemetry": false,
     "terminal.integrated.fontFamily": "Hack Nerd Font",
     "terraform.indexing.enabled": false,
-    "terraform.languageServer.enabled": true,
+    "terraform.languageServer.enabled": false,
     "window.title": "${activeEditorMedium}${separator}${rootName}${separator}${rootPath}",
     "window.zoomLevel": 0,
     /*"workbench.colorCustomizations": {
