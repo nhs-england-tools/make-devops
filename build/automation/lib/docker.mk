@@ -36,7 +36,7 @@ docker-build docker-image: ### Build Docker image - mandatory: NAME; optional: V
 	if [ -d $(DOCKER_LIBRARY_DIR)/$(NAME) ] && [ -z "$(__DOCKER_BUILD)" ]; then
 		cd $(DOCKER_LIBRARY_DIR)/$(NAME)
 		make build __DOCKER_BUILD=true DOCKER_REGISTRY=$(DOCKER_LIBRARY_REGISTRY) && exit
-	elif ([ -d $(DOCKER_LIBRARY_DIR)/$(NAME) ] || [ -d $(DOCKER_CUSTOM_DIR)/$(NAME) ]) && [ -z "$(__DOCKER_BUILD)" ]; then
+	elif [ -d $(DOCKER_CUSTOM_DIR)/$(NAME) ] && [ -z "$(__DOCKER_BUILD)" ]; then
 		cd $(DOCKER_CUSTOM_DIR)/$(NAME)
 		make build __DOCKER_BUILD=true && exit || cd $(PROJECT_DIR)
 	fi
@@ -591,7 +591,7 @@ docker-run-tools: ### Run tools (Python) container - mandatory: CMD; optional: S
 # ==============================================================================
 
 _docker-get-dir:
-	if [ -d $(DOCKER_CUSTOM_DIR)/$(NAME) ]; then
+	if [ -n "$(DOCKER_CUSTOM_DIR)" ] && [ -d $(DOCKER_CUSTOM_DIR)/$(NAME) ]; then
 		echo $(DOCKER_CUSTOM_DIR)/$(NAME)
 	elif [ -d $(DOCKER_LIBRARY_DIR)/$(NAME) ]; then
 		echo $(DOCKER_LIBRARY_DIR)/$(NAME)
@@ -600,7 +600,7 @@ _docker-get-dir:
 	fi
 
 _docker-get-reg:
-	if [ -d $(DOCKER_CUSTOM_DIR)/$(NAME) ] || [ -d $(DOCKER_LIBRARY_DIR)/$(NAME) ]; then
+	if ([ -n "$(DOCKER_CUSTOM_DIR)" ] && [ -d $(DOCKER_CUSTOM_DIR)/$(NAME) ]) || [ -d $(DOCKER_LIBRARY_DIR)/$(NAME) ]; then
 		echo $(DOCKER_LIBRARY_REGISTRY)
 	else
 		echo $(DOCKER_REGISTRY)
