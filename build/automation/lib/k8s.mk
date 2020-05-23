@@ -7,20 +7,17 @@ K8S_TTL_LENGTH = $(or $(TEXAS_K8S_TTL_LENGTH), 2 days)
 
 # ==============================================================================
 
-k8s-deploy-service: ### Deploy application service stack to the Kubernetes cluster - mandatory: PROFILE=[name]
-	make k8s-deploy STACK=service
-
 k8s-deploy: ### Deploy application to the Kubernetes cluster - mandatory: STACK=[name],PROFILE=[name]
 	make k8s-replace-variables STACK=$(STACK) PROFILE=$(PROFILE)
 	make k8s-kubeconfig-get
-	eval "$$(make k8s-kubeconfig-export)"
+	eval "$$(make k8s-kubeconfig-export-variables)"
 	kubectl apply -k $$(make -s _k8s-get-deployment-directory)
 	make k8s-clean # TODO: Create a flag to switch it off
 	make k8s-sts
 
 k8s-undeploy: ### Remove Kubernetes resources
 	make k8s-kubeconfig-get
-	eval "$$(make k8s-kubeconfig-export)"
+	eval "$$(make k8s-kubeconfig-export-variables)"
 	if kubectl get namespaces | grep -o "$(K8S_APP_NAMESPACE) "; then
 		kubectl delete namespace $(K8S_APP_NAMESPACE)
 	fi
@@ -28,7 +25,7 @@ k8s-undeploy: ### Remove Kubernetes resources
 k8s-deploy-job: ### Deploy job to the Kubernetes cluster - mandatory: STACK=[name],PROFILE=[name]
 	make k8s-replace-variables STACK=$(STACK) PROFILE=$(PROFILE)
 	make k8s-kubeconfig-get
-	eval "$$(make k8s-kubeconfig-export)"
+	eval "$$(make k8s-kubeconfig-export-variables)"
 	kubectl delete jobs --all -n $(K8S_JOB_NAMESPACE)
 	kubectl apply -k $$(make -s _k8s-get-deployment-directory)
 	make k8s-clean # TODO: Create a flag to switch it off
@@ -37,7 +34,7 @@ k8s-deploy-job: ### Deploy job to the Kubernetes cluster - mandatory: STACK=[nam
 
 k8s-undeploy-job: ### Remove Kubernetes resources from job namespace
 	make k8s-kubeconfig-get
-	eval "$$(make k8s-kubeconfig-export)"
+	eval "$$(make k8s-kubeconfig-export-variables)"
 	if kubectl get namespaces | grep -o "$(K8S_JOB_NAMESPACEss) "; then
 		kubectl delete namespace $(K8S_JOB_NAMESPACE)
 	fi
@@ -65,22 +62,28 @@ k8s-replace-variables: ### Replace variables in base and overlay of a stack - ma
 k8s-get-namespace-ttl: ### Get the length of time for the namespace to live
 	date -u +"%d-%b-%Y" -d "+$(K8S_TTL_LENGTH)"
 
-k8s-kubeconfig-get: ### Get configuration file
+k8s-kubeconfig-get: ### Get configuration file - mandatory: PROFILE=[name]
 	mkdir -p $(HOME)/etc
 	make aws-s3-download \
 		URI=$(K8S_KUBECONFIG_FILE) \
 		FILE=/tmp/etc/lk8s-$(AWS_ACCOUNT_NAME)-kubeconfig
+	if [ $(PROFILE) == "local" ]; then
+		mkdir -p $(HOME)/.kube/configs
+		cp -f \
+			$(HOME)/etc/lk8s-$(AWS_ACCOUNT_NAME)-kubeconfig \
+			$(HOME)/.kube/configs/lk8s-$(AWS_ACCOUNT_NAME)-kubeconfig
+	fi
 
-k8s-kubeconfig-export: ### Export configuration file
+k8s-kubeconfig-export-variables k8s-kubeconfig-export: ### Export configuration file - mandatory: PROFILE=[name]
 	echo "export KUBECONFIG=$(HOME)/etc/lk8s-$(AWS_ACCOUNT_NAME)-kubeconfig"
 
-k8s-clean: ### Clean Kubernetes files
+k8s-clean: ### Clean Kubernetes files - mandatory: STACK=[name]
 	find $(K8S_DIR) -type f -name '*.yaml' -print | grep -v "/template/" | xargs rm -fv
 	find $(K8S_DIR)/$(STACK)/base ! -path $(K8S_DIR)/$(STACK)/base -type d -print | \
 		grep -v "/template" | \
 		xargs rm -rfv
 
-k8s-alb-get-ingress-endpoint:
+k8s-alb-get-ingress-endpoint: ### Get ALB ingress enpoint - mandatory: PROFILE=[name]
 	kubectl get ingress \
 		--namespace=$(K8S_APP_NAMESPACE) \
 		--selector="env=$(PROFILE)" \
@@ -97,8 +100,10 @@ _k8s-get-deployment-directory:
 	fi
 
 # ==============================================================================
+# TODO: This section needs a review
 
 k8s-cnf: ### Show configmaps
+	eval "$$(make k8s-kubeconfig-export-variables)"
 	echo
 	kubectl get configmaps \
 		--namespace=$(K8S_APP_NAMESPACE) \
@@ -107,6 +112,7 @@ k8s-cnf: ### Show configmaps
 	echo
 
 k8s-log: ### Show logs
+	eval "$$(make k8s-kubeconfig-export-variables)"
 	echo
 	kubectl logs \
 		--namespace=$(K8S_APP_NAMESPACE) \
@@ -118,6 +124,7 @@ k8s-log: ### Show logs
 	echo
 
 k8s-net: ### Show network policies
+	eval "$$(make k8s-kubeconfig-export-variables)"
 	echo
 	kubectl describe networkpolicies \
 		--namespace=$(K8S_APP_NAMESPACE) \
@@ -125,6 +132,7 @@ k8s-net: ### Show network policies
 	echo
 
 k8s-sts: ### Show status of pods and services
+	eval "$$(make k8s-kubeconfig-export-variables)"
 	echo -e "\nDisplay namespaces"
 	kubectl get namespace \
 		--selector "project-group=$(PROJECT_GROUP_SHORT)" \
@@ -155,31 +163,16 @@ k8s-sts: ### Show status of pods and services
 		--namespace=$(K8S_APP_NAMESPACE)
 
 # ==============================================================================
-
-k8s-wait-for-job-to-complete: ### Wait for the job to complete
-	count=1
-	until [ $$count -gt 20 ]; do
-		if [ "$$(make -s k8s-job-failed | tr -d '\n')" == "True" ]; then
-			echo "The job has failed"
-			exit 1
-		fi
-		if [ "$$(make -s k8s-job-complete | tr -d '\n')" == "True" ]; then
-			echo "The job has completed"
-			exit 0
-		fi
-		echo "Still waiting for the job to complete"
-		sleep 5
-		((count++))
-	done
-	echo "The job has not completed, but have given up waiting."
-	exit 1
+# TODO: This section needs a review
 
 k8s-job-log: ### Show the job pod logs
+	eval "$$(make k8s-kubeconfig-export-variables)"
 	echo
 	kubectl logs $$(make -s k8s-job-pod) \
 		--namespace=$(K8S_JOB_NAMESPACE)
 
 k8s-job-pod: ### Get the name of the pod created by the job
+	eval "$$(make k8s-kubeconfig-export-variables)"
 	echo
 	kubectl get pods \
 		--namespace=$(K8S_JOB_NAMESPACE) \
@@ -187,6 +180,7 @@ k8s-job-pod: ### Get the name of the pod created by the job
 		--output jsonpath='{.items..metadata.name}'
 
 k8s-job-name: ### Get the name of the job
+	eval "$$(make k8s-kubeconfig-export-variables)"
 	echo
 	kubectl get jobs \
 		--namespace=$(K8S_JOB_NAMESPACE) \
@@ -194,18 +188,21 @@ k8s-job-name: ### Get the name of the job
 		--output jsonpath='{.items..metadata.name}'
 
 k8s-job-failed: ### Show whether the job failed
+	eval "$$(make k8s-kubeconfig-export-variables)"
 	echo
 	kubectl get jobs $$(make -s k8s-job-name)\
 		--namespace=$(K8S_JOB_NAMESPACE) \
 		--output jsonpath='{.status.conditions[?(@.type=="Failed")].status}'
 
 k8s-job-complete: ### Show whether the job completed
+	eval "$$(make k8s-kubeconfig-export-variables)"
 	echo
 	kubectl get jobs $$(make -s k8s-job-name)\
 		--namespace=$(K8S_JOB_NAMESPACE) \
 		--output jsonpath='{.status.conditions[?(@.type=="Complete")].status}'
 
 k8s-job: ### Show status of jobs
+	eval "$$(make k8s-kubeconfig-export-variables)"
 	echo -e "\nDisplay namespaces"
 	kubectl get namespace \
 		--selector "project-group=$(PROJECT_GROUP_SHORT)" \
@@ -231,6 +228,24 @@ k8s-job: ### Show status of jobs
 	kubectl get events \
 		--namespace=$(K8S_JOB_NAMESPACE)
 
+k8s-wait-for-job-to-complete: ### Wait for the job to complete
+	count=1
+	until [ $$count -gt 20 ]; do
+		if [ "$$(make -s k8s-job-failed | tr -d '\n')" == "True" ]; then
+			echo "The job has failed"
+			exit 1
+		fi
+		if [ "$$(make -s k8s-job-complete | tr -d '\n')" == "True" ]; then
+			echo "The job has completed"
+			exit 0
+		fi
+		echo "Still waiting for the job to complete"
+		sleep 5
+		((count++))
+	done
+	echo "The job has not completed, but have given up waiting."
+	exit 1
+
 # ==============================================================================
 
 .SILENT: \
@@ -241,7 +256,8 @@ k8s-job: ### Show status of jobs
 	k8s-job-failed \
 	k8s-job-log \
 	k8s-job-name \
-	k8s-kubeconfig-export
+	k8s-kubeconfig-export \
+	k8s-kubeconfig-export-variables \
 	k8s-log \
 	k8s-sts \
 	k8s-wait-for-job-to-complete

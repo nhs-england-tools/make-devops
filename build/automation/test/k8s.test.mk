@@ -1,10 +1,14 @@
 test-k8s:
 	make test-k8s-setup
 	tests=( \
-		test-k8s-get-namespace-ttl \
+		test-k8s-deploy \
+		test-k8s-undeploy \
+		test-k8s-deploy-job \
+		test-k8s-undeploy-job \
 		test-k8s-replace-variables \
+		test-k8s-get-namespace-ttl \
 		test-k8s-kubeconfig-get \
-		test-k8s-kubeconfig-export \
+		test-k8s-kubeconfig-export-variables \
 		test-k8s-clean \
 		test-k8s-alb-get-ingress-endpoint \
 	)
@@ -22,11 +26,17 @@ test-k8s-teardown:
 
 # ==============================================================================
 
-test-k8s-get-namespace-ttl:
-	# act
-	ttl=$$(make k8s-get-namespace-ttl)
-	# assert
-	mk_test "0 -eq $$(date -d $$ttl > /dev/null 2>&1; echo $$?)"
+test-k8s-deploy:
+	mk_test_skip
+
+test-k8s-undeploy:
+	mk_test_skip
+
+test-k8s-deploy-job:
+	mk_test_skip
+
+test-k8s-undeploy-job:
+	mk_test_skip
 
 test-k8s-replace-variables:
 	# act
@@ -38,12 +48,18 @@ test-k8s-replace-variables:
 	mk_test "overlays" "2 -eq $$cover"
 	mk_test_complete
 
+test-k8s-get-namespace-ttl:
+	# act
+	ttl=$$(make k8s-get-namespace-ttl)
+	# assert
+	mk_test "0 -eq $$(date -d $$ttl > /dev/null 2>&1; echo $$?)"
+
 test-k8s-kubeconfig-get:
 	mk_test_skip
 
-test-k8s-kubeconfig-export:
+test-k8s-kubeconfig-export-variables:
 	# act
-	export=$$(make k8s-kubeconfig-export)
+	export=$$(make k8s-kubeconfig-export-variables)
 	# assert
 	mk_test "1 -eq $$(echo $$export | grep 'export KUBECONFIG=' | wc -l)"
 

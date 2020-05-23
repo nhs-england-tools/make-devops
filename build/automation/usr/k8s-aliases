@@ -1,5 +1,9 @@
 #!/bin/bash
 
+alias {k-config-export-dev,kced}="export KUBECONFIG=~/.kube/configs/lk8s-dev-kubeconfig"
+alias {k-config-export-nonprod,kcenp}="export KUBECONFIG=~/.kube/configs/lk8s-nonprod-kubeconfig"
+alias {k-config-export-prod,kcep}="export KUBECONFIG=~/.kube/configs/lk8s-prod-kubeconfig"
+
 alias {k-get-namespace,kgn}="kubectl-get-current-namespace"
 alias {k-list-namespaces,klns}="kubectl get namespaces"
 alias {k-list-pods,klp}="kubectl get pods"
