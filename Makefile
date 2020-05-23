@@ -3,21 +3,13 @@ include $(abspath $(PROJECT_DIR)/build/automation/init.mk)
 
 # ==============================================================================
 
-project-config:
-	make \
-		git-config \
-		docker-config
+build: project-config
 
-project-build: project-config
+start: project-start
 
-project-start:
-	make docker-compose-start
+stop: project-stop
 
-project-stop:
-	make docker-compose-stop
-
-project-log:
-	make docker-compose-log
+log: project-log
 
 # ==============================================================================
 
