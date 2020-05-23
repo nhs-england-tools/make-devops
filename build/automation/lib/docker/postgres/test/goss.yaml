@@ -30,3 +30,7 @@ port:
     listening: true
     ip:
       - 0.0.0.0
+
+command:
+  'psql postgres://test:test@localhost:5432/test -c "select version();"':
+    exit-status: 0

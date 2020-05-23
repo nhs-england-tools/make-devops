@@ -11,6 +11,7 @@
 - Documentation
   - List features by module
   - Configuration of a CI/CD system, i.e. set mandatory variables
+  - Docker library image usage
 - Containers
   - Refactor the execution logic for the `postgres` Docker image
   - Should the `_replace_variables()` and `am_i_root()` functions be moved to `libinit.sh` script? E.g. https://github.com/bitnami/bitnami-docker-nginx/tree/master/1.18/debian-10/prebuildfs/opt/bitnami/scripts

@@ -37,7 +37,11 @@ _test-scripts-mount:
 _test-postgres:
 	make docker-test NAME=postgres \
 		GOSS_OPTS="GOSS_SLEEP=3" \
-		ARGS="--env POSTGRES_PASSWORD=postgres" \
+		ARGS=" \
+			--env DB_NAME=test \
+			--env DB_USERNAME=test \
+			--env DB_PASSWORD=test \
+		" \
 		CMD="postgres"
 
 push:

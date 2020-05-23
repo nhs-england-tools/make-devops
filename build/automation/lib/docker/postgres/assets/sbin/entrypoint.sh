@@ -1,6 +1,12 @@
 #!/bin/bash
 set -e
 
+export DB_HOST=${DB_HOST:-postgres}
+export DB_PORT=${DB_PORT:-5432}
+export DB_NAME=${DB_NAME:-postgres}
+export DB_USERNAME=${DB_USERNAME:-postgres}
+export DB_PASSWORD=${DB_PASSWORD:-postgres}
+
 # Configure
 [[ "$DEBUG" =~ ^(true|yes|on|1|TRUE|YES|ON)$ ]] && set -x
 [[ "$TRACE" =~ ^(true|yes|on|1|TRUE|YES|ON)$ ]] && export trace="strace -tt -T -v -s 65536 -f"

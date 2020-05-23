@@ -12,6 +12,9 @@ elif [ "scripts" == "$1" ]; then
     exec $trace $gosu psql "postgres://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}" -f $file
   done
 elif [ "postgres" == "$1" ] || [ $# -eq 0 ]; then
+  export POSTGRES_DB=$DB_NAME
+  export POSTGRES_USER=$DB_USERNAME
+  export POSTGRES_PASSWORD=$DB_PASSWORD
   exec /usr/local/bin/docker-entrypoint.sh postgres -c config_file=/etc/postgresql/postgresql.conf
 elif [ $# -gt 0 ]; then
   exec $trace $gosu "$@"

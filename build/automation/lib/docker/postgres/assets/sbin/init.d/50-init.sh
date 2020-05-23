@@ -1,12 +1,6 @@
 #!/bin/bash
 set -e
 
-DB_HOST=${DB_HOST:-postgres}
-DB_PORT=${DB_PORT:-5432}
-DB_NAME=${DB_NAME:-postgres}
-DB_USERNAME=${DB_USERNAME:-postgres}
-DB_PASSWORD=${DB_PASSWORD:-postgres}
-
 function main() {
   if [ "scripts" == "$1" ]; then
     replace_variables_in_scripts "$@"
