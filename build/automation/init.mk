@@ -139,6 +139,7 @@ devops-synchronise: ### Synchronise the DevOps automation toolchain scripts used
 		fi
 	}
 	if [ -z "$(__DEVOPS_SYNCHRONISE)" ]; then
+		git checkout -b task/Update_automation_scripts
 		download
 		cd $(TMP_DIR)/$(DEVOPS_PROJECT_NAME)
 		make devops-synchronise \
