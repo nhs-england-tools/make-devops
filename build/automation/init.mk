@@ -99,6 +99,7 @@ devops-synchronise: ### Synchronise the DevOps automation toolchain scripts used
 		if [[ "$(ALL)" =~ ^(true|yes|y|on|1|TRUE|YES|Y|ON)$$ ]]; then
 			mkdir -p $(PARENT_PROJECT_DIR)/documentation/adr
 			cp -fv documentation/adr/README.md $(PARENT_PROJECT_DIR)/documentation/adr/README.md
+			cp -fv .gitignore $(PARENT_PROJECT_DIR)/.gitignore
 			cp -fv CONTRIBUTING.md $(PARENT_PROJECT_DIR)/CONTRIBUTING.md
 			cp -fv $(DEVOPS_PROJECT_NAME).code-workspace.template $(PARENT_PROJECT_DIR)/$(PARENT_PROJECT_NAME).code-workspace.template
 		fi
