@@ -42,6 +42,19 @@ terraform-fmt: ### Format Terraform code - optional: DIR,OPTS=[Terraform options
 	make docker-run-terraform \
 		CMD="fmt -recursive $(OPTS)"
 
+terraform-clean: ### Clean Terraform files
+	find $(TERRAFORM_DIR) -type d -name '.terraform' -print0 | xargs -0 rm -rfv
+	find $(TERRAFORM_DIR) -type f -name '*terraform.tfstate*' -print0 | xargs -0 rm -rfv
+
+terraform-delete-state: ### Delete the Terraform state - mandatory: STACKS=[comma-separated names]; optional: PROFILE=[name]
+	# set up
+	eval "$$(make aws-assume-role-export-variables)"
+	# delete state
+	for stack in $$(echo $(STACKS) | tr "," "\n"); do
+		make _terraform-delete-state-store STACK="$$stack"
+		make _terraform-delete-state-lock STACK="$$stack"
+	done
+
 # ==============================================================================
 
 terraform-export-variables-aws: ### Get AWS environment variables as TF_VAR_[name] variables - returns: [variables export]
@@ -81,6 +94,9 @@ terraform-export-variables-from-json: ### Convert JSON to Terraform input export
 # ==============================================================================
 
 _terraform-stacks: ### Set up infrastructure for a given list of stacks - mandatory: STACKS=[comma-separated names],CMD=[Terraform command]; optional: INIT=false,PROFILE=[name]
+	# set up
+	eval "$$(make aws-assume-role-export-variables)"
+	# run stacks
 	for stack in $$(echo $(STACKS) | tr "," "\n"); do
 		make _terraform-stack STACK="$$stack" CMD="$(CMD)"
 	done
@@ -106,29 +122,20 @@ _terraform-initialise: ### Initialise infrastructure state - mandatory: STACK=[n
 			-backend-config="region=$(AWS_REGION)" \
 	"
 
-# ==============================================================================
-
-terraform-delete-state: ### Delete the Terraform state - mandatory: STACKS=[comma-separated names]; optional: PROFILE=[name]
-	for stack in $$(echo $(STACKS) | tr "," "\n"); do
-		make aws-delete-terraform-state-from-s3 STACK="$$stack"
-		make aws-delete-terraform-state-from-dynamodb STACK="$$stack"
-	done
-
 _terraform-delete-state-store: ### Delete Terraform state store - mandatory: STACK=[name]; optional: PROFILE=[name]
-	# TODO: Use Docker tools image to run the AWS CLI command
-	aws s3 rm \
-		s3://$(TERRAFORM_STATE_STORE)/$(TERRAFORM_STATE_KEY)/$(STACK) \
-		--recursive
+	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=localstack' ||:)" CMD=" \
+		$(AWSCLI) s3 rm \
+			s3://$(TERRAFORM_STATE_STORE)/$(TERRAFORM_STATE_KEY)/$(STACK) \
+			--recursive \
+	"
 
 _terraform-delete-state-lock: ### Delete Terraform state lock - mandatory: STACK=[name]; optional: PROFILE=[name]
-	# TODO: Use Docker tools image to run the AWS CLI command
-	aws dynamodb delete-item \
-		--table-name $(TERRAFORM_STATE_LOCK) \
-		--key '{"LockID": {"S": "$(TERRAFORM_STATE_STORE)/$(TERRAFORM_STATE_KEY)/$(STACK)/terraform.state-md5"}}'
-
-terraform-clean: ### Clean Terraform files
-	find $(TERRAFORM_DIR) -type d -name '.terraform' -print0 | xargs -0 rm -rfv
-	find $(TERRAFORM_DIR) -type f -name '*terraform.tfstate*' -print0 | xargs -0 rm -rfv
+	key='{"LockID": {"S": "$(TERRAFORM_STATE_STORE)/$(TERRAFORM_STATE_KEY)/$(STACK)/terraform.state-md5"}}'
+	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=localstack' ||:)" CMD=" \
+		$(AWSCLI) dynamodb delete-item \
+			--table-name $(TERRAFORM_STATE_LOCK) \
+			--key '$$key' \
+		"
 
 # ==============================================================================
 

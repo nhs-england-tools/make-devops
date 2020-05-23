@@ -8,24 +8,33 @@ K8S_TTL_LENGTH = $(or $(TEXAS_K8S_TTL_LENGTH), 2 days)
 # ==============================================================================
 
 k8s-deploy: ### Deploy application to the Kubernetes cluster - mandatory: STACK=[name],PROFILE=[name]
-	make k8s-replace-variables STACK=$(STACK) PROFILE=$(PROFILE)
+	# set up
+	eval "$$(make aws-assume-role-export-variables)"
 	make k8s-kubeconfig-get
 	eval "$$(make k8s-kubeconfig-export-variables)"
+	# deploy
+	make k8s-replace-variables STACK=$(STACK) PROFILE=$(PROFILE)
 	kubectl apply -k $$(make -s _k8s-get-deployment-directory)
 	make k8s-clean # TODO: Create a flag to switch it off
 	make k8s-sts
 
 k8s-undeploy: ### Remove Kubernetes resources
+	# set up
+	eval "$$(make aws-assume-role-export-variables)"
 	make k8s-kubeconfig-get
 	eval "$$(make k8s-kubeconfig-export-variables)"
+	# undeploy
 	if kubectl get namespaces | grep -o "$(K8S_APP_NAMESPACE) "; then
 		kubectl delete namespace $(K8S_APP_NAMESPACE)
 	fi
 
 k8s-deploy-job: ### Deploy job to the Kubernetes cluster - mandatory: STACK=[name],PROFILE=[name]
-	make k8s-replace-variables STACK=$(STACK) PROFILE=$(PROFILE)
+	# set up
+	eval "$$(make aws-assume-role-export-variables)"
 	make k8s-kubeconfig-get
 	eval "$$(make k8s-kubeconfig-export-variables)"
+	# deploy
+	make k8s-replace-variables STACK=$(STACK) PROFILE=$(PROFILE)
 	kubectl delete jobs --all -n $(K8S_JOB_NAMESPACE)
 	kubectl apply -k $$(make -s _k8s-get-deployment-directory)
 	make k8s-clean # TODO: Create a flag to switch it off
@@ -33,11 +42,28 @@ k8s-deploy-job: ### Deploy job to the Kubernetes cluster - mandatory: STACK=[nam
 	make k8s-wait-for-job-to-complete
 
 k8s-undeploy-job: ### Remove Kubernetes resources from job namespace
+	# set up
+	eval "$$(make aws-assume-role-export-variables)"
 	make k8s-kubeconfig-get
 	eval "$$(make k8s-kubeconfig-export-variables)"
+	# undeploy
 	if kubectl get namespaces | grep -o "$(K8S_JOB_NAMESPACEss) "; then
 		kubectl delete namespace $(K8S_JOB_NAMESPACE)
 	fi
+
+k8s-alb-get-ingress-endpoint: ### Get ALB ingress enpoint - mandatory: PROFILE=[name]
+	# set up
+	eval "$$(make aws-assume-role-export-variables)"
+	make k8s-kubeconfig-get
+	eval "$$(make k8s-kubeconfig-export-variables)"
+	# get ingress endpoint
+	kubectl get ingress \
+		--namespace=$(K8S_APP_NAMESPACE) \
+		--selector="env=$(PROFILE)" \
+		--output=json \
+	| make -s docker-run-tools CMD="jq -rf $(JQ_DIR)/k8s-alb-get-ingress-endpoint.jq"
+
+# ==============================================================================
 
 k8s-replace-variables: ### Replace variables in base and overlay of a stack - mandatory: STACK=[name],PROFILE=[name]
 	rsync -rav \
@@ -82,13 +108,6 @@ k8s-clean: ### Clean Kubernetes files - mandatory: STACK=[name]
 	find $(K8S_DIR)/$(STACK)/base ! -path $(K8S_DIR)/$(STACK)/base -type d -print | \
 		grep -v "/template" | \
 		xargs rm -rfv
-
-k8s-alb-get-ingress-endpoint: ### Get ALB ingress enpoint - mandatory: PROFILE=[name]
-	kubectl get ingress \
-		--namespace=$(K8S_APP_NAMESPACE) \
-		--selector="env=$(PROFILE)" \
-		--output=json \
-	| make -s docker-run-tools CMD="jq -rf $(JQ_DIR)/k8s-alb-get-ingress-endpoint.jq"
 
 # ==============================================================================
 
