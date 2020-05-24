@@ -273,11 +273,12 @@ docker-compose-start-single-service: ### Start Docker Compose - mandatory: NAME=
 		--file $(or $(YML), $(DOCKER_COMPOSE_YML)) \
 		up --no-build --remove-orphans --detach $(NAME)
 
-docker-compose-stop: ### Stop Docker Compose - optional: YML=[docker-compose.yml, defaults to $(DOCKER_COMPOSE_YML)]
+docker-compose-stop: ### Stop Docker Compose - optional: YML=[docker-compose.yml, defaults to $(DOCKER_COMPOSE_YML)],ALL=true
 	docker-compose \
 		--file $(or $(YML), $(DOCKER_COMPOSE_YML)) \
 		stop
 	docker rm --force --volumes $$(docker ps --all --filter "name=.*$(BUILD_ID).*" --quiet) 2> /dev/null ||:
+	[[ "$(ALL)" =~ ^(true|yes|y|on|1|TRUE|YES|Y|ON)$$ ]] && docker rm --force --volumes $$(docker ps --all --quiet) 2> /dev/null ||:
 
 docker-compose-log: ### Log Docker Compose output - optional: DO_NOT_FOLLOW=true,YML=[docker-compose.yml, defaults to $(DOCKER_COMPOSE_YML)]
 	docker-compose \

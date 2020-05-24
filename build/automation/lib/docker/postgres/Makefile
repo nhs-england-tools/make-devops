@@ -54,12 +54,15 @@ _generate-ssl-certificate:
 
 _test-prerequisites-setup:
 	make _TEST_POSTGRES_SQL_FILE
-	make docker-compose-stop docker-compose-start \
+	make \
+		docker-compose-stop ALL=true \
+		docker-compose-start \
 		YML=$(DOCKER_LIBRARY_DIR)/postgres/test/docker-compose.postgres.yml
 	sleep 1
 
 _test-prerequisites-teardown:
-	make docker-compose-stop \
+	make \
+		docker-compose-stop ALL=true \
 		YML=$(DOCKER_LIBRARY_DIR)/postgres/test/docker-compose.postgres.yml
 	rm -rf $(_TEST_POSTGRES_SQL_FILE)*
 
