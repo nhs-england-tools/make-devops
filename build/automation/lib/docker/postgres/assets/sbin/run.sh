@@ -1,15 +1,21 @@
 #!/bin/bash
 set -e
 
+function run_psql() {
+  $trace $gosu psql postgres://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME} "$@"
+}
+
 if [ "sql" == "$1" ]; then
   sql="$2"
   echo "Running SQL: $sql"
-  exec $trace $gosu psql "postgres://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}" -c "$sql"
+  run_psql -c "$sql"
 elif [ "scripts" == "$1" ]; then
   dir=${2:-/sql}
   for file in $dir/*; do
     echo "Running script: '$file'"
-    exec $trace $gosu psql "postgres://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}" -f $file
+    [[ $file == *.sql ]] && run_psql -f $file
+    [[ $file == *.sql.gz ]] && gunzip -c $file | run_psql
+    echo
   done
 elif [ "postgres" == "$1" ] || [ $# -eq 0 ]; then
   export POSTGRES_DB=$DB_NAME

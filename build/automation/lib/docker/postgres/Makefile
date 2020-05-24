@@ -11,8 +11,7 @@ build:
 test:
 	make \
 		_test-sql \
-		_test-scripts-mount \
-		_test-scripts-image \
+		_test-scripts \
 		_test-postgres
 
 _test-sql:
@@ -21,17 +20,11 @@ _test-sql:
 		CMD='sql "select version();"'
 	make _test-prerequisites-teardown
 
-_test-scripts-image:
-	make _test-prerequisites-setup
-	make docker-run-postgres \
-		CMD="scripts /sql"
-	make _test-prerequisites-teardown
-
-_test-scripts-mount:
+_test-scripts:
 	make _test-prerequisites-setup
 	make docker-run-postgres \
 		ARGS="--volume $(DOCKER_LIBRARY_DIR)/postgres/assets/sql:/sql" \
-		CMD="scripts /sql"
+		CMD="scripts"
 	make _test-prerequisites-teardown
 
 _test-postgres:
@@ -60,6 +53,7 @@ _generate-ssl-certificate:
 	fi
 
 _test-prerequisites-setup:
+	make _TEST_POSTGRES_SQL_FILE
 	make docker-compose-stop docker-compose-start \
 		YML=$(DOCKER_LIBRARY_DIR)/postgres/test/docker-compose.postgres.yml
 	sleep 1
@@ -67,3 +61,9 @@ _test-prerequisites-setup:
 _test-prerequisites-teardown:
 	make docker-compose-stop \
 		YML=$(DOCKER_LIBRARY_DIR)/postgres/test/docker-compose.postgres.yml
+	rm -rf $(_TEST_POSTGRES_SQL_FILE)*
+
+_TEST_POSTGRES_SQL_FILE := $(DOCKER_LIBRARY_DIR)/postgres/assets/sql/00-version.sql
+_TEST_POSTGRES_SQL_FILE:
+	echo "select version();" > $(_TEST_POSTGRES_SQL_FILE)
+	gzip -c $(_TEST_POSTGRES_SQL_FILE) > $(_TEST_POSTGRES_SQL_FILE).gz
