@@ -30,14 +30,14 @@ RUN set -eux && \
     \
     # Install Python packages
     pip install \
-        awscli==1.18.55 \
+        awscli==1.18.66 \
         awscli-local==0.6 \
-        boto3==1.13.5 \
+        boto3==1.13.16 \
         requests==2.23.0 \
     && \
     \
     # Install aws-iam-authenticator
-    curl -o aws-iam-authenticator https://amazon-eks.s3-us-west-2.amazonaws.com/1.15.10/2020-02-22/bin/linux/amd64/aws-iam-authenticator && \
+    curl -o aws-iam-authenticator https://amazon-eks.s3-us-west-2.amazonaws.com/1.16.8/2020-04-16/bin/linux/amd64/aws-iam-authenticator && \
     chmod +x ./aws-iam-authenticator && \
     mv ./aws-iam-authenticator /usr/local/bin/aws-iam-authenticator && \
     \
@@ -47,7 +47,7 @@ RUN set -eux && \
     mv ./jq-linux64 /usr/local/bin/jq && \
     \
     # Install kubectl
-    curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.18.2/bin/linux/amd64/kubectl && \
+    curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.18.3/bin/linux/amd64/kubectl && \
     chmod +x ./kubectl && \
     mv ./kubectl /usr/local/bin/kubectl && \
     \

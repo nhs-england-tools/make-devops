@@ -10,6 +10,8 @@ PYTHON_BASE_PACKAGES = \
 	pylint
 
 python-virtualenv: ### Setup Python virtual environment - optional: PYTHON_VERSION
+	brew update
+	brew upgrade pyenv
 	pyenv install --skip-existing $(PYTHON_VERSION)
 	pyenv virtualenv --force $(PYTHON_VERSION) $(PROJECT_GROUP_SHORT)-$(PROJECT_NAME)
 	pyenv local $(PROJECT_GROUP_SHORT)-$(PROJECT_NAME)
