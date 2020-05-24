@@ -1,5 +1,4 @@
 TEST_DOCKER_IMAGE := postgres
-TEST_DOCKER_COMPOSE_YML := $(TMP_DIR)/docker-compose.yml
 
 test-docker:
 	make test-docker-setup
@@ -24,6 +23,7 @@ test-docker:
 		test-docker-tag \
 		test-docker-compose \
 		test-docker-compose-single-service \
+		test-docker-compose-parallel-execution \
 		test-docker-get-variables-from-file \
 		test-docker-run-dotnet \
 		test-docker-run-gradle \
@@ -219,6 +219,20 @@ test-docker-compose-single-service:
 		mk_test "stop" "true" || mk_test "stop" "false"
 	mk_test_complete
 
+test-docker-compose-parallel-execution:
+	# arrange & act
+	export BUILD_ID=$(BUILD_ID)_1
+	make TEST_DOCKER_COMPOSE_YML
+	make docker-compose-stop docker-compose-start YML=$(TEST_DOCKER_COMPOSE_YML)
+	export BUILD_ID=$(BUILD_ID)_2
+	make TEST_DOCKER_COMPOSE_YML
+	make docker-compose-stop docker-compose-start YML=$(TEST_DOCKER_COMPOSE_YML)
+	# assert
+	mk_test "2 -eq $$(docker ps --all --filter "name=.*-$(BUILD_ID)_[1|2]" --quiet | wc -l)"
+	# clean up
+	docker rm --force --volumes $$(docker ps --all --filter "name=.*-$(BUILD_ID)_[1|2]" --quiet) #2> /dev/null ||:
+	docker network rm $$(docker network ls --filter "name=$(PROJECT_GROUP)/$(PROJECT_NAME)/$(BUILD_ID)_[1|2]" --quiet)
+
 test-docker-get-variables-from-file:
 	# act
 	vars=$$(make _docker-get-variables-from-file VARS_FILE=$(VAR_DIR)/project.mk.default)
@@ -392,14 +406,14 @@ test-docker-tools-image:
 	make clean
 
 # ==============================================================================
-# Supporting files
 
+TEST_DOCKER_COMPOSE_YML := $(TMP_DIR)/docker-compose.yml
 TEST_DOCKER_COMPOSE_YML:
 	echo 'version: "3.7"' > $(TEST_DOCKER_COMPOSE_YML)
 	echo "services:" >> $(TEST_DOCKER_COMPOSE_YML)
-	echo "  alpine:" >> $(TEST_DOCKER_COMPOSE_YML)
+	echo "  alpine-$(BUILD_ID):" >> $(TEST_DOCKER_COMPOSE_YML)
 	echo "    image: alpine:latest" >> $(TEST_DOCKER_COMPOSE_YML)
-	echo "    container_name: alpine" >> $(TEST_DOCKER_COMPOSE_YML)
+	echo "    container_name: alpine-$(BUILD_ID)" >> $(TEST_DOCKER_COMPOSE_YML)
 	echo "    hostname: alpine" >> $(TEST_DOCKER_COMPOSE_YML)
 	echo '    command: [ "sh" ]' >> $(TEST_DOCKER_COMPOSE_YML)
 	echo "networks:" >> $(TEST_DOCKER_COMPOSE_YML)
