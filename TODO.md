@@ -1,13 +1,16 @@
 # TODO
 
+- Refactoring
+  - Consider custom profile location outside the `build/automation` directory
+  - Consider custom certificate location outside the `build/automation` directory
+  - Consider custom githooks location outside the `build/automation` directory
+  - Make sure the `infrastructure` directory is custom and move away test files from it
+  - Run `kubectl` from container
 - Infrastructure
   - Create AWS RDS PostgreSQL infrastructure module
   - Add functionality to create Kubernetes deployment scripts on demand
 - Security
   - Perform security analysis using [prowler](https://github.com/toniblyx/prowler)
-- Testing
-  - Measure time of test execution
-  - Redirect verbose/debug output to file but keep the stdout clean e.g. https://stackoverflow.com/questions/27397865/how-to-write-stdout-to-file-with-colors
 - Documentation
   - List features by module
   - Configuration of a CI/CD system, i.e. set mandatory variables
@@ -21,8 +24,5 @@
   - Add `elasticsearch` for local Amazon Elasticsearch
   - Add `dynamodb` for local Amazon DynamoDB
 - Others
-  - 'Untexify' the project, e.g. in the `ssl.mk` module we can find references to the `$(TEXAS_HOSTED_ZONE_NONPROD)` and `$(TEXAS_HOSTED_ZONE_PROD)` variables
-  - Add `git publish` alias and other, see [Useful Git aliases](https://gist.github.com/robmiller/6018582)
   - Issue with the JS file formatting, see [Jsx indentation conflict vscode and eslint](https://stackoverflow.com/questions/48674208/jsx-indentation-conflict-vscode-and-eslint)
-  - Why `git checkout -b branch` forces then `git push origin`
   - Move iTerm2 config file into the repository
