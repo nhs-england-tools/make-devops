@@ -1,6 +1,6 @@
-TEST_AWS_SECRET_MANAGER_JSON := $(TMP_DIR)/secret.json
-TEST_AWS_BUCKET_FILE_NAME := aws-bucket-file
-TEST_AWS_BUCKET_FILE_PATH := $(shell echo $(abspath $(TMP_DIR)/$(TEST_AWS_BUCKET_FILE_NAME)) | sed "s;$(PROJECT_DIR);;g")
+TEST_AWS_SECRET_MANAGER_JSON = $(TMP_DIR)/secret.json
+TEST_AWS_BUCKET_FILE_NAME = aws-bucket-file
+TEST_AWS_BUCKET_FILE_PATH = $(shell echo $(abspath $(TMP_DIR)/$(TEST_AWS_BUCKET_FILE_NAME)) | sed "s;$(PROJECT_DIR);;g")
 
 test-aws:
 	make test-aws-setup

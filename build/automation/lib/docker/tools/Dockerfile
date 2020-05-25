@@ -30,9 +30,10 @@ RUN set -eux && \
     \
     # Install Python packages
     pip install \
-        awscli==1.18.66 \
         awscli-local==0.6 \
+        awscli==1.18.66 \
         boto3==1.13.16 \
+        pyyaml==5.3.1 \
         requests==2.23.0 \
     && \
     \

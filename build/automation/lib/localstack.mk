@@ -1,3 +1,5 @@
+LOCALSTACK_HOST = localstack.$(PROJECT_NAME_SHORT).local
+
 localstack-start: ### Start localstack
 	mkdir -p $(TMP_DIR)/localstack
 	cp -f $(LIB_DIR)/localstack/server.test.* $(TMP_DIR)/localstack

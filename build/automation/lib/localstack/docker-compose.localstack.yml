@@ -15,6 +15,10 @@ services:
       - DOCKER_HOST=unix:///var/run/docker.sock
     volumes:
       - "$TMP_DIR/localstack:/tmp/localstack"
+    networks:
+      default:
+        aliases:
+          - localstack.$PROJECT_NAME_SHORT.local
 
 networks:
   default:

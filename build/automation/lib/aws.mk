@@ -5,7 +5,7 @@ aws-session-fail-if-invalid: ### Fail if the session variables are not set
 aws-assume-role-export-variables: ### Get assume role export for the Jenkins user - optional: PROFILE=[name]
 	if [ $(AWS_ROLE) == $(AWS_ROLE_JENKINS) ]; then
 		array=($$(
-			make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=localstack' ||:)" CMD=" \
+			make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 				$(AWSCLI) sts assume-role \
 					--role-arn arn:aws:iam::$(AWS_ACCOUNT_ID):role/$(AWS_ROLE) \
 					--role-session-name $(AWS_ROLE_SESSION) \
@@ -27,7 +27,7 @@ aws-account-check-id: ### Checked if user has MFA'd into the account - mandatory
 	fi
 
 aws-account-get-id: ### Get the account ID user has MFA'd into
-	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=localstack' ||:)" CMD=" \
+	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) sts get-caller-identity \
 		--query 'Account' \
 		--output text \
@@ -35,7 +35,7 @@ aws-account-get-id: ### Get the account ID user has MFA'd into
 
 aws-secret-create: ### Create a new secret and save the value - mandatory: NAME=[secret name]; optional: VALUE=[string or file://file.json],AWS_REGION=[AWS region]
 	if [ "false" == $$(make aws-secret-exists NAME=$(NAME)) ]; then
-		make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=localstack' ||:)" CMD=" \
+		make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 			$(AWSCLI) secretsmanager create-secret \
 				--name $(NAME) \
 				--region $(AWS_REGION) \
@@ -51,7 +51,7 @@ aws-secret-create: ### Create a new secret and save the value - mandatory: NAME=
 aws-secret-put: ### Put secret value in the specified secret - mandatory: NAME=[secret name],VALUE=[string or file://file.json]; optional: AWS_REGION=[AWS region]
 	file=$$(echo $(VALUE) | grep -E "^file://" > /dev/null 2>&1 && echo $(VALUE) | sed 's;file://;;g' ||:)
 	[ -n "$$file" ] && volume="--volume $$file:$$file" || mount=
-	make -s docker-run-tools ARGS="$$volume $$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=localstack' ||:)" CMD=" \
+	make -s docker-run-tools ARGS="$$volume $$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) secretsmanager put-secret-value \
 			--secret-id $(NAME) \
 			--secret-string "$(VALUE)" \
@@ -61,7 +61,7 @@ aws-secret-put: ### Put secret value in the specified secret - mandatory: NAME=[
 	"
 
 aws-secret-get: ### Get secret - mandatory: NAME=[secret name]; optional: AWS_REGION=[AWS region]
-	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=localstack' ||:)" CMD=" \
+	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) secretsmanager get-secret-value \
 			--secret-id $(NAME) \
 			--version-stage AWSCURRENT \
@@ -75,7 +75,7 @@ aws-secret-get-and-format: ### Get secret - mandatory: NAME=[secret name]; optio
 		| make -s docker-run-tools CMD="jq -r"
 
 aws-secret-exists: ### Check if secret exists - mandatory: NAME=[secret name]; optional: AWS_REGION=[AWS region]; returns: true|false
-	count=$$(make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=localstack' ||:)" CMD=" \
+	count=$$(make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) secretsmanager list-secrets \
 			--region $(AWS_REGION) \
 			--query 'SecretList[*].Name' \
@@ -86,7 +86,7 @@ aws-secret-exists: ### Check if secret exists - mandatory: NAME=[secret name]; o
 aws-iam-policy-create: ### Create IAM policy - mandatory: NAME=[policy name],DESCRIPTION=[policy description],FILE=[path to json file]
 	cp $(FILE) $(TMP_DIR_REL)/$(@).json
 	make file-replace-variables FILE=$(TMP_DIR_REL)/$(@).json
-	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=localstack' ||:)" CMD=" \
+	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) iam create-policy \
 			--policy-name $(NAME) \
 			--policy-document file://$(TMP_DIR_REL)/$(@).json \
@@ -95,7 +95,7 @@ aws-iam-policy-create: ### Create IAM policy - mandatory: NAME=[policy name],DES
 	rm $(TMP_DIR_REL)/$(@).json
 
 aws-iam-policy-exists: ### Check if IAM policy exists - mandatory: NAME=[policy name]; returns: true|false
-	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=localstack' ||:)" CMD=" \
+	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) iam get-policy \
 			--policy-arn arn:aws:iam::$(AWS_ACCOUNT_ID):policy/$(NAME) \
 	" > /dev/null 2>&1 && echo true || echo false
@@ -104,7 +104,7 @@ aws-iam-role-create: ### Create IAM role - mandatory: NAME=[role name],DESCRIPTI
 	cp $(FILE) $(TMP_DIR_REL)/$(@).json
 	make file-replace-variables FILE=$(TMP_DIR_REL)/$(@).json
 	tags='[{"Key":"Programme","Value":"$(PROGRAMME)"},{"Key":"Service","Value":"$(TEXAS_SERVICE_TAG)"},{"Key":"Environment","Value":"$(PROFILE)"}]'
-	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=localstack' ||:)" CMD=" \
+	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) iam create-role \
 			--role-name $(NAME) \
 			--assume-role-policy-document file://$(TMP_DIR_REL)/$(@).json \
@@ -114,51 +114,51 @@ aws-iam-role-create: ### Create IAM role - mandatory: NAME=[role name],DESCRIPTI
 	rm $(TMP_DIR_REL)/$(@).json
 
 aws-iam-role-exists: ### Check if IAM role exists - mandatory: NAME=[role name]; returns: true|false
-	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=localstack' ||:)" CMD=" \
+	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) iam get-role \
 			--role-name $(NAME) \
 	" > /dev/null 2>&1 && echo true || echo false
 
 aws-iam-role-attach-policy: ### Attach IAM policy to role IAM role - mandatory: ROLE_NAME=[role name],POLICY_NAME=[policy name]
-	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=localstack' ||:)" CMD=" \
+	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) iam attach-role-policy \
 			--role-name $(ROLE_NAME) \
 			--policy-arn arn:aws:iam::$(AWS_ACCOUNT_ID):policy/$(POLICY_NAME) \
 	"
 
 aws-s3-create: ### Create secure bucket - mandatory: NAME=[bucket name]
-	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=localstack' ||:)" CMD=" \
+	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) s3api create-bucket \
 			--bucket $(NAME) \
 			--acl private \
 			--create-bucket-configuration LocationConstraint=$(AWS_REGION) \
 			--region $(AWS_REGION) \
 	"
-	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=localstack' ||:)" CMD=" \
+	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) s3api put-public-access-block \
 			--bucket $(NAME) \
 			--public-access-block-configuration "BlockPublicAcls=true,IgnorePublicAcls=true,BlockPublicPolicy=true,RestrictPublicBuckets=true" \
 	"
 	json='{"Rules":[{"ApplyServerSideEncryptionByDefault":{"SSEAlgorithm":"AES256"}}]}'
-	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=localstack' ||:)" CMD=" \
+	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) s3api put-bucket-encryption \
 			--bucket $(NAME) \
 			--server-side-encryption-configuration '$$json' \
 	"
-	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=localstack' ||:)" CMD=" \
+	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) s3api put-bucket-versioning \
 			--bucket $(NAME) \
 			--versioning-configuration "Status=Enabled" \
 	"
 	tags='TagSet=[{Key=Programme,Value=$(PROGRAMME)},{Key=Service,Value=$(TEXAS_SERVICE_TAG)},{Key=Environment,Value=$(PROFILE)}]'
-	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=localstack' ||:)" CMD=" \
+	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) s3api put-bucket-tagging \
 			--bucket $(NAME) \
 			--tagging '$$tags' \
 	"
 
 aws-s3-upload: ### Upload file to bucket - mandatory: FILE=[local path (inside container)],URI=[remote path]; optional: ARGS=[S3 cp options]
-	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=localstack' ||:)" CMD=" \
+	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) s3 cp \
 			$(FILE) \
 			s3://$(URI) \
@@ -166,7 +166,7 @@ aws-s3-upload: ### Upload file to bucket - mandatory: FILE=[local path (inside c
 	"
 
 aws-s3-download: ### Download file from bucket - mandatory: URI=[remote path],FILE=[local path (inside container)]; optional: ARGS=[S3 cp options]
-	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=localstack' ||:)" CMD=" \
+	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) s3 cp \
 			s3://$(URI) \
 			$(FILE) \
@@ -174,14 +174,14 @@ aws-s3-download: ### Download file from bucket - mandatory: URI=[remote path],FI
 	"
 
 aws-s3-exists: ### Check if bucket exists - mandatory: NAME=[bucket name]
-	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=localstack' ||:)" CMD=" \
+	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) s3 ls \
 			s3://$(NAME) \
 		2>&1 | grep -q NoSuchBucket \
 	" > /dev/null 2>&1 && echo false || echo true
 
 aws-rds-create-snapshot: ### Create RDS instance snapshot - mandatory: DB_INSTANCE,SNAPSHOT_NAME
-	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=localstack' ||:)" CMD=" \
+	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		aws rds create-db-snapshot \
 			--region $(AWS_REGION) \
 			--db-instance-identifier $(DB_INSTANCE) \
@@ -189,7 +189,7 @@ aws-rds-create-snapshot: ### Create RDS instance snapshot - mandatory: DB_INSTAN
 	"
 
 aws-rds-get-snapshot-status: ### Get RDS snapshot status - mandatory: SNAPSHOT_NAME
-	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=localstack' ||:)" CMD=" \
+	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) rds describe-db-snapshots \
 			--region $(AWS_REGION) \
 			--db-snapshot-identifier $(SNAPSHOT_NAME) \
@@ -212,7 +212,7 @@ aws-rds-wait-for-snapshot: ### Wait for RDS snapshot to become available - manda
 	exit 1
 
 aws-cognito-get-userpool-id: ### Get Cognito userpool ID - mandatory: NAME=[user pool name]; optional: AWS_REGION=[AWS region]
-	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=localstack' ||:)" CMD=" \
+	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) cognito-idp list-user-pools \
 			--region $(AWS_REGION) \
 			--max-results 60 \
@@ -220,7 +220,7 @@ aws-cognito-get-userpool-id: ### Get Cognito userpool ID - mandatory: NAME=[user
 	" | grep $(NAME) | awk '{ print $$3 }'
 
 aws-cognito-get-client-id: ### Get Cognito client ID - mandatory: NAME=[user pool name]; optional: AWS_REGION=[AWS region]
-	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=localstack' ||:)" CMD=" \
+	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) cognito-idp list-user-pool-clients \
 			--user-pool-id $$(make -s aws-cognito-get-userpool-id NAME=$(NAME)) \
 			--region $(AWS_REGION) \
@@ -229,7 +229,7 @@ aws-cognito-get-client-id: ### Get Cognito client ID - mandatory: NAME=[user poo
 	"
 
 aws-cognito-get-client-secret: ### Get Cognito client secret - mandatory: NAME=[user pool name]; optional: AWS_REGION=[AWS region]
-	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=localstack' ||:)" CMD=" \
+	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) cognito-idp describe-user-pool-client \
 			--user-pool-id $$(make -s aws-cognito-get-userpool-id NAME=$(NAME)) \
 			--client-id $$(make -s aws-cognito-get-client-id NAME=$(NAME)) \
@@ -239,12 +239,12 @@ aws-cognito-get-client-secret: ### Get Cognito client secret - mandatory: NAME=[
 	"
 
 aws-ecr-get-login-password: ### Get the ECR user login password
-	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=localstack' ||:)" CMD=" \
+	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) ecr get-login-password --region $(AWS_REGION) \
 	"
 
 aws-ses-verify-email-identity: ### Verify SES email address - mandatory: NAME
-	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=localstack' ||:)" CMD=" \
+	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) ses verify-email-identity \
 			--email-address $(NAME) \
 			--region $(AWS_SES_REGION) \
@@ -264,7 +264,7 @@ aws-elasticsearch-create-snapshot: ### Create an Elasticsearch snapshot - mandat
 	#curl -XPUT "https://$$endpoint/_snapshot/snapshot-repository-$(DOMAIN)/$(SNAPSHOT_NAME)"
 
 _aws-elasticsearch-get-endpoint: ### Get Elasticsearch endpoint - mandatory: DOMAIN=[Elasticsearch domain name]
-	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=localstack' ||:)" CMD=" \
+	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) es describe-elasticsearch-domain \
 			--domain-name $(DOMAIN) \
 			--region $(AWS_REGION) \

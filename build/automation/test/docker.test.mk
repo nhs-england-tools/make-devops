@@ -1,4 +1,4 @@
-TEST_DOCKER_IMAGE := postgres
+TEST_DOCKER_IMAGE = postgres
 
 test-docker:
 	make test-docker-setup
@@ -21,9 +21,6 @@ test-docker:
 		test-docker-image-save \
 		test-docker-image-load \
 		test-docker-tag \
-		test-docker-compose \
-		test-docker-compose-single-service \
-		test-docker-compose-parallel-execution \
 		test-docker-get-variables-from-file \
 		test-docker-run-dotnet \
 		test-docker-run-gradle \
@@ -41,6 +38,9 @@ test-docker:
 		test-docker-nginx-image \
 		test-docker-postgres-image \
 		test-docker-tools-image \
+		test-docker-compose \
+		test-docker-compose-single-service \
+		test-docker-compose-parallel-execution \
 		test-docker-clean \
 		test-docker-prune \
 	)
@@ -194,44 +194,6 @@ test-docker-tag:
 	make docker-tag NAME=postgres VERSION=version
 	# assert
 	mk_test "1 -eq $$(docker images --filter=reference=$(DOCKER_LIBRARY_REGISTRY)/postgres:version --quiet | wc -l)"
-
-test-docker-compose:
-	# arrange
-	make TEST_DOCKER_COMPOSE_YML
-	# act & assert
-	make docker-compose-stop docker-compose-start YML=$(TEST_DOCKER_COMPOSE_YML) && \
-		mk_test "start" "true" || mk_test "start" "false"
-	make docker-compose-log YML=$(TEST_DOCKER_COMPOSE_YML) DO_NOT_FOLLOW=true && \
-		mk_test "log" "true" || mk_test "log" "false"
-	make docker-compose-stop YML=$(TEST_DOCKER_COMPOSE_YML) && \
-		mk_test "stop" "true" || mk_test "stop" "false"
-	mk_test_complete
-
-test-docker-compose-single-service:
-	# arrange
-	make TEST_DOCKER_COMPOSE_YML
-	# act & assert
-	make docker-compose-stop docker-compose-start-single-service NAME=alpine YML=$(TEST_DOCKER_COMPOSE_YML) && \
-		mk_test "start" "true" || mk_test "start" "false"
-	make docker-compose-log YML=$(TEST_DOCKER_COMPOSE_YML) DO_NOT_FOLLOW=true && \
-		mk_test "log" "true" || mk_test "log" "false"
-	make docker-compose-stop YML=$(TEST_DOCKER_COMPOSE_YML) && \
-		mk_test "stop" "true" || mk_test "stop" "false"
-	mk_test_complete
-
-test-docker-compose-parallel-execution:
-	# arrange & act
-	export BUILD_ID=$(BUILD_ID)_1
-	make TEST_DOCKER_COMPOSE_YML
-	make docker-compose-stop docker-compose-start YML=$(TEST_DOCKER_COMPOSE_YML)
-	export BUILD_ID=$(BUILD_ID)_2
-	make TEST_DOCKER_COMPOSE_YML
-	make docker-compose-stop docker-compose-start YML=$(TEST_DOCKER_COMPOSE_YML)
-	# assert
-	mk_test "2 -eq $$(docker ps --all --filter "name=.*-$(BUILD_ID)_[1|2]" --quiet | wc -l)"
-	# clean up
-	docker rm --force --volumes $$(docker ps --all --filter "name=.*-$(BUILD_ID)_[1|2]" --quiet) #2> /dev/null ||:
-	docker network rm $$(docker network ls --filter "name=$(PROJECT_GROUP)/$(PROJECT_NAME)/$(BUILD_ID)_[1|2]" --quiet)
 
 test-docker-get-variables-from-file:
 	# act
@@ -405,18 +367,62 @@ test-docker-tools-image:
 	# clean up
 	make clean
 
+test-docker-compose:
+	# arrange
+	make TEST_DOCKER_COMPOSE_YML
+	# act & assert
+	make docker-compose-stop docker-compose-start YML=$(TEST_DOCKER_COMPOSE_YML) && \
+		mk_test "start" "true" || mk_test "start" "false"
+	make docker-compose-log YML=$(TEST_DOCKER_COMPOSE_YML) DO_NOT_FOLLOW=true && \
+		mk_test "log" "true" || mk_test "log" "false"
+	make docker-compose-stop YML=$(TEST_DOCKER_COMPOSE_YML) && \
+		mk_test "stop" "true" || mk_test "stop" "false"
+	mk_test_complete
+
+test-docker-compose-single-service:
+	# arrange
+	make TEST_DOCKER_COMPOSE_YML
+	# act & assert
+	make docker-compose-stop docker-compose-start-single-service NAME=alpine YML=$(TEST_DOCKER_COMPOSE_YML) && \
+		mk_test "start" "true" || mk_test "start" "false"
+	make docker-compose-log YML=$(TEST_DOCKER_COMPOSE_YML) DO_NOT_FOLLOW=true && \
+		mk_test "log" "true" || mk_test "log" "false"
+	make docker-compose-stop YML=$(TEST_DOCKER_COMPOSE_YML) && \
+		mk_test "stop" "true" || mk_test "stop" "false"
+	mk_test_complete
+
+test-docker-compose-parallel-execution:
+	# arrange & act
+	make TEST_DOCKER_COMPOSE_YML
+	make \
+		docker-compose-stop \
+		docker-compose-start \
+		YML=$(TEST_DOCKER_COMPOSE_YML) \
+		BUILD_ID=$(BUILD_ID)_1
+	make TEST_DOCKER_COMPOSE_YML
+	make \
+		docker-compose-stop \
+		docker-compose-start \
+		YML=$(TEST_DOCKER_COMPOSE_YML) \
+		BUILD_ID=$(BUILD_ID)_2
+	# assert
+	mk_test "2 -eq $$(docker ps --all --filter "name=.*-$(BUILD_ID)_[1|2]" --quiet | wc -l)"
+	# clean up
+	docker rm --force --volumes $$(docker ps --all --filter "name=.*-$(BUILD_ID)_[1|2]" --quiet) #2> /dev/null ||:
+	docker network rm $$(docker network ls --filter "name=$(PROJECT_GROUP)/$(PROJECT_NAME)/$(BUILD_ID)_[1|2]" --quiet)
+
 # ==============================================================================
 
-TEST_DOCKER_COMPOSE_YML := $(TMP_DIR)/docker-compose.yml
+TEST_DOCKER_COMPOSE_YML = $(TMP_DIR)/docker-compose.yml
 TEST_DOCKER_COMPOSE_YML:
 	echo 'version: "3.7"' > $(TEST_DOCKER_COMPOSE_YML)
 	echo "services:" >> $(TEST_DOCKER_COMPOSE_YML)
-	echo "  alpine-$(BUILD_ID):" >> $(TEST_DOCKER_COMPOSE_YML)
+	echo "  alpine:" >> $(TEST_DOCKER_COMPOSE_YML)
 	echo "    image: alpine:latest" >> $(TEST_DOCKER_COMPOSE_YML)
-	echo "    container_name: alpine-$(BUILD_ID)" >> $(TEST_DOCKER_COMPOSE_YML)
+	echo "    container_name: alpine" >> $(TEST_DOCKER_COMPOSE_YML)
 	echo "    hostname: alpine" >> $(TEST_DOCKER_COMPOSE_YML)
 	echo '    command: [ "sh" ]' >> $(TEST_DOCKER_COMPOSE_YML)
 	echo "networks:" >> $(TEST_DOCKER_COMPOSE_YML)
 	echo "  default:" >> $(TEST_DOCKER_COMPOSE_YML)
 	echo "    external:" >> $(TEST_DOCKER_COMPOSE_YML)
-	echo "      name: $(DOCKER_NETWORK)" >> $(TEST_DOCKER_COMPOSE_YML)
+	echo "      name: \$$DOCKER_NETWORK" >> $(TEST_DOCKER_COMPOSE_YML)

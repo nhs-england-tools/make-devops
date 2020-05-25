@@ -17,13 +17,17 @@ test:
 _test-sql:
 	make _test-prerequisites-setup
 	make docker-run-postgres \
+		ARGS="--env DB_HOST=postgres.$(PROJECT_NAME_SHORT).local" \
 		CMD='sql "select version();"'
 	make _test-prerequisites-teardown
 
 _test-scripts:
 	make _test-prerequisites-setup
 	make docker-run-postgres \
-		ARGS="--volume $(DOCKER_LIBRARY_DIR)/postgres/assets/sql:/sql" \
+		ARGS=" \
+			--env DB_HOST=postgres.$(PROJECT_NAME_SHORT).local \
+			--volume $(DOCKER_LIBRARY_DIR)/postgres/assets/sql:/sql \
+		" \
 		CMD="scripts"
 	make _test-prerequisites-teardown
 

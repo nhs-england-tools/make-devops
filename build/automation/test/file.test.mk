@@ -1,4 +1,4 @@
-TEST_FILE := $(TMP_DIR)/test-file.txt
+TEST_FILE = $(TMP_DIR)/test-file.txt
 
 test-file:
 	make test-file-setup

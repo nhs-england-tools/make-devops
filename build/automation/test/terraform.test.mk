@@ -1,5 +1,4 @@
-TEST_TERRAFORM_FORMATTING_INPUT := $(TMP_DIR)/terraform-input.tf
-TEST_TERRAFORM_FORMATTING_OUTPUT := $(TMP_DIR)/terraform-output.tf
+TF_VAR_localstack_host = $(LOCALSTACK_HOST)
 
 test-terraform:
 	make test-terraform-setup
@@ -149,12 +148,14 @@ test-terraform-unlock:
 
 # ==============================================================================
 
+TEST_TERRAFORM_FORMATTING_INPUT = $(TMP_DIR)/terraform-input.tf
 TEST_TERRAFORM_FORMATTING_INPUT:
 	echo 'resource "aws_s3_bucket" "b" {' > $(TEST_TERRAFORM_FORMATTING_INPUT)
 	echo '  bucket = "test-bucket"' >> $(TEST_TERRAFORM_FORMATTING_INPUT)
 	echo '      acl= "public-read"' >> $(TEST_TERRAFORM_FORMATTING_INPUT)
 	echo '}' >> $(TEST_TERRAFORM_FORMATTING_INPUT)
 
+TEST_TERRAFORM_FORMATTING_OUTPUT = $(TMP_DIR)/terraform-output.tf
 TEST_TERRAFORM_FORMATTING_OUTPUT:
 	echo 'resource "aws_s3_bucket" "b" {' > $(TEST_TERRAFORM_FORMATTING_OUTPUT)
 	echo '  bucket = "test-bucket"' >> $(TEST_TERRAFORM_FORMATTING_OUTPUT)

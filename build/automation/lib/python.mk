@@ -7,7 +7,8 @@ PYTHON_BASE_PACKAGES = \
 	flake8 \
 	mypy \
 	pygments \
-	pylint
+	pylint \
+	pyyaml
 
 python-virtualenv: ### Setup Python virtual environment - optional: PYTHON_VERSION
 	brew update
@@ -17,6 +18,7 @@ python-virtualenv: ### Setup Python virtual environment - optional: PYTHON_VERSI
 	pyenv local $(PROJECT_GROUP_SHORT)-$(PROJECT_NAME)
 	pip install --upgrade pip
 	pip install $(PYTHON_BASE_PACKAGES)
+	ln -sfv ~/.pyenv/versions/$(PYTHON_VERSION) ~/.pyenv/versions/default
 
 python-virtualenv-clean: ### Clean up Python virtual environment - optional: PYTHON_VERSION
 	rm -rf \

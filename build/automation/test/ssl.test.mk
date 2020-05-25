@@ -1,4 +1,4 @@
-TEST_CERT := custom-domain.com
+TEST_CERT = custom-domain.com
 
 test-ssl:
 	make test-ssl-setup
