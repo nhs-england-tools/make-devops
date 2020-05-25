@@ -17,7 +17,10 @@ test:
 _test-sql:
 	make _test-prerequisites-setup
 	make docker-run-postgres \
-		ARGS="--env DB_HOST=postgres.$(PROJECT_NAME_SHORT).local" \
+		ARGS=" \
+			--env DB_HOST=postgres.$(PROJECT_NAME_SHORT).local \
+			--env WAIT_FOR=postgres.$(PROJECT_NAME_SHORT).local:5432 \
+		" \
 		CMD='sql "select version();"'
 	make _test-prerequisites-teardown
 
@@ -26,6 +29,7 @@ _test-scripts:
 	make docker-run-postgres \
 		ARGS=" \
 			--env DB_HOST=postgres.$(PROJECT_NAME_SHORT).local \
+			--env WAIT_FOR=postgres.$(PROJECT_NAME_SHORT).local:5432 \
 			--volume $(DOCKER_LIBRARY_DIR)/postgres/assets/sql:/sql \
 		" \
 		CMD="scripts"
@@ -62,7 +66,6 @@ _test-prerequisites-setup:
 		docker-compose-stop ALL=true \
 		docker-compose-start \
 		YML=$(DOCKER_LIBRARY_DIR)/postgres/test/docker-compose.postgres.yml
-	sleep 1
 
 _test-prerequisites-teardown:
 	make \

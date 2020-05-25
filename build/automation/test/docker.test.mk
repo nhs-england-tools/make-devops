@@ -415,7 +415,7 @@ test-docker-compose-parallel-execution:
 
 TEST_DOCKER_COMPOSE_YML = $(TMP_DIR)/docker-compose.yml
 TEST_DOCKER_COMPOSE_YML:
-	echo 'version: "3.7"' > $(TEST_DOCKER_COMPOSE_YML)
+	echo 'version: "3.8"' > $(TEST_DOCKER_COMPOSE_YML)
 	echo "services:" >> $(TEST_DOCKER_COMPOSE_YML)
 	echo "  alpine:" >> $(TEST_DOCKER_COMPOSE_YML)
 	echo "    image: alpine:latest" >> $(TEST_DOCKER_COMPOSE_YML)
