@@ -2,6 +2,7 @@ test-git:
 	make test-git-setup
 	tests=( \
 		test-git-config \
+		test-git-secrets-add-allowed \
 		test-git-secrets-scan-history \
 	)
 	for test in $${tests[*]}; do
@@ -38,7 +39,12 @@ test-git-config:
 	mk_test ".git/hooks/commit-msg" "-x $(PROJECT_DIR)/.git/hooks/commit-msg"
 	mk_test ".git/hooks/pre-commit" "-x $(PROJECT_DIR)/.git/hooks/pre-commit"
 	mk_test ".git/hooks/prepare-commit-msg" "-x $(PROJECT_DIR)/.git/hooks/prepare-commit-msg"
+	mk_test "secrets.providers git secrets --aws-provider" "0 -lt $$(git-secrets --list | grep 'secrets.providers git secrets --aws-provider' | wc -l)"
+	mk_test "secrets.allowed 000000000000" "0 -lt $$(git-secrets --list | grep 'secrets.allowed 000000000000' | wc -l)"
 	mk_test_complete
+
+test-git-secrets-add-allowed:
+	mk_test_skip
 
 test-git-secrets-scan-history:
 	# act

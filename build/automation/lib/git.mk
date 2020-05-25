@@ -20,8 +20,12 @@ git-config: ### Configure local git repository
 		echo "build/automation/etc/githooks/prepare-commit-msg" > $(PROJECT_DIR)/.git/hooks/prepare-commit-msg
 		chmod +x $(PROJECT_DIR)/.git/hooks/prepare-commit-msg
 		git secrets --register-aws
-		git config --add secrets.allowed 000000000000
+		make git-secrets-add-allowed PATTERN=000000000000
 	fi
+
+git-secrets-add-allowed: ### Add allowed secret pattern - mandatory: PATTERN=[allowed pattern]
+	git-secrets --list | grep -q "secrets.allowed $(PATTERN)" \
+		|| git config --add secrets.allowed '$(PATTERN)'
 
 git-secrets-scan-history: ### Scan git histroy for any secrets
 	git secrets --scan-history
