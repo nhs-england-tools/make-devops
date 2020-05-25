@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 ## [Unreleased]
 
+## [0.7.5] - 2020-05-25
+
+### Added
+
+- Scan commits for secrets
+- Ask user to input valid AWS account IDs
+- Assume role from within modules
+- Docker Compose parallel execution
+- Provide consistent `nhsd/postgres` image variables and ability to run `.sql.gz` files
+
+### Changed
+
+- Refactor `k8s` module
+- Update versions
+
 ## [0.7.4] - 2020-05-12
 
 ### Added
@@ -281,7 +296,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 - Initial release of the DevOps automation toolchain scripts
 
-[unreleased]: https://github.com/nhsd-ddce/make-devops/compare/v0.7.4...master
+[unreleased]: https://github.com/nhsd-ddce/make-devops/compare/v0.7.5...master
+[0.7.5]: https://github.com/nhsd-ddce/make-devops/compare/v0.7.4...v0.7.5
 [0.7.4]: https://github.com/nhsd-ddce/make-devops/compare/v0.7.3...v0.7.4
 [0.7.3]: https://github.com/nhsd-ddce/make-devops/compare/v0.7.2...v0.7.3
 [0.7.2]: https://github.com/nhsd-ddce/make-devops/compare/v0.7.1...v0.7.2
