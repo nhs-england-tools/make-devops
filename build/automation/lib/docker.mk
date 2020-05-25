@@ -565,33 +565,31 @@ docker-run-tools: ### Run tools (Python) container - mandatory: CMD; optional: S
 
 # ==============================================================================
 
-docker-compose-start: ### Start Docker Compose - optional: YML=[docker-compose.yml, defaults to $(DOCKER_COMPOSE_YML)],PARALLEL=true
+docker-compose-start: ### Start Docker Compose - optional: YML=[docker-compose.yml, defaults to $(DOCKER_COMPOSE_YML)]
 	make docker-config
 	yml=$$(make _docker-get-docker-compose-yml YML=$(YML))
-	docker-compose \
-		--file $$yml \
+	docker-compose --file $$yml \
 		up --no-build --detach
 
-docker-compose-start-single-service: ### Start Docker Compose - mandatory: NAME=[service name]; optional: YML=[docker-compose.yml, defaults to $(DOCKER_COMPOSE_YML)],PARALLEL=true
+docker-compose-start-single-service: ### Start Docker Compose - mandatory: NAME=[service name]; optional: YML=[docker-compose.yml, defaults to $(DOCKER_COMPOSE_YML)]
 	make docker-config
 	yml=$$(make _docker-get-docker-compose-yml YML=$(YML))
-	docker-compose \
-		--file $$yml \
+	docker-compose --file $$yml \
 		up --no-build --detach $(NAME)
 
-docker-compose-stop: ### Stop Docker Compose - optional: YML=[docker-compose.yml, defaults to $(DOCKER_COMPOSE_YML)],PARALLEL=true,ALL=true
+docker-compose-stop: ### Stop Docker Compose - optional: YML=[docker-compose.yml, defaults to $(DOCKER_COMPOSE_YML)],ALL=true
 	make docker-config
 	yml=$$(make _docker-get-docker-compose-yml YML=$(YML))
-	docker-compose \
-		--file $$yml \
-		stop
+	docker-compose --file $$yml \
+		rm \
+		--stop \
+		--force
 	docker rm --force --volumes $$(docker ps --all --filter "name=.*$(BUILD_ID).*" --quiet) 2> /dev/null ||:
 	[[ "$(ALL)" =~ ^(true|yes|y|on|1|TRUE|YES|Y|ON)$$ ]] && docker rm --force --volumes $$(docker ps --all --quiet) 2> /dev/null ||:
 
-docker-compose-log: ### Log Docker Compose output - optional: DO_NOT_FOLLOW=true,YML=[docker-compose.yml, defaults to $(DOCKER_COMPOSE_YML)],PARALLEL=true
+docker-compose-log: ### Log Docker Compose output - optional: DO_NOT_FOLLOW=true,YML=[docker-compose.yml, defaults to $(DOCKER_COMPOSE_YML)]
 	yml=$$(make _docker-get-docker-compose-yml YML=$(YML))
-	docker-compose \
-		--file $$yml \
+	docker-compose --file $$yml \
 		logs $$(echo $(DO_NOT_FOLLOW) | grep -E 'true|yes|y|on|1|TRUE|YES|Y|ON' > /dev/null 2>&1 && : || echo "--follow")
 
 # ==============================================================================
