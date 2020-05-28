@@ -1,6 +1,6 @@
 git-config: ### Configure local git repository
 	if [ -d .git ] || git rev-parse --git-dir > /dev/null 2>&1; then
-		git config branch.autosetupmerge always
+		git config branch.autosetupmerge false
 		git config branch.autosetuprebase always
 		git config commit.gpgsign true
 		git config core.autocrlf input

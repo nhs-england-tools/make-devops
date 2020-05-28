@@ -23,7 +23,7 @@ test-git-config:
 	# act
 	make git-config
 	# assert
-	mk_test "branch.autosetupmerge" "always = $$(git config branch.autosetupmerge)"
+	mk_test "branch.autosetupmerge" "false = $$(git config branch.autosetupmerge)"
 	mk_test "branch.autosetuprebase" "always = $$(git config branch.autosetuprebase)"
 	mk_test "commit.gpgsign" "true = $$(git config commit.gpgsign)"
 	mk_test "core.autocrlf" "input = $$(git config core.autocrlf)"
