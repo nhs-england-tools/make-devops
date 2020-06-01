@@ -113,8 +113,9 @@ devops-synchronise: ### Synchronise the DevOps automation toolchain scripts used
 		cd $(PARENT_PROJECT_DIR)
 		# Clean up old project files
 		rm -rf \
+			~/bin/docker-compose-processor \
+			~/bin/texas-mfa \
 			~/bin/texas-mfa-clear.sh \
-			~/bin/texas-mfa.py \
 			~/bin/toggle-natural-scrolling.sh \
 			$(PARENT_PROJECT_DIR)/build/automation/bin/markdown.pl \
 			$(PARENT_PROJECT_DIR)/build/automation/etc/platform-texas* \

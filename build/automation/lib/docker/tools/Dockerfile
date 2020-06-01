@@ -1,5 +1,7 @@
 FROM python:latest
 
+ARG PYTHON_BASE_PACKAGES
+
 ENV \
     DEBIAN_FRONTEND="noninteractive" \
     GOSU_VERSION="1.12" \
@@ -29,13 +31,7 @@ RUN set -eux && \
     && \
     \
     # Install Python packages
-    pip install \
-        awscli-local==0.6 \
-        awscli==1.18.66 \
-        boto3==1.13.16 \
-        pyyaml==5.3.1 \
-        requests==2.23.0 \
-    && \
+    pip install $PYTHON_BASE_PACKAGES && \
     \
     # Install aws-iam-authenticator
     curl -o aws-iam-authenticator https://amazon-eks.s3-us-west-2.amazonaws.com/1.16.8/2020-04-16/bin/linux/amd64/aws-iam-authenticator && \

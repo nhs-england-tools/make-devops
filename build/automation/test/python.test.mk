@@ -2,7 +2,10 @@ test-python:
 	make test-python-setup
 	tests=( \
 		test-python-virtualenv \
-		test-python-virtualenv-clean
+		test-python-virtualenv-clean \
+		test-python-code-format \
+		test-python-code-check \
+		test-python-code-coverage \
 	)
 	for test in $${tests[*]}; do
 		mk_test_initialise $$test
@@ -31,3 +34,16 @@ test-python-virtualenv-clean:
 	make python-virtualenv-clean
 	# assert
 	mk_test "system = $$(pyenv version | grep -o ^system)"
+
+test-python-code-format:
+	# act & assert
+	make -s python-code-format FILES=build/automation/bin/*.py && \
+		mk_test "true" || mk_test "false"
+
+test-python-code-check:
+	# act & assert
+	make -s python-code-check FILES=build/automation/bin/*.py && \
+		mk_test "true" || mk_test "false"
+
+test-python-code-coverage:
+	mk_test_skip

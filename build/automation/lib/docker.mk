@@ -17,6 +17,7 @@ DOCKER_NGINX_VERSION = 1.18.0
 DOCKER_NODE_VERSION = 14.3.0
 DOCKER_OPENJDK_VERSION = 14.0.1-jdk
 DOCKER_POSTGRES_VERSION = 12.3
+DOCKER_PULUMI_VERSION = v2.3.0
 DOCKER_PYTHON_VERSION = $(PYTHON_VERSION)-slim
 DOCKER_TERRAFORM_VERSION = $(or $(TEXAS_TERRAFORM_VERSION), 0.12.25)
 
@@ -32,7 +33,7 @@ DOCKER_CLIENT_TIMEOUT := $(or $(DOCKER_CLIENT_TIMEOUT), 6000)
 docker-config: ### Configure Docker networking
 	docker network create $(DOCKER_NETWORK) 2> /dev/null ||:
 
-docker-build docker-image: ### Build Docker image - mandatory: NAME; optional: VERSION,NAME_AS=[new name],FROM_CACHE=true
+docker-build docker-image: ### Build Docker image - mandatory: NAME; optional: VERSION,FROM_CACHE=true,BUILD_OPTS=[build options],NAME_AS=[new name]
 	if [ -d $(DOCKER_LIBRARY_DIR)/$(NAME) ] && [ -z "$(__DOCKER_BUILD)" ]; then
 		cd $(DOCKER_LIBRARY_DIR)/$(NAME)
 		make build __DOCKER_BUILD=true DOCKER_REGISTRY=$(DOCKER_LIBRARY_REGISTRY) && exit
@@ -387,6 +388,30 @@ docker-run-node: ### Run node container - mandatory: CMD; optional: DIR,ARGS=[Do
 				su \$$(id -nu $$(id -u)) -c 'cd /project/$(DIR); $(CMD)' \
 			"
 
+docker-run-pulumi: ### Run pulumi container - mandatory: CMD; optional: DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file],IMAGE=[image name],CONTAINER=[container name]
+	image=$$([ -n "$(IMAGE)" ] && echo $(IMAGE) || echo pulumi/pulumi:$(DOCKER_PULUMI_VERSION))
+	container=$$([ -n "$(CONTAINER)" ] && echo $(CONTAINER) || echo pulumi-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7))
+	docker run --interactive $(_TTY) --rm \
+		--name $$container \
+		--user $$(id -u):$$(id -g) \
+		--env-file <(env | grep "^AWS_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
+		--env-file <(env | grep "^TF_VAR_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
+		--env-file <(env | grep "^DB_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
+		--env-file <(env | grep "^SERV[A-Z]*_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
+		--env-file <(env | grep "^APP[A-Z]*_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
+		--env-file <(env | grep "^PROJ[A-Z]*_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
+		--env-file <(env | grep "^TEXAS_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
+		--env-file <(env | grep "^PULUMI_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
+		--env-file <(make _docker-get-variables-from-file VARS_FILE=$(VARS_FILE)) \
+		--env PROFILE=$(PROFILE) \
+		--volume $(PROJECT_DIR):/project \
+		--network $(DOCKER_NETWORK) \
+		--workdir /project/$(shell echo $(abspath $(DIR)) | sed "s;$(PROJECT_DIR);;g") \
+		--entrypoint /bin/bash \
+		$(ARGS) \
+		$$image \
+			-c "$(CMD)"
+
 docker-run-python: ### Run python container - mandatory: CMD; optional: SH=true,DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file],IMAGE=[image name],CONTAINER=[container name]
 	mkdir -p $(HOME)/.python/pip/{cache,packages}
 	image=$$([ -n "$(IMAGE)" ] && echo $(IMAGE) || echo python:$(DOCKER_PYTHON_VERSION))
@@ -626,7 +651,7 @@ _docker-get-docker-compose-yml:
 	yml=$(or $(YML), $(DOCKER_COMPOSE_YML))
 	if [ "$(BUILD_ID)" != 0 ]; then
 		make -s docker-run-tools ARGS="--env BUILD_ID=$(BUILD_ID)" CMD=" \
-			$(BIN_DIR_REL)/docker-compose-processor \
+			$(BIN_DIR_REL)/docker-compose-processor.py \
 				$$(echo $$yml | sed "s;$(PROJECT_DIR);;g") \
 				$(TMP_DIR_REL)/docker-compose-$(BUILD_ID).yml \
 		"

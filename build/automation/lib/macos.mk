@@ -70,6 +70,7 @@ macos-install-essential:: ## Install essential development dependencies - option
 	brew $$install make ||:
 	brew $$install mas ||:
 	brew $$install nvm ||:
+	brew $$install pulumi ||:
 	brew $$install pyenv ||:
 	brew $$install pyenv-virtualenv ||:
 	brew $$install pyenv-which-ext ||:
@@ -182,6 +183,7 @@ macos-check:: ## Check if the development dependencies are installed
 	brew list mas ||:
 	brew list maven ||:
 	brew list nvm ||:
+	brew list pulumi ||:
 	brew list pyenv ||:
 	brew list pyenv-virtualenv ||:
 	brew list pyenv-which-ext ||:

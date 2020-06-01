@@ -51,7 +51,5 @@ command:
     exit-status: 0
   pip list | grep -iE 'boto3.*1.13':
     exit-status: 0
-  pip list | grep -iE 'pyyaml.*5.3':
-    exit-status: 0
   pip list | grep -iE 'requests.*2.23':
     exit-status: 0

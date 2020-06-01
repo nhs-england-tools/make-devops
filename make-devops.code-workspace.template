@@ -79,7 +79,7 @@
       "editor.tabSize": 2
     },
     "[python]": {
-      "editor.tabSize": 2,
+      "editor.tabSize": 4,
       "editor.insertSpaces": true
     },
     "[terraform]": {

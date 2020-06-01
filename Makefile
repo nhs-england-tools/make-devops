@@ -13,4 +13,14 @@ log: project-log
 
 # ==============================================================================
 
-.SILENT:
+code-format:
+	make -s python-code-format FILES=build/automation/bin/*.py
+
+code-check:
+	make -s python-code-check FILES=build/automation/bin/*.py
+
+# ==============================================================================
+
+.SILENT: \
+	code-check \
+	code-format

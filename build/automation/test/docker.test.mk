@@ -26,6 +26,7 @@ test-docker:
 		test-docker-run-gradle \
 		test-docker-run-mvn \
 		test-docker-run-node \
+		test-docker-run-pulumi \
 		test-docker-run-python-single-cmd \
 		test-docker-run-python-multiple-cmd \
 		test-docker-run-python-multiple-cmd-pip-install \
@@ -206,7 +207,7 @@ test-docker-run-dotnet:
 	make docker-config
 	# act
 	output=$$(
-		make docker-run-dotnet \
+		make -s docker-run-dotnet \
 			CMD="--info" \
 		| grep -Eo ".NET Core SDK" | wc -l)
 	# assert
@@ -217,7 +218,7 @@ test-docker-run-gradle:
 	make docker-config
 	# act
 	output=$$(
-		make docker-run-gradle \
+		make -s docker-run-gradle \
 			CMD="gradle --version" \
 		| grep -Eo "Gradle" | wc -l)
 	# assert
@@ -228,7 +229,7 @@ test-docker-run-mvn:
 	make docker-config
 	# act
 	output=$$(
-		make docker-run-mvn \
+		make -s docker-run-mvn \
 			CMD="--version" \
 		| grep -Eo "Apache Maven" | wc -l)
 	# assert
@@ -239,9 +240,20 @@ test-docker-run-node:
 	make docker-config
 	# act
 	output=$$(
-		make docker-run-node \
+		make -s docker-run-node \
 			CMD="npm --version" \
 		| grep -Eo "[(0-9)]*.[(0-9)]*" | wc -l)
+	# assert
+	mk_test "0 -lt $$output"
+
+test-docker-run-pulumi:
+	# arrange
+	make docker-config
+	# act
+	output=$$(
+		make -s docker-run-pulumi \
+			CMD="pulumi version" \
+		| grep -Eo "v[(0-9)]*.[(0-9)]*.[(0-9)]*" | wc -l)
 	# assert
 	mk_test "0 -lt $$output"
 
@@ -250,7 +262,7 @@ test-docker-run-python-single-cmd:
 	make docker-config
 	# act
 	output=$$(
-		make docker-run-python \
+		make -s docker-run-python \
 			CMD="python3 --version" \
 		| grep -Eo "Python" | wc -l)
 	# assert
@@ -261,7 +273,7 @@ test-docker-run-python-multiple-cmd:
 	make docker-config
 	# act
 	output=$$(
-		make docker-run-python SH=y \
+		make -s docker-run-python SH=y \
 			CMD="python3 --version && pip3 --version" \
 		| grep -Eo "Python" | wc -l)
 	# assert
@@ -272,7 +284,7 @@ test-docker-run-python-multiple-cmd-pip-install:
 	make docker-config
 	# act
 	output=$$(
-		make docker-run-python SH=y \
+		make -s docker-run-python SH=y \
 			CMD="pip3 install django > /dev/null 2>&1 && pip3 list" \
 		| grep -i "django" | wc -l)
 	# assert
@@ -283,7 +295,7 @@ test-docker-run-terraform:
 	make docker-config
 	# act
 	output=$$(
-		make docker-run-terraform \
+		make -s docker-run-terraform \
 			CMD="terraform --version" \
 		| grep -Eo "Terraform" | wc -l)
 	# assert
@@ -294,7 +306,7 @@ test-docker-run-tools-single-cmd:
 	make docker-config
 	# act
 	output=$$(
-		make docker-run-tools \
+		make -s docker-run-tools \
 			CMD="apt list --installed" \
 		| sed 's/\x1b\[[0-9;]*m//g' | grep -E -- '^curl/now' | wc -l)
 	# assert
@@ -305,7 +317,7 @@ test-docker-run-tools-multiple-cmd:
 	make docker-config
 	# act
 	output=$$(
-		make docker-run-tools SH=y \
+		make -s docker-run-tools SH=y \
 			CMD="cat /etc/issue && apt list --installed" \
 		| sed 's/\x1b\[[0-9;]*m//g' | grep -Ei -- '^(debian gnu/linux|curl/now)' | wc -l)
 	# assert

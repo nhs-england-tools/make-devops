@@ -4,7 +4,9 @@ include $(abspath $(lastword $(MAKEFILE_LIST))/../../../../init.mk)
 # ==============================================================================
 
 build:
-	make docker-build NAME=tools FROM_CACHE=$(or $(FROM_CACHE), true)
+	make docker-build NAME=tools \
+		FROM_CACHE=$(or $(FROM_CACHE), true) \
+		BUILD_OPTS="--build-arg PYTHON_BASE_PACKAGES='$(PYTHON_BASE_PACKAGES)'"
 	rm -f $(DOCKER_LIBRARY_DIR)/nginx/.version
 
 test:

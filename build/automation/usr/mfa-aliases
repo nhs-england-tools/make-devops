@@ -1,4 +1,4 @@
 #!/bin/bash
 
-alias tx-mfa="source ~/bin/texas-mfa-clear && ~/bin/texas-mfa"
+alias tx-mfa="source ~/bin/texas-mfa-clear && ~/bin/texas-mfa.py"
 alias tx-mfa-clear="source ~/bin/texas-mfa-clear"

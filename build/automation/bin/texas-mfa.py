@@ -22,12 +22,8 @@ def get_config_profiles():
 def role_arn_to_session(aws_profile):
     config = ConfigParser()
     config.read([path.join(path.expanduser("~"), ".aws/config")])
-    role_arn = config.get(
-        "profile {aws_profile}".format(aws_profile=aws_profile), "role_arn"
-    )
-    mfa_serial = config.get(
-        "profile {aws_profile}".format(aws_profile=aws_profile), "mfa_serial"
-    )
+    role_arn = config.get("profile {aws_profile}".format(aws_profile=aws_profile), "role_arn")
+    mfa_serial = config.get("profile {aws_profile}".format(aws_profile=aws_profile), "mfa_serial")
     client = boto3.client("sts")
     response = client.assume_role(
         RoleArn=role_arn,
