@@ -170,7 +170,7 @@ docker-create-dockerfile: ### Create effective Dockerfile - mandatory: NAME
 	" Dockerfile.effective
 	cd $$dir
 
-docker-get-image-version: ### Get effective Docker image version - mandatory: NAMEdim
+docker-get-image-version: ### Get effective Docker image version - mandatory: NAME
 	dir=$$(make _docker-get-dir)
 	cat $$dir/.version 2> /dev/null || cat $$dir/VERSION 2> /dev/null || echo unknown
 
