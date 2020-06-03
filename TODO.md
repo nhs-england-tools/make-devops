@@ -23,6 +23,5 @@
   - Add `redis` for local Amazon ElastiCache
   - Add `dynamodb` for local Amazon DynamoDB
 - Others
-  - Install `yq`
   - Issue with the JS file formatting, see [Jsx indentation conflict vscode and eslint](https://stackoverflow.com/questions/48674208/jsx-indentation-conflict-vscode-and-eslint)
   - Move iTerm2 config file into the repository

@@ -34,7 +34,7 @@ RUN set -eux && \
     gosu nobody true && \
     \
     # Configure system user
-    userdel --remove --force $SYSTEM_USER ||: && \
+    ( userdel --remove --force $SYSTEM_USER ||: ) && \
     groupadd --system --gid $SYSTEM_USER_GID $SYSTEM_USER && \
     useradd --system --create-home --home-dir /var/lib/postgresql --shell=/bin/false --uid $SYSTEM_USER_UID --gid $SYSTEM_USER_GID $SYSTEM_USER && \
     \

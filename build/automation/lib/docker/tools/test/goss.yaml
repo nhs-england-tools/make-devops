@@ -37,6 +37,9 @@ file:
   /usr/local/bin/jq:
     exists: true
     mode: "0755"
+  /usr/local/bin/yq:
+    exists: true
+    mode: "0755"
   /usr/local/bin/kubectl:
     exists: true
     mode: "0755"

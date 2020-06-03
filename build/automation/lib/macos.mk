@@ -79,6 +79,7 @@ macos-install-essential:: ## Install essential development dependencies - option
 	brew $$install terraform ||:
 	brew $$install tmux ||:
 	brew $$install tree ||:
+	brew $$install yq ||:
 	brew $$install zsh ||:
 	brew $$install zsh-autosuggestions ||:
 	brew $$install zsh-completions ||:
@@ -192,6 +193,7 @@ macos-check:: ## Check if the development dependencies are installed
 	brew list terraform ||:
 	brew list tmux ||:
 	brew list tree ||:
+	brew list yq ||:
 	brew list zsh ||:
 	brew list zsh-autosuggestions ||:
 	brew list zsh-completions ||:

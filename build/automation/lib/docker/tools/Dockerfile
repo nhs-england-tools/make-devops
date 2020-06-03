@@ -43,6 +43,11 @@ RUN set -eux && \
     chmod +x ./jq-linux64 && \
     mv ./jq-linux64 /usr/local/bin/jq && \
     \
+    # Install yq
+    curl -LO https://github.com/mikefarah/yq/releases/download/3.3.0/yq_linux_amd64 && \
+    chmod +x ./yq_linux_amd64 && \
+    mv ./yq_linux_amd64 /usr/local/bin/yq && \
+    \
     # Install kubectl
     curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.18.3/bin/linux/amd64/kubectl && \
     chmod +x ./kubectl && \
@@ -61,7 +66,7 @@ RUN set -eux && \
     gosu nobody true && \
     \
     # Configure system user
-    userdel --remove --force $SYSTEM_USER ||: && \
+    ( userdel --remove --force $SYSTEM_USER ||: ) && \
     groupadd --system --gid $SYSTEM_USER_GID $SYSTEM_USER && \
     useradd --system --create-home --home-dir /tmp --shell=/bin/false --uid $SYSTEM_USER_UID --gid $SYSTEM_USER_GID $SYSTEM_USER && \
     \
