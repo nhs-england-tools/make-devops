@@ -21,8 +21,8 @@
   - Move away from `openjdk` in favour of `adoptopenjdk`
   - Create reverse proxy configuration for `nginx`
   - Add `redis` for local Amazon ElastiCache
-  - Add `elasticsearch` for local Amazon Elasticsearch
   - Add `dynamodb` for local Amazon DynamoDB
 - Others
+  - Install `yq`
   - Issue with the JS file formatting, see [Jsx indentation conflict vscode and eslint](https://stackoverflow.com/questions/48674208/jsx-indentation-conflict-vscode-and-eslint)
   - Move iTerm2 config file into the repository

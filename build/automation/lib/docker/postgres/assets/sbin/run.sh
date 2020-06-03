@@ -15,12 +15,18 @@ if [ "sql" == "$1" ]; then
   run_psql -c "$sql"
 elif [ "scripts" == "$1" ]; then
   dir=${2:-/sql}
+  i=0
   for file in $dir/*; do
     echo "Running script: '$file'"
     [[ $file == *.sql ]] && run_psql -f $file
     [[ $file == *.sql.gz ]] && gunzip -c $file | run_psql
     echo
+    i=$((i+1))
   done
+  if [ $i -eq 0 ]; then
+    echo "ERROR: No script found"
+    exit 1
+  fi
 elif [ "postgres" == "$1" ] || [ $# -eq 0 ]; then
   export POSTGRES_DB=$DB_NAME
   export POSTGRES_USER=$DB_USERNAME

@@ -7,7 +7,6 @@ build:
 	make docker-build NAME=tools \
 		FROM_CACHE=$(or $(FROM_CACHE), true) \
 		BUILD_OPTS="--build-arg PYTHON_BASE_PACKAGES='$(PYTHON_BASE_PACKAGES)'"
-	rm -f $(DOCKER_LIBRARY_DIR)/nginx/.version
 
 test:
 	make docker-test NAME=tools

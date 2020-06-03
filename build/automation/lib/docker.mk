@@ -36,7 +36,8 @@ docker-config: ### Configure Docker networking
 docker-build docker-image: ### Build Docker image - mandatory: NAME; optional: VERSION,FROM_CACHE=true,BUILD_OPTS=[build options],NAME_AS=[new name]
 	if [ -d $(DOCKER_LIBRARY_DIR)/$(NAME) ] && [ -z "$(__DOCKER_BUILD)" ]; then
 		cd $(DOCKER_LIBRARY_DIR)/$(NAME)
-		make build __DOCKER_BUILD=true DOCKER_REGISTRY=$(DOCKER_LIBRARY_REGISTRY) && exit
+		make build __DOCKER_BUILD=true DOCKER_REGISTRY=$(DOCKER_LIBRARY_REGISTRY)
+		exit
 	elif [ -d $(DOCKER_CUSTOM_DIR)/$(NAME) ] && [ -z "$(__DOCKER_BUILD)" ]; then
 		cd $(DOCKER_CUSTOM_DIR)/$(NAME)
 		make build __DOCKER_BUILD=true && exit || cd $(PROJECT_DIR)
@@ -175,6 +176,10 @@ docker-get-image-version: ### Get effective Docker image version - mandatory: NA
 	cat $$dir/.version 2> /dev/null || cat $$dir/VERSION 2> /dev/null || echo unknown
 
 docker-set-image-version: ### Set effective Docker image version - mandatory: NAME; optional: VERSION
+	if [ -d $(DOCKER_LIBRARY_DIR)/$(NAME) ] && [ -z "$(DOCKER_CUSTOM_DIR)" ]; then
+		rm -f $(DOCKER_LIBRARY_DIR)/$(NAME)/.version
+		exit
+	fi
 	dir=$$(make _docker-get-dir)
 	if [ -n "$(VERSION)" ]; then
 		echo $(VERSION) > $$dir/.version
