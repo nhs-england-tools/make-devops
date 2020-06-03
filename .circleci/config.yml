@@ -37,6 +37,17 @@ jobs:
               clean
             curl --request POST "https://hooks.microbadger.com/images/nhsd/postgres/ei_kYbqtiwOtONIc5PV9_ZB-ANQ="
       - run:
+          name: Push 'elasticsearch' image
+          command: |
+            make docker-login DOCKER_USERNAME=$DOCKER_USERNAME DOCKER_PASSWORD=$DOCKER_PASSWORD
+            cd build/automation/lib/docker/elasticsearch
+            make \
+              build \
+              test \
+              push \
+              clean
+            curl --request POST "https://hooks.microbadger.com/images/nhsd/elasticsearch/CUcLDfBRSM2kIctxQbBVTM47W4w="
+      - run:
           name: Push 'tools' image
           command: |
             make docker-login DOCKER_USERNAME=$DOCKER_USERNAME DOCKER_PASSWORD=$DOCKER_PASSWORD

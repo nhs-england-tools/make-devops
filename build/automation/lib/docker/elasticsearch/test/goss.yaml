@@ -1,0 +1,32 @@
+user:
+  elasticsearch:
+    exists: true
+    uid: 999
+    gid: 999
+    home: /tmp
+    shell: /bin/false
+
+package:
+  ca-certificates:
+    installed: true
+  curl:
+    installed: true
+  gnupg:
+    installed: true
+  wget:
+    installed: true
+
+file:
+  /usr/local/bin/gosu:
+    exists: true
+    mode: "0755"
+
+process:
+  java:
+    running: true
+
+port:
+  tcp:9200:
+    listening: true
+    ip:
+      - 0.0.0.0

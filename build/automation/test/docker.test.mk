@@ -38,6 +38,7 @@ test-docker:
 		test-docker-run-specify-image \
 		test-docker-nginx-image \
 		test-docker-postgres-image \
+		test-docker-elasticsearch-image \
 		test-docker-tools-image \
 		test-docker-compose \
 		test-docker-compose-single-service \
@@ -362,6 +363,16 @@ test-docker-nginx-image:
 test-docker-postgres-image:
 	# arrange
 	cd $(DOCKER_LIBRARY_DIR)/postgres
+	# act
+	make build test
+	# assert
+	mk_test true
+	# clean up
+	make clean
+
+test-docker-elasticsearch-image:
+	# arrange
+	cd $(DOCKER_LIBRARY_DIR)/elasticsearch
 	# act
 	make build test
 	# assert
