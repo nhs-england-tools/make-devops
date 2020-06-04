@@ -8,7 +8,7 @@ build:
 
 test:
 	make docker-test NAME=elasticsearch \
-		GOSS_OPTS="GOSS_SLEEP=15" \
+		GOSS_OPTS="GOSS_SLEEP=20" \
 		CMD="elasticsearch"
 
 push:
