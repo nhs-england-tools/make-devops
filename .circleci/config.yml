@@ -7,6 +7,10 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Configure Environment
+          command: |
+            sudo sysctl -w vm.max_map_count=262144
+      - run:
           name: Show Variables
           command: |
             make devops-print-variables
