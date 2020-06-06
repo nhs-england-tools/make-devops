@@ -29,7 +29,7 @@ _test-scripts:
 		ARGS=" \
 			--env DB_HOST=postgres.$(PROJECT_NAME_SHORT).local \
 			--env WAIT_FOR=postgres.$(PROJECT_NAME_SHORT).local:5432 \
-			--volume $(DOCKER_LIBRARY_DIR)/postgres/assets/sql:/sql \
+			--volume $(DOCKER_LIBRARY_DIR)/postgres/assets/data:/data \
 		" \
 		CMD="scripts"
 	make _test-prerequisites-teardown
@@ -72,7 +72,7 @@ _test-prerequisites-teardown:
 		YML=$(DOCKER_LIBRARY_DIR)/postgres/test/docker-compose.postgres.yml
 	rm -rf $(_TEST_POSTGRES_SQL_FILE)*
 
-_TEST_POSTGRES_SQL_FILE := $(DOCKER_LIBRARY_DIR)/postgres/assets/sql/00-version.sql
+_TEST_POSTGRES_SQL_FILE := $(DOCKER_LIBRARY_DIR)/postgres/assets/data/00-version.sql
 _TEST_POSTGRES_SQL_FILE:
 	echo "select version();" > $(_TEST_POSTGRES_SQL_FILE)
 	gzip -c $(_TEST_POSTGRES_SQL_FILE) > $(_TEST_POSTGRES_SQL_FILE).gz

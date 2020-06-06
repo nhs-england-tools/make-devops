@@ -11,7 +11,7 @@ function main() {
 }
 
 function replace_variables_in_scripts() {
-  dir=${2:-/sql}
+  dir=${2:-/data}
   for file in $dir/*; do
     [ -f $file ] && _replace_variables $file ||:
   done

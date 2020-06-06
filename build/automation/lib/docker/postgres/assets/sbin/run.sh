@@ -14,7 +14,7 @@ if [ "sql" == "$1" ]; then
   echo "Running SQL: $sql"
   run_psql -c "$sql"
 elif [ "scripts" == "$1" ]; then
-  dir=${2:-/sql}
+  dir=${2:-/data}
   i=0
   for file in $dir/*; do
     echo "Running script: '$file'"
