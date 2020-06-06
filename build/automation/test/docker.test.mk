@@ -40,6 +40,7 @@ test-docker:
 		test-docker-nginx-image \
 		test-docker-postgres-image \
 		test-docker-python-base-image \
+		test-docker-python-app-image \
 		test-docker-tools-image \
 		test-docker-compose \
 		test-docker-compose-single-service \
@@ -388,6 +389,18 @@ test-docker-python-base-image:
 	make build test
 	# assert
 	mk_test true
+	# clean up
+	make clean
+
+test-docker-python-app-image:
+	# arrange
+	cd $(DOCKER_LIBRARY_DIR)/python-app
+	# act & assert
+	make build test && \
+		mk_test "main" "true" || mk_test "main" "false"
+	make build-example test-example && \
+		mk_test "example" "true" || mk_test "example" "false"
+	mk_test_complete
 	# clean up
 	make clean
 

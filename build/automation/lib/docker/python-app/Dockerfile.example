@@ -1,0 +1,15 @@
+FROM nhsd/python-app:latest as base
+
+FROM base as builder
+COPY example/requirements.txt /requirements.txt
+RUN set -eux && \
+    mkdir /packages && cd /packages && \
+    pip install \
+        --requirement /requirements.txt \
+        --prefix=/packages \
+        --no-warn-script-location
+
+FROM base
+ENV APP="hello_world"
+COPY --from=builder /packages /usr/local
+COPY example /application

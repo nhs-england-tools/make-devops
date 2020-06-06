@@ -24,6 +24,7 @@ DOCKER_TERRAFORM_VERSION = $(or $(TEXAS_TERRAFORM_VERSION), 0.12.25)
 DOCKER_LIBRARY_ELASTICSEARCH_VERSION = $(shell cat $(DOCKER_LIBRARY_DIR)/elasticsearch/VERSION 2> /dev/null)
 DOCKER_LIBRARY_NGINX_VERSION = $(shell cat $(DOCKER_LIBRARY_DIR)/nginx/VERSION 2> /dev/null)
 DOCKER_LIBRARY_POSTGRES_VERSION = $(shell cat $(DOCKER_LIBRARY_DIR)/postgres/VERSION 2> /dev/null)
+DOCKER_LIBRARY_PYTHON_APP_VERSION = $(shell cat $(DOCKER_LIBRARY_DIR)/python-app/VERSION 2> /dev/null)
 DOCKER_LIBRARY_PYTHON_BASE_VERSION = $(shell cat $(DOCKER_LIBRARY_DIR)/python-base/VERSION 2> /dev/null)
 DOCKER_LIBRARY_TOOLS_VERSION = $(shell cat $(DOCKER_LIBRARY_DIR)/tools/VERSION 2> /dev/null)
 
@@ -85,15 +86,16 @@ docker-build docker-image: ### Build Docker image - mandatory: NAME; optional: V
 	fi
 	docker image inspect $$reg/$(NAME)$(shell [ -n "$(EXAMPLE)" ] && echo -example):latest --format='{{.Size}}'
 
-docker-test: ### Test image - mandatory: NAME; optional: ARGS,CMD,GOSS_OPTS
+docker-test: ### Test image - mandatory: NAME; optional: ARGS,CMD,GOSS_OPTS,EXAMPLE=true
 	dir=$$(make _docker-get-dir)
 	reg=$$(make _docker-get-reg)
 	GOSS_FILES_PATH=$$dir/test \
-	CONTAINER_LOG_OUTPUT=$(TMP_DIR)/container-$(NAME)-$(BUILD_HASH)-$(BUILD_ID).log \
+	GOSS_FILE=$(shell [ -z "$(EXAMPLE)" ] && echo goss.yaml || echo goss-example.yaml) \
+	CONTAINER_LOG_OUTPUT=$(TMP_DIR)/container-$(NAME)$(shell [ -n "$(EXAMPLE)" ] && echo -example)-$(BUILD_HASH)-$(BUILD_ID).log \
 	$(GOSS_OPTS) \
 	dgoss run --interactive $(_TTY) \
 		$(ARGS) \
-		$$reg/$(NAME):latest \
+		$$reg/$(NAME)$(shell [ -n "$(EXAMPLE)" ] && echo -example):latest \
 		$(CMD)
 
 docker-login: ### Log into the Docker registry - optional: DOCKER_USERNAME,DOCKER_PASSWORD
