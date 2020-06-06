@@ -44,5 +44,5 @@ RUN set -eux && \
 COPY assets/ /
 
 WORKDIR /sql
-EXPOSE 5432
 ENTRYPOINT [ "/sbin/entrypoint.sh" ]
+EXPOSE 5432

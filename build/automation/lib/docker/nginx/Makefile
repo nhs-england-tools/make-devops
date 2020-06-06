@@ -5,16 +5,34 @@ include $(abspath $(lastword $(MAKEFILE_LIST))/../../../../init.mk)
 
 build:
 	make _generate-ssl-certificate
-	make docker-build NAME=nginx FROM_CACHE=$(or $(FROM_CACHE), true)
+	make docker-build NAME=nginx
 
 test:
-	make docker-test NAME=nginx
+	make docker-test NAME=nginx CMD=bash
 
 push:
 	make docker-push NAME=nginx
 
 clean:
 	make docker-image-clean NAME=nginx
+
+# ==============================================================================
+
+build-example:
+	make docker-build NAME=nginx EXAMPLE=true
+
+test-example:
+	make docker-test NAME=nginx EXAMPLE=true
+
+run-example:
+	make docker-image-start NAME=nginx EXAMPLE=true \
+		DIR="example" \
+		ARGS=" \
+			--publish 8080:8080 \
+			--publish 8443:8443 \
+			--attach \
+			--rm \
+		"
 
 # ==============================================================================
 

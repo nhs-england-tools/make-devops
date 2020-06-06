@@ -45,5 +45,5 @@ RUN set -eux && \
 COPY assets/ /
 
 WORKDIR /data
-EXPOSE 9200 9300
 ENTRYPOINT [ "/sbin/entrypoint.sh" ]
+EXPOSE 9200 9300

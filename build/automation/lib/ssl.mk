@@ -33,7 +33,6 @@ ssl-generate-certificate: ### Generate self-signed certificate - mandatory: DIR=
 		-in $(DIR)/$(NAME).crt \
 		-inkey $(DIR)/$(NAME).key \
 		-out $(DIR)/$(NAME).p12
-	chmod 400 $(DIR)/$(NAME).{crt,key,pem,p12}
 	openssl x509 -text < $(DIR)/$(NAME).crt
 
 ssl-trust-certificate-project: ### Trust self-signed certificate for the project - optional: FILE=[path to .pem file]

@@ -6,7 +6,7 @@ DOCKER_PYTHON_VERSION = $(PYTHON_VERSION)-alpine
 # ==============================================================================
 
 build:
-	make docker-build NAME=python FROM_CACHE=false
+	make docker-build NAME=python
 
 test:
 	make docker-test NAME=python CMD="bash"

@@ -9,12 +9,6 @@ user:
 package:
   ca-certificates:
     installed: true
-  curl:
-    installed: true
-  gnupg:
-    installed: true
-  wget:
-    installed: true
 
 file:
   /var/log/nginx/access.log:
@@ -29,35 +23,8 @@ file:
     exists: true
     filetype: file
     mode: "0400"
-  /application/index.html:
-    exists: true
-    filetype: file
+    owner: nginx
+    group: nginx
   /usr/local/bin/gosu:
     exists: true
     mode: "0755"
-
-process:
-  nginx:
-    running: true
-
-port:
-  tcp:8080:
-    listening: true
-    ip:
-      - 0.0.0.0
-  tcp:8443:
-    listening: true
-    ip:
-      - 0.0.0.0
-
-http:
-  http://localhost:8080:
-    status: 200
-    timeout: 1000
-    body:
-      - Welcome to Make DevOps!
-  https://localhost:8443:
-    status: 200
-    timeout: 1000
-    body:
-      - Welcome to Make DevOps!

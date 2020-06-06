@@ -1,7 +1,5 @@
-FROM nginx:latest
-
+FROM nginx:latest as base
 ENV \
-    DEBIAN_FRONTEND="noninteractive" \
     GOSU_VERSION="1.12" \
     LANG="C.UTF-8" \
     LC_ALL="C.UTF-8" \
@@ -10,18 +8,16 @@ ENV \
     SYSTEM_USER="nginx" \
     TZ="Europe/London"
 
+FROM base as builder
 RUN set -eux && \
     \
-    # Install base packages
-    apt-get update --yes && \
-    apt-get install --yes --no-install-recommends \
-        ca-certificates \
-        curl \
+    # Get base packages
+    apk add --no-cache \
+        dpkg \
         gnupg \
-        wget \
     && \
     \
-    # Install gosu
+    # Get gosu
     dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')" && \
     wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch" && \
     wget -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch.asc" && \
@@ -30,25 +26,23 @@ RUN set -eux && \
     gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu && \
     gpgconf --kill all && \
     rm -rf "$GNUPGHOME" /usr/local/bin/gosu.asc && \
-    chmod +x /usr/local/bin/gosu && \
-    gosu nobody true && \
-    \
-    # Configure system user
-    ( userdel --remove --force $SYSTEM_USER ||: ) && \
-    groupadd --system --gid $SYSTEM_USER_GID $SYSTEM_USER && \
-    useradd --system --create-home --home-dir /tmp --shell=/bin/false --uid $SYSTEM_USER_UID --gid $SYSTEM_USER_GID $SYSTEM_USER && \
-    \
-    # Clean up
-    rm -rf /tmp/* /var/tmp/* /var/lib/apt/lists/* /var/cache/apt/*
+    chmod +x /usr/local/bin/gosu
 
+FROM base
+COPY --from=builder /usr/local/bin/gosu /usr/local/bin/gosu
 COPY assets/ /
-
 RUN set -eux && \
     \
-    # Trust certificate
-    cp /certificate/*.crt /usr/local/share/ca-certificates && \
-    update-ca-certificates
-
+    # Install base packages
+    apk add --no-cache \
+        bash \
+    && \
+    \
+    # Configure system user
+    ( deluser $SYSTEM_USER ||: ) && ( delgroup $SYSTEM_USER ||: ) && ( delgroup $(getent group $SYSTEM_USER_GID | sed -e "s/:x:$SYSTEM_USER_GID//g") ||: ) && \
+    addgroup -S -g $SYSTEM_USER_GID $SYSTEM_USER && \
+    adduser -H -D -s /bin/false -g "" -h /tmp -G $SYSTEM_USER -u $SYSTEM_USER_UID $SYSTEM_USER && \
+    gosu nobody true
 WORKDIR /application
-EXPOSE 8080 8443
 ENTRYPOINT [ "/sbin/entrypoint.sh" ]
+EXPOSE 8080 8443

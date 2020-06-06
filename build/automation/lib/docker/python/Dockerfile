@@ -15,7 +15,6 @@ RUN set -eux && \
     \
     # Get base packages
     apk add --no-cache \
-        bash \
         dpkg \
         gnupg \
     && \
@@ -32,13 +31,17 @@ RUN set -eux && \
     chmod +x /usr/local/bin/gosu
 
 FROM base
-COPY --from=builder /bin/bash /bin/bash
 COPY --from=builder /usr/local/bin/gosu /usr/local/bin/gosu
 COPY assets/ /
 RUN set -eux && \
     \
+    # Install base packages
+    apk add --no-cache \
+        bash \
+    && \
+    \
     # Configure system user
-    ( delgroup $(getent group $SYSTEM_USER_GID | sed -e "s/:x:$SYSTEM_USER_GID//g") ||: ) && \
+    ( deluser $SYSTEM_USER ||: ) && ( delgroup $SYSTEM_USER ||: ) && ( delgroup $(getent group $SYSTEM_USER_GID | sed -e "s/:x:$SYSTEM_USER_GID//g") ||: ) && \
     addgroup -S -g $SYSTEM_USER_GID $SYSTEM_USER && \
     adduser -H -D -s /bin/false -g "" -h /tmp -G $SYSTEM_USER -u $SYSTEM_USER_UID $SYSTEM_USER && \
     gosu nobody true

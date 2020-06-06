@@ -365,10 +365,12 @@ test-docker-elasticsearch-image:
 test-docker-nginx-image:
 	# arrange
 	cd $(DOCKER_LIBRARY_DIR)/nginx
-	# act
-	make build test
-	# assert
-	mk_test true
+	# act & assert
+	make build test && \
+		mk_test "main" "true" || mk_test "main" "false"
+	make build-example test-example && \
+		mk_test "example" "true" || mk_test "example" "false"
+	mk_test_complete
 	# clean up
 	make clean
 

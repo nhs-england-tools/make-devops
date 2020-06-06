@@ -5,7 +5,7 @@ include $(abspath $(lastword $(MAKEFILE_LIST))/../../../../init.mk)
 
 build:
 	make _generate-ssl-certificate
-	make docker-build NAME=python-app FROM_CACHE=false
+	make docker-build NAME=python-app
 
 test:
 	make docker-test NAME=python-app CMD="bash"
@@ -32,6 +32,7 @@ run-example:
 			--env APP=hello_world \
 			--publish 8443:8443 \
 			--attach \
+			--rm \
 		"
 
 # ==============================================================================

@@ -14,8 +14,6 @@ RUN set -eux && \
 FROM base
 COPY --from=builder /packages /usr/local
 COPY assets/ /
-RUN set -eux && \
-    chown $SYSTEM_USER:$SYSTEM_USER /certificate/*
 WORKDIR /application
 CMD [ "gunicorn" ]
 EXPOSE 8443

@@ -23,7 +23,7 @@ function set_file_permissions() {
     "$(readlink /dev/stdout)"
   chown $SYSTEM_USER_UID /var/run
   chown -R $SYSTEM_USER_UID:$SYSTEM_USER_GID \
-    /certificate \
+    /certificate/* \
     /var/cache/nginx
   chmod 400 /certificate/*
 }
