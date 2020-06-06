@@ -72,7 +72,7 @@ jobs:
               test \
               push \
               clean
-            curl --request POST "https://hooks.microbadger.com/images/nhsd/python-app/6rhtUJFjPZD6XkzfZ7tE5o1KJp8="
+            curl --request POST "https://hooks.microbadger.com/images/nhsd/python-app/4eMOA9iHngrFwZ0fTWlMq4KR9Kk="
       - run:
           name: Push 'tools' image
           command: |
