@@ -1,4 +1,4 @@
-FROM nhsd/python-base:latest as base
+FROM nhsd/python:latest as base
 ENV \
     APP="" \
     PYTHONPATH="/application"

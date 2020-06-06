@@ -39,7 +39,7 @@ test-docker:
 		test-docker-elasticsearch-image \
 		test-docker-nginx-image \
 		test-docker-postgres-image \
-		test-docker-python-base-image \
+		test-docker-python-image \
 		test-docker-python-app-image \
 		test-docker-tools-image \
 		test-docker-compose \
@@ -382,9 +382,9 @@ test-docker-postgres-image:
 	# clean up
 	make clean
 
-test-docker-python-base-image:
+test-docker-python-image:
 	# arrange
-	cd $(DOCKER_LIBRARY_DIR)/python-base
+	cd $(DOCKER_LIBRARY_DIR)/python
 	# act
 	make build test
 	# assert

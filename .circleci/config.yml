@@ -52,16 +52,27 @@ jobs:
               clean
             curl --request POST "https://hooks.microbadger.com/images/nhsd/postgres/ei_kYbqtiwOtONIc5PV9_ZB-ANQ="
       - run:
-          name: Push 'python-base' image
+          name: Push 'python' image
           command: |
             make docker-login DOCKER_USERNAME=$DOCKER_USERNAME DOCKER_PASSWORD=$DOCKER_PASSWORD
-            cd build/automation/lib/docker/python-base
+            cd build/automation/lib/docker/python
             make \
               build \
               test \
               push \
               clean
-            curl --request POST "https://hooks.microbadger.com/images/nhsd/python-base/6rhtUJFjPZD6XkzfZ7tE5o1KJp8="
+            curl --request POST "https://hooks.microbadger.com/images/nhsd/python/CIrtN8vL4NBjH75NnXxM7rWFAbg="
+      - run:
+          name: Push 'python-app' image
+          command: |
+            make docker-login DOCKER_USERNAME=$DOCKER_USERNAME DOCKER_PASSWORD=$DOCKER_PASSWORD
+            cd build/automation/lib/docker/python-app
+            make \
+              build \
+              test \
+              push \
+              clean
+            curl --request POST "https://hooks.microbadger.com/images/nhsd/python-app/6rhtUJFjPZD6XkzfZ7tE5o1KJp8="
       - run:
           name: Push 'tools' image
           command: |
