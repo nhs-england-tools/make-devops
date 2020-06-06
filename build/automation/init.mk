@@ -120,6 +120,9 @@ devops-synchronise: ### Synchronise the DevOps automation toolchain scripts used
 			$(PARENT_PROJECT_DIR)/build/automation/bin/markdown.pl \
 			$(PARENT_PROJECT_DIR)/build/automation/etc/platform-texas* \
 			$(PARENT_PROJECT_DIR)/build/automation/lib/dev.mk \
+			$(PARENT_PROJECT_DIR)/build/automation/lib/docker/nginx \
+			$(PARENT_PROJECT_DIR)/build/automation/lib/docker/postgres \
+			$(PARENT_PROJECT_DIR)/build/automation/lib/docker/tools \
 			$(PARENT_PROJECT_DIR)/build/automation/lib/fix \
 			$(PARENT_PROJECT_DIR)/build/automation/var/helpers.mk.default \
 			$(PARENT_PROJECT_DIR)/build/automation/var/override.mk.default \

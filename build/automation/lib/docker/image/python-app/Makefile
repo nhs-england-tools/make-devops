@@ -1,5 +1,5 @@
-PROJECT_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))/../../../../..))
-include $(abspath $(lastword $(MAKEFILE_LIST))/../../../../init.mk)
+PROJECT_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))/../../../../../..))
+include $(abspath $(lastword $(MAKEFILE_LIST))/../../../../../init.mk)
 
 # ==============================================================================
 
@@ -38,8 +38,8 @@ run-example:
 # ==============================================================================
 
 _generate-ssl-certificate:
-	if [ ! -f $(DOCKER_LIBRARY_DIR)/python-app/assets/certificate/certificate.pem ]; then
+	if [ ! -f $(DOCKER_LIB_IMAGE_DIR)/python-app/assets/certificate/certificate.pem ]; then
 		make ssl-generate-certificate-project \
-			DIR=$(DOCKER_LIBRARY_DIR)/python-app/assets/certificate \
+			DIR=$(DOCKER_LIB_IMAGE_DIR)/python-app/assets/certificate \
 			DOMAINS=python-app.$(PROJECT_NAME_SHORT)-$(PROJECT_GROUP_SHORT).local
 	fi

@@ -1,7 +1,7 @@
 DOCKER_COMPOSE_YML = $(DOCKER_DIR)/docker-compose.yml
 DOCKER_DIR = $(PROJECT_DIR)/build/docker
-DOCKER_DIR_REL = $(shell echo $(DOCKER_DIR) | sed "s;$(PROJECT_DIR);;g")
-DOCKER_LIBRARY_DIR = $(LIB_DIR)/docker
+DOCKER_LIB_DIR = $(LIB_DIR)/docker
+DOCKER_LIB_IMAGE_DIR = $(LIB_DIR)/docker/image
 DOCKER_NETWORK = $(PROJECT_GROUP)/$(PROJECT_NAME)/$(BUILD_ID)
 DOCKER_REGISTRY = $(AWS_ECR)/$(PROJECT_GROUP)/$(PROJECT_NAME)
 DOCKER_LIBRARY_REGISTRY = nhsd
@@ -21,12 +21,12 @@ DOCKER_PULUMI_VERSION = v2.3.0
 DOCKER_PYTHON_VERSION = $(PYTHON_VERSION)-slim
 DOCKER_TERRAFORM_VERSION = $(or $(TEXAS_TERRAFORM_VERSION), 0.12.25)
 
-DOCKER_LIBRARY_ELASTICSEARCH_VERSION = $(shell cat $(DOCKER_LIBRARY_DIR)/elasticsearch/VERSION 2> /dev/null)
-DOCKER_LIBRARY_NGINX_VERSION = $(shell cat $(DOCKER_LIBRARY_DIR)/nginx/VERSION 2> /dev/null)
-DOCKER_LIBRARY_POSTGRES_VERSION = $(shell cat $(DOCKER_LIBRARY_DIR)/postgres/VERSION 2> /dev/null)
-DOCKER_LIBRARY_PYTHON_VERSION = $(shell cat $(DOCKER_LIBRARY_DIR)/python/VERSION 2> /dev/null)
-DOCKER_LIBRARY_PYTHON_APP_VERSION = $(shell cat $(DOCKER_LIBRARY_DIR)/python-app/VERSION 2> /dev/null)
-DOCKER_LIBRARY_TOOLS_VERSION = $(shell cat $(DOCKER_LIBRARY_DIR)/tools/VERSION 2> /dev/null)
+DOCKER_LIBRARY_ELASTICSEARCH_VERSION = $(shell cat $(DOCKER_LIB_IMAGE_DIR)/elasticsearch/VERSION 2> /dev/null)
+DOCKER_LIBRARY_NGINX_VERSION = $(shell cat $(DOCKER_LIB_IMAGE_DIR)/nginx/VERSION 2> /dev/null)
+DOCKER_LIBRARY_POSTGRES_VERSION = $(shell cat $(DOCKER_LIB_IMAGE_DIR)/postgres/VERSION 2> /dev/null)
+DOCKER_LIBRARY_PYTHON_VERSION = $(shell cat $(DOCKER_LIB_IMAGE_DIR)/python/VERSION 2> /dev/null)
+DOCKER_LIBRARY_PYTHON_APP_VERSION = $(shell cat $(DOCKER_LIB_IMAGE_DIR)/python-app/VERSION 2> /dev/null)
+DOCKER_LIBRARY_TOOLS_VERSION = $(shell cat $(DOCKER_LIB_IMAGE_DIR)/tools/VERSION 2> /dev/null)
 
 COMPOSE_HTTP_TIMEOUT := $(or $(COMPOSE_HTTP_TIMEOUT), 6000)
 DOCKER_CLIENT_TIMEOUT := $(or $(DOCKER_CLIENT_TIMEOUT), 6000)
@@ -37,8 +37,8 @@ docker-config: ### Configure Docker networking
 	docker network create $(DOCKER_NETWORK) 2> /dev/null ||:
 
 docker-build docker-image: ### Build Docker image - mandatory: NAME; optional: VERSION,FROM_CACHE=true,BUILD_OPTS=[build options],NAME_AS=[new name],EXAMPLE=true
-	if [ -d $(DOCKER_LIBRARY_DIR)/$(NAME) ] && [ -z "$(__DOCKER_BUILD)" ]; then
-		cd $(DOCKER_LIBRARY_DIR)/$(NAME)
+	if [ -d $(DOCKER_LIB_IMAGE_DIR)/$(NAME) ] && [ -z "$(__DOCKER_BUILD)" ]; then
+		cd $(DOCKER_LIB_IMAGE_DIR)/$(NAME)
 		make build __DOCKER_BUILD=true DOCKER_REGISTRY=$(DOCKER_LIBRARY_REGISTRY)
 		exit
 	elif [ -d $(DOCKER_CUSTOM_DIR)/$(NAME) ] && [ -z "$(__DOCKER_BUILD)" ]; then
@@ -145,8 +145,8 @@ docker-tag: ### Tag latest or provide arguments - mandatory: NAME,VERSION|TAG|[S
 docker-clean: ### Clean Docker files
 	find $(DOCKER_DIR) -type f -name '.version' -print0 | xargs -0 rm -v 2> /dev/null ||:
 	find $(DOCKER_DIR) -type f -name 'Dockerfile.effective' -print0 | xargs -0 rm -v 2> /dev/null ||:
-	find $(DOCKER_LIBRARY_DIR) -type f -name '.version' -print0 | xargs -0 rm -v 2> /dev/null ||:
-	find $(DOCKER_LIBRARY_DIR) -type f -name 'Dockerfile.effective' -print0 | xargs -0 rm -v 2> /dev/null ||:
+	find $(DOCKER_LIB_IMAGE_DIR) -type f -name '.version' -print0 | xargs -0 rm -v 2> /dev/null ||:
+	find $(DOCKER_LIB_IMAGE_DIR) -type f -name 'Dockerfile.effective' -print0 | xargs -0 rm -v 2> /dev/null ||:
 
 docker-prune: docker-clean ### Clean Docker resources - optional: ALL=true
 	docker rmi --force $$(docker images | grep $(DOCKER_REGISTRY) | awk '{ print $$3 }') 2> /dev/null ||:
@@ -159,7 +159,7 @@ docker-prune: docker-clean ### Clean Docker resources - optional: ALL=true
 docker-create-dockerfile: ### Create effective Dockerfile - mandatory: NAME
 	dir=$$(pwd)
 	cd $$(make _docker-get-dir)
-	cat Dockerfile $(DOCKER_LIBRARY_DIR)/Dockerfile.metadata > Dockerfile.effective
+	cat Dockerfile $(DOCKER_LIB_DIR)/Dockerfile.metadata > Dockerfile.effective
 	sed -i " \
 		s#FROM $(DOCKER_LIBRARY_REGISTRY)/elasticsearch:latest#FROM $(DOCKER_LIBRARY_REGISTRY)/elasticsearch:${DOCKER_LIBRARY_ELASTICSEARCH_VERSION}#g; \
 		s#FROM $(DOCKER_LIBRARY_REGISTRY)/nginx:latest#FROM $(DOCKER_LIBRARY_REGISTRY)/nginx:${DOCKER_LIBRARY_NGINX_VERSION}#g; \
@@ -183,8 +183,8 @@ docker-get-image-version: ### Get effective Docker image version - mandatory: NA
 	cat $$dir/.version 2> /dev/null || cat $$dir/VERSION 2> /dev/null || echo unknown
 
 docker-set-image-version: ### Set effective Docker image version - mandatory: NAME; optional: VERSION
-	if [ -d $(DOCKER_LIBRARY_DIR)/$(NAME) ] && [ -z "$(DOCKER_CUSTOM_DIR)" ]; then
-		rm -f $(DOCKER_LIBRARY_DIR)/$(NAME)/.version
+	if [ -d $(DOCKER_LIB_IMAGE_DIR)/$(NAME) ] && [ -z "$(DOCKER_CUSTOM_DIR)" ]; then
+		rm -f $(DOCKER_LIB_IMAGE_DIR)/$(NAME)/.version
 		exit
 	fi
 	dir=$$(make _docker-get-dir)
@@ -635,14 +635,14 @@ docker-compose-log: ### Log Docker Compose output - optional: DO_NOT_FOLLOW=true
 _docker-get-dir:
 	if [ -n "$(DOCKER_CUSTOM_DIR)" ] && [ -d $(DOCKER_CUSTOM_DIR)/$(NAME) ]; then
 		echo $(DOCKER_CUSTOM_DIR)/$(NAME)
-	elif [ -d $(DOCKER_LIBRARY_DIR)/$(NAME) ]; then
-		echo $(DOCKER_LIBRARY_DIR)/$(NAME)
+	elif [ -d $(DOCKER_LIB_IMAGE_DIR)/$(NAME) ]; then
+		echo $(DOCKER_LIB_IMAGE_DIR)/$(NAME)
 	else
 		echo $(DOCKER_DIR)/$(NAME)
 	fi
 
 _docker-get-reg:
-	if ([ -n "$(DOCKER_CUSTOM_DIR)" ] && [ -d $(DOCKER_CUSTOM_DIR)/$(NAME) ]) || [ -d $(DOCKER_LIBRARY_DIR)/$(NAME) ]; then
+	if ([ -n "$(DOCKER_CUSTOM_DIR)" ] && [ -d $(DOCKER_CUSTOM_DIR)/$(NAME) ]) || [ -d $(DOCKER_LIB_IMAGE_DIR)/$(NAME) ]; then
 		echo $(DOCKER_LIBRARY_REGISTRY)
 	else
 		echo $(DOCKER_REGISTRY)
