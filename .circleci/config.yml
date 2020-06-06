@@ -19,6 +19,17 @@ jobs:
           command: |
             make devops-test-suite || make devops-test-suite DEBUG=1
       - run:
+          name: Push 'elasticsearch' image
+          command: |
+            make docker-login DOCKER_USERNAME=$DOCKER_USERNAME DOCKER_PASSWORD=$DOCKER_PASSWORD
+            cd build/automation/lib/docker/elasticsearch
+            make \
+              build \
+              test \
+              push \
+              clean
+            curl --request POST "https://hooks.microbadger.com/images/nhsd/elasticsearch/CUcLDfBRSM2kIctxQbBVTM47W4w="
+      - run:
           name: Push 'nginx' image
           command: |
             make docker-login DOCKER_USERNAME=$DOCKER_USERNAME DOCKER_PASSWORD=$DOCKER_PASSWORD
@@ -41,16 +52,16 @@ jobs:
               clean
             curl --request POST "https://hooks.microbadger.com/images/nhsd/postgres/ei_kYbqtiwOtONIc5PV9_ZB-ANQ="
       - run:
-          name: Push 'elasticsearch' image
+          name: Push 'python-base' image
           command: |
             make docker-login DOCKER_USERNAME=$DOCKER_USERNAME DOCKER_PASSWORD=$DOCKER_PASSWORD
-            cd build/automation/lib/docker/elasticsearch
+            cd build/automation/lib/docker/python-base
             make \
               build \
               test \
               push \
               clean
-            curl --request POST "https://hooks.microbadger.com/images/nhsd/elasticsearch/CUcLDfBRSM2kIctxQbBVTM47W4w="
+            curl --request POST "https://hooks.microbadger.com/images/nhsd/python-base/6rhtUJFjPZD6XkzfZ7tE5o1KJp8="
       - run:
           name: Push 'tools' image
           command: |

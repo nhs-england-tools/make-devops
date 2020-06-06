@@ -21,8 +21,10 @@ DOCKER_PULUMI_VERSION = v2.3.0
 DOCKER_PYTHON_VERSION = $(PYTHON_VERSION)-slim
 DOCKER_TERRAFORM_VERSION = $(or $(TEXAS_TERRAFORM_VERSION), 0.12.25)
 
+DOCKER_LIBRARY_ELASTICSEARCH_VERSION = $(shell cat $(DOCKER_LIBRARY_DIR)/elasticsearch/VERSION 2> /dev/null)
 DOCKER_LIBRARY_NGINX_VERSION = $(shell cat $(DOCKER_LIBRARY_DIR)/nginx/VERSION 2> /dev/null)
 DOCKER_LIBRARY_POSTGRES_VERSION = $(shell cat $(DOCKER_LIBRARY_DIR)/postgres/VERSION 2> /dev/null)
+DOCKER_LIBRARY_PYTHON_BASE_VERSION = $(shell cat $(DOCKER_LIBRARY_DIR)/python-base/VERSION 2> /dev/null)
 DOCKER_LIBRARY_TOOLS_VERSION = $(shell cat $(DOCKER_LIBRARY_DIR)/tools/VERSION 2> /dev/null)
 
 COMPOSE_HTTP_TIMEOUT := $(or $(COMPOSE_HTTP_TIMEOUT), 6000)
@@ -33,7 +35,7 @@ DOCKER_CLIENT_TIMEOUT := $(or $(DOCKER_CLIENT_TIMEOUT), 6000)
 docker-config: ### Configure Docker networking
 	docker network create $(DOCKER_NETWORK) 2> /dev/null ||:
 
-docker-build docker-image: ### Build Docker image - mandatory: NAME; optional: VERSION,FROM_CACHE=true,BUILD_OPTS=[build options],NAME_AS=[new name]
+docker-build docker-image: ### Build Docker image - mandatory: NAME; optional: VERSION,FROM_CACHE=true,BUILD_OPTS=[build options],NAME_AS=[new name],EXAMPLE=true
 	if [ -d $(DOCKER_LIBRARY_DIR)/$(NAME) ] && [ -z "$(__DOCKER_BUILD)" ]; then
 		cd $(DOCKER_LIBRARY_DIR)/$(NAME)
 		make build __DOCKER_BUILD=true DOCKER_REGISTRY=$(DOCKER_LIBRARY_REGISTRY)
@@ -56,20 +58,20 @@ docker-build docker-image: ### Build Docker image - mandatory: NAME; optional: V
 	# Build
 	dir=$$(make _docker-get-dir)
 	docker build --rm \
-		--build-arg IMAGE=$$reg/$(NAME) \
+		--build-arg IMAGE=$$reg/$(NAME)$(shell [ -n "$(EXAMPLE)" ] && echo -example) \
 		--build-arg VERSION=$$(make docker-get-image-version) \
 		--build-arg BUILD_ID=$(BUILD_ID) \
 		--build-arg BUILD_DATE=$(BUILD_DATE) \
 		--build-arg BUILD_HASH=$(BUILD_HASH) \
 		--build-arg BUILD_REPO=$(BUILD_REPO) \
 		$(BUILD_OPTS) $$cache_from \
-		--file $$dir/Dockerfile.effective \
-		--tag $$reg/$(NAME):$$(make docker-get-image-version) \
+		--file $$dir/Dockerfile.$(shell [ -z "$(EXAMPLE)" ] && echo effective || echo example) \
+		--tag $$reg/$(NAME)$(shell [ -n "$(EXAMPLE)" ] && echo -example):$$(make docker-get-image-version) \
 		$$dir
 	# Tag
 	docker tag \
-		$$reg/$(NAME):$$(make docker-get-image-version) \
-		$$reg/$(NAME):latest
+		$$reg/$(NAME)$(shell [ -n "$(EXAMPLE)" ] && echo -example):$$(make docker-get-image-version) \
+		$$reg/$(NAME)$(shell [ -n "$(EXAMPLE)" ] && echo -example):latest
 	docker rmi --force $$(docker images | grep "<none>" | awk '{ print $$3 }') 2> /dev/null ||:
 	make docker-image-keep-latest-only NAME=$(NAME)
 	if [ -n "$(NAME_AS)" ]; then
@@ -81,7 +83,7 @@ docker-build docker-image: ### Build Docker image - mandatory: NAME; optional: V
 			$$reg/$(NAME_AS):latest
 		make docker-image-keep-latest-only NAME=$(NAME_AS)
 	fi
-	docker image inspect $$reg/$(NAME):latest --format='{{.Size}}'
+	docker image inspect $$reg/$(NAME)$(shell [ -n "$(EXAMPLE)" ] && echo -example):latest --format='{{.Size}}'
 
 docker-test: ### Test image - mandatory: NAME; optional: ARGS,CMD,GOSS_OPTS
 	dir=$$(make _docker-get-dir)
@@ -157,8 +159,12 @@ docker-create-dockerfile: ### Create effective Dockerfile - mandatory: NAME
 	cd $$(make _docker-get-dir)
 	cat Dockerfile $(DOCKER_LIBRARY_DIR)/Dockerfile.metadata > Dockerfile.effective
 	sed -i " \
+		s#FROM $(DOCKER_LIBRARY_REGISTRY)/elasticsearch:latest#FROM $(DOCKER_LIBRARY_REGISTRY)/elasticsearch:${DOCKER_LIBRARY_ELASTICSEARCH_VERSION}#g; \
 		s#FROM $(DOCKER_LIBRARY_REGISTRY)/nginx:latest#FROM $(DOCKER_LIBRARY_REGISTRY)/nginx:${DOCKER_LIBRARY_NGINX_VERSION}#g; \
 		s#FROM $(DOCKER_LIBRARY_REGISTRY)/postgres:latest#FROM $(DOCKER_LIBRARY_REGISTRY)/postgres:${DOCKER_LIBRARY_POSTGRES_VERSION}#g; \
+		s#FROM $(DOCKER_LIBRARY_REGISTRY)/python-app:latest#FROM $(DOCKER_LIBRARY_REGISTRY)/python-app:${DOCKER_LIBRARY_PYTHON_APP_VERSION}#g; \
+		s#FROM $(DOCKER_LIBRARY_REGISTRY)/python-base:latest#FROM $(DOCKER_LIBRARY_REGISTRY)/python-base:${DOCKER_LIBRARY_PYTHON_BASE_VERSION}#g; \
+		s#FROM $(DOCKER_LIBRARY_REGISTRY)/python:latest#FROM $(DOCKER_LIBRARY_REGISTRY)/python:${DOCKER_LIBRARY_PYTHON_VERSION}#g; \
 		s#FROM $(DOCKER_LIBRARY_REGISTRY)/tools:latest#FROM $(DOCKER_LIBRARY_REGISTRY)/tools:${DOCKER_LIBRARY_TOOLS_VERSION}#g; \
 		s#FROM alpine:latest#FROM alpine:${DOCKER_ALPINE_VERSION}#g; \
 		s#FROM elasticsearch:latest#FROM elasticsearch:${DOCKER_ELASTICSEARCH_VERSION}#g; \
@@ -204,10 +210,10 @@ docker-image-keep-latest-only: ### Remove other images than latest - mandatory: 
 			grep -v $$(docker images --filter=reference="$$reg/$(NAME):latest" --quiet) \
 	) 2> /dev/null ||:
 
-docker-image-start: ### Start container - mandatory: NAME; optional: CMD,DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file]
+docker-image-start: ### Start container - mandatory: NAME; optional: CMD,DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file],EXAMPLE=true
 	reg=$$(make _docker-get-reg)
 	docker run --interactive $(_TTY) $$(echo $(ARGS) | grep -- "--attach" > /dev/null 2>&1 && : || echo "--detach") \
-		--name $(NAME)-$(BUILD_HASH)-$(BUILD_ID) \
+		--name $(NAME)$(shell [ -n "$(EXAMPLE)" ] && echo -example)-$(BUILD_HASH)-$(BUILD_ID) \
 		--env-file <(env | grep "^AWS_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(env | grep "^TF_VAR_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(env | grep "^DB_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
@@ -221,15 +227,15 @@ docker-image-start: ### Start container - mandatory: NAME; optional: CMD,DIR,ARG
 		--network $(DOCKER_NETWORK) \
 		--workdir /project/$(shell echo $(abspath $(DIR)) | sed "s;$(PROJECT_DIR);;g") \
 		$$(echo $(ARGS) | sed -e "s/--attach//g") \
-		$$reg/$(NAME):latest \
+		$$reg/$(NAME)$(shell [ -n "$(EXAMPLE)" ] && echo -example):latest \
 		$(CMD)
 
-docker-image-stop: ### Stop container - mandatory: NAME
-	docker stop $(NAME)-$(BUILD_HASH)-$(BUILD_ID) 2> /dev/null ||:
+docker-image-stop: ### Stop container - mandatory: NAME; optional: EXAMPLE=true
+	docker stop $(NAME)$(shell [ -n "$(EXAMPLE)" ] && echo -example)-$(BUILD_HASH)-$(BUILD_ID) 2> /dev/null ||:
 	docker rm --force --volumes $(NAME)-$(BUILD_HASH)-$(BUILD_ID) 2> /dev/null ||:
 
-docker-image-log: ### Log output of a container - mandatory: NAME
-	docker logs --follow $(NAME)-$(BUILD_HASH)-$(BUILD_ID)
+docker-image-log: ### Log output of a container - mandatory: NAME; optional: EXAMPLE=true
+	docker logs --follow $(NAME)$(shell [ -n "$(EXAMPLE)" ] && echo -example)-$(BUILD_HASH)-$(BUILD_ID)
 
 docker-image-bash: ### Bash into a container - mandatory: NAME
 	docker exec --interactive $(_TTY) --user root \
@@ -242,6 +248,7 @@ docker-image-bash: ### Bash into a container - mandatory: NAME
 docker-image-clean: docker-image-stop ### Clean up container and image resources - mandatory: NAME
 	dir=$$(make _docker-get-dir)
 	reg=$$(make _docker-get-reg)
+	docker rmi --force $$(docker images --filter=reference="$$reg/$(NAME)-example:*" --quiet) 2> /dev/null ||:
 	docker rmi --force $$(docker images --filter=reference="$$reg/$(NAME):*" --quiet) 2> /dev/null ||:
 	rm -fv \
 		$$dir/.version \

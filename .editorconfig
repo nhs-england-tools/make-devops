@@ -8,7 +8,7 @@ indent_style = space
 insert_final_newline = true
 trim_trailing_whitespace = true
 
-[Dockerfile]
+[{Dockerfile,Dockerfile.}*]
 indent_size = 4
 
 [*{.mk,Makefile}]

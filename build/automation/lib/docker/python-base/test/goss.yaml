@@ -1,0 +1,15 @@
+user:
+  python:
+    exists: true
+    uid: 999
+    gid: 999
+    home: /tmp
+    shell: /bin/false
+
+file:
+  /bin/bash:
+    exists: true
+    mode: "0755"
+  /usr/local/bin/gosu:
+    exists: true
+    mode: "0755"

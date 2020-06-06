@@ -36,9 +36,10 @@ test-docker:
 		test-docker-run-pass-variables \
 		test-docker-run-do-not-pass-empty-variables \
 		test-docker-run-specify-image \
+		test-docker-elasticsearch-image \
 		test-docker-nginx-image \
 		test-docker-postgres-image \
-		test-docker-elasticsearch-image \
+		test-docker-python-base-image \
 		test-docker-tools-image \
 		test-docker-compose \
 		test-docker-compose-single-service \
@@ -350,6 +351,16 @@ test-docker-run-specify-image:
 	# assert
 	mk_test "1 -eq $$output"
 
+test-docker-elasticsearch-image:
+	# arrange
+	cd $(DOCKER_LIBRARY_DIR)/elasticsearch
+	# act
+	make build test
+	# assert
+	mk_test true
+	# clean up
+	make clean
+
 test-docker-nginx-image:
 	# arrange
 	cd $(DOCKER_LIBRARY_DIR)/nginx
@@ -370,9 +381,9 @@ test-docker-postgres-image:
 	# clean up
 	make clean
 
-test-docker-elasticsearch-image:
+test-docker-python-base-image:
 	# arrange
-	cd $(DOCKER_LIBRARY_DIR)/elasticsearch
+	cd $(DOCKER_LIBRARY_DIR)/python-base
 	# act
 	make build test
 	# assert

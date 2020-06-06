@@ -270,10 +270,14 @@ SETUP_COMPLETE_FLAG_FILE := $(TMP_DIR)/.make-devops-setup-complete
 .NOTPARALLEL:
 .ONESHELL:
 .PHONY: *
-.SHELLFLAGS := -ce
 MAKEFLAGS := --no-print-director
 PATH := /usr/local/opt/coreutils/libexec/gnubin:/usr/local/opt/findutils/libexec/gnubin:/usr/local/opt/gnu-sed/libexec/gnubin:/usr/local/opt/gnu-tar/libexec/gnubin:/usr/local/opt/grep/libexec/gnubin:/usr/local/opt/make/libexec/gnubin:$(BIN_DIR):$(PATH)
 SHELL := /bin/bash
+ifeq (true, $(shell [[ "$(DEBUG)" =~ ^(true|yes|y|on|1|TRUE|YES|Y|ON)$$ ]] && echo true))
+	.SHELLFLAGS := -cex
+else
+	.SHELLFLAGS := -ce
+endif
 
 # ==============================================================================
 # Include additional libraries and customisations
