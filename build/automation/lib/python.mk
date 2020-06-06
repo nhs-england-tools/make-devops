@@ -1,9 +1,9 @@
 PYTHON_VERSION = 3.8.2
 PYTHON_BASE_PACKAGES = \
 	awscli-local==0.6 \
-	awscli==1.18.70 \
+	awscli==1.18.74 \
 	black \
-	boto3==1.13.20 \
+	boto3==1.13.24 \
 	bpython \
 	configparser \
 	coverage \
