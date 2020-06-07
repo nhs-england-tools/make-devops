@@ -141,7 +141,7 @@ docker-push: ### Push Docker image - mandatory: NAME; optional: VERSION
 	docker push $$reg/$(NAME):latest
 
 docker-pull: ### Pull Docker image - mandatory: NAME,VERSION|TAG
-	make docker-login
+	[ $$(make _docker-is-lib-image) == false ] && make docker-login
 	reg=$$(make _docker-get-reg)
 	docker pull $$reg/$(NAME):$(or $(VERSION), $(TAG)) ||:
 
@@ -687,13 +687,17 @@ _docker-get-docker-compose-yml:
 	fi
 	echo $$yml
 
+_docker-is-lib-image:
+	[ -d $(DOCKER_LIB_IMAGE_DIR)/$(NAME) ] && echo true || echo false
+
 # ==============================================================================
 
 .SILENT: \
 	_docker-get-dir \
 	_docker-get-docker-compose-yml \
-	_docker-get-reg \
 	_docker-get-login-password \
+	_docker-get-reg \
 	_docker-get-variables-from-file \
+	_docker-is-lib-image \
 	docker-get-image-version \
 	docker-set-image-version
