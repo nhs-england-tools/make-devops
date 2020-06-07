@@ -131,6 +131,7 @@ docker-create-repository: ### Create Docker repository to store an image - manda
 	"
 
 docker-push: ### Push Docker image - mandatory: NAME; optional: VERSION
+	make docker-login
 	reg=$$(make _docker-get-reg)
 	if [ -n "$(VERSION)" ]; then
 		docker push $$reg/$(NAME):$(VERSION)
@@ -140,6 +141,7 @@ docker-push: ### Push Docker image - mandatory: NAME; optional: VERSION
 	docker push $$reg/$(NAME):latest
 
 docker-pull: ### Pull Docker image - mandatory: NAME,VERSION|TAG
+	make docker-login
 	reg=$$(make _docker-get-reg)
 	docker pull $$reg/$(NAME):$(or $(VERSION), $(TAG)) ||:
 

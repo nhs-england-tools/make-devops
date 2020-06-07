@@ -1,0 +1,19 @@
+version: "3.7"
+
+services:
+  app:
+    image: $DOCKER_REGISTRY/app:latest
+    container_name: app
+    hostname: app
+    environment:
+      PROFILE: $PROFILE
+    ports:
+      - "8443:8443"
+    networks:
+      default:
+        aliases:
+          - app.$PROJECT_NAME_SHORT.local
+networks:
+  default:
+    external:
+      name: $DOCKER_NETWORK

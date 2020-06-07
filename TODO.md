@@ -11,6 +11,10 @@
   - Add functionality to create Kubernetes deployment scripts on demand
 - Security
   - Perform security analysis using [prowler](https://github.com/toniblyx/prowler)
+- Development
+  - Provide `tdd` and `dev` targets for Python to support development workflow
+  - Implement `VERBOSE` flag to show/hide verbose script execution
+  - Issue with the JS file formatting, see [Jsx indentation conflict vscode and eslint](https://stackoverflow.com/questions/48674208/jsx-indentation-conflict-vscode-and-eslint)
 - Documentation
   - List features by module
   - Configuration of a CI/CD system, i.e. set mandatory variables
@@ -23,5 +27,4 @@
   - Add `redis` for local Amazon ElastiCache
   - Add `dynamodb` for local Amazon DynamoDB
 - Others
-  - Issue with the JS file formatting, see [Jsx indentation conflict vscode and eslint](https://stackoverflow.com/questions/48674208/jsx-indentation-conflict-vscode-and-eslint)
   - Move iTerm2 config file into the repository

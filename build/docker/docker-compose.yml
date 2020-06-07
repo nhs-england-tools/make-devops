@@ -1,5 +1,7 @@
 version: "3.7"
 
+# TODO: What's the purpose of this file?
+
 services:
   # service:
   #   image: $DOCKER_REGISTRY/service:latest

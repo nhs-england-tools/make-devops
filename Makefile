@@ -3,15 +3,7 @@ include $(abspath $(PROJECT_DIR)/build/automation/init.mk)
 
 # ==============================================================================
 
-build: project-config
-
-start: project-start
-
-stop: project-stop
-
-log: project-log
-
-# ==============================================================================
+config: project-config
 
 code-format:
 	make -s python-code-format FILES=build/automation/bin/*.py

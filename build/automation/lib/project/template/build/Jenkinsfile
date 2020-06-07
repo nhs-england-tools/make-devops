@@ -1,0 +1,50 @@
+pipeline {
+  agent {
+    label 'jenkins-slave'
+  }
+  options {
+    buildDiscarder(logRotator(numToKeepStr: '13'))
+  }
+  stages {
+    stage("Show Variables") {
+      steps {
+        script {
+          sh 'make devops-print-variables'
+        }
+      }
+    }
+    stage("Build") {
+      steps {
+        script {
+          sh 'make build'
+        }
+      }
+    }
+    stage("Test") {
+      steps {
+        script {
+          sh 'make test'
+        }
+      }
+    }
+    stage("Push") {
+      steps {
+        script {
+          sh 'make push'
+        }
+      }
+    }
+    stage("Deploy") {
+      steps {
+        script {
+          sh 'make deploy'
+        }
+      }
+    }
+  }
+  post {
+    always {
+      sh 'make clean'
+    }
+  }
+}
