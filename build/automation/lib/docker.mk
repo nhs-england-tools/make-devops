@@ -36,6 +36,7 @@ DOCKER_CLIENT_TIMEOUT := $(or $(DOCKER_CLIENT_TIMEOUT), 6000)
 docker-create-from-template: ### Create Docker image file structure - mandatory: NAME,TEMPLATE
 	rm -rf $(DOCKER_DIR)/$(NAME)
 	cp -rfv $(DOCKER_LIB_DIR)/template/$(TEMPLATE) $(DOCKER_DIR)/$(NAME)
+	export VERSION=$$(make docker-get-image-version NAME=$(TEMPLATE))
 	make -s file-replace-variables-in-dir DIR=$(DOCKER_DIR)/$(NAME)
 	find $(DOCKER_DIR)/$(NAME) -type f -name '.gitkeep' -print | xargs rm -fv
 
