@@ -22,7 +22,7 @@ jobs:
           name: Push 'elasticsearch' image
           command: |
             make docker-login DOCKER_USERNAME=$DOCKER_USERNAME DOCKER_PASSWORD=$DOCKER_PASSWORD
-            cd build/automation/lib/docker/elasticsearch
+            cd build/automation/lib/docker/image/elasticsearch
             make \
               build \
               test \
@@ -33,7 +33,7 @@ jobs:
           name: Push 'nginx' image
           command: |
             make docker-login DOCKER_USERNAME=$DOCKER_USERNAME DOCKER_PASSWORD=$DOCKER_PASSWORD
-            cd build/automation/lib/docker/nginx
+            cd build/automation/lib/docker/image/nginx
             make \
               build \
               test \
@@ -44,7 +44,7 @@ jobs:
           name: Push 'postgres' image
           command: |
             make docker-login DOCKER_USERNAME=$DOCKER_USERNAME DOCKER_PASSWORD=$DOCKER_PASSWORD
-            cd build/automation/lib/docker/postgres
+            cd build/automation/lib/docker/image/postgres
             make \
               build \
               test \
@@ -55,7 +55,7 @@ jobs:
           name: Push 'python' image
           command: |
             make docker-login DOCKER_USERNAME=$DOCKER_USERNAME DOCKER_PASSWORD=$DOCKER_PASSWORD
-            cd build/automation/lib/docker/python
+            cd build/automation/lib/docker/image/python
             make \
               build \
               test \
@@ -66,7 +66,7 @@ jobs:
           name: Push 'python-app' image
           command: |
             make docker-login DOCKER_USERNAME=$DOCKER_USERNAME DOCKER_PASSWORD=$DOCKER_PASSWORD
-            cd build/automation/lib/docker/python-app
+            cd build/automation/lib/docker/image/python-app
             make \
               build \
               test \
@@ -77,7 +77,7 @@ jobs:
           name: Push 'tools' image
           command: |
             make docker-login DOCKER_USERNAME=$DOCKER_USERNAME DOCKER_PASSWORD=$DOCKER_PASSWORD
-            cd build/automation/lib/docker/tools
+            cd build/automation/lib/docker/image/tools
             make \
               build \
               test \

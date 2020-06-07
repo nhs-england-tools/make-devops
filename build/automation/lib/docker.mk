@@ -33,10 +33,20 @@ DOCKER_CLIENT_TIMEOUT := $(or $(DOCKER_CLIENT_TIMEOUT), 6000)
 
 # ==============================================================================
 
+docker-create-from-template: ### Create Docker image file structure - mandatory: NAME,TEMPLATE
+	rm -rf $(DOCKER_DIR)/$(NAME)
+	cp -rfv $(DOCKER_LIB_DIR)/template/$(TEMPLATE) $(DOCKER_DIR)/$(NAME)
+	make -s file-replace-variables-in-dir DIR=$(DOCKER_DIR)/$(NAME)
+	find $(DOCKER_DIR)/$(NAME) -type f -name '.gitkeep' -print | xargs rm -fv
+
+# ==============================================================================
+
 docker-config: ### Configure Docker networking
 	docker network create $(DOCKER_NETWORK) 2> /dev/null ||:
 
 docker-build docker-image: ### Build Docker image - mandatory: NAME; optional: VERSION,FROM_CACHE=true,BUILD_OPTS=[build options],NAME_AS=[new name],EXAMPLE=true
+	reg=$$(make _docker-get-reg)
+	# Try to execute `make build` from the image directory
 	if [ -d $(DOCKER_LIB_IMAGE_DIR)/$(NAME) ] && [ -z "$(__DOCKER_BUILD)" ]; then
 		cd $(DOCKER_LIB_IMAGE_DIR)/$(NAME)
 		make build __DOCKER_BUILD=true DOCKER_REGISTRY=$(DOCKER_LIBRARY_REGISTRY)
@@ -44,8 +54,10 @@ docker-build docker-image: ### Build Docker image - mandatory: NAME; optional: V
 	elif [ -d $(DOCKER_CUSTOM_DIR)/$(NAME) ] && [ -z "$(__DOCKER_BUILD)" ]; then
 		cd $(DOCKER_CUSTOM_DIR)/$(NAME)
 		make build __DOCKER_BUILD=true && exit || cd $(PROJECT_DIR)
+	elif [ -d $(DOCKER_DIR)/$(NAME) ] && [ -z "$(__DOCKER_BUILD)" ]; then
+		cd $(DOCKER_DIR)/$(NAME)
+		make build __DOCKER_BUILD=true && exit || cd $(PROJECT_DIR)
 	fi
-	reg=$$(make _docker-get-reg)
 	# Dockerfile
 	make NAME=$(NAME) \
 		docker-create-dockerfile \

@@ -94,7 +94,7 @@ If you hear your teams or individuals saying _"It will take days to onboard a ne
     - Local domain names: `$(PROJECT_NAME_SHORT).local`, `$(PROJECT_NAME).local`, `$(PROJECT_NAME_SHORT)-$(PROJECT_GROUP_SHORT).local`
   - Versioning
     - Library Docker images: `YYYYmmdd` - fixed on the date of modification
-    - Application Docker images: `YYYYmmddHHMMss` - dynamic, set during the build process
+    - Application Docker images: `YYYYmmddHHMMss-hash` - dynamic, set during the build process
     - Release: `YYYYmmddHHMMss-release` - dynamic, set by the deployment process
 
 ## Guiding Principles

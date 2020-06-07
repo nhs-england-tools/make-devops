@@ -6,6 +6,7 @@ test-file:
 		test-file-remove-multiline-content \
 		test-file-replace-multiline-content \
 		test-file-replace-variables \
+		test-file-replace-variables-in-dir \
 	)
 	for test in $${tests[*]}; do
 		mk_test_initialise $$test
@@ -56,3 +57,6 @@ test-file-replace-variables:
 	mk_test "this_is_a_test = $$(cat $(TEST_FILE))"
 	# clean up
 	rm -f $(TEST_FILE)
+
+test-file-replace-variables-in-dir:
+	mk_test_skip

@@ -1,5 +1,5 @@
 PROJECT_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))/../../../../../..))
-include $(abspath $(lastword $(MAKEFILE_LIST))/../../../../../init.mk)
+include $(abspath $(PROJECT_DIR)/build/automation/init.mk)
 
 # ==============================================================================
 
@@ -29,7 +29,6 @@ run-example:
 	make docker-image-start NAME=python-app EXAMPLE=true \
 		DIR="example" \
 		ARGS=" \
-			--env APP=hello_world \
 			--publish 8443:8443 \
 			--attach \
 			--rm \

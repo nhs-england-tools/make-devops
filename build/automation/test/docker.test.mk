@@ -3,6 +3,7 @@ TEST_DOCKER_IMAGE = postgres
 test-docker:
 	make test-docker-setup
 	tests=( \
+		test-docker-create-from-template \
 		test-docker-config \
 		test-docker-build \
 		test-docker-image-name-as \
@@ -62,6 +63,9 @@ test-docker-teardown:
 	make docker-prune
 
 # ==============================================================================
+
+test-docker-create-from-template:
+	mk_test_skip
 
 test-docker-config:
 	# act

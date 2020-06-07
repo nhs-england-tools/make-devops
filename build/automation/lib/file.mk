@@ -24,3 +24,9 @@ file-replace-variables: ### Replace all variables in given file - mandatory: FIL
 			"s;$${key}_TO_REPLACE;$${value//&/\\&};g" \
 			$(FILE) ||:
 	done
+
+file-replace-variables-in-dir: ### Replace variables in all files in given directory - mandatory: DIR
+	files=($$(find $(DIR) -type f -not -path '*/\.*' -exec grep -Il '.' {} \; | xargs -L 1 echo))
+	for file in $${files[@]}; do
+		make file-replace-variables FILE=$$file
+	done
