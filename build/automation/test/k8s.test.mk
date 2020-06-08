@@ -1,6 +1,8 @@
 test-k8s:
 	make test-k8s-setup
 	tests=( \
+		test-k8s-create-base-from-template \
+		test-k8s-create-overlay-from-template \
 		test-k8s-deploy \
 		test-k8s-undeploy \
 		test-k8s-deploy-job \
@@ -25,6 +27,12 @@ test-k8s-teardown:
 	:
 
 # ==============================================================================
+
+test-k8s-create-base-from-template:
+	mk_test_skip
+
+test-k8s-create-overlay-from-template:
+	mk_test_skip
 
 test-k8s-deploy:
 	mk_test_skip

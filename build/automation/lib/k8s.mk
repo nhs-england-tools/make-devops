@@ -7,6 +7,28 @@ K8S_TTL_LENGTH = $(or $(TEXAS_K8S_TTL_LENGTH), 2 days)
 
 # ==============================================================================
 
+k8s-create-base-from-template: ### Create Kubernetes base deployment from template - optional: STACK=[name]
+	stack=$(or $(STACK), default)
+	mkdir -p $(DEPLOYMENT_DIR)/stacks/$$stack
+	cp -rfv $(LIB_DIR)/k8s/template/deployment/stacks/stack/base $(DEPLOYMENT_DIR)/stacks/$$stack
+	make -s file-replace-variables-in-dir \
+		DIR=$(DEPLOYMENT_DIR)/stacks/$$stack/base \
+		SUFFIX=_TEMPLATE_TO_REPLACE
+	find $(DEPLOYMENT_DIR)/stacks/$$stack/base -type d -name '*_TEMPLATE_TO_REPLACE' -print0 | xargs -0 rm -rf
+	cp -fv $(LIB_DIR)/k8s/template/deployment/stacks/.gitignore $(DEPLOYMENT_DIR)/stacks
+
+k8s-create-overlay-from-template: ### Create Kubernetes overlay deployment from template - mamdatory: PROFILE=[name]; optional: STACK=[name]
+	stack=$(or $(STACK), default)
+	mkdir -p $(DEPLOYMENT_DIR)/stacks/$$stack
+	cp -rfv $(LIB_DIR)/k8s/template/deployment/stacks/stack/overlays $(DEPLOYMENT_DIR)/stacks/$$stack
+	make -s file-replace-variables-in-dir \
+		DIR=$(DEPLOYMENT_DIR)/stacks/$$stack/overlays \
+		SUFFIX=_TEMPLATE_TO_REPLACE
+	find $(DEPLOYMENT_DIR)/stacks/$$stack/overlays -type d -name '*_TEMPLATE_TO_REPLACE' -print0 | xargs -0 rm -rf
+	cp -fv $(LIB_DIR)/k8s/template/deployment/stacks/.gitignore $(DEPLOYMENT_DIR)/stacks
+
+# ==============================================================================
+
 k8s-deploy: ### Deploy application to the Kubernetes cluster - mandatory: STACK=[name],PROFILE=[name]
 	# set up
 	eval "$$(make aws-assume-role-export-variables)"

@@ -1,0 +1,12 @@
+resources:
+  - namespace.yaml
+  - network-policy/deny-ingress.yaml
+  - STACK_TEMPLATE_TO_REPLACE/deployment.yaml
+  - STACK_TEMPLATE_TO_REPLACE/service.yaml
+  - STACK_TEMPLATE_TO_REPLACE/ingress.yaml
+  - STACK_TEMPLATE_TO_REPLACE/network-policy.yaml
+
+configMapGenerator:
+  - name: STACK_TEMPLATE_TO_REPLACE-configmap
+    literals:
+      - PROFILE=PROFILE_TO_REPLACE

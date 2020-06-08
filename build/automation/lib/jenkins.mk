@@ -2,6 +2,17 @@ JENKINS_JOB_NAME = $(shell echo "$(JOB_NAME)" | sed "s/[^a-zA-Z0-9]/-/g" | sed '
 JENKINS_WORKSPACE_BUCKET_NAME = $(PROJECT_GROUP_SHORT)-$(PROJECT_NAME)-jenkins-workspace
 JENKINS_WORKSPACE_BUCKET_URI = $(JENKINS_WORKSPACE_BUCKET_NAME)/$(or $(JENKINS_JOB_NAME), local)/$(BUILD_BRANCH)
 
+# ==============================================================================
+
+jenkins-create-pipline-from-template: ### Create Jenkins pipline from template
+	if [ ! -f $(PROJECT_DIR)/build/Jenkinsfile ]; then
+		cp -rfv \
+			$(LIB_DIR)/project/template/build/Jenkinsfile \
+			$(PROJECT_DIR)/build
+	fi
+
+# ==============================================================================
+
 jenkins-upload-workspace: ### Upload the project workspace to a storage - optional: ARCHIVE=true
 	# set up
 	eval "$$(make aws-assume-role-export-variables)"

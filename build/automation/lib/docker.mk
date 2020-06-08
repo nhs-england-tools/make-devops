@@ -33,7 +33,13 @@ DOCKER_CLIENT_TIMEOUT := $(or $(DOCKER_CLIENT_TIMEOUT), 6000)
 
 # ==============================================================================
 
-docker-create-from-template: ### Create Docker image file structure - mandatory: NAME,TEMPLATE
+docker-create-from-template: ### Create Docker image from template - mandatory: NAME,TEMPLATE=[library template image name]
+	mkdir -p $(DOCKER_DIR)
+	if [ ! -f $(DOCKER_DIR)/docker-compose.yml ]; then
+		cp -rfv \
+			$(PROJECT_DIR)/build/automation/lib/project/template/build/docker/docker-compose.yml \
+			$(DOCKER_DIR)
+	fi
 	rm -rf $(DOCKER_DIR)/$(NAME)
 	cp -rfv $(DOCKER_LIB_DIR)/template/$(TEMPLATE) $(DOCKER_DIR)/$(NAME)
 	export VERSION=$$(make docker-get-image-version NAME=$(TEMPLATE))
