@@ -127,15 +127,15 @@ macos-install-additional:: ## Install additional development dependencies - opti
 	brew cask $$install vanilla ||:
 	brew cask $$install vlc ||:
 	brew cask $$install wifi-explorer ||:
-	# Pinned package: vagrant
-	brew cask reinstall --force \
-		https://raw.githubusercontent.com/Homebrew/homebrew-cask/ae2a540ffee555491ccbb2cefa4296c76355ef9f/Casks/vagrant.rb ||:
-	# Pinned package: virtualbox
-	brew cask reinstall --force \
-		https://raw.githubusercontent.com/Homebrew/homebrew-cask/33de1ad39862b4d31528e62f931480c1ba8a90f8/Casks/virtualbox.rb ||:
-	# Pinned package: virtualbox-extension-pack
-	brew cask reinstall --force \
-		https://raw.githubusercontent.com/Homebrew/homebrew-cask/5a0a2b2322e35ec867f6633ca985ee485255f0b1/Casks/virtualbox-extension-pack.rb ||:
+	# # Pinned package: vagrant
+	# brew cask reinstall --force \
+	# 	https://raw.githubusercontent.com/Homebrew/homebrew-cask/ae2a540ffee555491ccbb2cefa4296c76355ef9f/Casks/vagrant.rb ||:
+	# # Pinned package: virtualbox
+	# brew cask reinstall --force \
+	# 	https://raw.githubusercontent.com/Homebrew/homebrew-cask/33de1ad39862b4d31528e62f931480c1ba8a90f8/Casks/virtualbox.rb ||:
+	# # Pinned package: virtualbox-extension-pack
+	# brew cask reinstall --force \
+	# 	https://raw.githubusercontent.com/Homebrew/homebrew-cask/5a0a2b2322e35ec867f6633ca985ee485255f0b1/Casks/virtualbox-extension-pack.rb ||:
 
 macos-install-corporate:: ## Install corporate dependencies - optional: REINSTALL=true
 	install="install"
@@ -411,9 +411,9 @@ _macos-config-visual-studio-code:
 	code --force --install-extension felixfbecker.php-debug
 	code --force --install-extension felixfbecker.php-intellisense
 	code --force --install-extension gabrielbb.vscode-lombok
+	code --force --install-extension hashicorp.terraform
 	code --force --install-extension humao.rest-client
 	code --force --install-extension johnpapa.vscode-peacock
-	code --force --install-extension mauve.terraform
 	code --force --install-extension mhutchie.git-graph
 	code --force --install-extension ms-azuretools.vscode-docker
 	code --force --install-extension ms-python.anaconda-extension-pack
@@ -481,13 +481,13 @@ _macos-config-firefox:
 		redux_devtools.xpi ||:
 
 _macos-fix-vagrant-virtualbox:
-	plugin=/opt/vagrant/embedded/gems/2.2.6/gems/vagrant-2.2.6/plugins/providers/virtualbox/plugin.rb
-	meta=/opt/vagrant/embedded/gems/2.2.6/gems/vagrant-2.2.6/plugins/providers/virtualbox/driver/meta.rb
-	if [ -f $$plugin ] && [ -f $$meta ]; then
-		sudo sed -i 's;autoload :Version_4_0, File.expand_path("../driver/version_4_0", __FILE__);autoload :Version_6_1, File.expand_path("../driver/version_6_1", __FILE__);g' $$plugin
-		sudo sed -i 's;"4.0" => Version_4_0,;"6.1" => Version_6_1,;g' $$meta
-		sudo cp $(LIB_DIR)/macos/version_6_1.rb /opt/vagrant/embedded/gems/2.2.6/gems/vagrant-2.2.6/plugins/providers/virtualbox/driver
-	fi
+	# plugin=/opt/vagrant/embedded/gems/2.2.6/gems/vagrant-2.2.6/plugins/providers/virtualbox/plugin.rb
+	# meta=/opt/vagrant/embedded/gems/2.2.6/gems/vagrant-2.2.6/plugins/providers/virtualbox/driver/meta.rb
+	# if [ -f $$plugin ] && [ -f $$meta ]; then
+	# 	sudo sed -i 's;autoload :Version_4_0, File.expand_path("../driver/version_4_0", __FILE__);autoload :Version_6_1, File.expand_path("../driver/version_6_1", __FILE__);g' $$plugin
+	# 	sudo sed -i 's;"4.0" => Version_4_0,;"6.1" => Version_6_1,;g' $$meta
+	# 	sudo cp $(LIB_DIR)/macos/version_6_1.rb /opt/vagrant/embedded/gems/2.2.6/gems/vagrant-2.2.6/plugins/providers/virtualbox/driver
+	# fi
 
 # ==============================================================================
 
