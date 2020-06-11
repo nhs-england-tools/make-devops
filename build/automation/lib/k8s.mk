@@ -220,27 +220,45 @@ k8s-job-pod: ### Get the name of the pod created by the job
 		--selector "env=$(PROFILE)" \
 		--output jsonpath='{.items..metadata.name}'
 
-k8s-job-name: ### Get the name of the job
+k8s-job-name: ### Get the name of job - return: [job name]
 	eval "$$(make k8s-kubeconfig-export-variables)"
-	echo
 	kubectl get jobs \
 		--namespace=$(K8S_JOB_NAMESPACE) \
 		--selector "env=$(PROFILE)" \
 		--output jsonpath='{.items..metadata.name}'
 
-k8s-job-failed: ### Show whether the job failed
+k8s-job-failed: ### Show whether job failed - return: [true|false]
 	eval "$$(make k8s-kubeconfig-export-variables)"
-	echo
 	kubectl get jobs $$(make -s k8s-job-name)\
 		--namespace=$(K8S_JOB_NAMESPACE) \
-		--output jsonpath='{.status.conditions[?(@.type=="Failed")].status}'
+		--output jsonpath='{.status.conditions[?(@.type=="Failed")].status}' \
+	| tr '[:upper:]' '[:lower:]'
 
-k8s-job-complete: ### Show whether the job completed
+k8s-job-complete: ### Show whether job completed - return: [true|false]
 	eval "$$(make k8s-kubeconfig-export-variables)"
-	echo
 	kubectl get jobs $$(make -s k8s-job-name)\
 		--namespace=$(K8S_JOB_NAMESPACE) \
-		--output jsonpath='{.status.conditions[?(@.type=="Complete")].status}'
+		--output jsonpath='{.status.conditions[?(@.type=="Complete")].status}' \
+	| tr '[:upper:]' '[:lower:]'
+
+k8s-wait-for-job-to-complete: ### Wait for job to complete - optional SECONDS=[number of seconds, defaults to 60]
+	seconds=$(or $(SECONDS), 60)
+	echo "Waiting for the job to complete in $$seconds seconds"
+	count=0
+	while [ $$count -lt $$seconds ]; do
+		if [ true == "$$(make -s k8s-job-failed | tr -d '\n')" ]; then
+			echo "ERROR: The job has failed"
+			exit 1
+		fi
+		if [ true == "$$(make -s k8s-job-complete | tr -d '\n')" ]; then
+			echo "The job has completed"
+			exit 0
+		fi
+		sleep 1
+		((count++))
+	done
+	echo "ERROR: The job did not complete in the given time of $$seconds seconds"
+	exit 1
 
 k8s-job: ### Show status of jobs
 	eval "$$(make k8s-kubeconfig-export-variables)"
@@ -268,24 +286,6 @@ k8s-job: ### Show status of jobs
 	echo -e "\nDisplay events"
 	kubectl get events \
 		--namespace=$(K8S_JOB_NAMESPACE)
-
-k8s-wait-for-job-to-complete: ### Wait for the job to complete
-	count=1
-	until [ $$count -gt 20 ]; do
-		if [ "$$(make -s k8s-job-failed | tr -d '\n')" == "True" ]; then
-			echo "The job has failed"
-			exit 1
-		fi
-		if [ "$$(make -s k8s-job-complete | tr -d '\n')" == "True" ]; then
-			echo "The job has completed"
-			exit 0
-		fi
-		echo "Still waiting for the job to complete"
-		sleep 5
-		((count++))
-	done
-	echo "The job has not completed, but have given up waiting."
-	exit 1
 
 # ==============================================================================
 
