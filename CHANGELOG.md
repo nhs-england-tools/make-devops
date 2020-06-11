@@ -6,6 +6,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 ## [Unreleased]
 
+## [0.7.6] - 2020-06-11
+
+### Added
+
+- `wait-for-it` script within each image
+- `ON_ERROR_STOP` flag for the `nhsd/postgres` image
+- `yq` tool
+- `nhsd/elasticsearch` image
+- `nhsd/python` image
+- `nhsd/python-app` image
+- Improved Python module functionality
+- Docker image template
+- Kubernetes deployment template
+- Project structure template
+
+### Changed
+
+- Provisioning of macOS `curl -L bit.ly/make-devops-macos | bash`
+- Installation of the project `curl -L bit.ly/make-devops-project | bash`
+
 ## [0.7.5] - 2020-05-25
 
 ### Added
@@ -296,7 +316,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 - Initial release of the DevOps automation toolchain scripts
 
-[unreleased]: https://github.com/nhsd-ddce/make-devops/compare/v0.7.5...master
+[unreleased]: https://github.com/nhsd-ddce/make-devops/compare/v0.7.6...master
+[0.7.6]: https://github.com/nhsd-ddce/make-devops/compare/v0.7.5...v0.7.6
 [0.7.5]: https://github.com/nhsd-ddce/make-devops/compare/v0.7.4...v0.7.5
 [0.7.4]: https://github.com/nhsd-ddce/make-devops/compare/v0.7.3...v0.7.4
 [0.7.3]: https://github.com/nhsd-ddce/make-devops/compare/v0.7.2...v0.7.3
