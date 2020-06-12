@@ -455,29 +455,29 @@ _macos-config-visual-studio-code:
 	code --list-extensions --show-versions
 
 _macos-config-firefox:
-	function firefox_install_extension {
-		url=$$1
-		file=$$2
-		(
-			cd ~/tmp
-			curl -L $$url --output $$file
-			mv $$file $$file.zip
-			mkdir -p $$file
-			mv $$file.zip $$file
-			cd $$file
-			unzip $$file.zip
-			id=$$(jq -r '.applications.gecko.id' manifest.json)
-			profile=$$(ls -1 ~/Library/Application\ Support/Firefox/Profiles/ | grep dev-edition-default)
-			cp $$file.zip ~/Library/Application\ Support/Firefox/Profiles/$$profile/extensions/$$id.xpi
-			cd ~/tmp
-			rm -rf $$file
-		)
-	}
-	firefox_install_extension \
-		https://addons.mozilla.org/firefox/downloads/file/3478747/react_developer_tools-4.4.0-fx.xpi \
-		react_developer_tools.xpi ||:
-	firefox_install_extension \
-		https://addons.mozilla.org/firefox/downloads/file/1509811/redux_devtools-2.17.1-fx.xpi \
+	# function firefox_install_extension {
+	# 	url=$$1
+	# 	file=$$2
+	# 	(
+	# 		cd ~/tmp
+	# 		curl -L $$url --output $$file
+	# 		mv $$file $$file.zip
+	# 		mkdir -p $$file
+	# 		mv $$file.zip $$file
+	# 		cd $$file
+	# 		unzip $$file.zip
+	# 		id=$$(jq -r '.applications.gecko.id' manifest.json)
+	# 		profile=$$(ls -1 ~/Library/Application\ Support/Firefox/Profiles/ | grep dev-edition-default)
+	# 		cp $$file.zip ~/Library/Application\ Support/Firefox/Profiles/$$profile/extensions/$$id.xpi
+	# 		cd ~/tmp
+	# 		rm -rf $$file
+	# 	)
+	# }
+	# firefox_install_extension \
+	# 	https://addons.mozilla.org/firefox/downloads/file/3478747/react_developer_tools-4.4.0-fx.xpi \
+	# 	react_developer_tools.xpi ||:
+	# firefox_install_extension \
+	# 	https://addons.mozilla.org/firefox/downloads/file/1509811/redux_devtools-2.17.1-fx.xpi \
 		redux_devtools.xpi ||:
 
 _macos-fix-vagrant-virtualbox:
