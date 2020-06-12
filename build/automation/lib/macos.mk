@@ -130,12 +130,15 @@ macos-install-additional:: ## Install additional development dependencies - opti
 	# # Pinned package: vagrant
 	# brew cask reinstall --force \
 	# 	https://raw.githubusercontent.com/Homebrew/homebrew-cask/ae2a540ffee555491ccbb2cefa4296c76355ef9f/Casks/vagrant.rb ||:
+	brew cask $$install vagrant ||:
 	# # Pinned package: virtualbox
 	# brew cask reinstall --force \
 	# 	https://raw.githubusercontent.com/Homebrew/homebrew-cask/33de1ad39862b4d31528e62f931480c1ba8a90f8/Casks/virtualbox.rb ||:
+	brew cask $$install virtualbox ||:
 	# # Pinned package: virtualbox-extension-pack
 	# brew cask reinstall --force \
 	# 	https://raw.githubusercontent.com/Homebrew/homebrew-cask/5a0a2b2322e35ec867f6633ca985ee485255f0b1/Casks/virtualbox-extension-pack.rb ||:
+	brew cask $$install virtualbox-extension-pack ||:
 
 macos-install-corporate:: ## Install corporate dependencies - optional: REINSTALL=true
 	install="install"
