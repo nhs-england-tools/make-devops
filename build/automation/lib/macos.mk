@@ -481,7 +481,7 @@ _macos-config-firefox:
 	# 	react_developer_tools.xpi ||:
 	# firefox_install_extension \
 	# 	https://addons.mozilla.org/firefox/downloads/file/1509811/redux_devtools-2.17.1-fx.xpi \
-		redux_devtools.xpi ||:
+	# 	redux_devtools.xpi ||:
 
 _macos-fix-vagrant-virtualbox:
 	# plugin=/opt/vagrant/embedded/gems/2.2.6/gems/vagrant-2.2.6/plugins/providers/virtualbox/plugin.rb

@@ -47,7 +47,7 @@ Global Git configuration
 
     git config --global user.name "Your Name"
     git config --global user.email "your.name@nhs.net"
-    git config --global branch.autosetupmerge always
+    git config --global branch.autosetupmerge false
     git config --global branch.autosetuprebase always
     git config --global commit.gpgsign true
     git config --global core.autocrlf input
