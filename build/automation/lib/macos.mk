@@ -74,7 +74,7 @@ macos-install-essential:: ## Install essential development dependencies - option
 	brew $$install pyenv ||:
 	brew $$install pyenv-virtualenv ||:
 	brew $$install pyenv-which-ext ||:
-	brew $$install python ||:
+	brew $$install python@3.8 ||:
 	brew $$install shellcheck ||:
 	brew $$install terraform ||:
 	brew $$install tmux ||:
@@ -191,7 +191,7 @@ macos-check:: ## Check if the development dependencies are installed
 	brew list pyenv ||:
 	brew list pyenv-virtualenv ||:
 	brew list pyenv-which-ext ||:
-	brew list python ||:
+	brew list python@3.8 ||:
 	brew list shellcheck ||:
 	brew list terraform ||:
 	brew list tmux ||:
@@ -315,10 +315,10 @@ _macos-config-oh-my-zsh:
 _macos-config-command-line:
 	sudo chown -R $$(id -u) $$(brew --prefix)/*
 	# configure Python
-	brew link python
+	brew link --overwrite --force python@3.8
 	rm -f $$(brew --prefix)/bin/python
 	ln $$(brew --prefix)/bin/python3 $$(brew --prefix)/bin/python
-	curl -s https://bootstrap.pypa.io/get-pip.py | sudo $$(brew --prefix)/bin/python3
+	curl -s https://bootstrap.pypa.io/get-pip.py | $$(brew --prefix)/bin/python3
 	$$(brew --prefix)/bin/pip3 install $(PYTHON_BASE_PACKAGES)
 	# configure Go
 	curl -sSL https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer | bash ||:
