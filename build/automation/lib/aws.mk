@@ -103,7 +103,7 @@ aws-iam-policy-exists: ### Check if IAM policy exists - mandatory: NAME=[policy 
 aws-iam-role-create: ### Create IAM role - mandatory: NAME=[role name],DESCRIPTION=[role description],FILE=[path to json file]
 	cp $(FILE) $(TMP_DIR_REL)/$(@).json
 	make file-replace-variables FILE=$(TMP_DIR_REL)/$(@).json
-	tags='[{"Key":"Programme","Value":"$(PROGRAMME)"},{"Key":"Service","Value":"$(TEXAS_SERVICE_TAG)"},{"Key":"Environment","Value":"$(PROFILE)"}]'
+	tags='[{"Key":"Programme","Value":"$(PROGRAMME)"},{"Key":"Service","Value":"$(SERVICE_TAG)"},{"Key":"Environment","Value":"$(PROFILE)"}]'
 	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) iam create-role \
 			--role-name $(NAME) \
@@ -150,7 +150,7 @@ aws-s3-create: ### Create secure bucket - mandatory: NAME=[bucket name]
 			--bucket $(NAME) \
 			--versioning-configuration "Status=Enabled" \
 	"
-	tags='TagSet=[{Key=Programme,Value=$(PROGRAMME)},{Key=Service,Value=$(TEXAS_SERVICE_TAG)},{Key=Environment,Value=$(PROFILE)}]'
+	tags='TagSet=[{Key=Programme,Value=$(PROGRAMME)},{Key=Service,Value=$(SERVICE_TAG)},{Key=Environment,Value=$(PROFILE)}]'
 	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) s3api put-bucket-tagging \
 			--bucket $(NAME) \

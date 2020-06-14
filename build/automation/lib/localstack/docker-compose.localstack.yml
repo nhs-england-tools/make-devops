@@ -7,11 +7,9 @@ services:
     hostname: localstack
     ports:
       - "4567-4597:4567-4597"
-      - "8080:8080"
     environment:
       - SERVICES=dynamodb,iam,s3,secretsmanager
       - DATA_DIR=$TMP_DIR/localstack/data
-      - PORT_WEB_UI=8080
       - DOCKER_HOST=unix:///var/run/docker.sock
     volumes:
       - "$TMP_DIR/localstack:/tmp/localstack"

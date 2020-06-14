@@ -113,7 +113,7 @@ devops-synchronise: ### Synchronise the DevOps automation toolchain scripts used
 	}
 	function version() {
 		cd $(PROJECT_DIR)
-		tag=$$([ -n "$$(git tag --points-at HEAD)" ] && echo $$(git tag --points-at HEAD) || echo vcommit)
+		tag=$$([ -n "$$(git tag --points-at HEAD)" ] && echo $$(git tag --points-at HEAD) || echo v$$(git show -s --format=%cd --date=format:%Y%m%d%H%M%S))
 		hash=$$(git rev-parse --short HEAD)
 		echo "$${tag:1}-$${hash}" > $(PARENT_PROJECT_DIR)/build/automation/VERSION
 	}
@@ -342,11 +342,14 @@ ifndef PROGRAMME
 $(error PROGRAMME is not set in build/automation/var/project.mk)
 endif
 
-ifndef TEXAS_SERVICE_TAG
-$(error TEXAS_SERVICE_TAG is not set in build/automation/var/project.mk)
+ifndef SERVICE_TAG
+$(error SERVICE_TAG is not set in build/automation/var/project.mk)
 endif
-ifndef TEXAS_ROLE_PREFIX
-$(error TEXAS_ROLE_PREFIX is not set in build/automation/var/project.mk)
+ifndef PROJECT_TAG
+$(error PROJECT_TAG is not set in build/automation/var/project.mk)
+endif
+ifndef ROLE_PREFIX
+$(error ROLE_PREFIX is not set in build/automation/var/project.mk)
 endif
 
 ifndef AWS_ACCOUNT_ID_LIVE_PARENT

@@ -11,7 +11,7 @@ DOCKER_COMPOSER_VERSION = 1.10.6
 DOCKER_DOTNET_VERSION = 3.1.201
 DOCKER_ELASTICSEARCH_VERSION = 7.7.0
 DOCKER_GRADLE_VERSION = 6.4.1-jdk14
-DOCKER_LOCALSTACK_VERSION = 0.11.1
+DOCKER_LOCALSTACK_VERSION = $(LOCALSTACK_VERSION)
 DOCKER_MAVEN_VERSION = 3.6.3-jdk-14
 DOCKER_NGINX_VERSION = 1.19.0-alpine
 DOCKER_NODE_VERSION = 14.4.0-alpine
@@ -128,7 +128,7 @@ docker-create-repository: ### Create Docker repository to store an image - manda
 	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) ecr create-repository \
 			--repository-name $(PROJECT_GROUP)/$(PROJECT_NAME)/$(NAME) \
-			--tags Key=Service,Value=$(TEXAS_SERVICE_TAG) \
+			--tags Key=Service,Value=$(SERVICE_TAG) \
 	"
 	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) ecr set-repository-policy \
