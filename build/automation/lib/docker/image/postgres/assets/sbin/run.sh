@@ -5,7 +5,7 @@ function run_psql() {
   [[ "$ON_ERROR_STOP" =~ ^(false|no|off|0|FALSE|NO|OFF)$ ]] && ON_ERROR_STOP=0 || ON_ERROR_STOP=1
   $trace $gosu psql \
     --set ON_ERROR_STOP=$ON_ERROR_STOP \
-    postgres://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME} \
+    postgres://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=require \
     "$@"
 }
 
@@ -13,7 +13,7 @@ if [ "sql" == "$1" ]; then
   sql="$2"
   echo "Running SQL: $sql"
   run_psql -c "$sql"
-elif [ "scripts" == "$1" ]; then
+elif [ "script" == "$1" ] || [ "scripts" == "$1" ]; then
   dir=${2:-/data}
   i=0
   for file in $dir/*; do

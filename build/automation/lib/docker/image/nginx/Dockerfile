@@ -36,6 +36,7 @@ RUN set -eux && \
     # Install base packages
     apk add --no-cache \
         bash \
+        curl \
     && \
     \
     # Configure system user
@@ -46,3 +47,10 @@ RUN set -eux && \
 WORKDIR /application
 ENTRYPOINT [ "/sbin/entrypoint.sh" ]
 EXPOSE 8080 8443
+
+HEALTHCHECK \
+    --start-period=3s \
+    --interval=7s \
+    --timeout=1s \
+    --retries=2 \
+    CMD curl --user-agent "healthcheck" --insecure --fail https://localhost:8443/ || exit 1

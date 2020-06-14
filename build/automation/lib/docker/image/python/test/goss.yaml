@@ -6,10 +6,13 @@ user:
     home: /tmp
     shell: /bin/false
 
+package:
+  bash:
+    installed: true
+  curl:
+    installed: true
+
 file:
-  /bin/bash:
-    exists: true
-    mode: "0755"
   /usr/local/bin/gosu:
     exists: true
     mode: "0755"
