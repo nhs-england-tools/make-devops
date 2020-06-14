@@ -132,6 +132,7 @@ devops-synchronise: ### Synchronise the DevOps automation toolchain scripts used
 			$(PARENT_PROJECT_DIR)/build/automation/lib/docker/postgres \
 			$(PARENT_PROJECT_DIR)/build/automation/lib/docker/tools \
 			$(PARENT_PROJECT_DIR)/build/automation/lib/fix \
+			$(PARENT_PROJECT_DIR)/build/automation/lib/k8s/template/deployment/stacks/stack/base/template/network-policy \
 			$(PARENT_PROJECT_DIR)/build/automation/var/helpers.mk.default \
 			$(PARENT_PROJECT_DIR)/build/automation/var/override.mk.default \
 			$(PARENT_PROJECT_DIR)/build/docker/Dockerfile.metadata

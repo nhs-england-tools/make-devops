@@ -13,7 +13,7 @@ project-log: ### Print log from Docker Compose
 	make docker-compose-log
 
 project-deploy: ### Deploy application service stack to the Kubernetes cluster - mandatory: PROFILE=[profile name]
-	make k8s-deploy STACK=service
+	make k8s-deploy STACK=$(or $(NAME), service)
 
 # ==============================================================================
 

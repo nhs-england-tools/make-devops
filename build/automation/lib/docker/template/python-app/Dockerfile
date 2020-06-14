@@ -1,4 +1,4 @@
-FROM nhsd/python-app:VERSION_TO_REPLACE as base
+FROM nhsd/python-app:VERSION_TEMPLATE_TO_REPLACE as base
 
 FROM base as builder
 ADD assets/application.tar.gz /application

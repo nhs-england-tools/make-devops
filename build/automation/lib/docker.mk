@@ -42,9 +42,13 @@ docker-create-from-template: ### Create Docker image from template - mandatory: 
 	fi
 	rm -rf $(DOCKER_DIR)/$(NAME)
 	cp -rfv $(DOCKER_LIB_DIR)/template/$(TEMPLATE) $(DOCKER_DIR)/$(NAME)
+	find $(DOCKER_DIR)/$(NAME) -type f -name '.gitkeep' -print | xargs rm -fv
+	# Replace template values
+	export SUFFIX=_TEMPLATE_TO_REPLACE
 	export VERSION=$$(make docker-get-image-version NAME=$(TEMPLATE))
 	make -s file-replace-variables-in-dir DIR=$(DOCKER_DIR)/$(NAME)
-	find $(DOCKER_DIR)/$(NAME) -type f -name '.gitkeep' -print | xargs rm -fv
+	make -s file-replace-variables FILE=$(DOCKER_DIR)/docker-compose.yml
+	make -s file-replace-variables FILE=Makefile
 
 # ==============================================================================
 

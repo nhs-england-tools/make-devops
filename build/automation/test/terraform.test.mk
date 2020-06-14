@@ -3,7 +3,7 @@ TF_VAR_localstack_host = $(LOCALSTACK_HOST)
 test-terraform:
 	make test-terraform-setup
 	tests=( \
-		test-terraform-export-variables-aws \
+		test-terraform-export-variables \
 		test-terraform-export-variables-from-secret \
 		test-terraform-export-variables-from-shell-vars \
 		test-terraform-export-variables-from-shell-pattern \
@@ -35,13 +35,13 @@ test-terraform-teardown:
 
 # ==============================================================================
 
-test-terraform-export-variables-aws:
+test-terraform-export-variables:
 	# arrange
 	export AWS_ACCESS_KEY_ID_test=value
 	export AWS_SECRET_ACCESS_KEY_test=value
 	export AWS_SESSION_TOKEN_test=value
 	# act
-	export=$$(make terraform-export-variables-aws)
+	export=$$(make terraform-export-variables)
 	# assert
 	count=$$(echo "$$export" | grep -E "TF_VAR_aws_[a-z_]*=value" | wc -l)
 	mk_test "3 = $$count"

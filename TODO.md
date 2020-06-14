@@ -10,7 +10,7 @@
   - Create Texas Terraform `data.tf` file
   - Create Texas Terraform `variables.tf` file
   - Create AWS RDS PostgreSQL infrastructure module
-  - Add functionality to create Kubernetes deployment scripts on demand
+  - More k8s example [network policies](https://www.stackrox.com/post/2019/04/setting-up-kubernetes-network-policies-a-detailed-guide/)
 - Security
   - Perform security analysis using [prowler](https://github.com/toniblyx/prowler)
 - Development

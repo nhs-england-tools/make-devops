@@ -1,10 +1,10 @@
 version: "3.7"
 
 services:
-  app:
-    image: $DOCKER_REGISTRY/app:latest
-    container_name: app
-    hostname: app
+  NAME_TEMPLATE_TO_REPLACE:
+    image: $DOCKER_REGISTRY/NAME_TEMPLATE_TO_REPLACE:latest
+    container_name: NAME_TEMPLATE_TO_REPLACE
+    hostname: NAME_TEMPLATE_TO_REPLACE
     environment:
       PROFILE: $PROFILE
     ports:
@@ -12,7 +12,7 @@ services:
     networks:
       default:
         aliases:
-          - app.$PROJECT_NAME_SHORT.local
+          - NAME_TEMPLATE_TO_REPLACE.$PROJECT_NAME_SHORT.local
 networks:
   default:
     external:

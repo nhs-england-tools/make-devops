@@ -10,6 +10,5 @@ K8S_JOB_NAMESPACE := $(K8S_JOB_NAMESPACE)-prod
 # ==============================================================================
 # Infrastructure variables
 
-STACKS = service
-
-TF_VAR_profile = $(PROFILE)
+DEPLOYMENT_STACKS = application
+INFRASTRUCTURE_STACKS = database
