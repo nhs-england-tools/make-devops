@@ -1,11 +1,11 @@
-FROM nginx:latest as base
+FROM node:latest as base
 ENV \
     GOSU_VERSION="1.12" \
     LANG="C.UTF-8" \
     LC_ALL="C.UTF-8" \
     SYSTEM_USER_GID="999" \
     SYSTEM_USER_UID="999" \
-    SYSTEM_USER="nginx" \
+    SYSTEM_USER="node" \
     TZ="Europe/London"
 
 FROM base as builder

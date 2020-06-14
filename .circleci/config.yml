@@ -41,6 +41,17 @@ jobs:
               clean
             curl --request POST "https://hooks.microbadger.com/images/nhsd/nginx/Yig4ioTnvCL1zCIJnBTypPLR1ic="
       - run:
+          name: Push 'node' image
+          command: |
+            make docker-login DOCKER_USERNAME=$DOCKER_USERNAME DOCKER_PASSWORD=$DOCKER_PASSWORD
+            cd build/automation/lib/docker/image/node
+            make \
+              build \
+              test \
+              push \
+              clean
+            curl --request POST "https://hooks.microbadger.com/images/nhsd/node/94ikQd3QKszS1_Y3eGlMcbt5iiI="
+      - run:
           name: Push 'postgres' image
           command: |
             make docker-login DOCKER_USERNAME=$DOCKER_USERNAME DOCKER_PASSWORD=$DOCKER_PASSWORD

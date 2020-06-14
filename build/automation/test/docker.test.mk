@@ -39,6 +39,7 @@ test-docker:
 		test-docker-run-specify-image \
 		test-docker-elasticsearch-image \
 		test-docker-nginx-image \
+		test-docker-node-image \
 		test-docker-postgres-image \
 		test-docker-python-image \
 		test-docker-python-app-image \
@@ -369,6 +370,18 @@ test-docker-elasticsearch-image:
 test-docker-nginx-image:
 	# arrange
 	cd $(DOCKER_LIB_IMAGE_DIR)/nginx
+	# act & assert
+	make build test && \
+		mk_test "main" "true" || mk_test "main" "false"
+	make build-example test-example && \
+		mk_test "example" "true" || mk_test "example" "false"
+	mk_test_complete
+	# clean up
+	make clean
+
+test-docker-node-image:
+	# arrange
+	cd $(DOCKER_LIB_IMAGE_DIR)/node
 	# act & assert
 	make build test && \
 		mk_test "main" "true" || mk_test "main" "false"

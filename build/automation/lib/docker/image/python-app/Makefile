@@ -27,8 +27,8 @@ test-example:
 
 run-example:
 	make docker-image-start NAME=python-app EXAMPLE=true \
-		DIR="example" \
 		ARGS=" \
+			--workdir /application \
 			--publish 8443:8443 \
 			--attach \
 			--rm \
