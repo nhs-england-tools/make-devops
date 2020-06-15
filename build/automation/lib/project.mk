@@ -31,6 +31,12 @@ project-create-deployment: ### Create deployment from template - mamdatory: NAME
 	make -s k8s-create-overlay-from-template STACK=$(NAME) PROFILE=$(PROFILE)
 	make project-create-profile NAME=$(PROFILE)
 
+project-create-infrastructure: ### Create infrastructure from template - mamdatory: NAME=[infrastructure name],TEMPLATE=[library template infrastructure name]
+	rm -rf $(INFRASTRUCTURE_DIR)/modules/$(TEMPLATE)
+	make -s k8s-create-module-from-template TEMPLATE=$(TEMPLATE)
+	rm -rf $(INFRASTRUCTURE_DIR)/stacks/$(NAME)
+	make -s k8s-create-stack-from-template NAME=$(NAME) TEMPLATE=$(TEMPLATE)
+
 project-create-pipline: ### Create pipline
 	make -s jenkins-create-pipline-from-template
 

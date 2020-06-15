@@ -6,6 +6,28 @@ TERRAFORM_STATE_STORE = $(or $(TEXAS_TERRAFORM_STATE_STORE), terraform-service-s
 
 # ==============================================================================
 
+k8s-create-module-from-template: ### Create Terraform module from template - mamdatory: TEMPLATE=[module template name]
+	mkdir -p $(INFRASTRUCTURE_DIR)/modules
+	if [ ! -d $(INFRASTRUCTURE_DIR)/modules/$(TEMPLATE) ]; then
+		cp -rfv \
+			$(LIB_DIR)/terraform/template/modules/$(TEMPLATE) \
+			$(INFRASTRUCTURE_DIR)/modules
+		cp -fv $(LIB_DIR)/terraform/template/.gitignore $(INFRASTRUCTURE_DIR)
+		make -s file-replace-variables-in-dir DIR=$(INFRASTRUCTURE_DIR)/modules/$(TEMPLATE) SUFFIX=_TEMPLATE_TO_REPLACE
+	fi
+
+k8s-create-stack-from-template: ### Create Terraform stack from template - mamdatory: NAME=[new stack name],TEMPLATE=[module template name]
+	mkdir -p $(INFRASTRUCTURE_DIR)/stacks
+	if [ ! -d $(INFRASTRUCTURE_DIR)/stacks/$(TEMPLATE) ]; then
+		cp -rfv \
+			$(LIB_DIR)/terraform/template/stacks/$(TEMPLATE) \
+			$(INFRASTRUCTURE_DIR)/stacks/$(NAME)
+		cp -fv $(LIB_DIR)/terraform/template/.gitignore $(INFRASTRUCTURE_DIR)
+		make -s file-replace-variables-in-dir DIR=$(INFRASTRUCTURE_DIR)/stacks/$(NAME) SUFFIX=_TEMPLATE_TO_REPLACE
+	fi
+
+# ==============================================================================
+
 terraform-apply-auto-approve: ### Set up infrastructure - mandatory: STACKS|INFRASTRUCTURE_STACKS=[comma-separated names]; optional: PROFILE=[name],INIT=false,OPTS=[Terraform options]
 	make terraform-apply \
 		STACKS="$(or $(STACKS), $(INFRASTRUCTURE_STACKS))" \
