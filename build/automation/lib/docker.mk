@@ -141,11 +141,11 @@ docker-create-repository: ### Create Docker repository to store an image - manda
 			--policy-text file://$(LIB_DIR_REL)/aws/ecr-policy.json \
 	"
 
-docker-push: ### Push Docker image - mandatory: NAME; optional: VERSION
+docker-push: ### Push Docker image - mandatory: NAME; optional: VERSION|TAG
 	make docker-login
 	reg=$$(make _docker-get-reg)
-	if [ -n "$(VERSION)" ]; then
-		docker push $$reg/$(NAME):$(VERSION)
+	if [ -n "$(or $(VERSION), $(TAG))" ]; then
+		docker push $$reg/$(NAME):$(or $(VERSION), $(TAG))
 	else
 		docker push $$reg/$(NAME):$$(make docker-get-image-version)
 	fi

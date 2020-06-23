@@ -180,6 +180,13 @@ aws-s3-exists: ### Check if bucket exists - mandatory: NAME=[bucket name]
 		2>&1 | grep -q NoSuchBucket \
 	" > /dev/null 2>&1 && echo false || echo true
 
+aws-rds-describe-instance: ### Describe RDS instance - mandatory: DB_INSTANCE
+	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
+		$(AWSCLI) rds describe-db-instances \
+			--region $(AWS_REGION) \
+			--db-instance-identifier=$(DB_INSTANCE) \
+	" | make -s docker-run-tools CMD="jq -r '.DBInstances[0]'"
+
 aws-rds-create-snapshot: ### Create RDS instance snapshot - mandatory: DB_INSTANCE,SNAPSHOT_NAME
 	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		aws rds create-db-snapshot \
@@ -300,6 +307,7 @@ _aws-elasticsearch-register-snapshot-repository: ### Register Elasticsearch snap
 	aws-ecr-get-login-password \
 	aws-iam-policy-exists \
 	aws-iam-role-exists \
+	aws-rds-describe-instance \
 	aws-rds-get-snapshot-status \
 	aws-s3-exists \
 	aws-secret-create \

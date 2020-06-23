@@ -26,9 +26,9 @@ spec:
               protocol: TCP
           resources:
             requests:
-              memory: "0Mi"
               cpu: "0m"
+              memory: "0Mi"
             limits:
-              memory: "2048Mi"
               cpu: "1000m"
+              memory: "2048Mi"
           imagePullPolicy: Always

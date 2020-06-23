@@ -4,11 +4,11 @@ module "db" {
 
   ### DB Instance ##############################################################
 
+  identifier = var.db_instance_identifier
   port       = var.db_port
   name       = var.db_name
   username   = var.db_username
   password   = var.db_password
-  identifier = var.db_instance_identifier
 
   allocated_storage     = var.db_allocated_storage
   max_allocated_storage = var.db_max_allocated_storage

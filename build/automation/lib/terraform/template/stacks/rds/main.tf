@@ -1,6 +1,6 @@
 module "rds" {
   source                     = "../../modules/rds"
-  db_instance_identifier     = var.db_instance_identifier
+  db_instance_identifier     = var.db_instance
   db_name                    = var.db_name
   db_password                = random_password.NAME_TEMPLATE_TO_REPLACE.result
   db_backup_retention_period = 0
@@ -11,7 +11,7 @@ module "rds" {
 }
 
 resource "aws_security_group" "rds_postgres_sg" {
-  name   = "${var.db_instance_identifier}-db-sg"
+  name   = "${var.db_instance}-db-sg"
   vpc_id = data.terraform_remote_state.vpc.outputs.vpc_id
   tags   = local.tags
 }
@@ -26,9 +26,9 @@ resource "aws_security_group_rule" "rds_postgres_ingress_from_eks_worker" {
 }
 
 resource "aws_secretsmanager_secret" "NAME_TEMPLATE_TO_REPLACE_password" {
-  name                    = var.db_instance_identifier
+  name                    = "${var.db_instance}/deployment"
   recovery_window_in_days = 0
-  description             = "Secrets for the DoS Test Database project (${var.db_instance_identifier})"
+  description             = "Secrets for the DoS Test Database project (${var.db_instance})"
   tags                    = local.tags
 }
 

@@ -1,8 +1,8 @@
 # ==============================================================================
 
-variable "db_instance_identifier" {}
-variable "db_name" {}
+variable "db_instance" {}
 variable "db_port" {}
+variable "db_name" {}
 variable "db_username" {}
 
 # ==============================================================================
