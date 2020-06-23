@@ -1,7 +1,5 @@
 FROM python:latest
-
 ARG PYTHON_BASE_PACKAGES
-
 ENV \
     DEBIAN_FRONTEND="noninteractive" \
     GOSU_VERSION="1.12" \
@@ -20,6 +18,7 @@ RUN set -eux && \
         ca-certificates \
         curl \
         dnsutils \
+        dpkg \
         git \
         gnupg \
         iputils-ping \
@@ -72,7 +71,6 @@ RUN set -eux && \
     \
     # Clean up
     rm -rf /tmp/* /var/tmp/* /var/lib/apt/lists/* /var/cache/apt/*
-
 COPY assets/ /
 
 ENTRYPOINT [ "/sbin/entrypoint.sh" ]

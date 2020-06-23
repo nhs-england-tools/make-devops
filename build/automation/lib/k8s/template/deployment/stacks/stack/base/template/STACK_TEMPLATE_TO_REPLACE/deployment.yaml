@@ -19,16 +19,16 @@ spec:
           readinessProbe:
             tcpSocket:
               port: 8443
-            initialDelaySeconds: 10
-            periodSeconds: 30
+            initialDelaySeconds: 3
+            periodSeconds: 7
           ports:
             - containerPort: 8443
               protocol: TCP
           resources:
             requests:
-              cpu: "0m"
-              memory: "0Mi"
+              cpu: "0.1"
+              memory: "128M"
             limits:
-              cpu: "1000m"
-              memory: "2048Mi"
+              cpu: "1"
+              memory: "2048M"
           imagePullPolicy: Always

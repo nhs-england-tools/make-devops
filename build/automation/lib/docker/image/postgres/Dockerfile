@@ -1,5 +1,4 @@
 FROM postgres:latest
-
 ENV \
     DEBIAN_FRONTEND="noninteractive" \
     GOSU_VERSION="1.12" \
@@ -17,6 +16,7 @@ RUN set -eux && \
     apt-get install --yes --no-install-recommends \
         ca-certificates \
         curl \
+        dpkg \
         gnupg \
         wget \
     && \
@@ -40,7 +40,6 @@ RUN set -eux && \
     \
     # Clean up
     rm -rf /tmp/* /var/tmp/* /var/lib/apt/lists/* /var/cache/apt/*
-
 COPY assets/ /
 
 WORKDIR /data
