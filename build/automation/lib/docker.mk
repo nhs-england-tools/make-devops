@@ -2,8 +2,8 @@ DOCKER_COMPOSE_YML = $(DOCKER_DIR)/docker-compose.yml
 DOCKER_DIR = $(PROJECT_DIR)/build/docker
 DOCKER_LIB_DIR = $(LIB_DIR)/docker
 DOCKER_LIB_IMAGE_DIR = $(LIB_DIR)/docker/image
-DOCKER_NETWORK = $(PROJECT_GROUP)/$(PROJECT_NAME)/$(BUILD_ID)
-DOCKER_REGISTRY = $(AWS_ECR)/$(PROJECT_GROUP)/$(PROJECT_NAME)
+DOCKER_NETWORK = $(PROJECT_GROUP_SHORT)/$(PROJECT_NAME_SHORT)/$(BUILD_ID)
+DOCKER_REGISTRY = $(AWS_ECR)/$(PROJECT_GROUP_SHORT)/$(PROJECT_NAME_SHORT)
 DOCKER_LIBRARY_REGISTRY = nhsd
 
 DOCKER_ALPINE_VERSION = 3.11.6
@@ -132,13 +132,15 @@ docker-login: ### Log into the Docker registry - optional: DOCKER_USERNAME,DOCKE
 docker-create-repository: ### Create Docker repository to store an image - mandatory: NAME
 	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) ecr create-repository \
-			--repository-name $(PROJECT_GROUP)/$(PROJECT_NAME)/$(NAME) \
+			--repository-name $(PROJECT_GROUP_SHORT)/$(PROJECT_NAME_SHORT)/$(NAME) \
 			--tags Key=Service,Value=$(SERVICE_TAG) \
 	"
+	cp $(LIB_DIR_REL)/aws/ecr-policy.json $(TMP_DIR_REL)/$(@).json
+	make file-replace-variables FILE=$(TMP_DIR_REL)/$(@).json
 	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) ecr set-repository-policy \
-			--repository-name $(PROJECT_GROUP)/$(PROJECT_NAME)/$(NAME) \
-			--policy-text file://$(LIB_DIR_REL)/aws/ecr-policy.json \
+			--repository-name $(PROJECT_GROUP_SHORT)/$(PROJECT_NAME_SHORT)/$(NAME) \
+			--policy-text file://$(TMP_DIR_REL)/$(@).json \
 	"
 
 docker-push: ### Push Docker image - mandatory: NAME; optional: VERSION|TAG

@@ -475,7 +475,7 @@ test-docker-compose-parallel-execution:
 	mk_test "2 -eq $$(docker ps --all --filter "name=.*-$(BUILD_ID)_[1|2]" --quiet | wc -l)"
 	# clean up
 	docker rm --force --volumes $$(docker ps --all --filter "name=.*-$(BUILD_ID)_[1|2]" --quiet) #2> /dev/null ||:
-	docker network rm $$(docker network ls --filter "name=$(PROJECT_GROUP)/$(PROJECT_NAME)/$(BUILD_ID)_[1|2]" --quiet)
+	docker network rm $$(docker network ls --filter "name=$(DOCKER_NETWORK)_[1|2]" --quiet)
 
 # ==============================================================================
 
