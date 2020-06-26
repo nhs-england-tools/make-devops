@@ -1,5 +1,0 @@
-apiVersion: extensions/v1beta1
-kind: Deployment
-metadata:
-  namespace: PROJECT_GROUP_SHORT_TO_REPLACE-PROJECT_NAME_SHORT_TO_REPLACE
-  name: sample
