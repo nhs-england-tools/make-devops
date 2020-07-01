@@ -15,7 +15,10 @@ help-project-supporting: ## Show development supporting targets
 devops-print-variables: ### Print all the variables
 	$(foreach v, $(sort $(.VARIABLES)),
 		$(if $(filter-out default automatic, $(origin $v)),
-			$(info $v=$($v) ($(value $v)))
+			$(if $(and $(patsubst %_PASSWORD,,$v), $(patsubst %_SECRET,,$v)),
+				$(info $v=$($v) ($(value $v)) [$(flavor $v),$(origin $v)]),
+				$(info $v=****** (******) [$(flavor $v),$(origin $v)])
+			)
 		)
 	)
 
