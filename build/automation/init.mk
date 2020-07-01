@@ -32,6 +32,8 @@ devops-test-suite: ### Run the DevOps unit test suite - optional: DEBUG=true
 		test-k8s \
 		test-jenkins \
 		test-python \
+		test-java \
+		test-postgres \
 		test-techradar \
 		test-project \
 	"

@@ -1,8 +1,6 @@
 PROJECT_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))/../../../../../..))
 include $(abspath $(PROJECT_DIR)/build/automation/init.mk)
 
-DOCKER_PYTHON_VERSION = $(PYTHON_VERSION)-alpine
-
 # ==============================================================================
 
 build:

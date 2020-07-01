@@ -8,7 +8,7 @@ build:
 	make docker-build NAME=nginx
 
 test:
-	make docker-test NAME=nginx CMD=bash
+	make docker-test NAME=nginx
 
 push:
 	make docker-push NAME=nginx

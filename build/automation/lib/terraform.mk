@@ -6,7 +6,7 @@ TERRAFORM_STATE_STORE = $(or $(TEXAS_TERRAFORM_STATE_STORE), terraform-service-s
 
 # ==============================================================================
 
-k8s-create-module-from-template: ### Create Terraform module from template - mamdatory: TEMPLATE=[module template name]
+terraform-create-module-from-template: ### Create Terraform module from template - mamdatory: TEMPLATE=[module template name]
 	mkdir -p $(INFRASTRUCTURE_DIR)/modules
 	if [ ! -d $(INFRASTRUCTURE_DIR)/modules/$(TEMPLATE) ]; then
 		cp -rfv \
@@ -16,7 +16,7 @@ k8s-create-module-from-template: ### Create Terraform module from template - mam
 		make -s file-replace-variables-in-dir DIR=$(INFRASTRUCTURE_DIR)/modules/$(TEMPLATE) SUFFIX=_TEMPLATE_TO_REPLACE
 	fi
 
-k8s-create-stack-from-template: ### Create Terraform stack from template - mamdatory: NAME=[new stack name],TEMPLATE=[module template name]
+terraform-create-stack-from-template: ### Create Terraform stack from template - mamdatory: NAME=[new stack name],TEMPLATE=[module template name]
 	mkdir -p $(INFRASTRUCTURE_DIR)/stacks
 	if [ ! -d $(INFRASTRUCTURE_DIR)/stacks/$(TEMPLATE) ]; then
 		cp -rfv \

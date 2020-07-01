@@ -7,52 +7,45 @@ user:
     shell: /bin/false
 
 package:
+  bash:
+    installed: true
+  bind-tools:
+    installed: true
   ca-certificates:
     installed: true
   curl:
-    installed: true
-  dnsutils:
     installed: true
   git:
     installed: true
   gnupg:
     installed: true
-  iputils-ping:
+  iputils:
     installed: true
   make:
     installed: true
   net-tools:
     installed: true
-  netcat:
-    installed: true
-  traceroute:
+  netcat-openbsd:
     installed: true
   wget:
     installed: true
-
-file:
-  /usr/local/bin/aws-iam-authenticator:
-    exists: true
-    mode: "0755"
-  /usr/local/bin/jq:
-    exists: true
-    mode: "0755"
-  /usr/local/bin/yq:
-    exists: true
-    mode: "0755"
-  /usr/local/bin/kubectl:
-    exists: true
-    mode: "0755"
-  /usr/local/bin/gosu:
-    exists: true
-    mode: "0755"
 
 command:
   pip list | grep -iE 'awscli-local.*0.6':
     exit-status: 0
   pip list | grep -iE 'awscli.*1.18':
     exit-status: 0
-  pip list | grep -iE 'boto3.*1.13':
+  pip list | grep -iE 'boto3.*1.14':
     exit-status: 0
-  pip list | grep -iE 'requests.*2.23':
+  pip list | grep -iE 'requests.*2.24':
+    exit-status: 0
+  aws-iam-authenticator version:
+    exit-status: 0
+  jq --version:
+    exit-status: 0
+  yq --version:
+    exit-status: 0
+  kubectl version | grep Client:
+    exit-status: 0
+  gosu --version:
     exit-status: 0

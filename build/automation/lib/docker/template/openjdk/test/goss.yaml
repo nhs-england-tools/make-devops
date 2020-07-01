@@ -1,5 +1,5 @@
 user:
-  python:
+  openjdk:
     exists: true
     uid: 999
     gid: 999
@@ -12,8 +12,11 @@ package:
   curl:
     installed: true
 
+file:
+  /usr/local/bin/gosu:
+    exists: true
+    mode: "0755"
+
 command:
-  gosu --version:
-    exit-status: 0
-  python --version:
+  java -version 2>&1 | grep OpenJDK:
     exit-status: 0

@@ -16,9 +16,9 @@ DOCKER_MAVEN_VERSION = 3.6.3-openjdk-$(JAVA_VERSION)-slim
 DOCKER_NGINX_VERSION = 1.19.0-alpine
 DOCKER_NODE_VERSION = 14.4.0-alpine
 DOCKER_OPENJDK_VERSION = $(JAVA_VERSION)-alpine
-DOCKER_POSTGRES_VERSION = 12.3
+DOCKER_POSTGRES_VERSION = $(POSTGRES_VERSION)-alpine
 DOCKER_PULUMI_VERSION = v2.3.0
-DOCKER_PYTHON_VERSION = $(PYTHON_VERSION)-slim
+DOCKER_PYTHON_VERSION = $(PYTHON_VERSION)-alpine
 DOCKER_TERRAFORM_VERSION = $(or $(TEXAS_TERRAFORM_VERSION), 0.12.25)
 
 DOCKER_LIBRARY_ELASTICSEARCH_VERSION = $(shell cat $(DOCKER_LIB_IMAGE_DIR)/elasticsearch/VERSION 2> /dev/null)
@@ -187,7 +187,7 @@ docker-prune: docker-clean ### Clean Docker resources - optional: ALL=true
 docker-create-dockerfile: ### Create effective Dockerfile - mandatory: NAME; optional FILE=[Dockerfile name, defaults to Dockerfile]
 	dir=$$(pwd)
 	cd $$(make _docker-get-dir)
-	cat $(or $(FILE), Dockerfile) $(DOCKER_LIB_DIR)/Dockerfile.metadata > Dockerfile.effective
+	cat $(or $(FILE), Dockerfile) $(DOCKER_LIB_DIR)/image/Dockerfile.metadata > Dockerfile.effective
 	sed -i " \
 		s#FROM $(DOCKER_LIBRARY_REGISTRY)/elasticsearch:latest#FROM $(DOCKER_LIBRARY_REGISTRY)/elasticsearch:${DOCKER_LIBRARY_ELASTICSEARCH_VERSION}#g; \
 		s#FROM $(DOCKER_LIBRARY_REGISTRY)/nginx:latest#FROM $(DOCKER_LIBRARY_REGISTRY)/nginx:${DOCKER_LIBRARY_NGINX_VERSION}#g; \

@@ -1,8 +1,4 @@
-FROM postgres:latest as base
-
-# ==============================================================================
-
-FROM base as builder
+FROM openjdk:latest AS builder
 ENV \
     GOSU_VERSION="1.12"
 
@@ -25,21 +21,33 @@ RUN set -eux && \
     gpg --batch --verify /usr/local/bin/gosu.asc /usr/local/bin/gosu && \
     gpgconf --kill all && \
     rm -rf "$GNUPGHOME" /usr/local/bin/gosu.asc && \
-    chmod +x /usr/local/bin/gosu
+    chmod +x /usr/local/bin/gosu && \
+    \
+    # Assemble and optimise a set of Java modules
+    jlink \
+        --no-header-files \
+        --no-man-pages \
+        --strip-java-debug-attributes \
+        --module-path /opt/java/openjdk/jmods \
+        --add-modules java.base,java.desktop,java.instrument,java.logging,java.management,java.naming,java.net.http,java.security.jgss \
+        --verbose \
+        --compress 2 \
+        --output /jdk
 
 # ==============================================================================
 
-FROM base
+FROM alpine:latest
 ENV \
     LANG="C.UTF-8" \
     LC_ALL="C.UTF-8" \
     SYSTEM_USER_GID="999" \
     SYSTEM_USER_UID="999" \
-    SYSTEM_USER="postgres" \
+    SYSTEM_USER="openjdk" \
     TZ="Europe/London"
 
 COPY --from=builder /usr/local/bin/gosu /usr/local/bin/gosu
-COPY assets/ /
+COPY --from=builder /jdk /opt/jdk/
+ENV PATH "/opt/jdk/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 RUN set -eux && \
     \
     # Install base packages
@@ -54,6 +62,4 @@ RUN set -eux && \
     adduser -H -D -s /bin/false -g "" -h /tmp -G $SYSTEM_USER -u $SYSTEM_USER_UID $SYSTEM_USER && \
     gosu nobody true
 
-WORKDIR /data
 ENTRYPOINT [ "/sbin/entrypoint.sh" ]
-EXPOSE 5432

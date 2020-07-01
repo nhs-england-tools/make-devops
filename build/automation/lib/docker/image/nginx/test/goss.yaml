@@ -27,6 +27,21 @@ file:
     mode: "0400"
     owner: nginx
     group: nginx
-  /usr/local/bin/gosu:
-    exists: true
-    mode: "0755"
+
+command:
+  gosu --version:
+    exit-status: 0
+
+process:
+  nginx:
+    running: true
+
+port:
+  tcp:8080:
+    listening: true
+    ip:
+      - 0.0.0.0
+  tcp:8443:
+    listening: true
+    ip:
+      - 0.0.0.0

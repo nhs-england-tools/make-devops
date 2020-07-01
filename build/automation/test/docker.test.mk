@@ -315,8 +315,8 @@ test-docker-run-tools-single-cmd:
 	# act
 	output=$$(
 		make -s docker-run-tools \
-			CMD="apt list --installed" \
-		| sed 's/\x1b\[[0-9;]*m//g' | grep -E -- '^curl/now' | wc -l)
+			CMD="cat /etc/alpine-release" \
+		| grep -Eo "[0-9]+\.[0-9]+\.[0-9]+" | wc -l)
 	# assert
 	mk_test "1 -eq $$output"
 
@@ -326,8 +326,8 @@ test-docker-run-tools-multiple-cmd:
 	# act
 	output=$$(
 		make -s docker-run-tools SH=y \
-			CMD="cat /etc/issue && apt list --installed" \
-		| sed 's/\x1b\[[0-9;]*m//g' | grep -Ei -- '^(debian gnu/linux|curl/now)' | wc -l)
+			CMD="cat /etc/alpine-release && cat /etc/alpine-release" \
+		| grep -Eo "[0-9]+\.[0-9]+\.[0-9]+" | wc -l)
 	# assert
 	mk_test "2 -eq $$output"
 

@@ -50,14 +50,19 @@ test-k8s-alb-get-ingress-endpoint:
 	mk_test_skip
 
 test-k8s-replace-variables:
+	# arrange
+	make k8s-create-base-from-template STACK=application
+	make k8s-create-overlay-from-template STACK=application PROFILE=live
 	# act
-	make k8s-replace-variables STACK=service PROFILE=live
+	make k8s-replace-variables STACK=application PROFILE=live
 	# assert
-	cbase=$$(find $(K8S_DIR)/service/base -type f -name '*.yaml' -print | grep -v '/template/' | wc -l)
-	cover=$$(find $(K8S_DIR)/service/overlays/live -type f -name '*.yaml' -print | grep -v '/template/' | wc -l)
-	mk_test "base" "5 -eq $$cbase"
+	cbase=$$(find $(K8S_DIR)/application/base -type f -name '*.yaml' -print | grep -v '/template/' | wc -l)
+	cover=$$(find $(K8S_DIR)/application/overlays/live -type f -name '*.yaml' -print | grep -v '/template/' | wc -l)
+	mk_test "base" "8 -eq $$cbase"
 	mk_test "overlays" "2 -eq $$cover"
 	mk_test_complete
+	# clean up
+	rm -rf $(K8S_DIR)/application
 
 test-k8s-get-namespace-ttl:
 	# act

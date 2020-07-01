@@ -1,9 +1,9 @@
-PYTHON_VERSION = 3.8.2
+PYTHON_VERSION = 3.8.3
 PYTHON_BASE_PACKAGES = \
 	awscli-local==0.6 \
-	awscli==1.18.74 \
+	awscli==1.18.91 \
 	black \
-	boto3==1.13.24 \
+	boto3==1.14.14 \
 	bpython \
 	configparser \
 	coverage \
@@ -12,7 +12,7 @@ PYTHON_BASE_PACKAGES = \
 	pygments \
 	pylint \
 	pyyaml \
-	requests==2.23.0
+	requests==2.24.0
 
 python-virtualenv: ### Setup Python virtual environment - optional: PYTHON_VERSION
 	brew update
