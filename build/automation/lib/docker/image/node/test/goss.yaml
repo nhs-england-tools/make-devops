@@ -16,3 +16,7 @@ file:
   /usr/local/bin/gosu:
     exists: true
     mode: "0755"
+
+command:
+  node --version:
+    exit-status: 0

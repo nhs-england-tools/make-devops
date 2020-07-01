@@ -6,16 +6,16 @@ DOCKER_NETWORK = $(PROJECT_GROUP_SHORT)/$(PROJECT_NAME_SHORT)/$(BUILD_ID)
 DOCKER_REGISTRY = $(AWS_ECR)/$(PROJECT_GROUP_SHORT)/$(PROJECT_NAME_SHORT)
 DOCKER_LIBRARY_REGISTRY = nhsd
 
-DOCKER_ALPINE_VERSION = 3.11.6
+DOCKER_ALPINE_VERSION = 3.12.0
 DOCKER_COMPOSER_VERSION = 1.10.6
 DOCKER_DOTNET_VERSION = 3.1.201
 DOCKER_ELASTICSEARCH_VERSION = 7.7.0
-DOCKER_GRADLE_VERSION = 6.4.1-jdk14
+DOCKER_GRADLE_VERSION = 6.5.0-jdk$(JAVA_VERSION)
 DOCKER_LOCALSTACK_VERSION = $(LOCALSTACK_VERSION)
-DOCKER_MAVEN_VERSION = 3.6.3-jdk-14
+DOCKER_MAVEN_VERSION = 3.6.3-openjdk-$(JAVA_VERSION)-slim
 DOCKER_NGINX_VERSION = 1.19.0-alpine
 DOCKER_NODE_VERSION = 14.4.0-alpine
-DOCKER_OPENJDK_VERSION = 14.0.1-jdk
+DOCKER_OPENJDK_VERSION = $(JAVA_VERSION)-alpine
 DOCKER_POSTGRES_VERSION = 12.3
 DOCKER_PULUMI_VERSION = v2.3.0
 DOCKER_PYTHON_VERSION = $(PYTHON_VERSION)-slim
@@ -72,7 +72,7 @@ docker-build docker-image: ### Build Docker image - mandatory: NAME; optional: V
 	fi
 	# Dockerfile
 	make NAME=$(NAME) \
-		docker-create-dockerfile \
+		docker-create-dockerfile FILE=Dockerfile$(shell [ -n "$(EXAMPLE)" ] && echo .example) \
 		docker-set-image-version VERSION=$(VERSION)
 	# Cache
 	cache_from=
@@ -90,7 +90,7 @@ docker-build docker-image: ### Build Docker image - mandatory: NAME; optional: V
 		--build-arg BUILD_HASH=$(BUILD_HASH) \
 		--build-arg BUILD_REPO=$(BUILD_REPO) \
 		$(BUILD_OPTS) $$cache_from \
-		--file $$dir/Dockerfile.$(shell [ -z "$(EXAMPLE)" ] && echo effective || echo example) \
+		--file $$dir/Dockerfile.effective \
 		--tag $$reg/$(NAME)$(shell [ -n "$(EXAMPLE)" ] && echo -example):$$(make docker-get-image-version) \
 		$$dir
 	# Tag
@@ -184,10 +184,10 @@ docker-prune: docker-clean ### Clean Docker resources - optional: ALL=true
 
 # ==============================================================================
 
-docker-create-dockerfile: ### Create effective Dockerfile - mandatory: NAME
+docker-create-dockerfile: ### Create effective Dockerfile - mandatory: NAME; optional FILE=[Dockerfile name, defaults to Dockerfile]
 	dir=$$(pwd)
 	cd $$(make _docker-get-dir)
-	cat Dockerfile $(DOCKER_LIB_DIR)/Dockerfile.metadata > Dockerfile.effective
+	cat $(or $(FILE), Dockerfile) $(DOCKER_LIB_DIR)/Dockerfile.metadata > Dockerfile.effective
 	sed -i " \
 		s#FROM $(DOCKER_LIBRARY_REGISTRY)/elasticsearch:latest#FROM $(DOCKER_LIBRARY_REGISTRY)/elasticsearch:${DOCKER_LIBRARY_ELASTICSEARCH_VERSION}#g; \
 		s#FROM $(DOCKER_LIBRARY_REGISTRY)/nginx:latest#FROM $(DOCKER_LIBRARY_REGISTRY)/nginx:${DOCKER_LIBRARY_NGINX_VERSION}#g; \
@@ -198,6 +198,8 @@ docker-create-dockerfile: ### Create effective Dockerfile - mandatory: NAME
 		s#FROM $(DOCKER_LIBRARY_REGISTRY)/tools:latest#FROM $(DOCKER_LIBRARY_REGISTRY)/tools:${DOCKER_LIBRARY_TOOLS_VERSION}#g; \
 		s#FROM alpine:latest#FROM alpine:${DOCKER_ALPINE_VERSION}#g; \
 		s#FROM elasticsearch:latest#FROM elasticsearch:${DOCKER_ELASTICSEARCH_VERSION}#g; \
+		s#FROM gradle:latest#FROM gradle:${DOCKER_GRADLE_VERSION}#g; \
+		s#FROM maven:latest#FROM maven:${DOCKER_MAVEN_VERSION}#g; \
 		s#FROM mcr.microsoft.com/dotnet/core/sdk:latest#FROM mcr.microsoft.com/dotnet/core/sdk:${DOCKER_DOTNET_VERSION}#g; \
 		s#FROM nginx:latest#FROM nginx:${DOCKER_NGINX_VERSION}#g; \
 		s#FROM node:latest#FROM node:${DOCKER_NODE_VERSION}#g; \
