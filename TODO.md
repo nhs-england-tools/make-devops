@@ -7,6 +7,7 @@
   - Make sure the `infrastructure` directory is custom and move away test files from it
   - Run `kubectl` from container
 - Infrastructure
+  - [Limit container resources](https://docs.docker.com/config/containers/resource_constraints/)
   - Create Texas Terraform `data.tf` file
   - Create Texas Terraform `variables.tf` file
   - Create AWS RDS PostgreSQL infrastructure module
