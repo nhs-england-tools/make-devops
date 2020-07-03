@@ -6,6 +6,8 @@ test-file:
 		test-file-remove-multiline-content \
 		test-file-replace-multiline-content \
 		test-file-replace-variables \
+		test-file-replace-variables-dollar \
+		test-file-replace-variables-dollar-curly-braces \
 		test-file-replace-variables-file-name \
 		test-file-replace-variables-file-name-exclude-file-name \
 		test-file-replace-variables-in-dir \
@@ -57,6 +59,28 @@ test-file-replace-variables:
 	make file-replace-variables FILE=$(TEST_FILE)
 	# assert
 	mk_test "this_is_a_test = $$(cat $(TEST_FILE))"
+	# clean up
+	rm -f $(TEST_FILE)
+
+test-file-replace-variables-dollar:
+	# arrange
+	echo 'Aaa_$$VARIABLE_TO_REPLACE_aaA' > $(TEST_FILE)
+	# act
+	export VARIABLE=this_is_a_test
+	make file-replace-variables FILE=$(TEST_FILE)
+	# assert
+	mk_test "Aaa_this_is_a_test_aaA = $$(cat $(TEST_FILE))"
+	# clean up
+	rm -f $(TEST_FILE)
+
+test-file-replace-variables-dollar-curly-braces:
+	# arrange
+	echo 'Aaa_$${VARIABLE_TO_REPLACE}_aaA' > $(TEST_FILE)
+	# act
+	export VARIABLE=this_is_a_test
+	make file-replace-variables FILE=$(TEST_FILE)
+	# assert
+	mk_test "Aaa_this_is_a_test_aaA = $$(cat $(TEST_FILE))"
 	# clean up
 	rm -f $(TEST_FILE)
 

@@ -25,6 +25,7 @@ variable "project_name" {}
 variable "project_name_short" {}
 variable "service_tag" {}
 variable "project_tag" {}
+variable "profile" {}
 
 # ==============================================================================
 # Default tags
@@ -34,5 +35,6 @@ locals {
     Programme = var.programme
     Service   = var.service_tag
     Project   = var.project_tag
+    Profile   = var.profile
   }
 }

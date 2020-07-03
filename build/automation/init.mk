@@ -264,9 +264,11 @@ APPLICATION_TEST_DIR := $(abspath $(or $(APPLICATION_TEST_DIR), $(PROJECT_DIR)/t
 CONFIG_DIR := $(abspath $(or $(CONFIG_DIR), $(PROJECT_DIR)/config))
 DATA_DIR := $(abspath $(or $(DATA_DIR), $(PROJECT_DIR)/data))
 DEPLOYMENT_DIR := $(abspath $(or $(DEPLOYMENT_DIR), $(PROJECT_DIR)/deployment))
+DEPLOYMENT_DIR_REL := $(shell echo $(DEPLOYMENT_DIR) | sed "s;$(PROJECT_DIR);;g")
 GITHOOKS_DIR := $(abspath $(ETC_DIR)/githooks)
 GITHOOKS_DIR_REL := $(shell echo $(GITHOOKS_DIR) | sed "s;$(PROJECT_DIR);;g")
 INFRASTRUCTURE_DIR := $(abspath $(or $(INFRASTRUCTURE_DIR), $(PROJECT_DIR)/infrastructure))
+INFRASTRUCTURE_DIR_REL := $(shell echo $(INFRASTRUCTURE_DIR) | sed "s;$(PROJECT_DIR);;g")
 JQ_DIR_REL := $(shell echo $(abspath $(LIB_DIR)/jq) | sed "s;$(PROJECT_DIR);;g")
 
 PROFILE := $(or $(PROFILE), local)

@@ -32,7 +32,7 @@ module "db" {
 
   ### DB Parameter Group #######################################################
 
-  family = "postgresRDS_POSTGRES_VERSION_MAJOR_TEMPLATE_TO_REPLACE"
+  family = "postgres${RDS_POSTGRES_VERSION_MAJOR_TEMPLATE_TO_REPLACE}"
   parameters = [
     {
       name         = "max_connections"

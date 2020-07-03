@@ -3,27 +3,29 @@ TERRAFORM_DIR_REL = $(shell echo $(TERRAFORM_DIR) | sed "s;$(PROJECT_DIR);;g")
 TERRAFORM_STATE_KEY = $(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)/$(PROFILE)
 TERRAFORM_STATE_LOCK = $(or $(TEXAS_TERRAFORM_STATE_LOCK), terraform-service-state-lock-$(PROFILE))
 TERRAFORM_STATE_STORE = $(or $(TEXAS_TERRAFORM_STATE_STORE), terraform-service-state-store-$(PROFILE))
+TERRAFORM_VERSION = 0.12.27
 
 # ==============================================================================
 
-terraform-create-module-from-template: ### Create Terraform module from template - mamdatory: TEMPLATE=[module template name]
-	mkdir -p $(INFRASTRUCTURE_DIR)/modules
-	if [ ! -d $(INFRASTRUCTURE_DIR)/modules/$(TEMPLATE) ]; then
+terraform-create-module-from-template: ### Create Terraform module from template - mandatory: TEMPLATE=[module template name]
+	mkdir -p $(INFRASTRUCTURE_DIR_REL)/modules
+	if [ ! -d $(INFRASTRUCTURE_DIR_REL)/modules/$(TEMPLATE) ]; then
 		cp -rfv \
-			$(LIB_DIR)/terraform/template/modules/$(TEMPLATE) \
-			$(INFRASTRUCTURE_DIR)/modules
-		cp -fv $(LIB_DIR)/terraform/template/.gitignore $(INFRASTRUCTURE_DIR)
-		make -s file-replace-variables-in-dir DIR=$(INFRASTRUCTURE_DIR)/modules/$(TEMPLATE) SUFFIX=_TEMPLATE_TO_REPLACE
+			$(LIB_DIR_REL)/terraform/template/modules/$(TEMPLATE) \
+			$(INFRASTRUCTURE_DIR_REL)/modules
+		cp -fv $(LIB_DIR_REL)/terraform/template/.gitignore $(INFRASTRUCTURE_DIR_REL)
+		make -s file-replace-variables-in-dir DIR=$(INFRASTRUCTURE_DIR_REL)/modules/$(TEMPLATE) SUFFIX=_TEMPLATE_TO_REPLACE
 	fi
 
-terraform-create-stack-from-template: ### Create Terraform stack from template - mamdatory: NAME=[new stack name],TEMPLATE=[module template name]
-	mkdir -p $(INFRASTRUCTURE_DIR)/stacks
-	if [ ! -d $(INFRASTRUCTURE_DIR)/stacks/$(TEMPLATE) ]; then
+terraform-create-stack-from-template: ### Create Terraform stack from template - mandatory: NAME|STACK=[new stack name],TEMPLATE=[module template name]
+	name=$(or $(NAME), $(STACK))
+	mkdir -p $(INFRASTRUCTURE_DIR_REL)/stacks
+	if [ ! -d $(INFRASTRUCTURE_DIR_REL)/stacks/$(TEMPLATE) ]; then
 		cp -rfv \
-			$(LIB_DIR)/terraform/template/stacks/$(TEMPLATE) \
-			$(INFRASTRUCTURE_DIR)/stacks/$(NAME)
-		cp -fv $(LIB_DIR)/terraform/template/.gitignore $(INFRASTRUCTURE_DIR)
-		make -s file-replace-variables-in-dir DIR=$(INFRASTRUCTURE_DIR)/stacks/$(NAME) SUFFIX=_TEMPLATE_TO_REPLACE
+			$(LIB_DIR_REL)/terraform/template/stacks/$(TEMPLATE) \
+			$(INFRASTRUCTURE_DIR_REL)/stacks/$$name
+		cp -fv $(LIB_DIR_REL)/terraform/template/.gitignore $(INFRASTRUCTURE_DIR_REL)
+		make -s file-replace-variables-in-dir DIR=$(INFRASTRUCTURE_DIR_REL)/stacks/$$name SUFFIX=_TEMPLATE_TO_REPLACE
 	fi
 
 # ==============================================================================

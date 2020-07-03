@@ -11,9 +11,10 @@ module "rds" {
 }
 
 resource "aws_security_group" "rds_postgres_sg" {
-  name   = "${var.db_instance}-db-sg"
-  vpc_id = data.terraform_remote_state.vpc.outputs.vpc_id
-  tags   = local.tags
+  name        = "${var.db_instance}-db-sg"
+  vpc_id      = data.terraform_remote_state.vpc.outputs.vpc_id
+  description = "Allow incoming connections to the RDS PostgreSQL instance from the Kubernetes cluster"
+  tags        = local.tags
 }
 
 resource "aws_security_group_rule" "rds_postgres_ingress_from_eks_worker" {
@@ -28,7 +29,7 @@ resource "aws_security_group_rule" "rds_postgres_ingress_from_eks_worker" {
 resource "aws_secretsmanager_secret" "NAME_TEMPLATE_TO_REPLACE_password" {
   name                    = "${var.db_instance}/deployment"
   recovery_window_in_days = 0
-  description             = "Secrets for the DoS Test Database project (${var.db_instance})"
+  description             = "Deployment secrets of the '${var.project_group}/${var.project_name}' project"
   tags                    = local.tags
 }
 

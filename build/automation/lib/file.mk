@@ -15,18 +15,25 @@ file-replace-content: ### Replace multiline content from given file - mandatory:
 	mv -f $$tmp_file $(FILE)
 	chmod $$permissions $(FILE)
 
-file-replace-variables: ### Replace all variables in given file - mandatory: FILE; optional: SUFFIX=[variable suffix, defaults to _TO_REPLACE],EXCLUDE_FILE_NAME=true
+file-replace-variables: ### Replace all placholders in given file - mandatory: FILE; optional: SUFFIX=[variable suffix, defaults to _TO_REPLACE],EXCLUDE_FILE_NAME=true
 	suffix=$(or $(SUFFIX), _TO_REPLACE)
-	echo "Replace variables in '$(FILE)'"
-	for str in $$(cat $(FILE) | grep -Eo "[A-Za-z0-9_]*$${suffix}" | sort | uniq); do
+	echo "Replace placholders in '$$(echo $(FILE) | sed "s;$(PROJECT_DIR);;g")'"
+	# Replace placholders in file content
+	for str in $$(cat $(FILE) | grep -Eo "\$$\{[A-Za-z0-9_]*$${suffix}\}|\$$[A-Za-z0-9_]*$${suffix}|[A-Za-z0-9_]*$${suffix}" | sed 's/\$$//g' | sed 's/{//g' | sed 's/}//g' | sort | uniq); do
 		key=$$(echo $$str | sed "s/$${suffix}//g")
 		value=$$(echo $$(eval echo "\$$$$key"))
-		[ -z "$$value" ] && echo "WARNING: Variable $$key has no value in '$(FILE)'" || \
-			sed -i \
-				"s;$${key}$${suffix};$${value//&/\\&};g" \
-				$(FILE) \
-			||:
+		if [ -z "$$value" ]; then
+			echo "WARNING: Variable $$key has no value in '$$(echo $(FILE) | sed "s;$(PROJECT_DIR);;g")'"
+		else
+			# Replace `${VARIABLE_TO_REPLACE}`
+			sed -i "s;\$${$${key}$${suffix}};$${value//&/\\&};g" $(FILE)
+			# Replace `$VARIABLE_TO_REPLACE`
+			sed -i "s;\$$$${key}$${suffix};$${value//&/\\&};g" $(FILE)
+			# Replace `VARIABLE_TO_REPLACE`
+			sed -i "s;$${key}$${suffix};$${value//&/\\&};g" $(FILE)
+		fi
 	done
+	# Replace placholders in file name
 	if [[ ! "$(EXCLUDE_FILE_NAME)" =~ ^(true|yes|y|on|1|TRUE|YES|Y|ON)$$ ]] && [[ $(FILE) == *"$${suffix}"* ]]; then
 		file=$(FILE)
 		for str in $$(echo $(FILE) | grep -Eo "[A-Za-z0-9_]*$${suffix}" | sort | uniq); do
@@ -34,14 +41,14 @@ file-replace-variables: ### Replace all variables in given file - mandatory: FIL
 			value=$$(echo $$(eval echo "\$$$$key"))
 			file=$$(echo $$file | sed "s;$${key}$${suffix};$${value};g")
 		done
-		echo "Rename file '$(FILE)' to '$$file'"
+		echo "Rename file '$$(echo $(FILE) | sed "s;$(PROJECT_DIR);;g")' to '$$file'"
 		[ -z "$$value" ] && echo "WARNING: Variable $$key has no value for '$(FILE)'" || ( \
 			mkdir -p $$(dirname $$file)
 			mv -f $(FILE) $$file
 		)
 	fi
 
-file-replace-variables-in-dir: ### Replace variables in all files in given directory - mandatory: DIR; optional: SUFFIX=[variable suffix, defaults to _TO_REPLACE],EXCLUDE_FILE_NAME=true
+file-replace-variables-in-dir: ### Replace placholders in all files in given directory - mandatory: DIR; optional: SUFFIX=[variable suffix, defaults to _TO_REPLACE],EXCLUDE_FILE_NAME=true
 	files=($$(find $(DIR) -type f -exec grep -Il '.' {} \; | xargs -L 1 echo))
 	for file in $${files[@]}; do
 		make file-replace-variables FILE=$$file SUFFIX=$(SUFFIX) EXCLUDE_FILE_NAME=$(EXCLUDE_FILE_NAME)
