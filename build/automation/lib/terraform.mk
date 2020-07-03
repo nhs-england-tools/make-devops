@@ -28,41 +28,41 @@ terraform-create-stack-from-template: ### Create Terraform stack from template -
 
 # ==============================================================================
 
-terraform-apply-auto-approve: ### Set up infrastructure - mandatory: STACKS|INFRASTRUCTURE_STACKS=[comma-separated names]; optional: PROFILE=[name],INIT=false,OPTS=[Terraform options]
+terraform-apply-auto-approve: ### Set up infrastructure - mandatory: STACK|STACKS|INFRASTRUCTURE_STACKS=[comma-separated names]; optional: PROFILE=[name],INIT=false,OPTS=[Terraform options]
 	make terraform-apply \
-		STACKS="$(or $(STACKS), $(INFRASTRUCTURE_STACKS))" \
+		STACKS="$(or $(STACK), $(or $(STACKS), $(INFRASTRUCTURE_STACKS)))" \
 		CMD="apply" \
 		OPTS="-auto-approve $(OPTS)"
 
-terraform-apply: ### Set up infrastructure - mandatory: STACKS|INFRASTRUCTURE_STACKS=[comma-separated names]; optional: PROFILE=[name],INIT=false,OPTS=[Terraform options]
+terraform-apply: ### Set up infrastructure - mandatory: STACK|STACKS|INFRASTRUCTURE_STACKS=[comma-separated names]; optional: PROFILE=[name],INIT=false,OPTS=[Terraform options]
 	make _terraform-stacks \
-		STACKS="$(or $(STACKS), $(INFRASTRUCTURE_STACKS))" \
+		STACKS="$(or $(STACK), $(or $(STACKS), $(INFRASTRUCTURE_STACKS)))" \
 		CMD="apply $(OPTS)"
 
-terraform-destroy-auto-approve: ### Tear down infrastructure - mandatory: STACKS|INFRASTRUCTURE_STACKS=[comma-separated names]; optional: PROFILE=[name],INIT=false,OPTS=[Terraform options]
+terraform-destroy-auto-approve: ### Tear down infrastructure - mandatory: STACK|STACKS|INFRASTRUCTURE_STACKS=[comma-separated names]; optional: PROFILE=[name],INIT=false,OPTS=[Terraform options]
 	make terraform-destroy \
-		STACKS="$(or $(STACKS), $(INFRASTRUCTURE_STACKS))" \
+		STACKS="$(or $(STACK), $(or $(STACKS), $(INFRASTRUCTURE_STACKS)))" \
 		CMD="destroy" \
 		OPTS="-auto-approve $(OPTS)"
 
-terraform-destroy: ### Tear down infrastructure - mandatory: STACKS|INFRASTRUCTURE_STACKS=[comma-separated names]; optional: PROFILE=[name],INIT=false,OPTS=[Terraform options]
+terraform-destroy: ### Tear down infrastructure - mandatory: STACK|STACKS|INFRASTRUCTURE_STACKS=[comma-separated names]; optional: PROFILE=[name],INIT=false,OPTS=[Terraform options]
 	make _terraform-stacks \
-		STACKS="$(or $(STACKS), $(INFRASTRUCTURE_STACKS))" \
+		STACKS="$(or $(STACK), $(or $(STACKS), $(INFRASTRUCTURE_STACKS)))" \
 		CMD="destroy $(OPTS)"
 
-terraform-plan: ### Show plan - mandatory: STACKS|INFRASTRUCTURE_STACKS=[comma-separated names]; optional: PROFILE=[name],INIT=false,OPTS=[Terraform options]
+terraform-plan: ### Show plan - mandatory: STACK|STACKS|INFRASTRUCTURE_STACKS=[comma-separated names]; optional: PROFILE=[name],INIT=false,OPTS=[Terraform options]
 	make _terraform-stacks \
-		STACKS="$(or $(STACKS), $(INFRASTRUCTURE_STACKS))" \
+		STACKS="$(or $(STACK), $(or $(STACKS), $(INFRASTRUCTURE_STACKS)))" \
 		CMD="plan $(OPTS)"
 
-terraform-show: ### Show state - mandatory: STACKS|INFRASTRUCTURE_STACKS=[comma-separated names]; optional: PROFILE=[name],INIT=false,OPTS=[Terraform options]
+terraform-show: ### Show state - mandatory: STACK|STACKS|INFRASTRUCTURE_STACKS=[comma-separated names]; optional: PROFILE=[name],INIT=false,OPTS=[Terraform options]
 	make _terraform-stacks \
-		STACKS="$(or $(STACKS), $(INFRASTRUCTURE_STACKS))" \
+		STACKS="$(or $(STACK), $(or $(STACKS), $(INFRASTRUCTURE_STACKS)))" \
 		CMD="show"
 
-terraform-unlock: ### Remove state lock - mandatory: STACKS|INFRASTRUCTURE_STACKS=[comma-separated names],ID=[lock ID]; optional: PROFILE=[name],INIT=false,OPTS=-force
+terraform-unlock: ### Remove state lock - mandatory: STACK|STACKS|INFRASTRUCTURE_STACKS=[comma-separated names],ID=[lock ID]; optional: PROFILE=[name],INIT=false,OPTS=-force
 	make _terraform-stacks \
-		STACKS="$(or $(STACKS), $(INFRASTRUCTURE_STACKS))" \
+		STACKS="$(or $(STACK), $(or $(STACKS), $(INFRASTRUCTURE_STACKS)))" \
 		CMD="force-unlock $(ID) $(OPTS)"
 
 terraform-fmt: ### Format Terraform code - optional: DIR,OPTS=[Terraform options]
@@ -73,11 +73,11 @@ terraform-clean: ### Clean Terraform files
 	find $(TERRAFORM_DIR) -type d -name '.terraform' -print0 | xargs -0 rm -rfv
 	find $(TERRAFORM_DIR) -type f -name '*terraform.tfstate*' -print0 | xargs -0 rm -rfv
 
-terraform-delete-state: ### Delete the Terraform state - mandatory: STACKS|INFRASTRUCTURE_STACKS=[comma-separated names]; optional: PROFILE=[name]
+terraform-delete-state: ### Delete the Terraform state - mandatory: STACK|STACKS|INFRASTRUCTURE_STACKS=[comma-separated names]; optional: PROFILE=[name]
 	# set up
 	eval "$$(make aws-assume-role-export-variables)"
 	# delete state
-	for stack in $$(echo $(or $(STACKS), $(INFRASTRUCTURE_STACKS)) | tr "," "\n"); do
+	for stack in $$(echo $(or $(STACK), $(or $(STACKS), $(INFRASTRUCTURE_STACKS))) | tr "," "\n"); do
 		make _terraform-delete-state-store STACK="$$stack"
 		make _terraform-delete-state-lock STACK="$$stack"
 	done
@@ -121,12 +121,12 @@ terraform-export-variables-from-json: ### Convert JSON to Terraform input export
 
 # ==============================================================================
 
-_terraform-stacks: ### Set up infrastructure for a given list of stacks - mandatory: STACKS|INFRASTRUCTURE_STACKS=[comma-separated names],CMD=[Terraform command]; optional: INIT=false,PROFILE=[name]
+_terraform-stacks: ### Set up infrastructure for a given list of stacks - mandatory: STACK|STACKS|INFRASTRUCTURE_STACKS=[comma-separated names],CMD=[Terraform command]; optional: INIT=false,PROFILE=[name]
 	# set up
 	eval "$$(make aws-assume-role-export-variables)"
 	eval "$$(make terraform-export-variables)"
 	# run stacks
-	for stack in $$(echo $(or $(STACKS), $(INFRASTRUCTURE_STACKS)) | tr "," "\n"); do
+	for stack in $$(echo $(or $(STACK), $(or $(STACKS), $(INFRASTRUCTURE_STACKS))) | tr "," "\n"); do
 		make _terraform-stack STACK="$$stack" CMD="$(CMD)"
 	done
 

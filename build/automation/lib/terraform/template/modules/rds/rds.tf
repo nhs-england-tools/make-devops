@@ -13,7 +13,7 @@ module "db" {
   allocated_storage     = var.db_allocated_storage
   max_allocated_storage = var.db_max_allocated_storage
   engine                = "postgres"
-  engine_version        = "12.2"
+  engine_version        = "RDS_POSTGRES_VERSION_TEMPLATE_TO_REPLACE"
   instance_class        = var.db_instance_class
   storage_encrypted     = true
 
@@ -32,7 +32,7 @@ module "db" {
 
   ### DB Parameter Group #######################################################
 
-  family = "postgres12"
+  family = "postgresRDS_POSTGRES_VERSION_MAJOR_TEMPLATE_TO_REPLACE"
   parameters = [
     {
       name         = "max_connections"
@@ -63,7 +63,7 @@ module "db" {
 
   ### DB Option Group ##########################################################
 
-  major_engine_version = "12"
+  major_engine_version = "RDS_POSTGRES_VERSION_MAJOR_TEMPLATE_TO_REPLACE"
   options = [
   ]
 

@@ -131,6 +131,7 @@ devops-synchronise: ### Synchronise the DevOps automation toolchain scripts used
 			~/bin/texas-mfa-clear.sh \
 			~/bin/toggle-natural-scrolling.sh \
 			$(PARENT_PROJECT_DIR)/build/automation/bin/markdown.pl \
+			$(PARENT_PROJECT_DIR)/build/automation/etc/githooks/scripts/*.default \
 			$(PARENT_PROJECT_DIR)/build/automation/etc/platform-texas* \
 			$(PARENT_PROJECT_DIR)/build/automation/lib/dev.mk \
 			$(PARENT_PROJECT_DIR)/build/automation/lib/docker/nginx \
@@ -263,7 +264,8 @@ APPLICATION_TEST_DIR := $(abspath $(or $(APPLICATION_TEST_DIR), $(PROJECT_DIR)/t
 CONFIG_DIR := $(abspath $(or $(CONFIG_DIR), $(PROJECT_DIR)/config))
 DATA_DIR := $(abspath $(or $(DATA_DIR), $(PROJECT_DIR)/data))
 DEPLOYMENT_DIR := $(abspath $(or $(DEPLOYMENT_DIR), $(PROJECT_DIR)/deployment))
-GITHOOKS_DIR_REL := $(shell echo $(abspath $(ETC_DIR)/githooks) | sed "s;$(PROJECT_DIR);;g")
+GITHOOKS_DIR := $(abspath $(ETC_DIR)/githooks)
+GITHOOKS_DIR_REL := $(shell echo $(GITHOOKS_DIR) | sed "s;$(PROJECT_DIR);;g")
 INFRASTRUCTURE_DIR := $(abspath $(or $(INFRASTRUCTURE_DIR), $(PROJECT_DIR)/infrastructure))
 JQ_DIR_REL := $(shell echo $(abspath $(LIB_DIR)/jq) | sed "s;$(PROJECT_DIR);;g")
 

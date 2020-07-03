@@ -1,4 +1,5 @@
 # ==============================================================================
+# User variables
 
 variable "db_instance" {}
 variable "db_port" {}
@@ -6,6 +7,7 @@ variable "db_name" {}
 variable "db_username" {}
 
 # ==============================================================================
+# Variables set by the Make DevOps automation scripts
 
 variable "terraform_platform_state_store" {}
 variable "vpc_terraform_state_key" {}
@@ -25,6 +27,7 @@ variable "service_tag" {}
 variable "project_tag" {}
 
 # ==============================================================================
+# Default tags
 
 locals {
   tags = {
