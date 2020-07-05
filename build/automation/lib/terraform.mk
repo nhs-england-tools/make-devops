@@ -8,6 +8,7 @@ TERRAFORM_VERSION = 0.12.27
 # ==============================================================================
 
 terraform-create-module-from-template: ### Create Terraform module from template - mandatory: TEMPLATE=[module template name]
+	rm -rf $(INFRASTRUCTURE_DIR)/modules/$(TEMPLATE)
 	mkdir -p $(INFRASTRUCTURE_DIR_REL)/modules
 	if [ ! -d $(INFRASTRUCTURE_DIR_REL)/modules/$(TEMPLATE) ]; then
 		cp -rfv \
@@ -17,15 +18,15 @@ terraform-create-module-from-template: ### Create Terraform module from template
 		make -s file-replace-variables-in-dir DIR=$(INFRASTRUCTURE_DIR_REL)/modules/$(TEMPLATE) SUFFIX=_TEMPLATE_TO_REPLACE
 	fi
 
-terraform-create-stack-from-template: ### Create Terraform stack from template - mandatory: NAME|STACK=[new stack name],TEMPLATE=[module template name]
-	name=$(or $(NAME), $(STACK))
+terraform-create-stack-from-template: ### Create Terraform stack from template - mandatory: STACK=[new stack name],TEMPLATE=[module template name]
+	rm -rf $(INFRASTRUCTURE_DIR)/stacks/$(STACK)
 	mkdir -p $(INFRASTRUCTURE_DIR_REL)/stacks
 	if [ ! -d $(INFRASTRUCTURE_DIR_REL)/stacks/$(TEMPLATE) ]; then
 		cp -rfv \
 			$(LIB_DIR_REL)/terraform/template/stacks/$(TEMPLATE) \
-			$(INFRASTRUCTURE_DIR_REL)/stacks/$$name
+			$(INFRASTRUCTURE_DIR_REL)/stacks/$(STACK)
 		cp -fv $(LIB_DIR_REL)/terraform/template/.gitignore $(INFRASTRUCTURE_DIR_REL)
-		make -s file-replace-variables-in-dir DIR=$(INFRASTRUCTURE_DIR_REL)/stacks/$$name SUFFIX=_TEMPLATE_TO_REPLACE
+		make -s file-replace-variables-in-dir DIR=$(INFRASTRUCTURE_DIR_REL)/stacks/$(STACK) SUFFIX=_TEMPLATE_TO_REPLACE
 	fi
 
 # ==============================================================================
@@ -57,10 +58,15 @@ terraform-plan: ### Show plan - mandatory: STACK|STACKS|INFRASTRUCTURE_STACKS=[c
 		STACKS="$(or $(STACK), $(or $(STACKS), $(INFRASTRUCTURE_STACKS)))" \
 		CMD="plan $(OPTS)"
 
-terraform-show: ### Show state - mandatory: STACK|STACKS|INFRASTRUCTURE_STACKS=[comma-separated names]; optional: PROFILE=[name],INIT=false,OPTS=[Terraform options]
-	make _terraform-stacks \
+terraform-output: ### Extract output variables - mandatory: STACK|STACKS|INFRASTRUCTURE_STACKS=[comma-separated names]; optional: PROFILE=[name],INIT=false,OPTS=[Terraform options]
+	make -s _terraform-stacks \
 		STACKS="$(or $(STACK), $(or $(STACKS), $(INFRASTRUCTURE_STACKS)))" \
-		CMD="show"
+		CMD="output $(OPTS)"
+
+terraform-show: ### Show state - mandatory: STACK|STACKS|INFRASTRUCTURE_STACKS=[comma-separated names]; optional: PROFILE=[name],INIT=false,OPTS=[Terraform options]
+	make -s _terraform-stacks \
+		STACKS="$(or $(STACK), $(or $(STACKS), $(INFRASTRUCTURE_STACKS)))" \
+		CMD="show $(OPTS)"
 
 terraform-unlock: ### Remove state lock - mandatory: STACK|STACKS|INFRASTRUCTURE_STACKS=[comma-separated names],ID=[lock ID]; optional: PROFILE=[name],INIT=false,OPTS=-force
 	make _terraform-stacks \
@@ -173,4 +179,6 @@ _terraform-delete-state-lock: ### Delete Terraform state lock - mandatory: STACK
 	terraform-export-variables \
 	terraform-export-variables-from-json \
 	terraform-export-variables-from-secret \
-	terraform-export-variables-from-shell
+	terraform-export-variables-from-shell \
+	terraform-output \
+	terraform-show

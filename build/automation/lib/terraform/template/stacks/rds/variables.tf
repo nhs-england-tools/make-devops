@@ -1,40 +1,19 @@
 # ==============================================================================
 # User variables
 
-variable "db_instance" {}
-variable "db_port" {}
-variable "db_name" {}
-variable "db_username" {}
-
-# ==============================================================================
-# Variables set by the Make DevOps automation scripts
-
-variable "terraform_platform_state_store" {}
-variable "vpc_terraform_state_key" {}
-variable "security_groups_k8s_terraform_state_key" {}
-
-variable "aws_account_id" {}
-variable "aws_account_name" {}
-variable "aws_region" {}
-variable "aws_profile" {}
-
-variable "programme" {}
-variable "project_group" {}
-variable "project_group_short" {}
-variable "project_name" {}
-variable "project_name_short" {}
-variable "service_tag" {}
-variable "project_tag" {}
-variable "profile" {}
-
-# ==============================================================================
-# Default tags
-
-locals {
-  tags = {
-    Programme = var.programme
-    Service   = var.service_tag
-    Project   = var.project_tag
-    Profile   = var.profile
-  }
+variable "db_instance" {
+  description = "The DB instance identifier name"
+  default     = "test"
+}
+variable "db_port" {
+  description = "The DB instance port number"
+  default     = 5432
+}
+variable "db_name" {
+  description = "The DB instance schema name"
+  default     = "postgres"
+}
+variable "db_username" {
+  description = "The DB instance user name"
+  default     = "postgres"
 }

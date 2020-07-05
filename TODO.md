@@ -8,9 +8,7 @@
   - Run `kubectl` from container
 - Infrastructure
   - [Limit container resources](https://docs.docker.com/config/containers/resource_constraints/)
-  - Create Texas Terraform `data.tf` file
-  - Create Texas Terraform `variables.tf` file
-  - Create AWS RDS PostgreSQL infrastructure module
+  - [Decouple data](https://www.terraform.io/docs/modules/composition.html)
   - More k8s example [network policies](https://www.stackrox.com/post/2019/04/setting-up-kubernetes-network-policies-a-detailed-guide/)
 - Security
   - Perform security analysis using [prowler](https://github.com/toniblyx/prowler)

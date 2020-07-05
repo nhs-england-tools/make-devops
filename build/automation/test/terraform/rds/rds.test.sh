@@ -14,7 +14,8 @@ HEREDOC
 make terraform-apply-auto-approve STACK=database PROFILE=dev
 
 # Assert
-make terraform-plan STACK=database PROFILE=dev
+make terraform-output STACK=database PROFILE=dev INIT=false OPTS="-json"
+make terraform-show STACK=database PROFILE=dev INIT=false OPTS="-json"
 
 # Clean up
 make terraform-destroy-auto-approve STACK=database PROFILE=dev

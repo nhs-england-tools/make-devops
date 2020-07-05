@@ -23,19 +23,15 @@ project-create-profile: ### Create profile file - mandatory: NAME=[profile name]
 project-create-image: ### Create image from template - mandatory: NAME=[image name],TEMPLATE=[library template image name]
 	make -s docker-create-from-template NAME=$(NAME) TEMPLATE=$(TEMPLATE)
 
-project-create-deployment: ### Create deployment from template - mandatory: NAME|STACK=[deployment name],PROFILE=[profile name]
-	name=$(or $(NAME), $(STACK))
-	rm -rf $(DEPLOYMENT_DIR)/stacks/$$name
-	make -s k8s-create-base-from-template STACK=$$name
-	make -s k8s-create-overlay-from-template STACK=$$name PROFILE=$(PROFILE)
+project-create-deployment: ### Create deployment from template - mandatory: STACK=[deployment name],PROFILE=[profile name]
+	rm -rf $(DEPLOYMENT_DIR)/stacks/$(STACK)
+	make -s k8s-create-base-from-template STACK=$(STACK)
+	make -s k8s-create-overlay-from-template STACK=$(STACK) PROFILE=$(PROFILE)
 	make project-create-profile NAME=$(PROFILE)
 
-project-create-infrastructure: ### Create infrastructure from template - mandatory: NAME|STACK=[infrastructure name],TEMPLATE=[library template infrastructure name]
-	name=$(or $(NAME), $(STACK))
-	rm -rf $(INFRASTRUCTURE_DIR)/modules/$(TEMPLATE)
+project-create-infrastructure: ### Create infrastructure from template - mandatory: STACK=[infrastructure name],TEMPLATE=[library template infrastructure name]
 	make -s terraform-create-module-from-template TEMPLATE=$(TEMPLATE)
-	rm -rf $(INFRASTRUCTURE_DIR)/stacks/$$name
-	make -s terraform-create-stack-from-template NAME=$$name TEMPLATE=$(TEMPLATE)
+	make -s terraform-create-stack-from-template NAME=$(STACK) TEMPLATE=$(TEMPLATE)
 
 project-create-pipline: ### Create pipline
 	make -s jenkins-create-pipline-from-template
