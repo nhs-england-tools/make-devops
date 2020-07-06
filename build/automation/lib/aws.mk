@@ -19,7 +19,7 @@ aws-assume-role-export-variables: ### Get assume role export for the Jenkins use
 		echo "export AWS_SESSION_TOKEN=$${array[2]}"
 	fi
 
-aws-account-check-id: ### Checked if user has MFA'd into the account - mandatory: ID; returns: true|false
+aws-account-check-id: ### Checked if user has MFA'd into the account - mandatory: ID; return: true|false
 	if [ $(ID) == "$$(make aws-account-get-id)" ] && [ "$$TEXAS_SESSION_EXPIRY_TIME" -gt $$(date -u +"%Y%m%d%H%M%S") ]; then
 		echo true
 	else
@@ -74,7 +74,7 @@ aws-secret-get-and-format: ### Get secret - mandatory: NAME=[secret name]; optio
 	make aws-secret-get NAME=$(NAME) \
 		| make -s docker-run-tools CMD="jq -r"
 
-aws-secret-exists: ### Check if secret exists - mandatory: NAME=[secret name]; optional: AWS_REGION=[AWS region]; returns: true|false
+aws-secret-exists: ### Check if secret exists - mandatory: NAME=[secret name]; optional: AWS_REGION=[AWS region]; return: true|false
 	count=$$(make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) secretsmanager list-secrets \
 			--region $(AWS_REGION) \
@@ -94,7 +94,7 @@ aws-iam-policy-create: ### Create IAM policy - mandatory: NAME=[policy name],DES
 	"
 	rm $(TMP_DIR_REL)/$(@).json
 
-aws-iam-policy-exists: ### Check if IAM policy exists - mandatory: NAME=[policy name]; returns: true|false
+aws-iam-policy-exists: ### Check if IAM policy exists - mandatory: NAME=[policy name]; return: true|false
 	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) iam get-policy \
 			--policy-arn arn:aws:iam::$(AWS_ACCOUNT_ID):policy/$(NAME) \
@@ -113,7 +113,7 @@ aws-iam-role-create: ### Create IAM role - mandatory: NAME=[role name],DESCRIPTI
 	"
 	rm $(TMP_DIR_REL)/$(@).json
 
-aws-iam-role-exists: ### Check if IAM role exists - mandatory: NAME=[role name]; returns: true|false
+aws-iam-role-exists: ### Check if IAM role exists - mandatory: NAME=[role name]; return: true|false
 	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) iam get-role \
 			--role-name $(NAME) \

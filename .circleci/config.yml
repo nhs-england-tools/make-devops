@@ -21,6 +21,7 @@ jobs:
       - run:
           name: Push 'elasticsearch' image
           command: |
+            [ true == $(make git-commit-has-changed-directory DIR=build/automation/lib/docker/image/elasticsearch) ] || exit 0
             make docker-login DOCKER_USERNAME=$DOCKER_USERNAME DOCKER_PASSWORD=$DOCKER_PASSWORD
             cd build/automation/lib/docker/image/elasticsearch
             make \
@@ -32,6 +33,7 @@ jobs:
       - run:
           name: Push 'nginx' image
           command: |
+            [ true == $(make git-commit-has-changed-directory DIR=build/automation/lib/docker/image/nginx) ] || exit 0
             make docker-login DOCKER_USERNAME=$DOCKER_USERNAME DOCKER_PASSWORD=$DOCKER_PASSWORD
             cd build/automation/lib/docker/image/nginx
             make \
@@ -43,6 +45,7 @@ jobs:
       - run:
           name: Push 'node' image
           command: |
+            [ true == $(make git-commit-has-changed-directory DIR=build/automation/lib/docker/image/node) ] || exit 0
             make docker-login DOCKER_USERNAME=$DOCKER_USERNAME DOCKER_PASSWORD=$DOCKER_PASSWORD
             cd build/automation/lib/docker/image/node
             make \
@@ -54,6 +57,7 @@ jobs:
       - run:
           name: Push 'postgres' image
           command: |
+            [ true == $(make git-commit-has-changed-directory DIR=build/automation/lib/docker/image/postgres) ] || exit 0
             make docker-login DOCKER_USERNAME=$DOCKER_USERNAME DOCKER_PASSWORD=$DOCKER_PASSWORD
             cd build/automation/lib/docker/image/postgres
             make \
@@ -65,6 +69,7 @@ jobs:
       - run:
           name: Push 'python' image
           command: |
+            [ true == $(make git-commit-has-changed-directory DIR=build/automation/lib/docker/image/python) ] || exit 0
             make docker-login DOCKER_USERNAME=$DOCKER_USERNAME DOCKER_PASSWORD=$DOCKER_PASSWORD
             cd build/automation/lib/docker/image/python
             make \
@@ -76,6 +81,7 @@ jobs:
       - run:
           name: Push 'python-app' image
           command: |
+            [ true == $(make git-commit-has-changed-directory DIR=build/automation/lib/docker/image/python-app) ] || exit 0
             make docker-login DOCKER_USERNAME=$DOCKER_USERNAME DOCKER_PASSWORD=$DOCKER_PASSWORD
             cd build/automation/lib/docker/image/python-app
             make \
@@ -87,6 +93,7 @@ jobs:
       - run:
           name: Push 'tools' image
           command: |
+            [ true == $(make git-commit-has-changed-directory DIR=build/automation/lib/docker/image/tools) ] || exit 0
             make docker-login DOCKER_USERNAME=$DOCKER_USERNAME DOCKER_PASSWORD=$DOCKER_PASSWORD
             cd build/automation/lib/docker/image/tools
             make \

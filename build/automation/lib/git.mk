@@ -29,3 +29,15 @@ git-secrets-add-allowed: ### Add allowed secret pattern - mandatory: PATTERN=[al
 
 git-secrets-scan-history: ### Scan git histroy for any secrets
 	git secrets --scan-history
+
+git-commit-has-changed-directory: ### Determin if any file changed in directory - mandatory: DIR=[directory]; return: true|false
+	if git diff --name-only --diff-filter=AMDR --cached HEAD^ | grep --quiet '$(DIR)'; then
+		echo true
+	else
+		echo false
+	fi
+
+# ==============================================================================
+
+.SILENT: \
+	git-commit-has-changed-directory

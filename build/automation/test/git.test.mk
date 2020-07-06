@@ -4,6 +4,7 @@ test-git:
 		test-git-config \
 		test-git-secrets-add-allowed \
 		test-git-secrets-scan-history \
+		test-git-commit-has-changed-directory \
 	)
 	for test in $${tests[*]}; do
 		mk_test_initialise $$test
@@ -50,4 +51,10 @@ test-git-secrets-scan-history:
 	# act
 	make git-secrets-scan-history
 	# assert
-	mk_test 0 -eq $$?
+	mk_test "0 -eq $$?"
+
+test-git-commit-has-changed-directory:
+	# act
+	output=$$(make git-commit-has-changed-directory DIR=build/automation/tmp)
+	# assert
+	mk_test "false == $$output"

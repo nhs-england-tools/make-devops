@@ -1,4 +1,4 @@
-secret-fetch-and-export-variables: ### Get secret and print variable exports - mandatory: NAME=[secret name]; returns: [variables export]
+secret-fetch-and-export-variables: ### Get secret and print variable exports - mandatory: NAME=[secret name]; return: [variables export]
 	# set up
 	eval "$$(make aws-assume-role-export-variables)"
 	# fetch
@@ -36,7 +36,7 @@ secret-random: ### Generate random secret string - optional: LENGTH=[integer]
 
 # ==============================================================================
 
-_secret-export-variables-from-json: ### Convert JSON to environment variables - mandatory: JSON='{"key":"value"}'|JSON="$$(echo '$(JSON)')"; returns: [variables export]
+_secret-export-variables-from-json: ### Convert JSON to environment variables - mandatory: JSON='{"key":"value"}'|JSON="$$(echo '$(JSON)')"; return: [variables export]
 	for str in $$(echo '$(JSON)' | make -s docker-run-tools CMD="jq -rf $(JQ_DIR_REL)/json-to-env-vars.jq"); do
 		key=$$(cut -d "=" -f1 <<<"$$str")
 		value=$$(cut -d "=" -f2- <<<"$$str")
