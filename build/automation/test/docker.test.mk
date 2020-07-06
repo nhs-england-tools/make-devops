@@ -7,6 +7,7 @@ test-docker:
 		test-docker-config \
 		test-docker-build \
 		test-docker-image-name-as \
+		test-docker-image-pull-or-build \
 		test-docker-image-keep-latest-only \
 		test-docker-login \
 		test-docker-create-repository \
@@ -85,6 +86,14 @@ test-docker-image-name-as:
 	make docker-build NAME=$(TEST_DOCKER_IMAGE) NAME_AS=$(TEST_DOCKER_IMAGE)-copy FROM_CACHE=true
 	# assert
 	mk_test "2 -eq $$(docker images --filter=reference=$(DOCKER_LIBRARY_REGISTRY)/$(TEST_DOCKER_IMAGE)-copy:* --quiet | wc -l)"
+
+test-docker-image-pull-or-build:
+	# arrange
+	docker rmi --force $$(docker images --filter=reference=$(DOCKER_LIBRARY_REGISTRY)/tools:* --quiet) 2> /dev/null ||:
+	# act
+	make docker-image-pull-or-build NAME=tools VERSION=$(DOCKER_LIBRARY_TOOLS_VERSION) LATEST=true
+	# assert
+	mk_test "2 -eq $$(docker images --filter=reference=$(DOCKER_LIBRARY_REGISTRY)/tools:* --quiet | wc -l)"
 
 test-docker-image-keep-latest-only:
 	# act

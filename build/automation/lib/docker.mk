@@ -235,6 +235,23 @@ docker-set-image-version: ### Set effective Docker image version - mandatory: NA
 
 # ==============================================================================
 
+docker-image-pull-or-build: ### Pull or build image - mandatory: NAME; optional VERSION|TAG=[defaults to 'latest'],LATEST=true
+	version=$(or $(or $(VERSION), $(TAG)), latest)
+	image=$(DOCKER_LIBRARY_REGISTRY)/$(NAME):$$version
+	if [ -z "$$(docker images --filter=reference="$$image" --quiet)" ]; then
+		make docker-pull NAME=$(NAME) VERSION=$$version ||:
+	fi
+	if [ -z "$$(docker images --filter=reference="$$image" --quiet)" ]; then
+			make docker-build NAME=$(NAME) || ( \
+				echo "ERROR: No image $$image found"; \
+				exit 1 \
+			)
+	fi
+	if [ -n "$$(docker images --filter=reference="$$image" --quiet)" ]; then
+		[[ "$(LATEST)" =~ ^(true|yes|y|on|1|TRUE|YES|Y|ON)$$ ]] && \
+			make docker-tag NAME=$(NAME) SOURCE=$$version TARGET=latest ||:
+	fi
+
 docker-image-keep-latest-only: ### Remove other images than latest - mandatory: NAME
 	reg=$$(make _docker-get-reg)
 	docker rmi --force $$( \
@@ -491,10 +508,7 @@ docker-run-terraform: ### Run terraform container - mandatory: CMD; optional: DI
 docker-run-postgres: ### Run postgres container - mandatory: CMD; optional: DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file],IMAGE=[image name],CONTAINER=[container name]
 	image=$$([ -n "$(IMAGE)" ] && echo $(IMAGE) || echo $(DOCKER_LIBRARY_REGISTRY)/postgres:$(DOCKER_LIBRARY_POSTGRES_VERSION))
 	container=$$([ -n "$(CONTAINER)" ] && echo $(CONTAINER) || echo postgres-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7))
-	if [ -z "$$(docker images --filter=reference="$$image" --quiet)" ]; then
-		make docker-pull NAME=postgres VERSION=$(DOCKER_LIBRARY_POSTGRES_VERSION) > /dev/null 2>&1
-		make docker-build NAME=postgres FROM_CACHE=true > /dev/null 2>&1
-	fi
+	make docker-image-pull-or-build NAME=postgres VERSION=$(DOCKER_LIBRARY_POSTGRES_VERSION) LATEST=true > /dev/null 2>&1
 	docker run --interactive $(_TTY) --rm \
 		--name $$container \
 		--user $$(id -u):$$(id -g) \
@@ -513,10 +527,7 @@ docker-run-tools: ### Run tools (Python) container - mandatory: CMD; optional: S
 	mkdir -p $(HOME)/{.aws,.python/pip/{cache,packages}}
 	image=$$([ -n "$(IMAGE)" ] && echo $(IMAGE) || echo $(DOCKER_LIBRARY_REGISTRY)/tools:$(DOCKER_LIBRARY_TOOLS_VERSION))
 	container=$$([ -n "$(CONTAINER)" ] && echo $(CONTAINER) || echo tools-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7))
-	if [ -z "$$(docker images --filter=reference="$$image" --quiet)" ]; then
-		make docker-pull NAME=tools VERSION=$(DOCKER_LIBRARY_TOOLS_VERSION) > /dev/null 2>&1
-		make docker-build NAME=tools FROM_CACHE=true > /dev/null 2>&1
-	fi
+	make docker-image-pull-or-build NAME=tools VERSION=$(DOCKER_LIBRARY_TOOLS_VERSION) LATEST=true > /dev/null 2>&1
 	if [[ ! "$(SH)" =~ ^(true|yes|y|on|1|TRUE|YES|Y|ON)$$ ]]; then
 		docker run --interactive $(_TTY) --rm \
 			--name $$container \
