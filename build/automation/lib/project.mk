@@ -33,8 +33,8 @@ project-create-infrastructure: ### Create infrastructure from template - mandato
 	make -s terraform-create-module-from-template TEMPLATE=$(TEMPLATE)
 	make -s terraform-create-stack-from-template NAME=$(STACK) TEMPLATE=$(TEMPLATE)
 
-project-create-pipline: ### Create pipline
-	make -s jenkins-create-pipline-from-template
+project-create-pipeline: ### Create pipeline
+	make -s jenkins-create-pipeline-from-template
 
 # ==============================================================================
 
@@ -42,5 +42,5 @@ project-create-pipline: ### Create pipline
 	project-create-deployment \
 	project-create-image \
 	project-create-infrastructure \
-	project-create-pipline \
+	project-create-pipeline \
 	project-create-profile

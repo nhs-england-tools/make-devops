@@ -1,7 +1,7 @@
 test-jenkins:
 	make test-jenkins-setup
 	tests=( \
-		test-jenkins-create-pipline-from-template \
+		test-jenkins-create-pipeline-from-template \
 		test-jenkins-upload-workspace-archived \
 		test-jenkins-upload-workspace-exploded \
 	)
@@ -24,7 +24,7 @@ test-jenkins-teardown:
 
 # ==============================================================================
 
-test-jenkins-create-pipline-from-template:
+test-jenkins-create-pipeline-from-template:
 	mk_test_skip
 
 test-jenkins-upload-workspace-archived:
