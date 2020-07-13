@@ -14,7 +14,7 @@ test-jenkins:
 test-jenkins-setup:
 	make localstack-start
 	# Prerequisites
-	make docker-build NAME=tools FROM_CACHE=true
+	make docker-pull NAME=tools VERSION=$(DOCKER_LIBRARY_TOOLS_VERSION)
 
 test-jenkins-teardown:
 	make localstack-stop

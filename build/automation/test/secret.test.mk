@@ -15,7 +15,7 @@ test-secret:
 test-secret-setup:
 	make localstack-start
 	# Prerequisites
-	make docker-build NAME=tools FROM_CACHE=true
+	make docker-pull NAME=tools VERSION=$(DOCKER_LIBRARY_TOOLS_VERSION)
 
 test-secret-teardown:
 	make localstack-stop
