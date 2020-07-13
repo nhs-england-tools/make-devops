@@ -644,7 +644,7 @@ _docker-get-docker-compose-yml:
 	if [ "$(BUILD_ID)" != 0 ]; then
 		make -s docker-run-tools ARGS="--env BUILD_ID=$(BUILD_ID)" CMD=" \
 			$(BIN_DIR_REL)/docker-compose-processor.py \
-				$$(echo $$yml | sed "s;$(PROJECT_DIR);;g") \
+				$$(echo $$yml | sed 's;//;/;g' | sed "s;$(PROJECT_DIR);;g") \
 				$(TMP_DIR_REL)/docker-compose-$(BUILD_ID).yml \
 		"
 		yml=$(TMP_DIR)/docker-compose-$(BUILD_ID).yml
