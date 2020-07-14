@@ -456,6 +456,8 @@ _macos-config-visual-studio-code:
 	code --force --install-extension zhuangtongfa.material-theme
 	# List them all
 	code --list-extensions --show-versions
+	# Copy user key bindings
+	cp -fv $(PROJECT_DIR)/build/automation/lib/macos/vscode-keybindings.json ~/Library/Application\ Support/Code/User/keybindings.json
 
 _macos-config-firefox:
 	# function firefox_install_extension {
