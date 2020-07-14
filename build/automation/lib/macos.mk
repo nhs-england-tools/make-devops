@@ -84,7 +84,7 @@ macos-install-essential:: ## Install essential development dependencies - option
 	brew $$install zsh-autosuggestions ||:
 	brew $$install zsh-completions ||:
 	brew $$install zsh-syntax-highlighting ||:
-	brew cask $$install adoptopenjdk13 ||:
+	brew cask $$install adoptopenjdk$(JAVA_VERSION) ||:
 	brew cask $$install docker ||:
 	brew cask $$install font-hack-nerd-font ||:
 	brew cask $$install iterm2 ||:
@@ -201,7 +201,7 @@ macos-check:: ## Check if the development dependencies are installed
 	brew list zsh-autosuggestions ||:
 	brew list zsh-completions ||:
 	brew list zsh-syntax-highlighting ||:
-	brew cask list adoptopenjdk13 ||:
+	brew cask list adoptopenjdk$(JAVA_VERSION) ||:
 	brew cask list docker ||:
 	brew cask list font-hack-nerd-font ||:
 	brew cask list iterm2 ||:
@@ -325,9 +325,9 @@ _macos-config-command-line:
 	# configure Java
 	eval "$$(jenv init -)"
 	jenv enable-plugin export
-	jenv add $$(/usr/libexec/java_home)
+	jenv add $$(/usr/libexec/java_home -v$(JAVA_VERSION))
 	jenv versions # ls -1 /Library/Java/JavaVirtualMachines
-	jenv global $$(jenv versions | sed 's/*//' | sed 's/^[ \t]*//;s/[ \t]*$$//' | grep '^[0-9]' | awk '{ print $$1 }' | sort -n | head -n 1)
+	jenv global $(JAVA_VERSION).0
 	# configure Git
 	make git-config
 	# configure shell
@@ -363,7 +363,7 @@ _macos-config-command-line:
 		echo "# env: Go"
 		echo ". $$HOME/.gvm/scripts/gvm"
 		echo "# env: Java"
-		echo "export PATH=\$$HOME/.jenv/bin:\$$PATH"
+		echo "export JAVA_HOME=$$(/usr/libexec/java_home -v$(JAVA_VERSION))"
 		echo "eval \"\$$(jenv init -)\""
 		echo "# env: Node"
 		echo "export NVM_DIR=\$$HOME/.nvm"
