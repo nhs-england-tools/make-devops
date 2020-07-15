@@ -5,13 +5,13 @@ If you hear your teams or individuals saying _"It will take days to onboard a ne
 ## Use cases
 
 - CI/CD building blocks to support a clean implementation of your pipelines
-- Development workflow with highly customisable project toolchain (inspired by dotfiles) for advanced \*NIX shell scripting
+- Development workflow with highly customisable project automation scripts (inspired by dotfiles) for advanced \*NIX shell scripting
 - macOS setup to complement the above and fully automate development environment provisioning
 
 ## Installation
 
-- To set up your development environment on a macOS run `curl -L bit.ly/make-devops | bash`
-- For a project toolchain integration, copy the content of the `build` directory and the top-level `Makefile` file to your project, commit your changes then run `make devops-synchronise`
+- Set up your development environment on a macOS `curl -L bit.ly/make-devops-macos | bash`
+- Instrument your project with the automation scripts `curl -L bit.ly/make-devops-project | bash`
 - Use make targets to support your CI/CD flow
 
 ## Features
