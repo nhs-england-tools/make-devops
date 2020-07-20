@@ -103,8 +103,6 @@ devops-synchronise: ### Synchronise the DevOps automation toolchain scripts used
 			build/* \
 			$(PARENT_PROJECT_DIR)/build
 		[ -f $(PARENT_PROJECT_DIR)/build/automation/etc/certificate/*.pem ] && rm -fv $(PARENT_PROJECT_DIR)/build/automation/etc/certificate/.gitignore
-		[ ! -f $(PARENT_PROJECT_DIR)/build/docker/docker-compose.yml ] && cp -v build/automation/lib/project/template/build/docker/docker-compose.yml $(PARENT_PROJECT_DIR)/build/docker/docker-compose.yml ||:
-		[ ! -f $(PARENT_PROJECT_DIR)/build/Jenkinsfile ] && cp -v build/automation/lib/project/template/build/Jenkinsfile $(PARENT_PROJECT_DIR)/build/Jenkinsfile ||:
 		cp -fv LICENSE.md $(PARENT_PROJECT_DIR)/build/automation/LICENSE.md
 		# Copy additionals
 		if [[ "$(ALL)" =~ ^(true|yes|y|on|1|TRUE|YES|Y|ON)$$ ]]; then
