@@ -1,5 +1,6 @@
 DOCKER_COMPOSE_YML = $(DOCKER_DIR)/docker-compose.yml
-DOCKER_DIR = $(PROJECT_DIR)/build/docker
+DOCKER_DIR = $(abspath $(PROJECT_DIR)/build/docker)
+DOCKER_DIR_REL = $(shell echo $(DOCKER_DIR) | sed "s;$(PROJECT_DIR);;g")
 DOCKER_LIB_DIR = $(LIB_DIR)/docker
 DOCKER_LIB_IMAGE_DIR = $(LIB_DIR)/docker/image
 DOCKER_NETWORK = $(PROJECT_GROUP_SHORT)/$(PROJECT_NAME_SHORT)/$(BUILD_ID)
@@ -17,9 +18,11 @@ DOCKER_NGINX_VERSION = 1.19.0-alpine
 DOCKER_NODE_VERSION = 14.4.0-alpine
 DOCKER_OPENJDK_VERSION = $(JAVA_VERSION)-alpine
 DOCKER_POSTGRES_VERSION = $(POSTGRES_VERSION)-alpine
+DOCKER_POSTMAN_NEWMAN_VERSION = $(POSTMAN_NEWMAN_VERSION)-alpine
 DOCKER_PULUMI_VERSION = v2.3.0
 DOCKER_PYTHON_VERSION = $(PYTHON_VERSION)-alpine
 DOCKER_TERRAFORM_VERSION = $(or $(TEXAS_TERRAFORM_VERSION), $(TERRAFORM_VERSION))
+DOCKER_WIREMOCK_VERSION = $(WIREMOCK_VERSION)-alpine
 
 DOCKER_LIBRARY_ELASTICSEARCH_VERSION = $(shell cat $(DOCKER_LIB_IMAGE_DIR)/elasticsearch/VERSION 2> /dev/null)
 DOCKER_LIBRARY_NGINX_VERSION = $(shell cat $(DOCKER_LIB_IMAGE_DIR)/nginx/VERSION 2> /dev/null)
@@ -205,7 +208,9 @@ docker-create-dockerfile: ### Create effective Dockerfile - mandatory: NAME; op
 		s#FROM node:latest#FROM node:${DOCKER_NODE_VERSION}#g; \
 		s#FROM openjdk:latest#FROM openjdk:${DOCKER_OPENJDK_VERSION}#g; \
 		s#FROM postgres:latest#FROM postgres:${DOCKER_POSTGRES_VERSION}#g; \
+		s#FROM postman/newman:latest#FROM postman/newman:${DOCKER_POSTMAN_NEWMAN_VERSION}#g; \
 		s#FROM python:latest#FROM python:${DOCKER_PYTHON_VERSION}#g; \
+		s#FROM rodolpheche/wiremock:latest#FROM rodolpheche/wiremock:${DOCKER_WIREMOCK_VERSION}#g; \
 	" Dockerfile.effective
 	cd $$dir
 
@@ -318,6 +323,40 @@ docker-image-load: ### Load image from a flat file - mandatory: NAME; optional: 
 
 # ==============================================================================
 
+docker-run: ### Run specified image - mandatory: IMAGE; optional: CMD,SH=true,DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file],CONTAINER=[container name]
+	container=$$([ -n "$(CONTAINER)" ] && echo $(CONTAINER) || echo $$(echo '$(IMAGE)' | md5sum | cut -c1-7)-$(BUILD_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7))
+	if [[ ! "$(SH)" =~ ^(true|yes|y|on|1|TRUE|YES|Y|ON)$$ ]]; then
+		docker run --interactive $(_TTY) --rm \
+			--name $$container \
+			--user $$(id -u):$$(id -g) \
+			--env-file <(env | grep -Ei "^(AWS|TX|TEXAS)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
+			--env-file <(env | grep -Ei "^(DB|DATABASE|APP|APPLICATION|UI|API|SERVER|HOST|URL)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
+			--env-file <(env | grep -Ei "^(PROFILE|BUILD|PROGRAMME|SERVICE|PROJECT)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
+			--env-file <(make _docker-get-variables-from-file VARS_FILE=$(VARS_FILE)) \
+			--volume $(PROJECT_DIR):/project \
+			--network $(DOCKER_NETWORK) \
+			--workdir /project/$(shell echo $(abspath $(DIR)) | sed "s;$(PROJECT_DIR);;g") \
+			$(ARGS) \
+			$(IMAGE) \
+				$(CMD)
+	else
+		docker run --interactive $(_TTY) --rm \
+			--name $$container \
+			--user $$(id -u):$$(id -g) \
+			--env-file <(env | grep -Ei "^(AWS|TX|TEXAS)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
+			--env-file <(env | grep -Ei "^(DB|DATABASE|APP|APPLICATION|UI|API|SERVER|HOST|URL)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
+			--env-file <(env | grep -Ei "^(PROFILE|BUILD|PROGRAMME|SERVICE|PROJECT)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
+			--env-file <(make _docker-get-variables-from-file VARS_FILE=$(VARS_FILE)) \
+			--volume $(PROJECT_DIR):/project \
+			--network $(DOCKER_NETWORK) \
+			--workdir /project/$(shell echo $(abspath $(DIR)) | sed "s;$(PROJECT_DIR);;g") \
+			$(ARGS) \
+			$(IMAGE) \
+				/bin/sh -c " \
+					$(CMD) \
+				"
+	fi
+
 docker-run-composer: ### Run composer container - mandatory: CMD; optional: DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file],IMAGE=[image name],CONTAINER=[container name]
 	mkdir -p $(HOME)/.composer
 	image=$$([ -n "$(IMAGE)" ] && echo $(IMAGE) || echo composer:$(DOCKER_COMPOSER_VERSION))
@@ -418,6 +457,12 @@ docker-run-node: ### Run node container - mandatory: CMD; optional: DIR,ARGS=[Do
 				chown $$(id -u):$$(id -g) /home/\$$(id -nu $$(id -u)) ||: && \
 				su \$$(id -nu $$(id -u)) -c 'cd /project/$(DIR); $(CMD)' \
 			"
+
+docker-run-postman: ### Run postman (newman) container - mandatory: DIR,CMD
+	make docker-run IMAGE=postman/newman:$(DOCKER_POSTMAN_NEWMAN_VERSION) \
+		ARGS="--volume $(DIR):/etc/newman" \
+		DIR="$(DIR)" \
+		CMD="$(CMD)"
 
 docker-run-pulumi: ### Run pulumi container - mandatory: CMD; optional: DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file],IMAGE=[image name],CONTAINER=[container name]
 	image=$$([ -n "$(IMAGE)" ] && echo $(IMAGE) || echo pulumi/pulumi:$(DOCKER_PULUMI_VERSION))

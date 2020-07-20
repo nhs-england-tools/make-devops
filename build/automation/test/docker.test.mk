@@ -24,10 +24,13 @@ test-docker:
 		test-docker-image-load \
 		test-docker-tag \
 		test-docker-get-variables-from-file \
+		test-docker-run \
+		test-docker-run-composer \
 		test-docker-run-dotnet \
 		test-docker-run-gradle \
 		test-docker-run-mvn \
 		test-docker-run-node \
+		test-docker-run-postman \
 		test-docker-run-pulumi \
 		test-docker-run-python-single-cmd \
 		test-docker-run-python-multiple-cmd \
@@ -219,6 +222,20 @@ test-docker-get-variables-from-file:
 	# assert
 	mk_test "PROJECT_NAME= = $$(echo \"$$vars\" | grep -o PROJECT_NAME=)"
 
+test-docker-run:
+	mk_test_skip
+
+test-docker-run-composer:
+	# arrange
+	make docker-config
+	# act
+	output=$$(
+		make -s docker-run-composer \
+			CMD="--version" \
+		| grep -Eo "[0-9]+\.[0-9]+\.[0-9]+" | wc -l)
+	# assert
+	mk_test "0 -lt $$output"
+
 test-docker-run-dotnet:
 	# arrange
 	make docker-config
@@ -263,6 +280,17 @@ test-docker-run-node:
 	# assert
 	mk_test "0 -lt $$output"
 
+test-docker-run-postman:
+	# arrange
+	make docker-config
+	# act
+	output=$$(
+		make -s docker-run-postman \
+			CMD="--version" \
+		| grep -Eo "[0-9]+\.[0-9]+\.[0-9]+" | wc -l)
+	# assert
+	mk_test "0 -lt $$output"
+
 test-docker-run-pulumi:
 	# arrange
 	make docker-config
@@ -270,7 +298,7 @@ test-docker-run-pulumi:
 	output=$$(
 		make -s docker-run-pulumi \
 			CMD="pulumi version" \
-		| grep -Eo "v[(0-9)]*.[(0-9)]*.[(0-9)]*" | wc -l)
+		| grep -Eo "v[0-9]+\.[0-9]+\.[0-9]+" | wc -l)
 	# assert
 	mk_test "0 -lt $$output"
 

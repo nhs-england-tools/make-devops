@@ -20,6 +20,10 @@ project-deploy: ### Deploy application service stack to the Kubernetes cluster -
 project-create-profile: ### Create profile file - mandatory: NAME=[profile name]
 	cp -fv $(VAR_DIR_REL)/profile/dev.mk.default $(VAR_DIR_REL)/profile/$(NAME).mk
 
+project-create-contract-test: ### Create contract test project structure from template
+	rm -rf $(APPLICATION_TEST_DIR)/contract
+	make -s test-create-contract
+
 project-create-image: ### Create image from template - mandatory: NAME=[image name],TEMPLATE=[library template image name]
 	make -s docker-create-from-template NAME=$(NAME) TEMPLATE=$(TEMPLATE)
 
@@ -39,6 +43,7 @@ project-create-pipeline: ### Create pipeline
 # ==============================================================================
 
 .SILENT: \
+	project-create-contract-test \
 	project-create-deployment \
 	project-create-image \
 	project-create-infrastructure \
