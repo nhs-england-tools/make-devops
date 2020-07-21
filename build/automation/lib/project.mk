@@ -2,6 +2,11 @@ project-config: ### Configure project environment
 	make \
 		git-config \
 		docker-config
+	if [ ! -f $(PROJECT_DIR)/$(PROJECT_NAME).code-workspace ]; then
+		cp -fv \
+			$(PROJECT_DIR)/$(PROJECT_NAME).code-workspace.template \
+			$(PROJECT_DIR)/$(PROJECT_NAME).code-workspace
+	fi
 
 project-start: ### Start Docker Compose
 	make docker-compose-start
