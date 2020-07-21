@@ -2,6 +2,12 @@
 
 # TODO: We need a tag for `mstruebing/editorconfig-checker`
 
-docker run --rm \
-  --volume=$PWD:/check mstruebing/editorconfig-checker \
-  ec --exclude 'markdown|linux-amd64$|\.p12$'
+if [ "$PROJECT_NAME" = "$DEVOPS_PROJECT_NAME" ]; then
+  docker run --rm \
+    --volume=$PWD:/check mstruebing/editorconfig-checker \
+    ec --exclude 'markdown|linux-amd64$|\.p12$'
+else
+  docker run --rm \
+    --volume=$PWD:/check mstruebing/editorconfig-checker \
+    ec --exclude 'build/automation|markdown|linux-amd64$|\.p12$'
+fi
