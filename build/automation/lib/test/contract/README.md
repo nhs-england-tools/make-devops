@@ -28,7 +28,7 @@ From within the `test/contract` directory which is the sub-project directory we 
 
 or simply run it as a single command
 
-    make test
+    make -s test
 
 ## Run the test suite using Postman
 

@@ -3,9 +3,12 @@ include $(abspath $(PROJECT_DIR)/build/automation/init.mk)
 
 # ==============================================================================
 
-test: start run stop ### Execute the test suite
+config: ### Configure the contaract test environment
+	make project-config
 
-start: ### Start the contaract test project
+test: start run stop ### Execute the contaract test suite
+
+start: config ### Start the contaract test project
 	make docker-compose-start YML=$(DOCKER_DIR)/mockservice.docker-compose.yml
 
 stop: ### Stop the contaract test project
