@@ -63,8 +63,9 @@
   - Xcode Command Line Tools
   - Homebrew
   - GNU Make
+- Go to System Preferences > Security & Privacy > General > [ Enable software ] - you may need to re-run installation of the failed software
 
-Please, follow the instructions provided by the script and execute them from the command-line to satisfy the dependencies.
+Please, follow the instructions provided by the script and execute them from the command-line to satisfy the dependencies. If the network connectivity fails in random places, especially while installing or updating the Homebrew package manager, try to set your DNS server to 8.8.8.8 which may solve the issue.
 
 ---
 

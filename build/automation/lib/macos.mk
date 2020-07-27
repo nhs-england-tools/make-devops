@@ -98,13 +98,13 @@ macos-install-additional:: ## Install additional development dependencies - opti
 		install="reinstall --force"
 	fi
 	brew update
-	#brew tap weaveworks/tap ||:
+	brew tap weaveworks/tap ||:
 	brew $$install github/gh/gh ||:
-	#brew $$install weaveworks/tap/eksctl ||:
+	brew $$install weaveworks/tap/eksctl ||:
 	brew cask $$install appcleaner ||:
 	brew cask $$install atom ||:
-	brew cask $$install bettertouchtool ||:
-	brew cask $$install cheatsheet ||:
+	#brew cask $$install bettertouchtool ||:
+	#brew cask $$install cheatsheet ||:
 	brew cask $$install dbeaver-community ||:
 	brew cask $$install dcommander ||:
 	brew cask $$install drawio
@@ -117,7 +117,7 @@ macos-install-additional:: ## Install additional development dependencies - opti
 	brew cask $$install istat-menus ||:
 	brew cask $$install karabiner-elements ||:
 	brew cask $$install keepingyouawake ||:
-	brew cask $$install microsoft-remote-desktop-beta ||:
+	#brew cask $$install microsoft-remote-desktop-beta ||:
 	brew cask $$install postman ||:
 	brew cask $$install pycharm ||:
 	brew cask $$install sourcetree ||:
@@ -208,16 +208,17 @@ macos-check:: ## Check if the development dependencies are installed
 	brew cask list visual-studio-code ||:
 	# Additional dependencies
 	brew list github/gh/gh ||:
-	#brew list weaveworks/tap/eksctl ||:
+	brew list weaveworks/tap/eksctl ||:
 	brew cask list atom ||:
-	brew cask list cheatsheet ||:
+	#brew cask list bettertouchtool ||:
+	#brew cask list cheatsheet ||:
 	brew cask list dbeaver-community ||:
 	brew cask list drawio ||:
 	brew cask list gitkraken ||:
 	brew cask list google-chrome ||:
 	brew cask list intellij-idea-ce ||:
 	brew cask list keepingyouawake ||:
-	brew cask list microsoft-remote-desktop-beta ||:
+	#brew cask list microsoft-remote-desktop-beta ||:
 	brew cask list postman ||:
 	brew cask list pycharm ||:
 	brew cask list sourcetree ||:
