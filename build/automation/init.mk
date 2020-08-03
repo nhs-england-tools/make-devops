@@ -334,13 +334,6 @@ else
 	AWSCLI := aws
 endif
 
-ifneq ($(BUILD_ID), 1)
-x := $(shell echo TEST; echo xxx > $(TMP_DIR)/build-date.var)
-endif
-
-xxx:
-	echo $(x)
-
 # ==============================================================================
 # Check if all the required variables are set
 
