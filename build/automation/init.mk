@@ -122,7 +122,14 @@ devops-synchronise: ### Synchronise the DevOps automation toolchain scripts used
 	}
 	function cleanup() {
 		cd $(PARENT_PROJECT_DIR)
-		# Clean up old project files
+		# Remove not needed project files
+		rm -f \
+			$(PARENT_PROJECT_DIR)/build/docker/.gitkeep
+		# Remove empty project directories
+		rmdir \
+			$(PARENT_PROJECT_DIR)/build/docker \
+			||:
+		# Remove old project files and directories
 		rm -rf \
 			~/bin/docker-compose-processor \
 			~/bin/texas-mfa \
@@ -326,6 +333,13 @@ ifeq ("$(_DEVOPS_RUN_TEST)", "true")
 else
 	AWSCLI := aws
 endif
+
+ifneq ($(BUILD_ID), 1)
+x := $(shell echo TEST; echo xxx > $(TMP_DIR)/build-date.var)
+endif
+
+xxx:
+	echo $(x)
 
 # ==============================================================================
 # Check if all the required variables are set
