@@ -18,7 +18,7 @@ macos-prepare:: ## Prepare for installation and configuration of the development
 	networksetup -setdnsservers Wi-Fi 8.8.8.8
 	sudo chown -R $$(id -u) $$(brew --prefix)/*
 
-macos-update:: ## Update all currently installed development dependencies
+macos-update:: ## Update/upgrade all currently installed development dependencies
 	which mas > /dev/null 2>&1 || brew install mas
 	mas upgrade $(mas list | grep -i xcode | awk '{ print $1 }')
 	brew update

@@ -76,7 +76,7 @@ devops-copy: ### Copy the DevOps automation toolchain scripts to given destinati
 	cp -fv $(PROJECT_DIR)/build/automation/lib/project/template/Makefile $(DIR)
 	cp -fv $(PROJECT_DIR)/LICENSE.md $(DIR)/build/automation/LICENSE.md
 
-devops-synchronise: ### Synchronise the DevOps automation toolchain scripts used by this project - optional: LATEST=true,ALL=true
+devops-update devops-synchronise: ### Update/upgrade the DevOps automation toolchain scripts used by this project - optional: LATEST=true,ALL=true
 	function download() {
 		cd $(PROJECT_DIR)
 		rm -rf \
@@ -283,9 +283,10 @@ JQ_DIR_REL := $(shell echo $(abspath $(LIB_DIR)/jq) | sed "s;$(PROJECT_DIR);;g")
 PROFILE := $(or $(PROFILE), local)
 BUILD_ID := $(or $(or $(BUILD_ID), $(CIRCLE_BUILD_NUM)), 0)
 BUILD_DATE := $(or $(BUILD_DATE), $(shell date -u +"%Y-%m-%dT%H:%M:%S%z"))
-BUILD_HASH := $(or $(shell git rev-parse --short HEAD 2> /dev/null ||:), unknown)
 BUILD_REPO := $(or $(shell git config --get remote.origin.url 2> /dev/null ||:), unknown)
 BUILD_BRANCH := $(or $(shell git rev-parse --abbrev-ref HEAD 2> /dev/null ||:), unknown)
+BUILD_COMMIT_HASH := $(or $(shell git rev-parse --short HEAD 2> /dev/null ||:), unknown)
+BUILD_COMMIT_DATE := $(or $(shell TZ=UTC git show -s --format=%cd --date=format-local:%Y-%m-%dT%H:%M:%S%z HEAD 2> /dev/null ||:), unknown)
 USER_ID := $(shell id -u)
 GROUP_ID := $(shell id -g)
 TTY_ENABLE := false
