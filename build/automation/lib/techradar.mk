@@ -4,7 +4,7 @@ techradar-inspect: ### Inspect Docker image - mandatory: IMAGE=[image name]
 	size="$$(make techradar-image-get-size)"
 	trace=$$(make techradar-image-get-trace | base64 -w 0)
 	tech="$$(make techradar-image-detect-tech)"
-	echo "{$$tech,\"image\":{\"name\":\"$(IMAGE)\",\"hash\":\"$$hash\",\"date\":\"$$date\",\"size\":$$size,\"trace\":\"$$trace\"},\"build\":{\"id\":\"$(BUILD_ID)\",\"date\":\"$(BUILD_DATE)\",\"hash\":\"$(BUILD_HASH)\",\"repo\":\"$(BUILD_REPO)\"}}"
+	echo "{$$tech,\"image\":{\"name\":\"$(IMAGE)\",\"hash\":\"$$hash\",\"date\":\"$$date\",\"size\":$$size,\"trace\":\"$$trace\"},\"build\":{\"id\":\"$(BUILD_ID)\",\"date\":\"$(BUILD_DATE)\",\"hash\":\"$(BUILD_COMMIT_HASH)\",\"repo\":\"$(BUILD_REPO)\"}}"
 
 # ==============================================================================
 
@@ -38,7 +38,7 @@ techradar-image-detect-tech: ### Detect Docker image technologies - mandatory: I
 # ==============================================================================
 
 _techradar-image-run: ### Run an image in a custom scrip - mandatory: IMAGE=[image name]; optional: ADD=[file to add],CMD=[command to execute]
-	hash=$$(echo '$(BUILD_HASH)$(BUILD_ID)$(IMAGE)$(CMD)' | md5sum | cut -c1-7)
+	hash=$$(echo '$(BUILD_COMMIT_HASH)$(BUILD_ID)$(IMAGE)$(CMD)' | md5sum | cut -c1-7)
 	make HASH=$$hash \
 		_techradar-image-entrypoint \
 		_techradar-image-dockerfile \

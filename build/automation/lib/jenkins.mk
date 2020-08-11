@@ -32,7 +32,7 @@ _jenkins-create-workspace-storage:
 _jenkins-upload-workspace-archived:
 	date=$$(date --date=$(BUILD_DATE) -u +"%Y%m%d%H%M%S")
 	id=$$(printf "%04d\n" $(BUILD_ID))
-	file=workspace-$(PROJECT_NAME_SHORT)-$${date}-$${id}-$(BUILD_HASH).tar.gz
+	file=workspace-$(PROJECT_NAME_SHORT)-$${date}-$${id}-$(BUILD_COMMIT_HASH).tar.gz
 	tar --exclude-vcs --exclude='$(TMP_DIR_REL)' -zcvf $(TMP_DIR)/$$file .
 	make aws-s3-upload \
 		FILE=$(TMP_DIR_REL)/$$file \
@@ -45,9 +45,9 @@ _jenkins-upload-workspace-exploded:
 	id=$$(printf "%04d\n" $(BUILD_ID))
 	make aws-s3-upload \
 		FILE=. \
-		URI=$(JENKINS_WORKSPACE_BUCKET_URI)/$${date}-$${id}-$(BUILD_HASH) \
+		URI=$(JENKINS_WORKSPACE_BUCKET_URI)/$${date}-$${id}-$(BUILD_COMMIT_HASH) \
 		ARGS=" \
 			--recursive \
 			--exclude '.git/*' \
 		"
-	echo -e "\nJenkins workspace URL is https://s3.console.aws.amazon.com/s3/buckets/$(JENKINS_WORKSPACE_BUCKET_URI)/$${date}-$${id}-$(BUILD_HASH)/\n"
+	echo -e "\nJenkins workspace URL is https://s3.console.aws.amazon.com/s3/buckets/$(JENKINS_WORKSPACE_BUCKET_URI)/$${date}-$${id}-$(BUILD_COMMIT_HASH)/\n"

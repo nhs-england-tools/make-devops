@@ -84,7 +84,7 @@ k8s-alb-get-ingress-endpoint: ### Get ALB ingress enpoint - mandatory: PROFILE=[
 		--namespace=$(K8S_APP_NAMESPACE) \
 		--selector="env=$(PROFILE)" \
 		--output=json \
-	| make -s docker-run-tools CMD="jq -rf $(JQ_DIR)/k8s-alb-get-ingress-endpoint.jq"
+	| make -s docker-run-tools CMD="jq -rf $(JQ_DIR_REL)/k8s-alb-get-ingress-endpoint.jq"
 
 k8s-pod-get-status-phase: ### Get the pod status phase - return: [phase name]
 	eval "$$(make k8s-kubeconfig-export-variables)"

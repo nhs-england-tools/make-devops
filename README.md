@@ -93,9 +93,10 @@ If you hear your teams or individuals saying _"It will take days to onboard a ne
     - AWS resources prefix: `$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)-*`
     - Local domain names: `$(PROJECT_NAME_SHORT).local`, `$(PROJECT_NAME).local`, `$(PROJECT_NAME_SHORT)-$(PROJECT_GROUP_SHORT).local`
   - Versioning
-    - Library Docker images: `YYYYmmdd` - fixed on the date of modification
-    - Application Docker images: `YYYYmmddHHMMss-hash` - dynamic, set during the build process
-    - Release: `YYYYmmddHHMMss-release` - dynamic, set by the deployment process
+    - Library build: `[YYYYmmdd]` - fixed on the date of modification as a Docker tag
+    - User build: `[YYYYmmddHHMMss]-[hash]` - dynamic, set during the build process as a Docker tag
+    - Release candidate: `[YYYYmmddHHMMss]-rc` - set by a developer as a Git tag and then as a Docker tag as well on the corresponding image
+    - Environment deployment: `[YYYYmmddHHMMss]-[env]` - set by a developer as a Git tag and then as a Docker tag as well on the corresponding image
 
 ## Guiding Principles
 

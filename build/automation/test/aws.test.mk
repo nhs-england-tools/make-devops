@@ -35,6 +35,7 @@ test-aws:
 		test-aws-cognito-get-client-id \
 		test-aws-cognito-get-client-secret \
 		test-aws-ecr-get-login-password \
+		test-aws-ecr-get-image-digest \
 		test-aws-ses-verify-email-identity \
 	)
 	for test in $${tests[*]}; do
@@ -262,6 +263,9 @@ test-aws-cognito-get-client-secret:
 	mk_test_skip
 
 test-aws-ecr-get-login-password:
+	mk_test_skip
+
+test-aws-ecr-get-image-digest:
 	mk_test_skip
 
 test-aws-ses-verify-email-identity:

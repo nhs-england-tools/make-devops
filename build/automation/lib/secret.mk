@@ -15,14 +15,14 @@ secret-create: ### Set secret - mandatory: NAME=[secret name], VARS=[comma-separ
 	# set up
 	eval "$$(make aws-assume-role-export-variables)"
 	# create
-	file=$(TMP_DIR)/$(PROJECT_NAME)-$(@)-$(BUILD_HASH)-$(BUILD_ID).json
+	file=$(TMP_DIR)/$(PROJECT_NAME)-$(@)-$(BUILD_COMMIT_HASH)-$(BUILD_ID).json
 	json=
 	for key in $$(echo "$(VARS)" | sed 's/,/\n/g'); do
 		value=$$(echo $$(eval echo "\$$$$key"))
 		json+="\"$${key}\":\"$${value}\","
 	done
 	trap "rm -f $$file" EXIT
-	echo "{$${json%?}}" > $(TMP_DIR)/$(PROJECT_NAME)-$(@)-$(BUILD_HASH)-$(BUILD_ID).json
+	echo "{$${json%?}}" > $(TMP_DIR)/$(PROJECT_NAME)-$(@)-$(BUILD_COMMIT_HASH)-$(BUILD_ID).json
 	make aws-secret-create NAME=$(NAME) VALUE=file://$$file
 
 secret-random: ### Generate random secret string - optional: LENGTH=[integer]

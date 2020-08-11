@@ -245,10 +245,18 @@ aws-cognito-get-client-secret: ### Get Cognito client secret - mandatory: NAME=[
 			--output text \
 	"
 
-aws-ecr-get-login-password: ### Get the ECR user login password
+aws-ecr-get-login-password: ### Get ECR user login password
 	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) ecr get-login-password --region $(AWS_REGION) \
 	"
+aws-ecr-get-image-digest: ### Get ECR image digest by matching tag pattern - mandatory: REPO=[repository name],TAG=[string to match]
+	cp $(JQ_DIR_REL)/$(@).jq $(TMP_DIR_REL)/$(@).json
+	make -s file-replace-variables FILE=$(TMP_DIR_REL)/$(@).json > /dev/null 2>&1
+	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
+		aws ecr list-images \
+			--repository-name $(shell echo $(REPO) | sed "s;$(AWS_ECR)/;;g") \
+	" | make -s docker-run-tools CMD="jq -rf $(TMP_DIR_REL)/$(@).json"
+	rm $(TMP_DIR_REL)/$(@).json
 
 aws-ses-verify-email-identity: ### Verify SES email address - mandatory: NAME
 	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
@@ -304,6 +312,7 @@ _aws-elasticsearch-register-snapshot-repository: ### Register Elasticsearch snap
 	aws-cognito-get-client-id \
 	aws-cognito-get-client-secret \
 	aws-cognito-get-userpool-id \
+	aws-ecr-get-image-digest \
 	aws-ecr-get-login-password \
 	aws-iam-policy-exists \
 	aws-iam-role-exists \
