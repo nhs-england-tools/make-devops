@@ -25,7 +25,7 @@ python-virtualenv: ### Setup Python virtual environment - optional: PYTHON_VERSI
 	pyenv local $(PROJECT_GROUP_SHORT)-$(PROJECT_NAME)
 	pip install --upgrade pip
 	pip install $(PYTHON_BASE_PACKAGES)
-	ln -sfv ~/.pyenv/versions/$(PYTHON_VERSION) ~/.pyenv/versions/default
+	sed -i 's;    "python.pythonPath":.*;    "python.pythonPath": "$(HOME)/.pyenv/versions/$(PYTHON_VERSION)",;g' $(PROJECT_DIR)/$(PROJECT_NAME).code-workspace
 
 python-virtualenv-clean: ### Clean up Python virtual environment - optional: PYTHON_VERSION
 	rm -rf \
@@ -56,3 +56,15 @@ python-code-coverage: ### Test Python code with 'coverage' - mandatory: CMD=[tes
 		coverage report -m && \
 		coverage erase \
 	"
+
+python-clean: ### Clean up Python project files - mandatory: DIR=[Python project directory]
+	[ -z "$(DIR)" ] && (echo "ERROR: Please, specify the DIR"; exit 1)
+	find $(DIR) \( \
+		-name "__pycache__" -o \
+		-name ".mypy_cache" -o \
+		-name "*.pyc" -o \
+		-name "*.pyd" -o \
+		-name "*.pyo" -o \
+		-name "coverage.xml" -o \
+		-name "db.sqlite3" -o \
+	\) -print | xargs rm -rfv

@@ -288,6 +288,7 @@ _macos-config-oh-my-zsh:
 	echo "    docker" >> ~/.zshrc
 	echo "    docker-compose" >> ~/.zshrc
 	echo "    virtualenv" >> ~/.zshrc
+	echo "    jenv" >> ~/.zshrc
 	echo "    terraform" >> ~/.zshrc
 	echo "    kubectl" >> ~/.zshrc
 	echo "    aws" >> ~/.zshrc
@@ -309,7 +310,7 @@ _macos-config-oh-my-zsh:
 	echo "POWERLEVEL9K_MODE=nerdfont-complete" >> ~/.zshrc
 	echo "POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir vcs)" >> ~/.zshrc
 	echo "POWERLEVEL9K_SHORTEN_DIR_LENGTH=3" >> ~/.zshrc
-	echo "POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status custom_texas virtualenv root_indicator background_jobs time)" >> ~/.zshrc
+	echo "POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status virtualenv jenv custom_texas root_indicator background_jobs time)" >> ~/.zshrc
 	echo "POWERLEVEL9K_PROMPT_ON_NEWLINE=true" >> ~/.zshrc
 	echo "POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true" >> ~/.zshrc
 	echo "ZSH_THEME=powerlevel10k/powerlevel10k" >> ~/.zshrc

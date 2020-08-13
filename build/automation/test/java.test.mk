@@ -1,6 +1,9 @@
 test-java:
 	make test-java-setup
 	tests=( \
+		test-java-virtualenv \
+		test-java-virtualenv-clean \
+		test-java-clean \
 	)
 	for test in $${tests[*]}; do
 		mk_test_initialise $$test
@@ -13,3 +16,12 @@ test-java-setup:
 
 test-java-teardown:
 	:
+
+test-java-virtualenv:
+	mk_test_skip
+
+test-java-virtualenv-clean:
+	mk_test_skip
+
+test-java-clean:
+	mk_test_skip

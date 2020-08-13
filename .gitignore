@@ -1,4 +1,5 @@
 .DS_Store
 .idea
+.java-version
 .python-version
 *.code-workspace
