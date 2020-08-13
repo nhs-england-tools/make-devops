@@ -10,8 +10,9 @@ java-virtualenv: ### Setup Java virtual environment - optional: JAVA_VERSION
 java-virtualenv-clean: ### Clean up Java virtual environment
 	rm -f .java-version
 
-java-clean: ### Clean up Java project files - mandatory: DIR=[Java project directory]
+java-clean: ### Clean up Java project files - mandatory: DIR=[Java project directory]; optional: EXCLUDE=[directory, file or pattern]
 	[ -z "$(DIR)" ] && (echo "ERROR: Please, specify the DIR"; exit 1)
+	[ -n "$(EXCLUDE)" ] && exclude="grep -vE $(EXCLUDE)" || exclude=cat
 	find $(DIR) \( \
 		-name ".settings" -o \
 		-name "bin" -o \
@@ -21,4 +22,4 @@ java-clean: ### Clean up Java project files - mandatory: DIR=[Java project direc
 		-name ".factorypath" -o \
 		-name ".project" -o \
 		-name "*.iml" \
-	\) -print | xargs rm -rfv
+	\) -print | $$exclude | xargs rm -rfv
