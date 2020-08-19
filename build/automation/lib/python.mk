@@ -1,12 +1,12 @@
 PYTHON_VERSION_MAJOR = 3
 PYTHON_VERSION_MINOR = 8
-PYTHON_VERSION_PATCH = 3
+PYTHON_VERSION_PATCH = 5
 PYTHON_VERSION = $(PYTHON_VERSION_MAJOR).$(PYTHON_VERSION_MINOR).$(PYTHON_VERSION_PATCH)
 PYTHON_BASE_PACKAGES = \
-	awscli-local==0.6 \
-	awscli==1.18.91 \
+	awscli-local==0.7 \
+	awscli==1.18.122 \
 	black \
-	boto3==1.14.14 \
+	boto3==1.14.45 \
 	bpython \
 	configparser \
 	coverage \
