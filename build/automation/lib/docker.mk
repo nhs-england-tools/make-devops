@@ -135,18 +135,7 @@ docker-login: ### Log into the Docker registry - optional: DOCKER_USERNAME,DOCKE
 	fi
 
 docker-create-repository: ### Create Docker repository to store an image - mandatory: NAME
-	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
-		$(AWSCLI) ecr create-repository \
-			--repository-name $(PROJECT_GROUP_SHORT)/$(PROJECT_NAME_SHORT)/$(NAME) \
-			--tags Key=Service,Value=$(SERVICE_TAG) \
-	"
-	cp $(LIB_DIR_REL)/aws/ecr-policy.json $(TMP_DIR_REL)/$(@).json
-	make file-replace-variables FILE=$(TMP_DIR_REL)/$(@).json
-	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
-		$(AWSCLI) ecr set-repository-policy \
-			--repository-name $(PROJECT_GROUP_SHORT)/$(PROJECT_NAME_SHORT)/$(NAME) \
-			--policy-text file://$(TMP_DIR_REL)/$(@).json \
-	"
+	make aws-ecr-create-repository NAME=$(NAME)
 
 docker-push: ### Push Docker image - mandatory: NAME; optional: VERSION|TAG
 	make docker-login

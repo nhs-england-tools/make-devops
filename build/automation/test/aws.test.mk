@@ -35,6 +35,7 @@ test-aws:
 		test-aws-cognito-get-client-id \
 		test-aws-cognito-get-client-secret \
 		test-aws-ecr-get-login-password \
+		test-aws-ecr-create-repository \
 		test-aws-ecr-get-image-digest \
 		test-aws-ses-verify-email-identity \
 	)
@@ -263,6 +264,9 @@ test-aws-cognito-get-client-secret:
 	mk_test_skip
 
 test-aws-ecr-get-login-password:
+	mk_test_skip
+
+test-aws-ecr-create-repository:
 	mk_test_skip
 
 test-aws-ecr-get-image-digest:

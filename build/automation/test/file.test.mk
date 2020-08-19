@@ -1,4 +1,4 @@
-TEST_FILE = $(TMP_DIR)/test-file.txt
+TEST_FILE = $(TMP_DIR_REL)/test-file.txt
 
 test-file:
 	make test-file-setup
@@ -11,6 +11,7 @@ test-file:
 		test-file-replace-variables-file-name \
 		test-file-replace-variables-file-name-exclude-file-name \
 		test-file-replace-variables-in-dir \
+		test-file-copy-and-replace \
 	)
 	for test in $${tests[*]}; do
 		mk_test_initialise $$test
@@ -108,3 +109,16 @@ test-file-replace-variables-file-name-exclude-file-name:
 
 test-file-replace-variables-in-dir:
 	mk_test_skip
+
+test-file-copy-and-replace:
+	# arrange
+	echo "this_is_a_test" > $(TEST_FILE)
+	# act
+	make file-copy-and-replace \
+		SRC=$(TEST_FILE) \
+		DEST=$(TMP_DIR_REL)/$(@)_$(BUILD_ID).txt && \
+		trap "{ rm -f $(TMP_DIR_REL)/$(@)_$(BUILD_ID).txt; }" EXIT
+	# assert
+	mk_test "this_is_a_test = $$(cat $(TEST_FILE))"
+	# clean up
+	rm -f $(TEST_FILE)

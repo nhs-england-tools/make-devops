@@ -70,7 +70,7 @@ If you hear your teams or individuals saying _"It will take days to onboard a ne
   - Prefix target with the underscore i.e. `_descriptive-name` to indicate that it is a 'private' target
   - Do not exceed 40 characters
 - Target help convention
-  - Sample format is `# Target description - mandatory: ARG1=[argument description]; optional: ARG2="argument-value"; return: [string]`
+  - Sample format is `# Target description - mandatory: ARG1=[argument description]; optional: ARG2="argument-value"; return: [string]`. A mandatory argument name can be concise e.g. `IMAGE`, however to avoid unpredicted behaviour while constructing higher lever make targets use more descriptive naming convention for the optional arguments e.g. `DOCKER_IMAGE`
   - Prefix with `#` to indicate project development flow target listed by `make help` or `help-project-flow`
   - Prefix with `##` to indicate development supporting target listed by `make help-project-supporting`
   - Prefix with `###` to indicate library target, use `make help-all` to see the full list of available targets
