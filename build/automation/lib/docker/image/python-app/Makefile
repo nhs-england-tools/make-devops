@@ -3,9 +3,9 @@ include $(abspath $(PROJECT_DIR)/build/automation/init.mk)
 
 # ==============================================================================
 
-build:
-	make _generate-ssl-certificate
-	make docker-build NAME=python-app
+build: _generate-ssl-certificate
+	[ -n "$(FORCE)" ] && target=docker-build || target=docker-image-pull-or-build
+	make $$target NAME=python-app
 
 test:
 	make docker-test NAME=python-app CMD="bash"

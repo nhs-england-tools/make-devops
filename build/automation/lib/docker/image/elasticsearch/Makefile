@@ -4,7 +4,8 @@ include $(abspath $(PROJECT_DIR)/build/automation/init.mk)
 # ==============================================================================
 
 build:
-	make docker-build NAME=elasticsearch FROM_CACHE=$(or $(FROM_CACHE), true)
+	[ -n "$(FORCE)" ] && target=docker-build || target=docker-image-pull-or-build
+	make $$target NAME=elasticsearch FROM_CACHE=$(or $(FROM_CACHE), true)
 
 test:
 	make docker-test NAME=elasticsearch \

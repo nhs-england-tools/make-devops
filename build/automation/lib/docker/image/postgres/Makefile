@@ -3,9 +3,9 @@ include $(abspath $(PROJECT_DIR)/build/automation/init.mk)
 
 # ==============================================================================
 
-build:
-	make _generate-ssl-certificate
-	make docker-build NAME=postgres FROM_CACHE=$(or $(FROM_CACHE), true)
+build: _generate-ssl-certificate
+	[ -n "$(FORCE)" ] && target=docker-build || target=docker-image-pull-or-build
+	make $$target NAME=postgres FROM_CACHE=$(or $(FROM_CACHE), true)
 
 test:
 	make \

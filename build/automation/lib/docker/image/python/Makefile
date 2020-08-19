@@ -4,7 +4,8 @@ include $(abspath $(PROJECT_DIR)/build/automation/init.mk)
 # ==============================================================================
 
 build:
-	make docker-build NAME=python
+	[ -n "$(FORCE)" ] && target=docker-build || target=docker-image-pull-or-build
+	make $$target NAME=python
 
 test:
 	make docker-test NAME=python CMD="bash"
