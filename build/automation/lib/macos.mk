@@ -432,6 +432,7 @@ _macos-config-visual-studio-code:
 	code --force --install-extension ms-vsliveshare.vsliveshare-pack
 	code --force --install-extension msjsdiag.debugger-for-chrome
 	code --force --install-extension msjsdiag.vscode-react-native
+	code --force --install-extension nicolasvuillamy.vscode-groovy-lint
 	code --force --install-extension oderwat.indent-rainbow
 	code --force --install-extension pivotal.vscode-spring-boot
 	code --force --install-extension redhat.java
