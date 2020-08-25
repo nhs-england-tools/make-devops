@@ -10,6 +10,8 @@ jobs:
           name: Configure Environment
           command: |
             sudo sysctl -w vm.max_map_count=262144
+            BUILD_DATE=$(date -u +"%Y-%m-%dT%H:%M:%S%z")
+            echo "export BUILD_DATE=$BUILD_DATE" >> $BASH_ENV
       - run:
           name: Show Variables
           command: |
