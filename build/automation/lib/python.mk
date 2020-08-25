@@ -31,9 +31,9 @@ python-virtualenv: ### Setup Python virtual environment - optional: PYTHON_VERSI
 	sed -i 's;    "python.pythonPath":.*;    "python.pythonPath": "$(HOME)/.pyenv/versions/$(PYTHON_VERSION)/bin/python",;g' $(PROJECT_DIR)/$(PROJECT_NAME).code-workspace
 
 python-virtualenv-clean: ### Clean up Python virtual environment - optional: PYTHON_VERSION
-	rm -rf \
-		.python-version \
-		~/.pyenv/versions/$(PYTHON_VERSION)/envs/$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME)
+	pyenv uninstall --force $(PYTHON_VERSION)
+	rm -rf .python-version
+	pyenv global system
 
 python-code-format: ### Format Python code with 'balck' - optional: FILES=[directory, file or pattern]
 	make docker-run-tools CMD=" \
