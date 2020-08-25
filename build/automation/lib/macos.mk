@@ -57,6 +57,7 @@ macos-install-essential:: ## Install essential development dependencies - option
 	brew $$install google-java-format ||:
 	brew $$install gpg ||:
 	brew $$install gradle ||:
+	brew $$install graphviz ||:
 	brew $$install grep ||:
 	brew $$install helm ||:
 	brew $$install httpie ||:
@@ -168,6 +169,7 @@ macos-check:: ## Check if the development dependencies are installed
 	brew list google-java-format ||:
 	brew list gpg ||:
 	brew list gradle ||:
+	brew list graphviz ||:
 	brew list grep ||:
 	brew list helm ||:
 	brew list httpie ||:
@@ -325,6 +327,7 @@ _macos-config-command-line:
 	ln $$(brew --prefix)/bin/python3 $$(brew --prefix)/bin/python
 	curl -s https://bootstrap.pypa.io/get-pip.py | $$(brew --prefix)/bin/python3
 	$$(brew --prefix)/bin/pip3 install $(PYTHON_BASE_PACKAGES)
+	pyenv global $(PYTHON_VERSION)
 	# configure Go
 	curl -sSL https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer | bash ||:
 	# configure Java

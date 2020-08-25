@@ -61,12 +61,15 @@ RUN set -eux && \
         curl \
         git \
         gnupg \
+        graphviz \
         iputils \
         make \
+        msttcorefonts-installer \
         net-tools \
         netcat-openbsd \
         wget \
     && \
+    update-ms-fonts && \
     \
     # Install aws-iam-authenticator
     curl -o aws-iam-authenticator https://amazon-eks.s3-us-west-2.amazonaws.com/1.17.9/2020-08-04/bin/linux/amd64/aws-iam-authenticator && \

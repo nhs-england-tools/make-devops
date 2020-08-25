@@ -19,9 +19,13 @@ package:
     installed: true
   gnupg:
     installed: true
+  graphviz:
+    installed: true
   iputils:
     installed: true
   make:
+    installed: true
+  msttcorefonts-installer:
     installed: true
   net-tools:
     installed: true

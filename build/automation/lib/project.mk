@@ -20,6 +20,12 @@ project-log: ### Print log from Docker Compose
 project-deploy: ### Deploy application service stack to the Kubernetes cluster - mandatory: PROFILE=[profile name]
 	make k8s-deploy STACK=$(or $(NAME), service)
 
+project-document-infrastructure: ### Generate infrastructure diagram - optional: FIN=[Python file path, defaults to infrastructure/diagram.py],FOUT=[PNG file path, defaults to documentation/Infrastructure_Diagram]
+	make docker-run-tools CMD="python \
+		$(or $(FIN), $(INFRASTRUCTURE_DIR_REL)/diagram.py) \
+		$(or $(FOUT), $(DOCUMENTATION_DIR_REL)/Infrastructure_Diagram) \
+	"
+
 # ==============================================================================
 
 project-tag-as-release-candidate: ### Tag release candidate - mandatory: IMAGE|IMAGES=[comma-separated image names]; optional: COMMIT=[git commit hash, defaults to master]
@@ -61,6 +67,7 @@ project-create-deployment: ### Create deployment from template - mandatory: STAC
 project-create-infrastructure: ### Create infrastructure from template - mandatory: STACK=[infrastructure name],TEMPLATE=[library template infrastructure name]
 	make -s terraform-create-module-from-template TEMPLATE=$(TEMPLATE)
 	make -s terraform-create-stack-from-template NAME=$(STACK) TEMPLATE=$(TEMPLATE)
+	cp -fv $(LIB_DIR_REL)/project/template/infrastructure/diagram.py $(INFRASTRUCTURE_DIR_REL)/diagram.py
 
 project-create-pipeline: ### Create pipeline
 	make -s jenkins-create-pipeline-from-template
