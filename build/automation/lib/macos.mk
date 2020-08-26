@@ -327,6 +327,7 @@ _macos-config-command-line:
 	ln $$(brew --prefix)/bin/python3 $$(brew --prefix)/bin/python
 	curl -s https://bootstrap.pypa.io/get-pip.py | $$(brew --prefix)/bin/python3
 	$$(brew --prefix)/bin/pip3 install $(PYTHON_BASE_PACKAGES)
+	pyenv install --skip-existing $(PYTHON_VERSION)
 	pyenv global $(PYTHON_VERSION)
 	# configure Go
 	curl -sSL https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer | bash ||:
