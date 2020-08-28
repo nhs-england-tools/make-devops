@@ -23,7 +23,7 @@ aws-assume-role-export-variables: ### Get assume role export for the Jenkins use
 		echo "export AWS_SESSION_TOKEN=$${array[2]}"
 	fi
 
-aws-account-check-id: ### Checked if user has MFA'd into the account - mandatory: ID=[AWS account number]; return: true|false
+aws-account-check-id: ### Check if user has MFA'd into the account - mandatory: ID=[AWS account number]; return: true|false
 	if [ $(ID) == "$$(make aws-account-get-id)" ] && [ "$$TEXAS_SESSION_EXPIRY_TIME" -gt $$(date -u +"%Y%m%d%H%M%S") ]; then
 		echo true
 	else
