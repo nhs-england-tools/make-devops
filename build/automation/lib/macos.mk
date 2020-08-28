@@ -410,6 +410,7 @@ _macos-config-visual-studio-code:
 	# Install extensions
 	code --force --install-extension alefragnani.bookmarks
 	code --force --install-extension alexkrechik.cucumberautocomplete
+	code --force --install-extension amazonwebservices.aws-toolkit-vscode
 	code --force --install-extension ban.spellright
 	code --force --install-extension christian-kohler.npm-intellisense
 	code --force --install-extension christian-kohler.path-intellisense
@@ -426,6 +427,7 @@ _macos-config-visual-studio-code:
 	code --force --install-extension felixfbecker.php-debug
 	code --force --install-extension felixfbecker.php-intellisense
 	code --force --install-extension gabrielbb.vscode-lombok
+	code --force --install-extension gruntfuggly.todo-tree
 	code --force --install-extension hashicorp.terraform
 	code --force --install-extension humao.rest-client
 	code --force --install-extension johnpapa.vscode-peacock
