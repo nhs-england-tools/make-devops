@@ -171,7 +171,7 @@ k8s-replace-variables: ### Replace variables in base and overlay of a stack - ma
 k8s-get-namespace-ttl: ### Get the length of time for the namespace to live
 	date -u +"%d-%b-%Y" -d "+$(K8S_TTL_LENGTH)"
 
-k8s-kubeconfig-get: ### Get configuration file - mandatory: PROFILE=[name]
+k8s-kubeconfig-get: ### Get configuration file
 	make aws-s3-download \
 		URI=$(K8S_KUBECONFIG_FILE) \
 		FILE=$(TMP_DIR_REL)/lk8s-$(AWS_ACCOUNT_NAME)-kubeconfig
@@ -182,7 +182,7 @@ k8s-kubeconfig-get: ### Get configuration file - mandatory: PROFILE=[name]
 			$(HOME)/.kube/configs/lk8s-$(AWS_ACCOUNT_NAME)-kubeconfig
 	fi
 
-k8s-kubeconfig-export-variables k8s-kubeconfig-export: ### Export configuration file - mandatory: PROFILE=[name]
+k8s-kubeconfig-export-variables k8s-kubeconfig-export: ### Export configuration file
 	echo "export KUBECONFIG=$(TMP_DIR_REL)/lk8s-$(AWS_ACCOUNT_NAME)-kubeconfig"
 
 k8s-clean: ### Clean Kubernetes files - mandatory: STACK=[name]
