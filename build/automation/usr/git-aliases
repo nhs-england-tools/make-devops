@@ -24,15 +24,8 @@ alias gr="git reset HEAD"
 alias gs="git status --short"
 
 function git-pull {
-  current=$(git rev-parse --abbrev-ref HEAD)
-  for branch in $(git branch | cut -c 3-); do
-    if [ $branch != $current ]; then
-      git fetch origin $branch:$branch
-      #git rebase origin $branch:$branch
-    else
-      git pull
-    fi
-  done
+  git branch -r | grep -v '\->' | while read remote; do git branch --track "${remote#origin/}" "$remote" 2> /dev/null; done
+  git pull --all
 }
 
 function git-prune {

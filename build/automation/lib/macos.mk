@@ -287,6 +287,8 @@ _macos-config-oh-my-zsh:
 	echo -e "\n# BEGIN: Custom configuration" >> ~/.zshrc
 	echo "plugins=(" >> ~/.zshrc
 	echo "    git" >> ~/.zshrc
+	echo "    git-extras" >> ~/.zshrc
+	echo "    git-auto-fetch" >> ~/.zshrc
 	echo "    docker" >> ~/.zshrc
 	echo "    docker-compose" >> ~/.zshrc
 	echo "    pyenv" >> ~/.zshrc
@@ -303,6 +305,7 @@ _macos-config-oh-my-zsh:
 	echo "    gpg-agent" >> ~/.zshrc
 	echo "    common-aliases" >> ~/.zshrc
 	echo "    colorize" >> ~/.zshrc
+	echo "    copybuffer" >> ~/.zshrc
 	echo "    $(DEVOPS_PROJECT_NAME)" >> ~/.zshrc
 	echo ")" >> ~/.zshrc
 	echo 'function tx-status { [ -n "$$TEXAS_SESSION_EXPIRY_TIME" ] && [ "$$TEXAS_SESSION_EXPIRY_TIME" -gt $$(date -u +"%Y%m%d%H%M%S") ] && echo $$TEXAS_PROFILE ||: }' >> ~/.zshrc
