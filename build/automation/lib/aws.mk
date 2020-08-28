@@ -4,6 +4,10 @@ aws-session-fail-if-invalid: ### Fail if the session variables are not set
 
 aws-assume-role-export-variables: ### Get assume role export for the Jenkins user - optional: PROFILE=[name]
 	if [ $(AWS_ROLE) == $(AWS_ROLE_JENKINS) ]; then
+		if [ $(AWS_ACCOUNT_ID) == "$$(make aws-account-get-id)" ]; then
+			echo "Already assumed arn:aws:iam::$(AWS_ACCOUNT_ID):role/$(AWS_ROLE)"
+			exit
+		fi
 		array=($$(
 			make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 				$(AWSCLI) sts assume-role \
@@ -19,14 +23,14 @@ aws-assume-role-export-variables: ### Get assume role export for the Jenkins use
 		echo "export AWS_SESSION_TOKEN=$${array[2]}"
 	fi
 
-aws-account-check-id: ### Checked if user has MFA'd into the account - mandatory: ID; return: true|false
+aws-account-check-id: ### Checked if user has MFA'd into the account - mandatory: ID=[AWS account number]; return: true|false
 	if [ $(ID) == "$$(make aws-account-get-id)" ] && [ "$$TEXAS_SESSION_EXPIRY_TIME" -gt $$(date -u +"%Y%m%d%H%M%S") ]; then
 		echo true
 	else
 		echo false
 	fi
 
-aws-account-get-id: ### Get the account ID user has MFA'd into
+aws-account-get-id: ### Get the account ID user has MFA'd into - return: AWS account number
 	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) sts get-caller-identity \
 		--query 'Account' \
