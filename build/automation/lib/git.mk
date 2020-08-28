@@ -53,19 +53,22 @@ git-tag-is-environment-deployment: ### Check if a commit is tagged as environmen
 	commit=$(or $(COMMIT), master)
 	(git show-ref --tags -d | grep $$(git rev-parse $$commit) | sed -e 's;.* refs/tags/;;' -e 's;\^{};;' | grep -- -$(PROFILE)$$) > /dev/null 2>&1 && echo true || echo false
 
+git-tag-create: ### Tag a commit - mandatory: TAG=[tag name]; optional: COMMIT=[commit, defaults to master]
+	commit=$(or $(COMMIT), master)
+	git tag $(TAG) $$commit
+	git push origin $(TAG)
+
 git-tag-create-release-candidate: ### Tag release candidate as `[YYYYmmddHHMMSS]-rc` - optional: COMMIT=[commit, defaults to master]
 	commit=$(or $(COMMIT), master)
 	tag=$$(date --date=$(BUILD_DATE) -u +%Y%m%d%H%M%S)-rc
-	git tag $$tag $$commit
-	git push origin $$tag
+	make git-tag-create TAG=$$tag COMMIT=$$commit
 
 git-tag-create-environment-deployment: ### Tag environment deployment as `[YYYYmmddHHMMSS]-[env]` - mandatory: PROFILE=[profile name]; optional: COMMIT=[release candidate tag name, defaults to master]
 	[ $(PROFILE) = local ] && (echo "ERROR: Please, specify the PROFILE"; exit 1)
 	commit=$(or $(COMMIT), master)
 	if [ $$(make git-tag-is-release-candidate COMMIT=$$commit) = true ]; then
 		tag=$$(date --date=$(BUILD_DATE) -u +%Y%m%d%H%M%S)-$(PROFILE)
-		git tag $$tag $$commit
-		git push origin $$tag
+		make git-tag-create TAG=$$tag COMMIT=$$commit
 	fi
 
 git-tag-get-release-candidate: ### Get the latest release candidate tag for the whole repository or just the specified commit - optional: COMMIT=[commit]
@@ -82,6 +85,9 @@ git-tag-get-environment-deployment: ### Get the latest environment deployment t
 	else
 		git show-ref --tags -d | grep ^$$(git rev-parse --short $(COMMIT)) | sed -e 's;.* refs/tags/;;' -e 's;\^{};;' | grep -- -$(PROFILE)$$ | sort -r | head -n 1
 	fi
+
+git-tag-get-latest: ### Get the latest tag on the current branch - return [YYYYmmddHHMMSS]-[*]
+	git tag --sort version:refname | grep '^[0-9]*'| sort -r | head -n 1
 
 git-tag-list: ### List tags of a commit - optional: COMMIT=[commit, defaults to master],PROFILE=[profile name]
 	commit=$(or $(COMMIT), master)
@@ -103,6 +109,7 @@ git-tag-clear: ### Remove tags from the specified commit - optional: COMMIT=[co
 	git-commit-get-timestamp \
 	git-commit-has-changed-directory \
 	git-tag-get-environment-deployment \
+	git-tag-get-latest \
 	git-tag-get-release-candidate \
 	git-tag-is-environment-deployment \
 	git-tag-is-release-candidate \
