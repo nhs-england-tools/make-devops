@@ -451,6 +451,8 @@ _macos-config-visual-studio-code:
 	code --force --install-extension vscjava.vscode-spring-boot-dashboard
 	code --force --install-extension vscjava.vscode-spring-initializr
 	code --force --install-extension vscode-icons-team.vscode-icons
+	code --force --install-extension vsls-contrib.codetour
+	code --force --install-extension vsls-contrib.gistfs
 	code --force --install-extension wayou.vscode-todo-highlight
 	code --force --install-extension xabikos.javascriptsnippets
 	code --force --install-extension yzhang.markdown-all-in-one
