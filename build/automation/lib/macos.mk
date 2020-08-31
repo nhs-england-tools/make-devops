@@ -87,7 +87,7 @@ macos-install-essential:: ## Install essential development dependencies - option
 	brew cask $$install docker ||:
 	brew cask $$install font-hack-nerd-font ||:
 	brew cask $$install iterm2 ||:
-	brew cask $$install visual-studio-code ||:
+	brew cask $$install visual-studio-code && which code > /dev/null 2>&1 || brew cask reinstall --force visual-studio-code ||:
 	# maven depends on java
 	brew $$install maven ||:
 
