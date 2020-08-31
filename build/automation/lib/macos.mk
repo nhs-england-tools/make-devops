@@ -75,9 +75,9 @@ macos-install-essential:: ## Install essential development dependencies - option
 	brew $$install pyenv-which-ext ||:
 	brew $$install python@$(PYTHON_VERSION_MAJOR).$(PYTHON_VERSION_MINOR) ||:
 	brew $$install shellcheck ||:
-	brew $$install terraform ||:
 	brew $$install tmux ||:
 	brew $$install tree ||:
+	brew $$install warrensbox/tap/tfswitch ||:
 	brew $$install yq ||:
 	brew $$install zsh ||:
 	brew $$install zsh-autosuggestions ||:
@@ -188,9 +188,9 @@ macos-check:: ## Check if the development dependencies are installed
 	brew list pyenv-which-ext ||:
 	brew list python@$(PYTHON_VERSION_MAJOR).$(PYTHON_VERSION_MINOR) ||:
 	brew list shellcheck ||:
-	brew list terraform ||:
 	brew list tmux ||:
 	brew list tree ||:
+	brew list warrensbox/tap/tfswitch ||:
 	brew list yq ||:
 	brew list zsh ||:
 	brew list zsh-autosuggestions ||:
@@ -340,6 +340,8 @@ _macos-config-command-line:
 	jenv add $$(/usr/libexec/java_home -v$(JAVA_VERSION))
 	jenv versions # ls -1 /Library/Java/JavaVirtualMachines
 	jenv global $(JAVA_VERSION).0
+	# configure Terraform
+	tfswitch $(TERRAFORM_VERSION)
 	# configure Git
 	make git-config
 	# configure shell
