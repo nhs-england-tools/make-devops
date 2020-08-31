@@ -87,7 +87,7 @@ RUN set -eux && \
     mv ./yq_linux_amd64 /usr/local/bin/yq && \
     \
     # Install kubectl
-    curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.18.8/bin/linux/amd64/kubectl && \
+    curl -LO https://storage.googleapis.com/kubernetes-release/release/v1.19.0/bin/linux/amd64/kubectl && \
     chmod +x ./kubectl && \
     mv ./kubectl /usr/local/bin/kubectl && \
     \
