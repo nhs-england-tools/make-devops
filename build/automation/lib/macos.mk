@@ -397,9 +397,6 @@ _macos-config-command-line:
 			echo
 		) > $(DEV_OHMYZSH_DIR)/plugins/$(DEVOPS_PROJECT_NAME)/aws-platform.zsh
 	fi
-	if [ -f $(PROJECT_DIR)/*.code-workspace.template ] && [ ! -f $(PROJECT_DIR)/$(PROJECT_NAME).code-workspace ]; then
-		cp $(PROJECT_DIR)/*.code-workspace.template $(PROJECT_DIR)/$(PROJECT_NAME).code-workspace
-	fi
 
 _macos-config-iterm2:
 	curl -fsSL https://raw.githubusercontent.com/stefaniuk/dotfiles/master/lib/resources/iterm/com.googlecode.iterm2.plist -o /tmp/com.googlecode.iterm2.plist

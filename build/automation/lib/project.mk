@@ -1,11 +1,25 @@
+PROJECT_CONFIG_TIMESTAMP_FILE = $(TMP_DIR)/project-config-timestamp
+#PROJECT_CONFIG_TARGET
+#PROJECT_CONFIG_TIMESTAMP
+#PROJECT_CONFIG_FORCE
+
 project-config: ### Configure project environment
 	make \
 		git-config \
 		docker-config
-	if [ ! -f $(PROJECT_DIR)/$(PROJECT_NAME).code-workspace ]; then
-		cp -fv \
-			$(PROJECT_DIR)/$(PROJECT_NAME).code-workspace.template \
-			$(PROJECT_DIR)/$(PROJECT_NAME).code-workspace
+	if [ ! -f $(PROJECT_DIR)/project.code-workspace ]; then
+		cp -fv $(LIB_DIR)/project/template/project.code-workspace $(PROJECT_DIR)
+	fi
+	# Re-configure developer's environment on demand
+	if [ -n "$(PROJECT_CONFIG_TIMESTAMP)" ] && ([ ! -f $(PROJECT_CONFIG_TIMESTAMP_FILE) ] || [ $(PROJECT_CONFIG_TIMESTAMP) -gt $$(cat $(PROJECT_CONFIG_TIMESTAMP_FILE)) ]) && [ $(BUILD_ID) -eq 0 ]; then
+		if [[ ! "$(PROJECT_CONFIG_FORCE)" =~ ^(true|yes|y|on|1|TRUE|YES|Y|ON)$$ ]]; then
+			read -p "Your development environment needs to be re-configured, would you like to proceed? (yes or no) " answer
+			if [[ ! "$$answer" =~ ^(yes|y|YES|Y)$$ ]]; then
+				exit 1
+			fi
+		fi
+		make $(PROJECT_CONFIG_TARGET)
+		echo $(BUILD_TIMESTAMP) > $(PROJECT_CONFIG_TIMESTAMP_FILE)
 	fi
 
 project-start: ### Start Docker Compose

@@ -1,11 +1,8 @@
 /.github @stefaniuk
 /.vscode @stefaniuk
 /build @stefaniuk
-/deployment @stefaniuk
 /documentation @stefaniuk
-/infrastructure @stefaniuk
 /.editorconfig @stefaniuk
 /.gitignore @stefaniuk
-/Makefile @stefaniuk
 /*.md @stefaniuk
-/*.code-workspace.template @stefaniuk
+/*.code-workspace @stefaniuk

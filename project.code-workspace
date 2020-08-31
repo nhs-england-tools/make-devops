@@ -1,0 +1,145 @@
+{
+  "folders": [
+    {
+      "name": "[Repository]",
+      "path": "."
+    }
+  ],
+  "settings": {
+    "breadcrumbs.enabled": true,
+    "editor.autoIndent": "full",
+    "editor.fontSize": 18,
+    "editor.formatOnSave": true,
+    "editor.renderWhitespace": "all",
+    "editor.suggestSelection": "recentlyUsedByPrefix",
+    "explorer.autoReveal": true,
+    "explorer.sortOrder": "type",
+    "extensions.ignoreRecommendations": true,
+    "extensions.showRecommendationsOnlyOnDemand": true,
+    "files.autoSave": "onFocusChange",
+    "files.eol": "\n",
+    "files.exclude": {
+      "**/.classpath": true,
+      "**/.project": true,
+      "**/.settings": true,
+      "**/.factorypath": true
+    },
+    "files.insertFinalNewline": true,
+    "files.trimFinalNewlines": true,
+    "files.trimTrailingWhitespace": true,
+    "java.completion.enabled": true,
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "java.format.enabled": false,
+    "java.home": "~/.jenv/versions/14.0",
+    "python.formatting.blackArgs": ["--line-length", "120"],
+    "python.formatting.provider": "black",
+    "python.linting.flake8Args": ["--max-line-length=120"],
+    "python.linting.flake8Enabled": true,
+    "python.linting.flake8Path": "~/.pyenv/versions/3.8.5/bin/flake8",
+    "python.linting.mypyArgs": [],
+    "python.linting.mypyEnabled": true,
+    "python.linting.mypyPath": "~/.pyenv/versions/3.8.5/bin/mypy",
+    "python.linting.pylintArgs": [],
+    "python.linting.pylintEnabled": true,
+    "python.linting.pylintPath": "~/.pyenv/versions/3.8.5/bin/pylint",
+    "python.pythonPath": "~/.pyenv/versions/3.8.5/bin/python",
+    "telemetry.enableCrashReporter": false,
+    "telemetry.enableTelemetry": false,
+    "terminal.integrated.fontFamily": "Hack Nerd Font",
+    "window.title": "${activeEditorMedium}${separator}${rootName}${separator}${rootPath}",
+    "window.zoomLevel": 0,
+    /*"workbench.colorCustomizations": {
+      "editorWhitespace.foreground": "#FF0000",
+    },*/
+    "workbench.colorTheme": "Better Solarized Dark Italics",
+    "workbench.editor.enablePreview": false,
+    "workbench.tree.indent": 24,
+    "[dockerfile]": {
+      "editor.formatOnSave": false,
+      "editor.insertSpaces": true,
+      "editor.tabSize": 4
+    },
+    "[groovy]": {
+      "editor.insertSpaces": true,
+      "editor.tabSize": 2
+    },
+    "[java]": {
+      "editor.tabSize": 2,
+      "editor.insertSpaces": true
+    },
+    "[javascript]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+      "editor.insertSpaces": true,
+      "editor.tabSize": 2
+    },
+    "[javascriptreact]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+      "editor.insertSpaces": true,
+      "editor.tabSize": 2
+    },
+    "[json]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+      "editor.insertSpaces": true,
+      "editor.tabSize": 2
+    },
+    "[python]": {
+      "editor.tabSize": 4,
+      "editor.insertSpaces": true
+    },
+    "[terraform]": {
+      "editor.insertSpaces": true,
+      "editor.tabSize": 2
+    },
+    "[typescript]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+      "editor.insertSpaces": true,
+      "editor.tabSize": 2
+    },
+    "[typescriptreact]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode",
+      "editor.insertSpaces": true,
+      "editor.tabSize": 2
+    },
+    "[makefile]": {
+      "editor.insertSpaces": false,
+      "editor.tabSize": 2
+    },
+    "[markdown]": {
+      "editor.insertSpaces": true,
+      "editor.tabSize": 2
+    },
+    "[xml]": {
+      "editor.insertSpaces": true,
+      "editor.tabSize": 2
+    },
+    "[yaml]": {
+      "editor.insertSpaces": true,
+      "editor.tabSize": 2
+    },
+    "emeraldwalk.runonsave": {
+      "commands": [
+        {
+          "match": "\\.java$",
+          "cmd": "/usr/local/bin/google-java-format --replace ${file}"
+        }
+      ]
+    },
+    "workbench.colorCustomizations": {
+      "activityBar.background": "#d04649",
+      "activityBar.activeBackground": "#d04649",
+      "activityBar.activeBorder": "#37cb34",
+      "activityBar.foreground": "#e7e7e7",
+      "activityBar.inactiveForeground": "#e7e7e799",
+      "activityBarBadge.background": "#37cb34",
+      "activityBarBadge.foreground": "#15202b",
+      "titleBar.activeBackground": "#b52e31",
+      "titleBar.inactiveBackground": "#b52e3199",
+      "titleBar.activeForeground": "#e7e7e7",
+      "titleBar.inactiveForeground": "#e7e7e799",
+      "statusBar.background": "#b52e31",
+      "statusBarItem.hoverBackground": "#d04649",
+      "statusBar.foreground": "#e7e7e7"
+    },
+    "peacock.color": "#b52e31"
+  }
+}
