@@ -4,7 +4,7 @@
       "type": "header",
       "text": {
         "type": "plain_text",
-        "text": "JOB_NAME_TO_REPLACE",
+        "text": "PIPELINE_NAME_TO_REPLACE",
         "emoji": true
       }
     },
@@ -20,7 +20,8 @@
           Commit Hash: BUILD_COMMIT_HASH_TO_REPLACE \n
           Branch: BUILD_BRANCH_TO_REPLACE \n
           Repository: BUILD_REPO_TO_REPLACE \n
-          For more information click here BUILD_URL_TO_REPLACE"
+          For more information click here BUILD_URL_TO_REPLACE \n
+          SLACK_EXTRA_DETAILS_TO_REPLACE"
       }
     }
   ]
