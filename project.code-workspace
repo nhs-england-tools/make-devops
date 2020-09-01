@@ -43,6 +43,7 @@
     "python.linting.pylintEnabled": true,
     "python.linting.pylintPath": "~/.pyenv/versions/3.8.5/bin/pylint",
     "python.pythonPath": "~/.pyenv/versions/3.8.5/bin/python",
+    "python.terminal.activateEnvironment": false,
     "telemetry.enableCrashReporter": false,
     "telemetry.enableTelemetry": false,
     "terminal.integrated.fontFamily": "Hack Nerd Font",
