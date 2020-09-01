@@ -5,7 +5,7 @@ aws-session-fail-if-invalid: ### Fail if the session variables are not set
 aws-assume-role-export-variables: ### Get assume role export for the Jenkins user - optional: PROFILE=[name]
 	if [ $(AWS_ROLE) == $(AWS_ROLE_JENKINS) ]; then
 		if [ $(AWS_ACCOUNT_ID) == "$$(make aws-account-get-id)" ]; then
-			echo "Already assumed arn:aws:iam::$(AWS_ACCOUNT_ID):role/$(AWS_ROLE)"
+			>&2 echo "Already assumed arn:aws:iam::$(AWS_ACCOUNT_ID):role/$(AWS_ROLE)"
 			exit
 		fi
 		array=($$(
@@ -263,7 +263,7 @@ aws-ecr-create-repository: ### Create ECR repository to store an image - mandato
 			--policy-text file://$(TMP_DIR_REL)/$(@)_$(BUILD_ID) \
 	"
 
-aws-ecr-get-image-digest: ### Get ECR image digest by matching tag pattern - mandatory: REPO=[repository name],TAG=[string to match]
+aws-ecr-get-image-digest: ### Get ECR image digest by matching tag pattern - mandatory: REPO=[repository name],TAG=[string to match tag of an image]
 	make file-copy-and-replace SRC=$(JQ_DIR_REL)/aws-ecr-get-image-digest.jq DEST=$(TMP_DIR_REL)/$(@)_$(BUILD_ID) && trap "{ rm -f $(TMP_DIR_REL)/$(@)_$(BUILD_ID); }" EXIT
 	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		aws ecr list-images \
