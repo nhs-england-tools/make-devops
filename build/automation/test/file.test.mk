@@ -116,8 +116,8 @@ test-file-copy-and-replace:
 	# act
 	make file-copy-and-replace \
 		SRC=$(TEST_FILE) \
-		DEST=$(TMP_DIR_REL)/$(@)_$(BUILD_ID).txt && \
-		trap "{ rm -f $(TMP_DIR_REL)/$(@)_$(BUILD_ID).txt; }" EXIT
+		DEST=$(TMP_DIR_REL)/$(@)_$(BUILD_ID) && \
+		trap "rm -f $(TMP_DIR_REL)/$(@)_$(BUILD_ID)" EXIT
 	# assert
 	mk_test "this_is_a_test = $$(cat $(TEST_FILE))"
 	# clean up

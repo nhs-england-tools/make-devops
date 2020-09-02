@@ -19,7 +19,7 @@ function mk_test() {
   if [ $# -eq 2 ]; then
     description="$1"; shift
   fi
-  if test $1; then
+  if [ "$1" != false ] && test $1; then
     TEST_PASS_COUNT=$((TEST_PASS_COUNT+1))
     ( mk_test_print "." ) >&5
   else

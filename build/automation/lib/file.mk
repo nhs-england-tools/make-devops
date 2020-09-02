@@ -54,6 +54,6 @@ file-replace-variables-in-dir: ### Replace placholders in all files in given dir
 		make file-replace-variables FILE=$$file SUFFIX=$(SUFFIX) EXCLUDE_FILE_NAME=$(EXCLUDE_FILE_NAME)
 	done
 
-file-copy-and-replace: ### Copy file to an alternative location and replace placholders - mandatory: SRC,DEST; optional: `&& trap "{ rm -f $(DEST); }" EXIT`
+file-copy-and-replace: ### Copy file to an alternative location and replace placholders - mandatory: SRC,DEST; optional: `&& trap "rm -f $(DEST)" EXIT`
 	cp $(SRC) $(DEST)
 	make file-replace-variables FILE=$(DEST)

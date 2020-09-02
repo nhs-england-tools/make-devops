@@ -2,7 +2,7 @@ aws-session-fail-if-invalid: ### Fail if the session variables are not set
 	([ -z "$$AWS_ACCESS_KEY_ID" ] || [ -z "$$AWS_SECRET_ACCESS_KEY" ] || [ -z "$$AWS_SESSION_TOKEN" ]) \
 		&& exit 1 ||:
 
-aws-assume-role-export-variables: ### Get assume role export for the Jenkins user - optional: PROFILE=[name]
+aws-assume-role-export-variables: ### Get assume role export for the Jenkins user - optional: PROFILE=[profile name to load relevant platform configuration file]
 	if [ $(AWS_ROLE) == $(AWS_ROLE_JENKINS) ]; then
 		if [ $(AWS_ACCOUNT_ID) == "$$(make aws-account-get-id)" ]; then
 			echo "Already assumed arn:aws:iam::$(AWS_ACCOUNT_ID):role/$(AWS_ROLE)" >&2
@@ -88,11 +88,12 @@ aws-secret-exists: ### Check if secret exists - mandatory: NAME=[secret name]; o
 	[ 0 -eq $$count ] && echo false || echo true
 
 aws-iam-policy-create: ### Create IAM policy - mandatory: NAME=[policy name],DESCRIPTION=[policy description],FILE=[path to json file]
-	make file-copy-and-replace SRC=$(FILE) DEST=$(TMP_DIR_REL)/$(@)_$(BUILD_ID) && trap "{ rm -f $(TMP_DIR_REL)/$(@)_$(BUILD_ID); }" EXIT
+	file=$(TMP_DIR_REL)/$(@)_$(BUILD_ID)
+	make file-copy-and-replace SRC=$(FILE) DEST=$$file && trap "rm -f $$file" EXIT
 	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) iam create-policy \
 			--policy-name $(NAME) \
-			--policy-document file://$(TMP_DIR_REL)/$(@)_$(BUILD_ID) \
+			--policy-document file://$$file \
 			--description '$(DESCRIPTION)' \
 	"
 
@@ -103,12 +104,13 @@ aws-iam-policy-exists: ### Check if IAM policy exists - mandatory: NAME=[policy 
 	" > /dev/null 2>&1 && echo true || echo false
 
 aws-iam-role-create: ### Create IAM role - mandatory: NAME=[role name],DESCRIPTION=[role description],FILE=[path to json file]
-	make file-copy-and-replace SRC=$(FILE) DEST=$(TMP_DIR_REL)/$(@)_$(BUILD_ID) && trap "{ rm -f $(TMP_DIR_REL)/$(@)_$(BUILD_ID); }" EXIT
+	file=$(TMP_DIR_REL)/$(@)_$(BUILD_ID)
+	make file-copy-and-replace SRC=$(FILE) DEST=$$file && trap "rm -f $$file" EXIT
 	tags='[{"Key":"Programme","Value":"$(PROGRAMME)"},{"Key":"Service","Value":"$(SERVICE_TAG)"},{"Key":"Environment","Value":"$(PROFILE)"}]'
 	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) iam create-role \
 			--role-name $(NAME) \
-			--assume-role-policy-document file://$(TMP_DIR_REL)/$(@)_$(BUILD_ID) \
+			--assume-role-policy-document file://$$file \
 			--description '$(DESCRIPTION)' \
 			--tags '$$tags' \
 	"
@@ -251,7 +253,8 @@ aws-ecr-get-login-password: ### Get ECR user login password
 	"
 
 aws-ecr-create-repository: ### Create ECR repository to store an image - mandatory: NAME
-	make file-copy-and-replace SRC=$(LIB_DIR_REL)/aws/aws-ecr-create-repository-policy.json DEST=$(TMP_DIR_REL)/$(@)_$(BUILD_ID) && trap "{ rm -f $(TMP_DIR_REL)/$(@)_$(BUILD_ID); }" EXIT
+	file=$(TMP_DIR_REL)/$(@)_$(BUILD_ID)
+	make file-copy-and-replace SRC=$(LIB_DIR_REL)/aws/aws-ecr-create-repository-policy.json DEST=$$file && trap "rm -f $$file" EXIT
 	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) ecr create-repository \
 			--repository-name $(PROJECT_GROUP_SHORT)/$(PROJECT_NAME_SHORT)/$(NAME) \
@@ -260,15 +263,16 @@ aws-ecr-create-repository: ### Create ECR repository to store an image - mandato
 	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) ecr set-repository-policy \
 			--repository-name $(PROJECT_GROUP_SHORT)/$(PROJECT_NAME_SHORT)/$(NAME) \
-			--policy-text file://$(TMP_DIR_REL)/$(@)_$(BUILD_ID) \
+			--policy-text file://$$file \
 	"
 
 aws-ecr-get-image-digest: ### Get ECR image digest by matching tag pattern - mandatory: REPO=[repository name],TAG=[string to match tag of an image]
-	make file-copy-and-replace SRC=$(JQ_DIR_REL)/aws-ecr-get-image-digest.jq DEST=$(TMP_DIR_REL)/$(@)_$(BUILD_ID) >&2 && trap "{ rm -f $(TMP_DIR_REL)/$(@)_$(BUILD_ID); }" EXIT
+	file=$(TMP_DIR_REL)/$(@)_$(BUILD_ID)
+	make file-copy-and-replace SRC=$(JQ_DIR_REL)/aws-ecr-get-image-digest.jq DEST=$$file >&2 && trap "rm -f $$file" EXIT
 	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		aws ecr list-images \
 			--repository-name $(shell echo $(REPO) | sed "s;$(AWS_ECR)/;;g") \
-	" | make -s docker-run-tools CMD="jq -rf $(TMP_DIR_REL)/$(@)_$(BUILD_ID)" | head -n 1
+	" | make -s docker-run-tools CMD="jq -rf $$file" | head -n 1
 
 aws-ses-verify-email-identity: ### Verify SES email address - mandatory: NAME
 	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \

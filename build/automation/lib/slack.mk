@@ -6,9 +6,9 @@ slack-send-notification: ### Send notification based on a template - mandatory: 
 	curl --request POST --header "Content-type: application/json" --data "$$message" $(SLACK_WEBHOOK_URL)
 
 slack-render-template: ### Render message content from a template - mandatory: FILE=[template file]
-	make -s file-copy-and-replace SRC=$(FILE) DEST=$(TMP_DIR)/$(@).json > /dev/null 2>&1 && trap "{ rm -f $(TMP_DIR)/$(@).json; }" EXIT
-	file=$$(cat $(TMP_DIR)/$(@).json)
-	echo $$file
+	file=$(TMP_DIR_REL)/$(@)_$(BUILD_ID)
+	make -s file-copy-and-replace SRC=$(FILE) DEST=$$file >&2 && trap "rm -f $$file" EXIT
+	cat $$file
 
 .SILENT: \
 	slack-render-template

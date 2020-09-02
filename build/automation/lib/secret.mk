@@ -1,3 +1,12 @@
+secret-get-random-string secret-random: ### Generate random string - optional: LENGTH=[integer]
+	str=
+	if [ "$$OS" == "unix" ]; then
+		str=$$(env LC_ALL=C tr -dc 'A-Za-z0-9' < /dev/urandom | head -c $(or $(LENGTH), 32))
+	else
+		str=</dev/urandom LC_ALL=C tr -dc A-Za-z0-9 | (head -c $$ > /dev/null 2>&1 || head -c $(or $(LENGTH), 32))
+	fi
+	echo "$$str"
+
 secret-fetch-and-export-variables: ### Get secret and print variable exports - mandatory: NAME=[secret name]; return: [variables export]
 	# set up
 	eval "$$(make aws-assume-role-export-variables)"
@@ -5,7 +14,7 @@ secret-fetch-and-export-variables: ### Get secret and print variable exports - m
 	secret=$$(make aws-secret-get NAME=$(NAME))
 	make _secret-export-variables-from-json JSON="$$secret"
 
-secret-fetch: ### Get secret - mandatory: NAME=[secret name]
+secret-fetch: ### Get secret - mandatory: NAME=[secret name]; return: [json object]
 	# set up
 	eval "$$(make aws-assume-role-export-variables)"
 	# fetch
@@ -15,24 +24,35 @@ secret-create: ### Set secret - mandatory: NAME=[secret name], VARS=[comma-separ
 	# set up
 	eval "$$(make aws-assume-role-export-variables)"
 	# create
-	file=$(TMP_DIR)/$(PROJECT_NAME)-$(@)-$(BUILD_COMMIT_HASH)-$(BUILD_ID).json
 	json=
 	for key in $$(echo "$(VARS)" | sed 's/,/\n/g'); do
 		value=$$(echo $$(eval echo "\$$$$key"))
 		json+="\"$${key}\":\"$${value}\","
 	done
-	trap "rm -f $$file" EXIT
-	echo "{$${json%?}}" > $(TMP_DIR)/$(PROJECT_NAME)-$(@)-$(BUILD_COMMIT_HASH)-$(BUILD_ID).json
+	file=$(TMP_DIR)/$(@)_$(BUILD_ID)
+	echo "{$${json%?}}" > $$file && trap "rm -f $$file" EXIT
 	make aws-secret-create NAME=$(NAME) VALUE=file://$$file
 
-secret-random: ### Generate random secret string - optional: LENGTH=[integer]
-	str=
-	if [ "$$OS" == "unix" ]; then
-		str=$$(env LC_ALL=C tr -dc 'A-Za-z0-9' < /dev/urandom | head -c $(or $(LENGTH), 32))
+secret-get-existing-value: ### Get secret key value - mandatory: NAME=[secret name]; optional: KEY=[secret key]; return [key value]
+	eval "$$(make aws-assume-role-export-variables)"
+	secret=$$(make secret-fetch NAME=$(NAME))
+	if [ -n "$(KEY)" ] && [[ $$secret == {*} ]]; then
+		echo $$secret | make -s docker-run-tools CMD="jq -r '.$(KEY)'"
 	else
-		str=</dev/urandom LC_ALL=C tr -dc A-Za-z0-9 | (head -c $$ > /dev/null 2>&1 || head -c $(or $(LENGTH), 32))
+		echo $$secret
 	fi
-	echo "$$str"
+
+secret-update-existing-value: ### Update existing secret key with given key/value pair - mandatory: NAME=[secret name],KEY=[secret key],VALUE=[new key value]
+	eval "$$(make aws-assume-role-export-variables)"
+	secrets=$$(make secret-fetch NAME=$(NAME))
+	file=$(TMP_DIR)/$(@)_$(BUILD_ID)
+	echo $$secrets | make -s docker-run-tools CMD="jq '.$(KEY) = \"$(VALUE)\"'" > $$file # && trap "rm -f $$file" EXIT
+	make aws-secret-put NAME=$(NAME) VALUE=file://$$file
+
+secret-copy-value-from: ### Copy secret key value - mandatory: SRC_NAME=[secret name],DEST_NAME=[secret name],KEY=[secret key]
+	eval "$$(make aws-assume-role-export-variables)"
+	value=$$(make secret-get-existing-value NAME=$(SRC_NAME) KEY=$(KEY))
+	make secret-update-existing-value NAME=$(DEST_NAME) KEY=$(KEY) VALUE=$$value
 
 # ==============================================================================
 
@@ -51,4 +71,6 @@ _secret-export-variables-from-json: ### Convert JSON to environment variables - 
 	secret-create \
 	secret-fetch \
 	secret-fetch-and-export-variables \
+	secret-get-existing-value \
+	secret-get-random-string \
 	secret-random

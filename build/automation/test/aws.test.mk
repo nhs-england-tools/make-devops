@@ -89,33 +89,33 @@ test-aws-account-get-id:
 
 test-aws-secret-create-value:
 	# act
-	make aws-secret-create NAME=DB_PASSWORD VALUE=p45w0rd
-	secret="$$(make aws-secret-get NAME=DB_PASSWORD)"
+	make aws-secret-create NAME=$(@) VALUE=value
+	secret="$$(make aws-secret-get NAME=$(@))"
 	# assert
-	mk_test "p45w0rd = $$secret"
+	mk_test "value = $$secret"
 
 test-aws-secret-create-object:
 	# arrange
 	make TEST_AWS_SECRET_MANAGER_JSON
 	# act
-	make aws-secret-create NAME=service/deployment-$(@) VALUE=file://$(TEST_AWS_SECRET_MANAGER_JSON)
-	secret=$$(make aws-secret-get NAME=service/deployment-$(@))
+	make aws-secret-create NAME=$(@) VALUE=file://$(TEST_AWS_SECRET_MANAGER_JSON)
+	secret=$$(make aws-secret-get NAME=$(@))
 	# assert
 	mk_test "{\"DB_USERNAME\":\"admin\",\"DB_PASSWORD\":\"secret\"} = $$secret"
 
 test-aws-secret-put-get-value:
 	# act
-	make aws-secret-put NAME=DB_PASSWORD VALUE=p45w0rd
-	secret="$$(make aws-secret-get NAME=DB_PASSWORD)"
+	make aws-secret-put NAME=$(@) VALUE=value
+	secret="$$(make aws-secret-get NAME=$(@))"
 	# assert
-	mk_test "p45w0rd = $$secret"
+	mk_test "value = $$secret"
 
 test-aws-secret-put-get-object:
 	# arrange
 	make TEST_AWS_SECRET_MANAGER_JSON
 	# act
-	make aws-secret-put NAME=service/deployment-$(@) VALUE=file://$(TEST_AWS_SECRET_MANAGER_JSON)
-	secret=$$(make aws-secret-get NAME=service/deployment-$(@))
+	make aws-secret-put NAME=$(@) VALUE=file://$(TEST_AWS_SECRET_MANAGER_JSON)
+	secret=$$(make aws-secret-get NAME=$(@))
 	# assert
 	mk_test "{\"DB_USERNAME\":\"admin\",\"DB_PASSWORD\":\"secret\"} = $$secret"
 
@@ -123,22 +123,22 @@ test-aws-secret-put-get-and-format:
 	# arrange
 	make TEST_AWS_SECRET_MANAGER_JSON
 	# act
-	make aws-secret-put NAME=service/deployment-$(@) VALUE=file://$(TEST_AWS_SECRET_MANAGER_JSON)
-	secret="$$(make aws-secret-get-and-format NAME=service/deployment-$(@))"
+	make aws-secret-put NAME=$(@) VALUE=file://$(TEST_AWS_SECRET_MANAGER_JSON)
+	secret="$$(make aws-secret-get-and-format NAME=$(@))"
 	# assert
 	mk_test "1 -eq $$(echo $$secret | grep DB_USERNAME | wc -l)"
 
 test-aws-secret-exists-false:
 	# act
-	output="$$(make aws-secret-exists NAME=service/deployment-$(@))"
+	output="$$(make aws-secret-exists NAME=$(@))"
 	# assert
 	mk_test "false = $$output"
 
 test-aws-secret-exists-true:
 	# arrange
-	make aws-secret-create NAME=service/deployment-$(@) VALUE=value
+	make aws-secret-create NAME=$(@) VALUE=value
 	# act
-	output="$$(make aws-secret-exists NAME=service/deployment-$(@))"
+	output="$$(make aws-secret-exists NAME=$(@))"
 	# assert
 	mk_test "true = $$output"
 
