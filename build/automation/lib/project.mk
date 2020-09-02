@@ -42,22 +42,27 @@ project-document-infrastructure: ### Generate infrastructure diagram - optional:
 
 # ==============================================================================
 
-project-tag-as-release-candidate: ### Tag release candidate - mandatory: IMAGE|IMAGES=[comma-separated image names]; optional: COMMIT=[git commit hash, defaults to master]
-	make git-tag-create-release-candidate
-	tag=$$(make git-tag-get-release-candidate)
-	for image in $$(echo $(or $(IMAGES), $(IMAGE)) | tr "," "\n"); do
-		make docker-tag-as-release-candidate \
+project-tag-as-release-candidate: ### Tag release candidate - mandatory: ARTEFACT|ARTEFACTS=[comma-separated image names]; optional: COMMIT=[git commit hash, defaults to master]
+	commit=$(or $(COMMIT), master)
+	make git-tag-create-release-candidate COMMIT=$$commit
+	tag=$$(make git-tag-get-release-candidate COMMIT=$$commit)
+	for image in $$(echo $(or $(ARTEFACTS), $(ARTEFACT)) | tr "," "\n"); do
+		make docker-image-find-and-tag-as \
+			TAG=$$tag \
 			IMAGE=$$image \
-			TAG=$$tag
+			COMMIT=$$commit
 	done
 
-project-tag-as-environment-deployment: ### Tag environment deployment - mandatory: IMAGE|IMAGES=[comma-separated image names],PROFILE=[profile name]; optional: COMMIT=[git release candidate tag name, defaults to master]
-	make git-tag-create-environment-deployment
-	tag=$$(make git-tag-get-environment-deployment)
-	for image in $$(echo $(or $(IMAGES), $(IMAGE)) | tr "," "\n"); do
-		make docker-tag-as-environment-deployment \
+project-tag-as-environment-deployment: ### Tag environment deployment - mandatory: ARTEFACT|ARTEFACTS=[comma-separated image names],PROFILE=[profile name]; optional: COMMIT=[git release candidate tag name, defaults to master]
+	[ $(PROFILE) = local ] && (echo "ERROR: Please, specify the PROFILE"; exit 1)
+	commit=$(or $(COMMIT), master)
+	make git-tag-create-environment-deployment COMMIT=$$commit PROFILE=$(PROFILE)
+	tag=$$(make git-tag-get-environment-deployment COMMIT=$$commit PROFILE=$(PROFILE) )
+	for image in $$(echo $(or $(ARTEFACTS), $(ARTEFACT)) | tr "," "\n"); do
+		make docker-image-find-and-tag-as \
+			TAG=$$tag \
 			IMAGE=$$image \
-			TAG=$$tag
+			COMMIT=$$commit
 	done
 
 # ==============================================================================
