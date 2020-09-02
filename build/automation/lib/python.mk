@@ -25,10 +25,10 @@ python-virtualenv: ### Setup Python virtual environment - optional: PYTHON_VERSI
 	pyenv local $(PYTHON_VERSION)
 	pip install --upgrade pip
 	pip install $(PYTHON_BASE_PACKAGES)
-	sed -i 's;    "python.linting.flake8Path":.*;    "python.linting.flake8Path": "$(HOME)/.pyenv/versions/$(PYTHON_VERSION)/bin/flake8",;g' $(PROJECT_DIR)/$(PROJECT_NAME).code-workspace
-	sed -i 's;    "python.linting.mypyPath":.*;    "python.linting.mypyPath": "$(HOME)/.pyenv/versions/$(PYTHON_VERSION)/bin/mypy",;g' $(PROJECT_DIR)/$(PROJECT_NAME).code-workspace
-	sed -i 's;    "python.linting.pylintPath":.*;    "python.linting.pylintPath": "$(HOME)/.pyenv/versions/$(PYTHON_VERSION)/bin/pylint",;g' $(PROJECT_DIR)/$(PROJECT_NAME).code-workspace
-	sed -i 's;    "python.pythonPath":.*;    "python.pythonPath": "$(HOME)/.pyenv/versions/$(PYTHON_VERSION)/bin/python",;g' $(PROJECT_DIR)/$(PROJECT_NAME).code-workspace
+	sed -i 's;    "python.linting.flake8Path":.*;    "python.linting.flake8Path": "~/.pyenv/versions/$(PYTHON_VERSION)/bin/flake8",;g' project.code-workspace
+	sed -i 's;    "python.linting.mypyPath":.*;    "python.linting.mypyPath": "~/.pyenv/versions/$(PYTHON_VERSION)/bin/mypy",;g' project.code-workspace
+	sed -i 's;    "python.linting.pylintPath":.*;    "python.linting.pylintPath": "~/.pyenv/versions/$(PYTHON_VERSION)/bin/pylint",;g' project.code-workspace
+	sed -i 's;    "python.pythonPath":.*;    "python.pythonPath": "~/.pyenv/versions/$(PYTHON_VERSION)/bin/python",;g' project.code-workspace
 
 python-virtualenv-clean: ### Clean up Python virtual environment - optional: PYTHON_VERSION
 	pyenv uninstall --force $(PYTHON_VERSION)

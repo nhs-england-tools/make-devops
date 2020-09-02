@@ -5,7 +5,7 @@ java-virtualenv: ### Setup Java virtual environment - optional: JAVA_VERSION
 	brew cask install adoptopenjdk$(JAVA_VERSION)
 	jenv add $$(/usr/libexec/java_home -v$(JAVA_VERSION))
 	jenv local $(JAVA_VERSION).0
-	sed -i 's;    "java.home":.*;    "java.home": "$(HOME)/.jenv/versions/$(JAVA_VERSION).0",;g' $(PROJECT_DIR)/$(PROJECT_NAME).code-workspace
+	sed -i 's;    "java.home":.*;    "java.home": "$(HOME)/.jenv/versions/$(JAVA_VERSION).0",;g' project.code-workspace
 
 java-virtualenv-clean: ### Clean up Java virtual environment
 	rm -f .java-version
