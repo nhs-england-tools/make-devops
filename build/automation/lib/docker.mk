@@ -59,7 +59,7 @@ docker-create-from-template: ### Create Docker image from template - mandatory: 
 docker-config: ### Configure Docker networking
 	docker network create $(DOCKER_NETWORK) 2> /dev/null ||:
 
-docker-build docker-image: ### Build Docker image - mandatory: NAME; optional: VERSION,FROM_CACHE=true,BUILD_OPTS=[build options],NAME_AS=[new name],EXAMPLE=true
+docker-build docker-image: ### Build Docker image - mandatory: NAME; optional: VERSION,FROM_CACHE=true,BUILD_OPTS=[build options],EXAMPLE=true
 	reg=$$(make _docker-get-reg)
 	# Try to execute `make build` from the image directory
 	if [ -d $(DOCKER_LIB_IMAGE_DIR)/$(NAME) ] && [ -z "$(__DOCKER_BUILD)" ]; then
@@ -104,15 +104,6 @@ docker-build docker-image: ### Build Docker image - mandatory: NAME; optional: V
 		$$reg/$(NAME)$(shell [ -n "$(EXAMPLE)" ] && echo -example):latest
 	docker rmi --force $$(docker images | grep "<none>" | awk '{ print $$3 }') 2> /dev/null ||:
 	make docker-image-keep-latest-only NAME=$(NAME)
-	if [ -n "$(NAME_AS)" ]; then
-		docker tag \
-			$$reg/$(NAME):$$(make docker-image-get-version) \
-			$$reg/$(NAME_AS):$$(make docker-image-get-version)
-		docker tag \
-			$$reg/$(NAME):latest \
-			$$reg/$(NAME_AS):latest
-		make docker-image-keep-latest-only NAME=$(NAME_AS)
-	fi
 	docker image inspect $$reg/$(NAME)$(shell [ -n "$(EXAMPLE)" ] && echo -example):latest --format='{{.Size}}'
 
 docker-test: ### Test image - mandatory: NAME; optional: ARGS,CMD,GOSS_OPTS,EXAMPLE=true
@@ -171,6 +162,16 @@ docker-tag: ### Tag latest or provide arguments - mandatory: NAME,VERSION|TAG|[S
 			$$reg/$(NAME):latest \
 			$$reg/$(NAME):$(or $(VERSION), $(TAG))
 	fi
+
+docker-rename: ### Rename Docker image - mandatory: NAME,AS
+	reg=$$(make _docker-get-reg)
+	docker tag \
+		$$reg/$(NAME):$$(make docker-image-get-version) \
+		$$reg/$(AS):$$(make docker-image-get-version)
+	docker tag \
+		$$reg/$(NAME):latest \
+		$$reg/$(AS):latest
+	make docker-image-keep-latest-only NAME=$(AS)
 
 docker-clean: ### Clean Docker files
 	find $(DOCKER_DIR) -type f -name '.version' -print0 | xargs -0 rm -v 2> /dev/null ||:

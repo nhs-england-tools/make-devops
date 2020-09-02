@@ -6,13 +6,13 @@ test-docker:
 		test-docker-create-from-template \
 		test-docker-config \
 		test-docker-build \
-		test-docker-image-name-as \
 		test-docker-image-pull-or-build \
 		test-docker-image-keep-latest-only \
 		test-docker-login \
 		test-docker-create-repository \
 		test-docker-push \
 		test-docker-pull \
+		test-docker-rename \
 		test-docker-create-dockerfile \
 		test-docker-image-set-get-version \
 		test-docker-image-start \
@@ -87,12 +87,6 @@ test-docker-build:
 	# assert
 	mk_test "1 -eq $$(docker images --filter=reference=$(DOCKER_LIBRARY_REGISTRY)/$(TEST_DOCKER_IMAGE):latest -q | wc -l)"
 
-test-docker-image-name-as:
-	# act
-	make docker-build NAME=$(TEST_DOCKER_IMAGE) NAME_AS=$(TEST_DOCKER_IMAGE)-copy FROM_CACHE=true
-	# assert
-	mk_test "2 -eq $$(docker images --filter=reference=$(DOCKER_LIBRARY_REGISTRY)/$(TEST_DOCKER_IMAGE)-copy:* --quiet | wc -l)"
-
 test-docker-image-pull-or-build:
 	# arrange
 	docker rmi --force $$(docker images --filter=reference=$(DOCKER_LIBRARY_REGISTRY)/tools:* --quiet) 2> /dev/null ||:
@@ -120,6 +114,14 @@ test-docker-push:
 
 test-docker-pull:
 	mk_test_skip
+
+test-docker-rename:
+	# arrange
+	make docker-build NAME=$(TEST_DOCKER_IMAGE) FROM_CACHE=true
+	# act
+	make docker-rename NAME=$(TEST_DOCKER_IMAGE) AS=$(TEST_DOCKER_IMAGE)-copy
+	# assert
+	mk_test "2 -eq $$(docker images --filter=reference=$(DOCKER_LIBRARY_REGISTRY)/$(TEST_DOCKER_IMAGE)-copy:* --quiet | wc -l)"
 
 test-docker-clean:
 	# act
