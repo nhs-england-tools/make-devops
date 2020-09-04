@@ -77,7 +77,7 @@ macos-install-essential:: ## Install essential development dependencies - option
 	brew $$install shellcheck ||:
 	brew $$install tmux ||:
 	brew $$install tree ||:
-	brew $$install warrensbox/tap/tfswitch ||:
+	brew $$install warrensbox/tap/tfswitch || brew uninstall --force terrafrom && brew reinstall --force warrensbox/tap/tfswitch ||:
 	brew $$install yq ||:
 	brew $$install zsh ||:
 	brew $$install zsh-autosuggestions ||:
