@@ -331,7 +331,7 @@ _macos-config-command-line:
 	curl -s https://bootstrap.pypa.io/get-pip.py | $$(brew --prefix)/bin/python3
 	$$(brew --prefix)/bin/pip3 install $(PYTHON_BASE_PACKAGES)
 	pyenv install --skip-existing $(PYTHON_VERSION)
-	pyenv global $(PYTHON_VERSION)
+	pyenv global system
 	# configure Go
 	curl -sSL https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer | bash ||:
 	# configure Java
@@ -339,7 +339,7 @@ _macos-config-command-line:
 	jenv enable-plugin export
 	jenv add $$(/usr/libexec/java_home -v$(JAVA_VERSION))
 	jenv versions # ls -1 /Library/Java/JavaVirtualMachines
-	jenv global $(JAVA_VERSION).0
+	jenv global $(JAVA_VERSION)
 	# configure Terraform
 	tfswitch $(TERRAFORM_VERSION)
 	# configure Git

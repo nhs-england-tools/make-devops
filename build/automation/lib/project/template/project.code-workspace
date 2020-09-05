@@ -30,7 +30,7 @@
     "java.completion.enabled": true,
     "java.configuration.updateBuildConfiguration": "automatic",
     "java.format.enabled": false,
-    "java.home": "~/.jenv/versions/14.0",
+    "java.home": "/Library/Java/JavaVirtualMachines/adoptopenjdk-14.jdk/Contents/Home",
     "python.formatting.blackArgs": ["--line-length", "120"],
     "python.formatting.provider": "black",
     "python.linting.flake8Args": ["--max-line-length=120"],
