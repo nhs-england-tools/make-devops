@@ -408,6 +408,7 @@ _macos-config-iterm2:
 _macos-config-visual-studio-code:
 	# Install extensions
 	code --force --install-extension alefragnani.bookmarks
+	code --force --install-extension alefragnani.project-manager
 	code --force --install-extension alexkrechik.cucumberautocomplete
 	code --force --install-extension amazonwebservices.aws-toolkit-vscode
 	code --force --install-extension ban.spellright
