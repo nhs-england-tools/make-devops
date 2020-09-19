@@ -444,6 +444,7 @@ _macos-config-visual-studio-code:
 	code --force --install-extension pivotal.vscode-spring-boot
 	code --force --install-extension redhat.java
 	code --force --install-extension sonarsource.sonarlint-vscode
+	code --force --install-extension shengchen.vscode-checkstyle
 	code --force --install-extension streetsidesoftware.code-spell-checker
 	code --force --install-extension techer.open-in-browser
 	code --force --install-extension timonwong.shellcheck
