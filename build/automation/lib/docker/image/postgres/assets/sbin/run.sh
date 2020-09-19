@@ -31,9 +31,9 @@ elif [ "script" == "$1" ] || [ "scripts" == "$1" ]; then
       # Check for alternative connection details
       for item in $(echo $script_name_pattern | sed "s;,; ;g"); do
           if [[ $file = *$item* ]]; then
-            DB_NAME=$(eval echo "\$${connection_details_prefix}DB_NAME")
-            DB_USERNAME=$(eval echo "\$${connection_details_prefix}DB_USERNAME")
-            DB_PASSWORD=$(eval echo "\$${connection_details_prefix}DB_PASSWORD")
+            DB_NAME=$(eval echo "\$${connection_details_prefix}_NAME")
+            DB_USERNAME=$(eval echo "\$${connection_details_prefix}_USERNAME")
+            DB_PASSWORD=$(eval echo "\$${connection_details_prefix}_PASSWORD")
           fi
       done
       echo "Running script: '$file'"
