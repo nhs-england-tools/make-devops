@@ -115,6 +115,6 @@ If you hear your teams or individuals saying _"It will take days to onboard a ne
 
 ## Status
 
-| Category       | Badges                                                                                                                       |
-| -------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| Automated Test | [![CircleCI](https://circleci.com/gh/nhsd-ddce/make-devops.svg?style=shield)](https://circleci.com/gh/nhsd-ddce/make-devops) |
+| Category       | Badges                                                                                                                           |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| Automated Test | [![CircleCI](https://circleci.com/gh/nhsd-exeter/make-devops.svg?style=shield)](https://circleci.com/gh/nhsd-exeter/make-devops) |

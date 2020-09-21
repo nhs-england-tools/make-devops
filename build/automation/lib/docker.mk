@@ -125,8 +125,8 @@ docker-login: ### Log into the Docker registry - optional: DOCKER_USERNAME,DOCKE
 		make aws-ecr-get-login-password | docker login --username AWS --password-stdin $(AWS_ECR)
 	fi
 
-docker-create-repository: ### Create Docker repository to store an image - mandatory: NAME
-	make aws-ecr-create-repository NAME=$(NAME)
+docker-create-repository: ### Create Docker repository to store an image - mandatory: NAME; optional: POLICY_FILE=[policy file]
+	make aws-ecr-create-repository NAME=$(NAME) POLICY_FILE=$(POLICY_FILE)
 
 docker-push: ### Push Docker image - mandatory: NAME; optional: VERSION|TAG
 	make docker-login

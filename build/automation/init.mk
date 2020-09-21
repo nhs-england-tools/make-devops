@@ -246,7 +246,7 @@ devops-setup-aws-accounts: ### Ask user to input valid AWS account IDs to be use
 # ==============================================================================
 # Project configuration
 
-DEVOPS_PROJECT_ORG := nhsd-ddce
+DEVOPS_PROJECT_ORG := nhsd-exeter
 DEVOPS_PROJECT_NAME := make-devops
 DEVOPS_PROJECT_DIR := $(abspath $(lastword $(MAKEFILE_LIST))/..)
 

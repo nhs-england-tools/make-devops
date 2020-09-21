@@ -252,9 +252,10 @@ aws-ecr-get-login-password: ### Get ECR user login password
 		$(AWSCLI) ecr get-login-password --region $(AWS_REGION) \
 	"
 
-aws-ecr-create-repository: ### Create ECR repository to store an image - mandatory: NAME
-	file=$(TMP_DIR_REL)/$(@)_$(BUILD_ID)
-	make file-copy-and-replace SRC=$(LIB_DIR_REL)/aws/aws-ecr-create-repository-policy.json DEST=$$file && trap "rm -f $$file" EXIT
+aws-ecr-create-repository: ### Create ECR repository to store an image - mandatory: NAME; optional: POLICY_FILE=[policy file]
+	policy_file=$(or $(POLICY_FILE), $(LIB_DIR_REL)/aws/aws-ecr-create-repository-policy.json)
+	effective_policy_file=$(TMP_DIR_REL)/$(@)_$(BUILD_ID)
+	make file-copy-and-replace SRC=$$policy_file DEST=$$effective_policy_file && trap "rm -f $$effective_policy_file" EXIT
 	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) ecr create-repository \
 			--repository-name $(PROJECT_GROUP_SHORT)/$(PROJECT_NAME_SHORT)/$(NAME) \
@@ -263,7 +264,7 @@ aws-ecr-create-repository: ### Create ECR repository to store an image - mandato
 	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) ecr set-repository-policy \
 			--repository-name $(PROJECT_GROUP_SHORT)/$(PROJECT_NAME_SHORT)/$(NAME) \
-			--policy-text file://$$file \
+			--policy-text file://$$effective_policy_file \
 	"
 
 aws-ecr-get-image-digest: ### Get ECR image digest by matching tag pattern - mandatory: REPO=[repository name],TAG=[string to match tag of an image]
