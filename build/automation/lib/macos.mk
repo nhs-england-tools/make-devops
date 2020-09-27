@@ -433,6 +433,7 @@ _macos-config-visual-studio-code:
 	code --force --install-extension jebbs.plantuml
 	code --force --install-extension johnpapa.vscode-peacock
 	code --force --install-extension mhutchie.git-graph
+	code --force --install-extension mrmlnc.vscode-apache
 	code --force --install-extension ms-azuretools.vscode-docker
 	code --force --install-extension ms-python.anaconda-extension-pack
 	code --force --install-extension ms-python.python
@@ -443,8 +444,8 @@ _macos-config-visual-studio-code:
 	code --force --install-extension oderwat.indent-rainbow
 	code --force --install-extension pivotal.vscode-spring-boot
 	code --force --install-extension redhat.java
-	code --force --install-extension sonarsource.sonarlint-vscode
 	code --force --install-extension shengchen.vscode-checkstyle
+	code --force --install-extension sonarsource.sonarlint-vscode
 	code --force --install-extension streetsidesoftware.code-spell-checker
 	code --force --install-extension techer.open-in-browser
 	code --force --install-extension timonwong.shellcheck
