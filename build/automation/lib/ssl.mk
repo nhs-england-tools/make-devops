@@ -1,16 +1,19 @@
 SSL_CERTIFICATE_DIR = $(ETC_DIR)/certificate
 SSL_CERTIFICATE_VALID_DAYS = 397
 
-ssl-generate-certificate-project: ### Generate self-signed certificate for the project
+ssl-generate-certificate-project: ### Generate self-signed certificate for the project - optional: SSL_DOMAINS='*.domain1,*.domain2'
 	domains="localhost,DNS:$(PROJECT_NAME_SHORT).local,DNS:*.$(PROJECT_NAME_SHORT).local,DNS:$(PROJECT_NAME).local,DNS:*.$(PROJECT_NAME).local,"
 	domains+="DNS:$(PROJECT_NAME_SHORT)-$(PROJECT_GROUP_SHORT).local,DNS:*.$(PROJECT_NAME_SHORT)-$(PROJECT_GROUP_SHORT).local,"
 	domains+="DNS:*.$(TEXAS_HOSTED_ZONE_NONPROD),DNS:*.$(TEXAS_HOSTED_ZONE_PROD),"
+	for domain in $$(echo $(SSL_DOMAINS) | tr "," "\n"); do
+		domains+="DNS:$${domain},"
+	done
 	make ssl-generate-certificate \
 		DIR=$(SSL_CERTIFICATE_DIR) \
 		NAME=certificate \
-		DOMAINS=$$(printf "$$domains" | head -c -1)
+		SSL_DOMAINS=$$(printf "$$domains" | head -c -1)
 
-ssl-generate-certificate: ### Generate self-signed certificate - mandatory: DIR=[path to certificate],NAME=[certificate file name],DOMAINS='*.domain1,DNS:*.domain2'
+ssl-generate-certificate: ### Generate self-signed certificate - mandatory: DIR=[path to certificate],NAME=[certificate file name],SSL_DOMAINS='*.domain1,DNS:*.domain2'
 	rm -f $(DIR)/$(NAME).{crt,key,pem,p12}
 	openssl req \
 		-new -x509 -nodes -sha256 \
@@ -21,7 +24,7 @@ ssl-generate-certificate: ### Generate self-signed certificate - mandatory: DIR=
 		-extensions SAN \
 		-config \
 			<(cat /etc/ssl/openssl.cnf \
-			<(printf '[SAN]\nsubjectAltName=DNS:$(DOMAINS)')) \
+			<(printf '[SAN]\nsubjectAltName=DNS:$(SSL_DOMAINS)')) \
 		-keyout $(DIR)/$(NAME).key \
 		-out $(DIR)/$(NAME).crt
 	cat $(DIR)/$(NAME).crt $(DIR)/$(NAME).key > $(DIR)/$(NAME).pem
