@@ -477,6 +477,8 @@ _macos-config-visual-studio-code:
 	# List them all
 	code --list-extensions --show-versions
 	# Copy user key bindings
+	cp ~/Library/Application\ Support/Code/User/keybindings.json ~/Library/Application\ Support/Code/User/keybindings.json.bak.$$(date -u +"%Y%m%d%H%M%S") ||:
+	find ~/Library/Application\ Support/Code/User -maxdepth 1 -type f -mtime +7 -name 'keybindings.json.bak.*' -execdir rm -- '{}' \;
 	cp -fv $(PROJECT_DIR)/build/automation/lib/macos/vscode-keybindings.json ~/Library/Application\ Support/Code/User/keybindings.json
 
 _macos-config-firefox:
