@@ -10,6 +10,11 @@ project-config: ### Configure project environment
 	if [ ! -f $(PROJECT_DIR)/project.code-workspace ]; then
 		cp -fv $(LIB_DIR)/project/template/project.code-workspace $(PROJECT_DIR)
 	fi
+	# Make sure project's SSL certificate is created
+	if [ ! -f $(SSL_CERTIFICATE_DIR)/certificate.pem ]; then
+		make ssl-generate-certificate-project
+		[ $(PROJECT_NAME) != "make-devops" ] && rm -f $(SSL_CERTIFICATE_DIR)/.gitignore
+	fi
 	# Re-configure developer's environment on demand
 	if [ -n "$(PROJECT_CONFIG_TIMESTAMP)" ] && ([ ! -f $(PROJECT_CONFIG_TIMESTAMP_FILE) ] || [ $(PROJECT_CONFIG_TIMESTAMP) -gt $$(cat $(PROJECT_CONFIG_TIMESTAMP_FILE)) ]) && [ $(BUILD_ID) -eq 0 ]; then
 		if [[ ! "$(PROJECT_CONFIG_FORCE)" =~ ^(true|yes|y|on|1|TRUE|YES|Y|ON)$$ ]]; then

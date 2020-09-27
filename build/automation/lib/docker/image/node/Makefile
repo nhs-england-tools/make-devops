@@ -3,7 +3,7 @@ include $(abspath $(PROJECT_DIR)/build/automation/init.mk)
 
 # ==============================================================================
 
-build: _generate-ssl-certificate
+build: project-config _copy-ssl-certificate
 	[ -n "$(FORCE)" ] && target=docker-build || target="docker-image-pull-or-build VERSION=$(DOCKER_LIBRARY_NODE_VERSION) LATEST=true"
 	make $$target NAME=node
 
@@ -36,9 +36,5 @@ run-example:
 
 # ==============================================================================
 
-_generate-ssl-certificate:
-	if [ ! -f $(DOCKER_LIB_IMAGE_DIR)/node/assets/certificate/certificate.pem ]; then
-		make ssl-generate-certificate-project \
-			DIR=$(DOCKER_LIB_IMAGE_DIR)/node/assets/certificate \
-			DOMAINS=node.$(PROJECT_NAME_SHORT)-$(PROJECT_GROUP_SHORT).local
-	fi
+_copy-ssl-certificate:
+	make ssl-copy-certificate-project DIR=$(DOCKER_LIB_IMAGE_DIR)/node/assets/certificate

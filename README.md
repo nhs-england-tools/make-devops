@@ -93,11 +93,13 @@ If you hear your teams or individuals saying _"It will take days to onboard a ne
     - AWS secret name for deployment: `$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)-$(PROFILE)`
     - AWS database instance: `$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)-$(PROFILE)` or `$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)-$(NAME)-$(PROFILE)`
     - Local domain names: `$(PROJECT_NAME_SHORT).local`, `$(PROJECT_NAME).local`, `$(PROJECT_NAME_SHORT)-$(PROJECT_GROUP_SHORT).local`
+  - SSL certificate
+    - A default SSL certificate for development is going to be created by the automation scripts in the `build/automation/etc/certificate` directory
+    - Commit the relevant files and use this certificate to enable encrypted communication between components within the project
   - Versioning
     - Library build: `[YYYYmmdd]` - fixed on the date of modification as a Docker tag
     - User build: `[YYYYmmddHHMMss]-[hash]` - dynamic, set during the build process as a Docker tag
-    - Release candidate: `[YYYYmmddHHMMss]-rc` - set by a developer as a Git tag and then as a Docker tag as well on the corresponding image
-    - Environment deployment: `[YYYYmmddHHMMss]-[env]` - set by a developer as a Git tag and then as a Docker tag as well on the corresponding image
+    - On demand deployment: `[YYYYmmddHHMMss]-[env]` - set by a developer as a Git tag and then as a Docker tag as well on the corresponding image
 
 ## Guiding Principles
 

@@ -3,7 +3,7 @@ include $(abspath $(PROJECT_DIR)/build/automation/init.mk)
 
 # ==============================================================================
 
-build: _generate-ssl-certificate
+build: project-config _copy-ssl-certificate
 	[ -n "$(FORCE)" ] && target=docker-build || target="docker-image-pull-or-build VERSION=$(DOCKER_LIBRARY_POSTGRES_VERSION) LATEST=true"
 	make $$target NAME=postgres FROM_CACHE=$(or $(FROM_CACHE), true)
 
@@ -52,12 +52,8 @@ clean:
 
 # ==============================================================================
 
-_generate-ssl-certificate:
-	if [ ! -f $(DOCKER_LIB_IMAGE_DIR)/postgres/assets/etc/postgresql/certificate.pem ]; then
-		make ssl-generate-certificate-project \
-			DIR=$(DOCKER_LIB_IMAGE_DIR)/postgres/assets/etc/postgresql \
-			NAME=certificate
-	fi
+_copy-ssl-certificate:
+	make ssl-copy-certificate-project DIR=$(DOCKER_LIB_IMAGE_DIR)/postgres/assets/etc/postgresql
 
 _test-prerequisites-setup:
 	make _TEST_POSTGRES_SQL_FILE

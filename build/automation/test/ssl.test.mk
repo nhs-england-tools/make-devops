@@ -6,6 +6,7 @@ test-ssl:
 		test-ssl-generate-certificate-single-domain \
 		test-ssl-generate-certificate-multiple-domains \
 		test-ssl-generate-certificate-project \
+		test-ssl-copy-certificate-project \
 		test-ssl-trust-certificate-project \
 		test-ssl-trust-certificate \
 	)
@@ -59,6 +60,14 @@ test-ssl-generate-certificate-project:
 		DOMAINS=platform.com,*.platform.com NAME=certificate
 	# assert
 	mk_test "-f $(SSL_CERTIFICATE_DIR)/certificate.pem"
+
+test-ssl-copy-certificate-project:
+	# arrange
+	rm -f $(TMP_DIR)/certificate.*
+	# act
+	make ssl-copy-certificate-project DIR=$(TMP_DIR)
+	# assert
+	mk_test "-f $(TMP_DIR)/certificate.pem"
 
 test-ssl-trust-certificate-project:
 	mk_test_skip_if_not_macos $(@) && exit ||:

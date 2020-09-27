@@ -1,9 +1,6 @@
 # TODO
 
 - Refactoring
-  - Consider custom profile location outside the `build/automation` directory
-  - Consider custom certificate location outside the `build/automation` directory
-  - Consider custom githooks location outside the `build/automation` directory
   - Make sure the `infrastructure` directory is custom and move away test files from it
   - Run `kubectl` from container
 - Infrastructure

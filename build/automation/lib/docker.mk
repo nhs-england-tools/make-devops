@@ -2,7 +2,9 @@ DOCKER_COMPOSE_YML = $(DOCKER_DIR)/docker-compose.yml
 DOCKER_DIR = $(abspath $(PROJECT_DIR)/build/docker)
 DOCKER_DIR_REL = $(shell echo $(DOCKER_DIR) | sed "s;$(PROJECT_DIR);;g")
 DOCKER_LIB_DIR = $(LIB_DIR)/docker
+DOCKER_LIB_DIR_REL = $(shell echo $(DOCKER_LIB_DIR) | sed "s;$(PROJECT_DIR);;g")
 DOCKER_LIB_IMAGE_DIR = $(LIB_DIR)/docker/image
+DOCKER_LIB_IMAGE_DIR_REL = $(shell echo $(DOCKER_LIB_IMAGE_DIR) | sed "s;$(PROJECT_DIR);;g")
 DOCKER_NETWORK = $(PROJECT_GROUP_SHORT)/$(PROJECT_NAME_SHORT)/$(BUILD_ID)
 DOCKER_REGISTRY = $(AWS_ECR)/$(PROJECT_GROUP_SHORT)/$(PROJECT_NAME_SHORT)
 DOCKER_LIBRARY_REGISTRY = nhsd
@@ -41,8 +43,8 @@ docker-create-from-template: ### Create Docker image from template - mandatory: 
 	mkdir -p $(DOCKER_DIR)
 	if [ ! -f $(DOCKER_DIR)/docker-compose.yml ]; then
 		cp -rfv \
-			$(PROJECT_DIR)/build/automation/lib/project/template/build/docker/docker-compose.yml \
-			$(DOCKER_DIR)
+			build/automation/lib/project/template/build/docker/docker-compose.yml \
+			$(DOCKER_DIR_REL)
 	fi
 	rm -rf $(DOCKER_DIR)/$(NAME)
 	cp -rfv $(DOCKER_LIB_DIR)/template/$(TEMPLATE) $(DOCKER_DIR)/$(NAME)

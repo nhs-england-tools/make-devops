@@ -1,4 +1,4 @@
-# Release Runbook
+# Continuous Integration Runbook
 
     git checkout master
     name=app # Set your image name accordingly
