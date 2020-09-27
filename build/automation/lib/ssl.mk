@@ -58,3 +58,4 @@ ssl-trust-certificate: ### Trust self-signed certificate - mandatory: FILE=[path
 	echo "127.0.0.1 $(PROJECT_NAME).local" | sudo tee -a $$file
 	echo "127.0.0.1 $(PROJECT_NAME_SHORT)-$(PROJECT_GROUP_SHORT).local" | sudo tee -a $$file
 	echo "# END: $(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)" | sudo tee -a $$file
+	dscacheutil -flushcache
