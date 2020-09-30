@@ -34,10 +34,10 @@ def role_arn_to_session(aws_profile):
     )
     time_now = datetime.datetime.now()
     expiry_time = time_now + datetime.timedelta(seconds=SESSION_DURATION)
-    print("Expiry time: {}".format(expiry_time))
-    print(
+    fp = open(path.expanduser("~/.aws/session.tmp"), "w")
+    fp.write(
         """
-## Copy the below into your terminal to export your temporary credentials
+## Source this file or copy the below into your terminal to export your temporary credentials
 
 export AWS_ACCESS_KEY_ID={access_key_id}
 export AWS_SECRET_ACCESS_KEY={secret_access_key}
@@ -53,6 +53,7 @@ export TEXAS_SESSION_EXPIRY_TIME={expiry_time}
             expiry_time=expiry_time.strftime("%Y%m%d%H%M%S"),
         )
     )
+    fp.close()
 
 
 if __name__ == "__main__":
