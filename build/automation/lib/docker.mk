@@ -424,6 +424,13 @@ docker-run-mvn: ### Run maven container - mandatory: CMD; optional: DIR,ARGS=[Do
 	mkdir -p $(TMP_DIR)/.m2
 	image=$$([ -n "$(IMAGE)" ] && echo $(IMAGE) || echo maven:$(DOCKER_MAVEN_VERSION))
 	container=$$([ -n "$(CONTAINER)" ] && echo $(CONTAINER) || echo mvn-$(BUILD_COMMIT_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7))
+	keystore=
+	if [ -f $(ETC_DIR)/keystore.jks ]; then
+		keystore=" \
+			-Djavax.net.ssl.trustStore=/project/$(ETC_DIR_REL)/keystore.jks \
+			-Djavax.net.ssl.trustStorePassword=changeit \
+		"
+	fi
 	docker run --interactive $(_TTY) --rm \
 		--name $$container \
 		--user $$(id -u):$$(id -g) \
@@ -439,7 +446,7 @@ docker-run-mvn: ### Run maven container - mandatory: CMD; optional: DIR,ARGS=[Do
 		$(ARGS) \
 		$$image \
 			/bin/sh -c " \
-				mvn -Duser.home=/var/maven $(CMD) \
+				mvn -Duser.home=/var/maven $$keystore $(CMD) \
 			"
 
 docker-run-node: ### Run node container - mandatory: CMD; optional: DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file],IMAGE=[image name],CONTAINER=[container name]

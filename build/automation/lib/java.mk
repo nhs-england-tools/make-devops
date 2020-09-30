@@ -23,3 +23,16 @@ java-clean: ### Clean up Java project files - mandatory: DIR=[Java project direc
 		-name ".project" -o \
 		-name "*.iml" \
 	\) -print | $$exclude | xargs rm -rfv
+
+java-add-certificate-to-keystore: ### Add certificate to the Java keystore and include it in the project
+	sudo keytool -delete -storepass changeit \
+		-keystore $(JAVA_HOME)/lib/security/cacerts \
+		-alias $(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT) > /dev/null 2>&1 ||:
+	sudo keytool -import -trustcacerts -noprompt -storepass changeit \
+		-file $(PROJECT_DIR)/build/automation/etc/certificate/certificate.pem \
+		-keystore $(JAVA_HOME)/lib/security/cacerts \
+		-alias $(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)
+	keytool -list -storepass changeit -keystore $(JAVA_HOME)/lib/security/cacerts | grep -A 1 $(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)
+	if [ ! -f $(ETC_DIR)/keystore.jks ]; then
+		cp -fv $(JAVA_HOME)/lib/security/cacerts $(ETC_DIR)/keystore.jks
+	fi

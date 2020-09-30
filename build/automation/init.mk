@@ -293,7 +293,7 @@ BUILD_COMMIT_HASH := $(or $(shell git rev-parse --short HEAD 2> /dev/null ||:), 
 BUILD_COMMIT_DATE := $(or $(shell TZ=UTC git show -s --format=%cd --date=format-local:%Y-%m-%dT%H:%M:%S%z HEAD 2> /dev/null ||:), unknown)
 USER_ID := $(shell id -u)
 GROUP_ID := $(shell id -g)
-TTY_ENABLE := false
+TTY_ENABLE := $(or $(TTY_ENABLE), $(shell [ $(BUILD_ID) -eq 0 ] && echo true || echo false))
 _TTY := $$([ -t 0 ] && [ $(TTY_ENABLE) == true ] && echo "--tty")
 
 GOSS_PATH := $(BIN_DIR)/goss-linux-amd64
