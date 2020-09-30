@@ -299,6 +299,7 @@ _macos-config-oh-my-zsh:
 	echo "    httpie" >> ~/.zshrc
 	echo "    vscode" >> ~/.zshrc
 	echo "    iterm2" >> ~/.zshrc
+	echo "    nvm" >> ~/.zshrc
 	echo "    osx" >> ~/.zshrc
 	echo "    emoji" >> ~/.zshrc
 	echo "    ssh-agent" >> ~/.zshrc
@@ -312,10 +313,11 @@ _macos-config-oh-my-zsh:
 	echo "POWERLEVEL9K_CUSTOM_TEXAS=tx-status" >> ~/.zshrc
 	echo "POWERLEVEL9K_CUSTOM_TEXAS_BACKGROUND=balck" >> ~/.zshrc
 	echo "POWERLEVEL9K_CUSTOM_TEXAS_FOREGROUND=yellow" >> ~/.zshrc
+	echo "POWERLEVEL9K_NODE_VERSION_PROJECT_ONLY=true" >> ~/.zshrc
 	echo "POWERLEVEL9K_MODE=nerdfont-complete" >> ~/.zshrc
 	echo "POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir vcs)" >> ~/.zshrc
 	echo "POWERLEVEL9K_SHORTEN_DIR_LENGTH=3" >> ~/.zshrc
-	echo "POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status pyenv jenv custom_texas root_indicator background_jobs time)" >> ~/.zshrc
+	echo "POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status node_version pyenv jenv custom_texas root_indicator background_jobs time)" >> ~/.zshrc
 	echo "POWERLEVEL9K_PROMPT_ON_NEWLINE=true" >> ~/.zshrc
 	echo "POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true" >> ~/.zshrc
 	echo "ZSH_THEME=powerlevel10k/powerlevel10k" >> ~/.zshrc
