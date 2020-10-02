@@ -1,4 +1,4 @@
 #!/bin/bash
 
 alias tx-mfa="source ~/bin/texas-mfa-clear && ~/bin/texas-mfa.py && source ~/.aws/session.tmp"
-alias tx-mfa-clear="source ~/bin/texas-mfa-clear"
+alias tx-mfa-clear="rm -f ~/.aws/session.tmp && source ~/bin/texas-mfa-clear"
