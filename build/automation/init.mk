@@ -80,6 +80,7 @@ devops-copy: ### Copy the DevOps automation toolchain scripts to given destinati
 		cd $(PROJECT_DIR)
 		rsync -rav \
 			--include=build/ \
+			--exclude=automation/etc/certificate/certificate.* \
 			--exclude=automation/var/project.mk \
 			--exclude=Jenkinsfile \
 			build/* \
@@ -96,7 +97,7 @@ devops-copy: ### Copy the DevOps automation toolchain scripts to given destinati
 		cp -fv .gitignore $(DIR)
 		cp -fv CONTRIBUTING.md $(DIR)
 		cp -fv LICENSE.md $(DIR)/build/automation/LICENSE.md
-		[ ! -f $(DIR)/README.md ] && cp -fv build/automation/lib/project/template/README.md $(DIR)
+		[ ! -f $(DIR)/README.md ] && cp -fv build/automation/lib/project/template/README.md $(DIR) ||:
 	}
 	function version() {
 		cd $(PROJECT_DIR)
@@ -127,6 +128,7 @@ devops-update devops-synchronise: ### Update/upgrade the DevOps automation toolc
 		cd $(PROJECT_DIR)
 		rsync -rav \
 			--include=build/ \
+			--exclude=automation/etc/certificate/certificate.* \
 			--exclude=automation/var/project.mk \
 			--exclude=Jenkinsfile \
 			build/* \
@@ -143,7 +145,7 @@ devops-update devops-synchronise: ### Update/upgrade the DevOps automation toolc
 		cp -fv .gitignore $(PARENT_PROJECT_DIR)
 		cp -fv CONTRIBUTING.md $(PARENT_PROJECT_DIR)
 		cp -fv LICENSE.md $(PARENT_PROJECT_DIR)/build/automation/LICENSE.md
-		[ ! -f $(PARENT_PROJECT_DIR)/README.md ] && cp -fv build/automation/lib/project/template/README.md $(PARENT_PROJECT_DIR)
+		[ ! -f $(PARENT_PROJECT_DIR)/README.md ] && cp -fv build/automation/lib/project/template/README.md $(PARENT_PROJECT_DIR) ||:
 	}
 	function version() {
 		cd $(PROJECT_DIR)
