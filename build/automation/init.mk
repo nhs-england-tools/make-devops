@@ -105,13 +105,17 @@ devops-update devops-synchronise: ### Update/upgrade the DevOps automation toolc
 			build/* \
 			$(PARENT_PROJECT_DIR)/build
 		[ -f $(PARENT_PROJECT_DIR)/build/automation/etc/certificate/*.pem ] && rm -fv $(PARENT_PROJECT_DIR)/build/automation/etc/certificate/.gitignore
-		mkdir -p $(PARENT_PROJECT_DIR)/documentation/adr
+		mkdir -p \
+			.github \
+			$(PARENT_PROJECT_DIR)/documentation/adr
+		cp -fv .github/CODEOWNERS $(PARENT_PROJECT_DIR)/.github/CODEOWNERS
+		cp -fv build/automation/lib/project/template/project.code-workspace $(PARENT_PROJECT_DIR)
+		cp -fv documentation/adr/README.md $(PARENT_PROJECT_DIR)/documentation/adr
 		cp -fv .editorconfig $(PARENT_PROJECT_DIR)
 		cp -fv .gitignore $(PARENT_PROJECT_DIR)
-		cp -fv documentation/adr/README.md $(PARENT_PROJECT_DIR)/documentation/adr
 		cp -fv CONTRIBUTING.md $(PARENT_PROJECT_DIR)
 		cp -fv LICENSE.md $(PARENT_PROJECT_DIR)/build/automation/LICENSE.md
-		cp -fv $(LIB_DIR)/project/template/project.code-workspace $(PARENT_PROJECT_DIR)
+		sed -i "s;@nhsd-exeter/admins;@nhsd-exeter/maintainers;" $(PARENT_PROJECT_DIR)/.github/CODEOWNERS
 	}
 	function version() {
 		cd $(PROJECT_DIR)

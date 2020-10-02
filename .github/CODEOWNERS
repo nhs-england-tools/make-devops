@@ -1,8 +1,3 @@
-/.github @stefaniuk
-/.vscode @stefaniuk
-/build @stefaniuk
-/documentation @stefaniuk
-/.editorconfig @stefaniuk
-/.gitignore @stefaniuk
-/*.md @stefaniuk
-/*.code-workspace @stefaniuk
+/.github @nhsd-exeter/admins
+/build/automation/lib @nhsd-exeter/admins
+/build/automation/init.mk @nhsd-exeter/admins
