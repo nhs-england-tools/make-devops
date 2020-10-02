@@ -71,8 +71,8 @@ If you hear your teams or individuals saying _"It will take days to onboard a ne
   - Do not exceed 40 characters
 - Target help convention
   - Sample format is `# Target description - mandatory: ARG1=[argument description]; optional: ARG2="argument-value"; return: [string]`. A mandatory argument name can be concise e.g. `IMAGE`, however to avoid unpredicted behaviour while constructing higher lever make targets use more descriptive naming convention for the optional arguments e.g. `DOCKER_IMAGE`
-  - Prefix with `#` to indicate project development flow target listed by `make help` or `help-project-flow`
-  - Prefix with `##` to indicate development supporting target listed by `make help-project-supporting`
+  - Prefix with `#` to indicate a project specific development workflow target listed by `make help` or `help-project-development`
+  - Prefix with `##` to indicate a project specific supporting or deployment target listed by `make help-project-supporting`
   - Prefix with `###` to indicate library target, use `make help-all` to see the full list of available targets
   - An argument is mandatory when target cannot function without it being specified and this argument is not a configuration option
   - An argument is optional when it is provided by a profile, however it is intended to be set from the command-line depending on the context

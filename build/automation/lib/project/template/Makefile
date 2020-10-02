@@ -2,10 +2,7 @@ PROJECT_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 include $(abspath $(PROJECT_DIR)/build/automation/init.mk)
 
 # ==============================================================================
-# Project targets: Dev workflow
-
-# ==============================================================================
-# Project targets: Ops workflow
+# Development workflow targets
 
 build: project-config # Build project
 	make docker-build NAME=NAME_TEMPLATE_TO_REPLACE
@@ -20,17 +17,26 @@ test: # Test project
 	make start
 	make stop
 
-push: # Push project artefacts to the registry
+clean: # Clean up project
+
+# ==============================================================================
+# Deployment workflow targets
+
+push: ## Push project artefacts to the registry
 	make docker-push NAME=NAME_TEMPLATE_TO_REPLACE
 
-deploy: project-deploy # Deploy project - mandatory: PROFILE=[name]
+deploy: ## Deploy artefacts - mandatory: PROFILE=[name]
+	make project-deploy STACK=application PROFILE=$(PROFILE)
 
-clean: # Clean up project
+provision: ## Provision environment - mandatory: PROFILE=[name]
+	make terraform-apply-auto-approve STACK=database PROFILE=$(PROFILE)
 
 # ==============================================================================
 # Supporting targets
 
-create-artefact-repository: ## Create Docker repositories to store artefacts
+trust-certificate: ssl-trust-certificate
+
+create-artefact-repositories: ## Create repositories to store artefacts
 	make docker-create-repository NAME=NAME_TEMPLATE_TO_REPLACE
 
 # ==============================================================================

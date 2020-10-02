@@ -1,16 +1,21 @@
-help: help-project-flow # Show project development flow targets
+help: help-project-development # Show project specific development workflow targets
 
 help-all: # Show all targets
-	@awk 'BEGIN {FS = ":.*?#+ "} /^[ a-zA-Z0-9_-]+:.*? #+ / {printf "\033[36m%-41s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST) | sort
+	tput setaf 190; printf "\nProject specific development workflow targets\n\n"; tput sgr 0
+	make help-project-development
+	tput setaf 190; printf "\nProject specific supporting and deployment workflow targets\n\n"; tput sgr 0
+	make help-project-supporting
+	tput setaf 190; printf "\nLibrary targets\n\n"; tput sgr 0
+	make help-library
 
-help-dev: # Show development documentation
-	# TODO: Show development documentation
-
-help-project-flow: ## Show project development flow targets
+help-project-development: ### Show project specific development workflow targets
 	@awk 'BEGIN {FS = ":.*?# "} /^[ a-zA-Z0-9_-]+:.*? # / {printf "\033[36m%-41s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
-help-project-supporting: ## Show development supporting targets
+help-project-supporting: ### Show project specific supporting and deployment workflow targets
 	@awk 'BEGIN {FS = ":.*?## "} /^[ a-zA-Z0-9_-]+:.*? ## / {printf "\033[36m%-41s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
+
+help-library: ### Show library targets
+	@awk 'BEGIN {FS = ":.*?### "} /^[ a-zA-Z0-9_-]+:.*? ### / {printf "\033[36m%-41s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST) | sort
 
 devops-print-variables: ### Print all the variables
 	$(foreach v, $(sort $(.VARIABLES)),
@@ -91,7 +96,7 @@ devops-copy: ### Copy the DevOps automation toolchain scripts to given destinati
 		cp -fv .gitignore $(DIR)
 		cp -fv CONTRIBUTING.md $(DIR)
 		cp -fv LICENSE.md $(DIR)/build/automation/LICENSE.md
-		[ ! -f $(DIR)/README.md ] && touch $(DIR)/README.md
+		[ ! -f $(DIR)/README.md ] && cp -fv build/automation/lib/project/template/README.md $(DIR)
 	}
 	function version() {
 		cd $(PROJECT_DIR)
@@ -138,7 +143,7 @@ devops-update devops-synchronise: ### Update/upgrade the DevOps automation toolc
 		cp -fv .gitignore $(PARENT_PROJECT_DIR)
 		cp -fv CONTRIBUTING.md $(PARENT_PROJECT_DIR)
 		cp -fv LICENSE.md $(PARENT_PROJECT_DIR)/build/automation/LICENSE.md
-		[ ! -f $(DIR)/README.md ] && touch $(DIR)/README.md
+		[ ! -f $(PARENT_PROJECT_DIR)/README.md ] && cp -fv build/automation/lib/project/template/README.md $(PARENT_PROJECT_DIR)
 	}
 	function version() {
 		cd $(PROJECT_DIR)
@@ -480,4 +485,6 @@ endif
 	devops-print-variables \
 	devops-setup-aws-accounts \
 	devops-test-single \
-	devops-test-suite
+	devops-test-suite \
+	help \
+	help-all

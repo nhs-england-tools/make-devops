@@ -1,6 +1,6 @@
 DEV_OHMYZSH_DIR := ~/.dotfiles/oh-my-zsh
 
-macos-setup devops-setup: ## Provision your MacBook (and become a DevOps ninja) - optional: REINSTALL=true
+macos-setup devops-setup: ### Provision your MacBook (and become a DevOps ninja) - optional: REINSTALL=true
 	rm -f $(SETUP_COMPLETE_FLAG_FILE)
 	make macos-disable-gatekeeper
 	make \
@@ -14,11 +14,11 @@ macos-setup devops-setup: ## Provision your MacBook (and become a DevOps ninja) 
 	make macos-enable-gatekeeper
 	touch $(SETUP_COMPLETE_FLAG_FILE)
 
-macos-prepare:: ## Prepare for installation and configuration of the development dependencies
+macos-prepare:: ### Prepare for installation and configuration of the development dependencies
 	networksetup -setdnsservers Wi-Fi 8.8.8.8
 	sudo chown -R $$(id -u) $$(brew --prefix)/*
 
-macos-update:: ## Update/upgrade all currently installed development dependencies
+macos-update:: ### Update/upgrade all currently installed development dependencies
 	which mas > /dev/null 2>&1 || brew install mas
 	mas upgrade $(mas list | grep -i xcode | awk '{ print $1 }')
 	brew update
@@ -26,7 +26,7 @@ macos-update:: ## Update/upgrade all currently installed development dependencie
 	brew tap buo/cask-upgrade
 	brew cu --all --yes
 
-macos-install-essential:: ## Install essential development dependencies - optional: REINSTALL=true
+macos-install-essential:: ### Install essential development dependencies - optional: REINSTALL=true
 	install="install"
 	if [[ "$$REINSTALL" =~ ^(true|yes|y|on|1|TRUE|YES|Y|ON)$$ ]]; then
 		install="reinstall --force"
@@ -91,7 +91,7 @@ macos-install-essential:: ## Install essential development dependencies - option
 	# maven depends on java
 	brew $$install maven ||:
 
-macos-install-additional:: ## Install additional development dependencies - optional: REINSTALL=true
+macos-install-additional:: ### Install additional development dependencies - optional: REINSTALL=true
 	install="install"
 	if [[ "$$REINSTALL" =~ ^(true|yes|y|on|1|TRUE|YES|Y|ON)$$ ]]; then
 		install="reinstall --force"
@@ -134,7 +134,7 @@ macos-install-additional:: ## Install additional development dependencies - opti
 	# 	https://raw.githubusercontent.com/Homebrew/homebrew-cask/5a0a2b2322e35ec867f6633ca985ee485255f0b1/Casks/virtualbox-extension-pack.rb ||:
 	brew cask $$install virtualbox-extension-pack ||:
 
-macos-install-corporate:: ## Install corporate dependencies - optional: REINSTALL=true
+macos-install-corporate:: ### Install corporate dependencies - optional: REINSTALL=true
 	install="install"
 	if [[ "$$REINSTALL" =~ ^(true|yes|y|on|1|TRUE|YES|Y|ON)$$ ]]; then
 		install="reinstall --force"
@@ -146,7 +146,7 @@ macos-install-corporate:: ## Install corporate dependencies - optional: REINSTAL
 	brew cask $$install vmware-horizon-client ||:
 	brew cask $$install avast-security ||:
 
-macos-check:: ## Check if the development dependencies are installed
+macos-check:: ### Check if the development dependencies are installed
 	# Essential dependencies
 	mas list | grep -i "xcode" ||:
 	brew list ack ||:
@@ -230,7 +230,7 @@ macos-check:: ## Check if the development dependencies are installed
 	brew cask list virtualbox ||:
 	brew cask list virtualbox-extension-pack ||:
 
-macos-config:: ## Configure development dependencies
+macos-config:: ### Configure development dependencies
 	make \
 		_macos-config-mac \
 		_macos-config-zsh \
@@ -241,20 +241,20 @@ macos-config:: ## Configure development dependencies
 		_macos-config-firefox
 	make macos-info
 
-macos-fix:: ## Fix development dependencies
+macos-fix:: ### Fix development dependencies
 	make _macos-fix-vagrant-virtualbox
 
-macos-info:: ## Show "Setting up your macOS using Make DevOps" manual
+macos-info:: ### Show "Setting up your macOS using Make DevOps" manual
 	info=$(LIB_DIR)/macos/README.md
 	html=$(TMP_DIR)/make-devops-doc-$(shell echo $$info | md5sum | cut -c1-7).html
 	perl $(BIN_DIR)/markdown --html4tags $$info > $$html
 	cp -f $$html ~/Desktop/Setting\ up\ your\ macOS\ using\ Make\ DevOps.html
 	open -a "Safari" ~/Desktop/Setting\ up\ your\ macOS\ using\ Make\ DevOps.html
 
-macos-disable-gatekeeper:: ## Disable Gatekeeper
+macos-disable-gatekeeper:: ### Disable Gatekeeper
 	sudo spctl --master-disable
 
-macos-enable-gatekeeper:: ## Enable Gatekeeper
+macos-enable-gatekeeper:: ### Enable Gatekeeper
 	sudo spctl --master-enable
 
 # ==============================================================================
