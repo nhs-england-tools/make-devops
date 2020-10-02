@@ -78,7 +78,7 @@ devops-copy: ### Copy the DevOps automation toolchain scripts to given destinati
 	cp -fv $(LIB_DIR)/project/template/project.code-workspace $(DIR)
 	cp -fv $(PROJECT_DIR)/LICENSE.md $(DIR)/build/automation
 
-devops-update devops-synchronise: ### Update/upgrade the DevOps automation toolchain scripts used by this project - optional: LATEST=true,ALL=true
+devops-update devops-synchronise: ### Update/upgrade the DevOps automation toolchain scripts used by this project - optional: LATEST=true
 	function download() {
 		cd $(PROJECT_DIR)
 		rm -rf \
@@ -105,16 +105,13 @@ devops-update devops-synchronise: ### Update/upgrade the DevOps automation toolc
 			build/* \
 			$(PARENT_PROJECT_DIR)/build
 		[ -f $(PARENT_PROJECT_DIR)/build/automation/etc/certificate/*.pem ] && rm -fv $(PARENT_PROJECT_DIR)/build/automation/etc/certificate/.gitignore
+		mkdir -p $(PARENT_PROJECT_DIR)/documentation/adr
+		cp -fv .editorconfig $(PARENT_PROJECT_DIR)
+		cp -fv .gitignore $(PARENT_PROJECT_DIR)
+		cp -fv documentation/adr/README.md $(PARENT_PROJECT_DIR)/documentation/adr
+		cp -fv CONTRIBUTING.md $(PARENT_PROJECT_DIR)
 		cp -fv LICENSE.md $(PARENT_PROJECT_DIR)/build/automation/LICENSE.md
-		# Copy additionals
-		if [[ "$(ALL)" =~ ^(true|yes|y|on|1|TRUE|YES|Y|ON)$$ ]]; then
-			mkdir -p $(PARENT_PROJECT_DIR)/documentation/adr
-			cp -fv documentation/adr/README.md $(PARENT_PROJECT_DIR)/documentation/adr
-			cp -fv .editorconfig $(PARENT_PROJECT_DIR)
-			cp -fv .gitignore $(PARENT_PROJECT_DIR)
-			cp -fv CONTRIBUTING.md $(PARENT_PROJECT_DIR)
-			cp -fv $(LIB_DIR)/project/template/project.code-workspace $(PARENT_PROJECT_DIR)
-		fi
+		cp -fv $(LIB_DIR)/project/template/project.code-workspace $(PARENT_PROJECT_DIR)
 	}
 	function version() {
 		cd $(PROJECT_DIR)
