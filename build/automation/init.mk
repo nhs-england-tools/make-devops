@@ -71,12 +71,36 @@ devops-test-cleanup: ### Clean up adter the tests
 	# TODO: Remove older networks that remained after unsuccessful builds
 
 devops-copy: ### Copy the DevOps automation toolchain scripts to given destination - optional: DIR
+	function sync() {
+		cd $(PROJECT_DIR)
+		rsync -rav \
+			--include=build/ \
+			--exclude=automation/var/project.mk \
+			--exclude=Jenkinsfile \
+			build/* \
+			$(DIR)/build
+		[ -f $(DIR)/build/automation/etc/certificate/*.pem ] && rm -fv $(DIR)/build/automation/etc/certificate/.gitignore
+		[ -f $(DIR)/build/docker/docker-compose.yml ] && rm -fv $(DIR)/build/docker/.gitkeep
+		mkdir -p \
+			$(DIR)/.github \
+			$(DIR)/documentation/adr
+		cp -fv .github/CODEOWNERS $(DIR)/.github/CODEOWNERS
+		cp -fv build/automation/lib/project/template/project.code-workspace $(DIR)
+		cp -fv documentation/adr/README.md $(DIR)/documentation/adr
+		cp -fv .editorconfig $(DIR)
+		cp -fv .gitignore $(DIR)
+		cp -fv CONTRIBUTING.md $(DIR)
+		cp -fv LICENSE.md $(DIR)/build/automation/LICENSE.md
+		sed -i "s;@nhsd-exeter/admins;@nhsd-exeter/maintainers;" $(DIR)/.github/CODEOWNERS
+	}
+	function version() {
+		cd $(PROJECT_DIR)
+		tag=$$([ -n "$$(git tag --points-at HEAD)" ] && echo $$(git tag --points-at HEAD) || echo v$$(git show -s --format=%cd --date=format:%Y%m%d%H%M%S))
+		hash=$$(git rev-parse --short HEAD)
+		echo "$${tag:1}-$${hash}" > $(DIR)/build/automation/VERSION
+	}
 	mkdir -p $(DIR)/build
-	rm -rf $(DIR)/build/automation
-	cp -rfv $(PROJECT_DIR)/build/automation $(DIR)/build
-	cp -fv $(LIB_DIR)/project/template/Makefile $(DIR)
-	cp -fv $(LIB_DIR)/project/template/project.code-workspace $(DIR)
-	cp -fv $(PROJECT_DIR)/LICENSE.md $(DIR)/build/automation
+	sync && version
 
 devops-update devops-synchronise: ### Update/upgrade the DevOps automation toolchain scripts used by this project - optional: LATEST=true
 	function download() {
@@ -96,17 +120,16 @@ devops-update devops-synchronise: ### Update/upgrade the DevOps automation toolc
 	}
 	function sync() {
 		cd $(PROJECT_DIR)
-		# Copy essentials
 		rsync -rav \
 			--include=build/ \
 			--exclude=automation/var/project.mk \
-			--exclude=docker/docker-compose.yml \
 			--exclude=Jenkinsfile \
 			build/* \
 			$(PARENT_PROJECT_DIR)/build
 		[ -f $(PARENT_PROJECT_DIR)/build/automation/etc/certificate/*.pem ] && rm -fv $(PARENT_PROJECT_DIR)/build/automation/etc/certificate/.gitignore
+		[ -f $(PARENT_PROJECT_DIR)/docker/docker-compose.yml ] && rm -fv $(PARENT_PROJECT_DIR)/docker/.gitkeep
 		mkdir -p \
-			.github \
+			$(PARENT_PROJECT_DIR)/.github \
 			$(PARENT_PROJECT_DIR)/documentation/adr
 		cp -fv .github/CODEOWNERS $(PARENT_PROJECT_DIR)/.github/CODEOWNERS
 		cp -fv build/automation/lib/project/template/project.code-workspace $(PARENT_PROJECT_DIR)
