@@ -7,7 +7,7 @@ dependencies:
 	cd $(APPLICATION_DIR)
 	tar -czf $(DOCKER_DIR)/NAME_TEMPLATE_TO_REPLACE/assets/application.tar.gz *
 
-build: project-config _copy-ssl-certificate
+build: dependencies project-config _copy-ssl-certificate
 	make docker-build NAME=NAME_TEMPLATE_TO_REPLACE
 
 test:
