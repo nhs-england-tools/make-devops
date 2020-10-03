@@ -35,6 +35,7 @@
 ### Local Environment Configuration
 
     make macos-setup
+    make devops-setup-aws-accounts
     make trust-certificate
 
 ### Local Project Setup

@@ -8,6 +8,7 @@
   - [Decouple data](https://www.terraform.io/docs/modules/composition.html)
   - More k8s example [network policies](https://www.stackrox.com/post/2019/04/setting-up-kubernetes-network-policies-a-detailed-guide/)
 - Security
+  - Replace the development SSL certificate by a secure one loaded by the CI/CD pipeline
   - Perform security analysis using [prowler](https://github.com/toniblyx/prowler)
 - Development
   - Provide `tdd` and `dev` targets for Python to support development workflow
