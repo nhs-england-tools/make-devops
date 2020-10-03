@@ -91,13 +91,16 @@ devops-copy: ### Copy the DevOps automation toolchain scripts to given destinati
 			$(DIR)/.github \
 			$(DIR)/documentation/adr
 		cp -fv .github/CODEOWNERS $(DIR)/.github/CODEOWNERS && sed -i "s;@nhsd-exeter/admins;@nhsd-exeter/maintainers;" $(DIR)/.github/CODEOWNERS
+		cp -fv build/automation/lib/project/template/.gitattributes $(DIR)
 		cp -fv build/automation/lib/project/template/project.code-workspace $(DIR)
 		cp -fv documentation/adr/README.md $(DIR)/documentation/adr
 		cp -fv .editorconfig $(DIR)
 		cp -fv .gitignore $(DIR)
 		cp -fv CONTRIBUTING.md $(DIR)
 		cp -fv LICENSE.md $(DIR)/build/automation/LICENSE.md
-		[ ! -f $(DIR)/README.md ] && cp -fv build/automation/lib/project/template/README.md $(DIR) ||:
+		[ ! -f $(DIR)/Makefile ] && cp -fv build/automation/lib/project/template/Makefile $(DIR)
+		[ ! -f $(DIR)/README.md ] && cp -fv build/automation/lib/project/template/README.md $(DIR)
+		return 0
 	}
 	function version() {
 		cd $(PROJECT_DIR)
@@ -139,13 +142,16 @@ devops-update devops-synchronise: ### Update/upgrade the DevOps automation toolc
 			$(PARENT_PROJECT_DIR)/.github \
 			$(PARENT_PROJECT_DIR)/documentation/adr
 		cp -fv .github/CODEOWNERS $(PARENT_PROJECT_DIR)/.github/CODEOWNERS && sed -i "s;@nhsd-exeter/admins;@nhsd-exeter/maintainers;" $(PARENT_PROJECT_DIR)/.github/CODEOWNERS
+		cp -fv build/automation/lib/project/template/.gitattributes $(PARENT_PROJECT_DIR)
 		cp -fv build/automation/lib/project/template/project.code-workspace $(PARENT_PROJECT_DIR)
 		cp -fv documentation/adr/README.md $(PARENT_PROJECT_DIR)/documentation/adr
 		cp -fv .editorconfig $(PARENT_PROJECT_DIR)
 		cp -fv .gitignore $(PARENT_PROJECT_DIR)
 		cp -fv CONTRIBUTING.md $(PARENT_PROJECT_DIR)
 		cp -fv LICENSE.md $(PARENT_PROJECT_DIR)/build/automation/LICENSE.md
-		[ ! -f $(PARENT_PROJECT_DIR)/README.md ] && cp -fv build/automation/lib/project/template/README.md $(PARENT_PROJECT_DIR) ||:
+		[ ! -f $(PARENT_PROJECT_DIR)/Makefile ] && cp -fv build/automation/lib/project/template/Makefile $(PARENT_PROJECT_DIR)
+		[ ! -f $(PARENT_PROJECT_DIR)/README.md ] && cp -fv build/automation/lib/project/template/README.md $(PARENT_PROJECT_DIR)
+		return 0
 	}
 	function version() {
 		cd $(PROJECT_DIR)
