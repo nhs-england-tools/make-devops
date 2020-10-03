@@ -1,42 +1,39 @@
 pipeline {
   agent {
-    label "jenkins-slave"
+    label 'jenkins-slave'
   }
   options {
-    buildDiscarder(logRotator(numToKeepStr: "13"))
+    buildDiscarder(logRotator(daysToKeepStr: '5', numToKeepStr: '13'))
     disableConcurrentBuilds()
   }
   environment {
-    BUILD_DATE = ""
+    BUILD_DATE = sh(returnStdout: true, script: "date -u +'%Y-%m-%dT%H:%M:%S%z'").trim()
   }
   stages {
-    stage("Show Variables") {
+    stage('Show Variables') {
       steps {
         script {
-          this.BUILD_DATE = sh(returnStdout: true, script: "date -u +'%Y-%m-%dT%H:%M:%S%z'").trim()
-          sh """
-            make devops-print-variables
-          """
+          sh 'make devops-print-variables'
         }
       }
     }
-    stage("Run Test Suite") {
+    stage('Run Test Suite') {
       steps {
         script {
-          sh """
+          sh '''
             export AWS_ACCOUNT_ID_LIVE_PARENT=000000000000
             export AWS_ACCOUNT_ID_MGMT=000000000000
             export AWS_ACCOUNT_ID_NONPROD=000000000000
             export AWS_ACCOUNT_ID_PROD=000000000000
             make devops-test-suite || make devops-test-suite DEBUG=1
-          """
+          '''
         }
       }
     }
   }
   post {
     always {
-      sh "make devops-test-cleanup"
+      sh 'make devops-test-cleanup'
     }
   }
 }
