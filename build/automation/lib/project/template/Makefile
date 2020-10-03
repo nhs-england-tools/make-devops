@@ -34,7 +34,7 @@ provision: ## Provision environment - mandatory: PROFILE=[name]
 # ==============================================================================
 # Supporting targets
 
-trust-certificate: ssl-trust-certificate
+trust-certificate: ssl-trust-certificate-project
 
 create-artefact-repositories: ## Create repositories to store artefacts
 	make docker-create-repository NAME=NAME_TEMPLATE_TO_REPLACE
