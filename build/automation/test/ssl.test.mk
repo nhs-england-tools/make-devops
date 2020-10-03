@@ -6,6 +6,7 @@ test-ssl:
 		test-ssl-generate-certificate-single-domain \
 		test-ssl-generate-certificate-multiple-domains \
 		test-ssl-generate-certificate-project \
+		test-ssl-print-certificate-info-project \
 		test-ssl-copy-certificate-project \
 		test-ssl-trust-certificate-project \
 		test-ssl-trust-certificate \
@@ -58,6 +59,14 @@ test-ssl-generate-certificate-project:
 	make ssl-generate-certificate-project SSL_DOMAINS=platform.com,*.platform.com
 	# assert
 	mk_test "-f $(SSL_CERTIFICATE_DIR)/certificate.pem"
+
+test-ssl-print-certificate-info-project:
+	# arrange
+	make ssl-generate-certificate-project SSL_DOMAINS=platform.com,*.platform.com
+	# act
+	output=$$(make ssl-print-certificate-info-project | grep -Eo "DNS:platform.com" | wc -l)
+	# assert
+	mk_test "1 -eq $$output"
 
 test-ssl-copy-certificate-project:
 	# arrange

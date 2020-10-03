@@ -13,6 +13,20 @@ ssl-generate-certificate-project: ### Generate self-signed certificate for the p
 		NAME=certificate \
 		SSL_DOMAINS=$$(printf "$$domains" | head -c -1)
 
+ssl-print-certificate-info-project: ### Print inforamtion about the self-signed certificate for the project
+	openssl x509 -in $(SSL_CERTIFICATE_DIR)/certificate.pem -text
+
+ssl-copy-certificate-project: ### Copy self-signed certificate for the project - mandatory: DIR=[new path for the certificate]
+	if [ ! -f $(DIR)/certificate.pem ] || [ $$(md5sum $(SSL_CERTIFICATE_DIR)/certificate.pem | awk '{ print $$1 }') != $$(md5sum $(DIR)/certificate.pem | awk '{ print $$1 }') ]; then
+		cp -fv $(SSL_CERTIFICATE_DIR)/certificate.* $(DIR)
+	fi
+
+ssl-trust-certificate-project: ### Trust self-signed certificate for the project
+	make ssl-trust-certificate \
+		FILE=$(SSL_CERTIFICATE_DIR)/certificate.pem
+
+# ==============================================================================
+
 ssl-generate-certificate: ### Generate self-signed certificate - mandatory: DIR=[path to certificate],NAME=[certificate file name],SSL_DOMAINS='*.domain1,DNS:*.domain2'
 	rm -f $(DIR)/$(NAME).{crt,key,pem,p12}
 	openssl req \
@@ -34,15 +48,6 @@ ssl-generate-certificate: ### Generate self-signed certificate - mandatory: DIR=
 		-inkey $(DIR)/$(NAME).key \
 		-out $(DIR)/$(NAME).p12
 	openssl x509 -text < $(DIR)/$(NAME).crt
-
-ssl-copy-certificate-project: ### Copy self-signed certificate for the project - mandatory: DIR=[new path for the certificate]
-	if [ ! -f $(DIR)/certificate.pem ] || [ $$(md5sum $(SSL_CERTIFICATE_DIR)/certificate.pem | awk '{ print $$1 }') != $$(md5sum $(DIR)/certificate.pem | awk '{ print $$1 }') ]; then
-		cp -fv $(SSL_CERTIFICATE_DIR)/certificate.* $(DIR)
-	fi
-
-ssl-trust-certificate-project: ### Trust self-signed certificate for the project
-	make ssl-trust-certificate \
-		FILE=$(SSL_CERTIFICATE_DIR)/certificate.pem
 
 ssl-trust-certificate: ### Trust self-signed certificate - mandatory: FILE=[path to .pem file]
 	sudo security add-trusted-cert -d \
