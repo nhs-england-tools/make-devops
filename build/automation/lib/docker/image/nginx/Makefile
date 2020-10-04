@@ -19,7 +19,7 @@ clean:
 # ==============================================================================
 
 build-example:
-	make docker-build NAME=nginx EXAMPLE=true
+	make docker-build NAME=nginx EXAMPLE=true FORCE=true
 
 test-example:
 	make docker-test NAME=nginx EXAMPLE=true

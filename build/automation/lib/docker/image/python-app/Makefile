@@ -19,7 +19,7 @@ clean:
 # ==============================================================================
 
 build-example:
-	make docker-build NAME=python-app EXAMPLE=true
+	make docker-build NAME=python-app EXAMPLE=true FORCE=true
 
 test-example:
 	make docker-test NAME=python-app EXAMPLE=true \

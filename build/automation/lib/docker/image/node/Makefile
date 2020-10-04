@@ -19,7 +19,7 @@ clean:
 # ==============================================================================
 
 build-example:
-	make docker-build NAME=node EXAMPLE=true
+	make docker-build NAME=node EXAMPLE=true FORCE=true
 
 test-example:
 	make docker-test NAME=node EXAMPLE=true
