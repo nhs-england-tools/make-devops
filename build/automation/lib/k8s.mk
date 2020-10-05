@@ -166,7 +166,7 @@ k8s-replace-variables: ### Replace variables in base and overlay of a stack - ma
 	)
 	export K8S_TTL=$$(make k8s-get-namespace-ttl)
 	for file in $${files[@]}; do
-		make file-replace-variables FILE=$$file
+		make -s file-replace-variables FILE=$$file
 	done
 
 k8s-get-namespace-ttl: ### Get the length of time for the namespace to live
