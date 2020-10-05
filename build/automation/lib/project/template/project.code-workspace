@@ -16,6 +16,9 @@
     "explorer.sortOrder": "type",
     "extensions.ignoreRecommendations": true,
     "extensions.showRecommendationsOnlyOnDemand": true,
+    "files.associations": {
+      "Jenkinsfile*": "jenkinsfile"
+    },
     "files.autoSave": "onFocusChange",
     "files.eol": "\n",
     "files.exclude": {
