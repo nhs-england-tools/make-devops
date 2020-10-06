@@ -27,6 +27,9 @@ test-aws:
 		test-aws-s3-exists \
 		test-aws-s3-create \
 		test-aws-s3-upload-download \
+		test-aws-dynamodb-exists \
+		test-aws-dynamodb-create \
+		test-aws-dynamodb-put-query \
 		test-aws-rds-describe-instance \
 		test-aws-rds-create-snapshot \
 		test-aws-rds-get-snapshot-status \
@@ -241,6 +244,40 @@ test-aws-s3-upload-download:
 	hash1=$$(md5sum $(TEST_AWS_BUCKET_FILE_PATH).upload | awk '{ print $$1 }')
 	hash2=$$(md5sum $(TEST_AWS_BUCKET_FILE_PATH).download | awk '{ print $$1 }')
 	mk_test "$$hash1 = $$hash2"
+
+test-aws-dynamodb-exists:
+	# act
+	output=$$(make aws-dynamodb-exists TABLE_NAME=$(@)-table)
+	# assert
+	mk_test "false = $$output"
+
+test-aws-dynamodb-create:
+	# act
+	make aws-dynamodb-create \
+		TABLE_NAME=$(@)-table \
+		ATTRIBUTE_DEFINITIONS="AttributeName=Artist,AttributeType=S AttributeName=SongTitle,AttributeType=S" \
+		KEY_SCHEMA="AttributeName=Artist,KeyType=HASH AttributeName=SongTitle,KeyType=RANGE" \
+		PROVISIONED_THROUGHPUT=ReadCapacityUnits=3,WriteCapacityUnits=3
+	# assert
+	output=$$(make aws-dynamodb-exists TABLE_NAME=$(@)-table)
+	mk_test "true = $$output"
+
+test-aws-dynamodb-put-query:
+	# arrange
+	make aws-dynamodb-create \
+		TABLE_NAME=$(@)-table \
+		ATTRIBUTE_DEFINITIONS="AttributeName=Artist,AttributeType=S AttributeName=SongTitle,AttributeType=S" \
+		KEY_SCHEMA="AttributeName=Artist,KeyType=HASH AttributeName=SongTitle,KeyType=RANGE"
+	# act
+	make aws-dynamodb-put \
+		TABLE_NAME=$(@)-table \
+		ITEM='{"Artist": {"S": "No One You Know"},"SongTitle": {"S": "Call Me Today"},"AlbumTitle": {"S": "Somewhat Famous"}}'
+	output=$$(make aws-dynamodb-query \
+		TABLE_NAME=$(@)-table \
+		CONDITION_EXPRESSION="Artist=:v1" \
+		EXPRESSION_ATTRIBUTES='{":v1": {"S": "No One You Know"}}')
+	# assert
+	mk_test "1 -eq $$(echo $$output | grep 'No One You Know' | wc -l)"
 
 test-aws-rds-describe-instance:
 	mk_test_skip

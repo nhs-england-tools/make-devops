@@ -54,7 +54,7 @@ aws-secret-create: ### Create a new secret and save the value - mandatory: NAME=
 
 aws-secret-put: ### Put secret value in the specified secret - mandatory: NAME=[secret name],VALUE=[string or file://file.json]; optional: AWS_REGION=[AWS region]
 	file=$$(echo $(VALUE) | grep -E "^file://" > /dev/null 2>&1 && echo $(VALUE) | sed 's;file://;;g' ||:)
-	[ -n "$$file" ] && volume="--volume $$file:$$file" || mount=
+	[ -n "$$file" ] && volume="--volume $$file:$$file" || volume=
 	make -s docker-run-tools ARGS="$$volume $$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) secretsmanager put-secret-value \
 			--secret-id $(NAME) \
@@ -181,6 +181,46 @@ aws-s3-exists: ### Check if bucket exists - mandatory: NAME=[bucket name]
 			s3://$(NAME) \
 		2>&1 | grep -q NoSuchBucket \
 	" > /dev/null 2>&1 && echo false || echo true
+
+aws-dynamodb-create: ### Create DynamoDB table - mandatory: TABLE_NAME=[table name],ATTRIBUTE_DEFINITIONS,KEY_SCHEMA; optional: PROVISIONED_THROUGHPUT
+	default_throughput="ReadCapacityUnits=1,WriteCapacityUnits=1"
+	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
+		$(AWSCLI) dynamodb create-table \
+			--table-name $(TABLE_NAME) \
+			--attribute-definitions $(ATTRIBUTE_DEFINITIONS) \
+			--key-schema $(KEY_SCHEMA) \
+			--provisioned-throughput $(or $(PROVISIONED_THROUGHPUT), $$default_throughput) \
+	"
+
+aws-dynamodb-put: ### Create DynamoDB item - mandatory: TABLE_NAME=[table name],ITEM=[json or file://file.json]
+	file=$$(echo '$(ITEM)' | grep -E "^file://" > /dev/null 2>&1 && echo $(ITEM) | sed 's;file://;;g' ||:)
+	[ -n "$$file" ] && volume="--volume $$file:$$file" || volume=
+	json='$(ITEM)'
+	make -s docker-run-tools ARGS="$$volume $$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
+		$(AWSCLI) dynamodb put-item \
+			--table-name $(TABLE_NAME) \
+			--item '$$json' \
+			--return-consumed-capacity TOTAL \
+			--return-item-collection-metrics SIZE \
+	"
+
+aws-dynamodb-query: ### Query DynamoDB table - mandatory: TABLE_NAME=[table name],CONDITION_EXPRESSION,EXPRESSION_ATTRIBUTES=[json or file://file.json]
+	file=$$(echo '$(EXPRESSION_ATTRIBUTES)' | grep -E "^file://" > /dev/null 2>&1 && echo $(EXPRESSION_ATTRIBUTES) | sed 's;file://;;g' ||:)
+	[ -n "$$file" ] && volume="--volume $$file:$$file" || volume=
+	json='$(EXPRESSION_ATTRIBUTES)'
+	make -s docker-run-tools ARGS="$$volume $$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
+		$(AWSCLI) dynamodb query \
+			--table-name $(TABLE_NAME) \
+			--key-condition-expression "$(CONDITION_EXPRESSION)" \
+			--expression-attribute-values '$$json' \
+	"
+
+aws-dynamodb-exists: ### Check if DynamoDB table exists - mandatory: TABLE_NAME=[table name]
+	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
+		$(AWSCLI) dynamodb describe-table \
+			--table-name $(TABLE_NAME) \
+			2>&1 | grep -q '\"TableName\": \"$(TABLE_NAME)\"' \
+	" > /dev/null 2>&1 && echo true || echo false
 
 aws-rds-describe-instance: ### Describe RDS instance - mandatory: DB_INSTANCE
 	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
@@ -329,6 +369,8 @@ _aws-elasticsearch-register-snapshot-repository: ### Register Elasticsearch snap
 	aws-cognito-get-client-id \
 	aws-cognito-get-client-secret \
 	aws-cognito-get-userpool-id \
+	aws-dynamodb-exists \
+	aws-dynamodb-query \
 	aws-ecr-get-image-digest \
 	aws-ecr-get-login-password \
 	aws-iam-policy-exists \
