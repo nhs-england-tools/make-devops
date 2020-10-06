@@ -90,7 +90,9 @@ If you hear your teams or individuals saying _"It will take days to onboard a ne
     - Terraform state: `$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)/$(PROFILE)/$(STACK)`
     - AWS tags: `TagSet=[{Key=Programme,Value=$(PROGRAMME)},{Key=Service,Value=$(SERVICE_TAG),{Key=Environment,Value=$(PROFILE)}]`
     - AWS resources prefix: `$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)-*`
-    - AWS secret name for deployment: `$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)-$(PROFILE)`
+    - AWS secret name for deployment: `$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)-$(PROFILE)/deployment`
+    - AWS bucket name for deployment: `$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)-$(PROFILE)-deployment`
+    - AWS table name for deployment: `$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)-$(PROFILE)-deployment-[events|resources]`
     - AWS database instance: `$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)-$(PROFILE)` or `$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)-$(NAME)-$(PROFILE)`
     - Local domain names: `$(PROJECT_NAME_SHORT).local`, `$(PROJECT_NAME).local`, `$(PROJECT_NAME_SHORT)-$(PROJECT_GROUP_SHORT).local`
   - SSL certificate

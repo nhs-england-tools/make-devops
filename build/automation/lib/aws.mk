@@ -190,6 +190,7 @@ aws-dynamodb-create: ### Create DynamoDB table - mandatory: TABLE_NAME=[table na
 			--attribute-definitions $(ATTRIBUTE_DEFINITIONS) \
 			--key-schema $(KEY_SCHEMA) \
 			--provisioned-throughput $(or $(PROVISIONED_THROUGHPUT), $$default_throughput) \
+			--tags Key=Programme,Value=$(PROGRAMME) Key=Service,Value=$(SERVICE_TAG) Key=Environment,Value=$(PROFILE) \
 	"
 
 aws-dynamodb-put: ### Create DynamoDB item - mandatory: TABLE_NAME=[table name],ITEM=[json or file://file.json]
