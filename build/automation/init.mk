@@ -17,7 +17,7 @@ help-project-supporting: ### Show project specific supporting and deployment wor
 help-library: ### Show library targets
 	@awk 'BEGIN {FS = ":.*?### "} /^[ a-zA-Z0-9_-]+:.*? ### / {printf "\033[36m%-41s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST) | sort
 
-devops-print-variables: ### Print all the variables
+devops-print-variables show-configuration: ### Print all the variables
 	$(foreach v, $(sort $(.VARIABLES)),
 		$(if $(filter-out default automatic, $(origin $v)),
 			$(if $(and $(patsubst %_PASSWORD,,$v), $(patsubst %_SECRET,,$v)),
