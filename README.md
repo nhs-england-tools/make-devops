@@ -115,7 +115,7 @@ If you hear your teams or individuals saying _"It will take days to onboard a ne
 
 ## CI/CD Design
 
-![DevOps CI Diagram](documentation/DevOps_CI_Diagram.png)
+![DevOps Pipelines](documentation/DevOps-Pipelines.png)
 
 ## Status
 
