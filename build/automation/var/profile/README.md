@@ -1,8 +1,7 @@
 # List of profiles
 
-* `local` - Docker-based profile that runs on every commit in the CI pipeline as well as locally
-* `remote` - Kubernetes-based profile that runs nightly in the CI pipeline
-* `dev` - non-production/staging, shared development
-* `perf` - non-production/staging, performance testing
+* `local` - local development profile
+* `dev` - shared development profile that runs on every commit in the CI pipeline or used for the cleanup
+* `test` - test profile that runs nightly in the CI pipeline
 * `demo` - production, UX
 * `live` - production, service

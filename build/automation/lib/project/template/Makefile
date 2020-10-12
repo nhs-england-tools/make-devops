@@ -17,27 +17,93 @@ test: # Test project
 	make start
 	make stop
 
-clean: # Clean up project
-
-# ==============================================================================
-# Deployment workflow targets
-
 push: ## Push project artefacts to the registry
 	make docker-push NAME=NAME_TEMPLATE_TO_REPLACE
 
-deploy: ## Deploy artefacts - mandatory: PROFILE=[name]
+deploy: # Deploy artefacts - mandatory: PROFILE=[name]
 	make project-deploy STACK=application PROFILE=$(PROFILE)
 
-provision: ## Provision environment - mandatory: PROFILE=[name]
+provision: # Provision environment - mandatory: PROFILE=[name]
 	make terraform-apply-auto-approve STACK=database PROFILE=$(PROFILE)
+
+clean: # Clean up project
 
 # ==============================================================================
 # Supporting targets
 
-trust-certificate: ssl-trust-certificate-project
+trust-certificate: ssl-trust-certificate-project ## Trust the SSL development certificate
 
-create-artefact-repositories: ## Create repositories to store artefacts
+create-artefact-repositories: ## Create ECR repositories to store the artefacts
 	make docker-create-repository NAME=NAME_TEMPLATE_TO_REPLACE
+
+# ==============================================================================
+# Pipeline targets
+
+build-artefact:
+	echo TODO: $(@)
+
+publish-artefact:
+	echo TODO: $(@)
+
+backup-data:
+	echo TODO: $(@)
+
+provision-infractructure:
+	echo TODO: $(@)
+
+deploy-artefact:
+	echo TODO: $(@)
+
+apply-data-changes:
+	echo TODO: $(@)
+
+# --------------------------------------
+
+run-static-analisys:
+	echo TODO: $(@)
+
+run-unit-test:
+	echo TODO: $(@)
+
+run-smoke-test:
+	echo TODO: $(@)
+
+run-integration-test:
+	echo TODO: $(@)
+
+run-contract-test:
+	echo TODO: $(@)
+
+run-functional-test:
+	echo TODO: $(@)
+
+run-performance-test:
+	echo TODO: $(@)
+
+run-security-test:
+	echo TODO: $(@)
+
+# --------------------------------------
+
+remove-unused-environments:
+	echo TODO: $(@)
+
+remove-old-artefacts:
+	echo TODO: $(@)
+
+remove-old-backups:
+	echo TODO: $(@)
+
+# --------------------------------------
+
+pipeline-send-notification:
+	echo TODO: $(@)
+
+pipeline-on-success:
+	echo TODO: $(@)
+
+pipeline-on-failure:
+	echo TODO: $(@)
 
 # ==============================================================================
 

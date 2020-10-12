@@ -13,9 +13,9 @@ jobs:
             BUILD_DATE=$(date -u +"%Y-%m-%dT%H:%M:%S%z")
             echo "export BUILD_DATE=$BUILD_DATE" >> $BASH_ENV
       - run:
-          name: Show Variables
+          name: Show Configuration
           command: |
-            make devops-print-variables
+            make show-configuration
       - run:
           name: Push 'elasticsearch' image
           command: |

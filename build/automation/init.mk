@@ -321,7 +321,6 @@ INFRASTRUCTURE_DIR := $(abspath $(or $(INFRASTRUCTURE_DIR), $(PROJECT_DIR)/infra
 INFRASTRUCTURE_DIR_REL := $(shell echo $(INFRASTRUCTURE_DIR) | sed "s;$(PROJECT_DIR);;g")
 JQ_DIR_REL := $(shell echo $(abspath $(LIB_DIR)/jq) | sed "s;$(PROJECT_DIR);;g")
 
-PROFILE := $(or $(PROFILE), local)
 BUILD_ID := $(or $(or $(BUILD_ID), $(CIRCLE_BUILD_NUM)), 0)
 BUILD_DATE := $(or $(BUILD_DATE), $(shell date -u +"%Y-%m-%dT%H:%M:%S%z"))
 BUILD_TIMESTAMP := $(shell date --date=$(BUILD_DATE) -u +"%Y%m%d%H%M%S")
@@ -329,6 +328,8 @@ BUILD_REPO := $(or $(shell git config --get remote.origin.url 2> /dev/null ||:),
 BUILD_BRANCH := $(if $(shell git rev-parse --abbrev-ref HEAD 2> /dev/null | grep -E ^HEAD$ ||:),$(or $(shell git name-rev --name-only HEAD 2> /dev/null ||:), unknown),$(or $(shell git rev-parse --abbrev-ref HEAD 2> /dev/null ||:), unknown))
 BUILD_COMMIT_HASH := $(or $(shell git rev-parse --short HEAD 2> /dev/null ||:), unknown)
 BUILD_COMMIT_DATE := $(or $(shell TZ=UTC git show -s --format=%cd --date=format-local:%Y-%m-%dT%H:%M:%S%z HEAD 2> /dev/null ||:), unknown)
+PROFILE := $(or $(PROFILE), local)
+ENVIRONMENT := $(or $(ENVIRONMENT), $(shell ([ $(PROFILE) == local ] && echo local) || ([[ $(BUILD_BRANCH) =~ ^task/[A-Z]{2,5}-[0-9]{1,5}_[A-Za-z0-9_]{4,32} ]] && (echo $(BUILD_BRANCH) | grep -Eo '^task/[A-Z]{2,5}-[0-9]{1,5}' | grep -Eo '[A-Z]{2,5}-[0-9]{1,5}' | tr '[:upper:]' '[:lower:]') || ([ $(BUILD_BRANCH) == master ] && echo $(PROFILE)))))
 USER_ID := $(shell id -u)
 GROUP_ID := $(shell id -g)
 TTY_ENABLE := $(or $(TTY_ENABLE), $(shell [ $(BUILD_ID) -eq 0 ] && echo true || echo false))

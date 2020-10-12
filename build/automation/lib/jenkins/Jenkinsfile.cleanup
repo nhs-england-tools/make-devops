@@ -1,0 +1,39 @@
+pipeline {
+  /*
+    Description: TODO:
+   */
+  agent { label "jenkins-slave" }
+  options {
+    buildDiscarder(logRotator(daysToKeepStr: "7", numToKeepStr: "13"))
+    disableConcurrentBuilds()
+    parallelsAlwaysFailFast()
+    timeout(time: 60, unit: "MINUTES")
+  }
+  environment {
+    BUILD_DATE = sh(returnStdout: true, script: "date -u +'%Y-%m-%dT%H:%M:%S%z'").trim()
+    PROFILE = "dev"
+  }
+  triggers { cron(env.BRANCH_NAME == "master" ? "0 20 * * *" : "") }
+  stages {
+    stage("Show Configuration") {
+      steps { sh "make show-configuration" }
+    }
+    stage("Clean up") {
+      parallel {
+        stage("Clean up: Remove unused environments") {
+          steps { sh "make remove-unused-environments" }
+        }
+        stage("Clean up: Remove old artefacts") {
+          steps { sh "make remove-old-artefacts" }
+        }
+        stage("Clean up: Remove old backups") {
+          steps { sh "make remove-old-backups" }
+        }
+      }
+    }
+  }
+  post {
+    success { sh "make pipeline-on-success" }
+    failure { sh "make pipeline-on-failure" }
+  }
+}

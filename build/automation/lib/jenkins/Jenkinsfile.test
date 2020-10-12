@@ -1,0 +1,62 @@
+pipeline {
+  /*
+    Description: TODO:
+   */
+  agent { label "jenkins-slave" }
+  options {
+    buildDiscarder(logRotator(daysToKeepStr: "7", numToKeepStr: "13"))
+    disableConcurrentBuilds()
+    parallelsAlwaysFailFast()
+    timeout(time: 60, unit: "MINUTES")
+  }
+  environment {
+    BUILD_DATE = sh(returnStdout: true, script: "date -u +'%Y-%m-%dT%H:%M:%S%z'").trim()
+    PROFILE = "test"
+  }
+  triggers { cron(env.BRANCH_NAME == "master" ? "0 4 * * *" : "") }
+  stages {
+    stage("Show Configuration") {
+      steps { sh "make show-configuration" }
+    }
+    stage("Build") {
+      parallel {
+        stage("Build: App") {
+          agent { label "jenkins-slave" }
+          steps {
+            sh "make run-static-analisys"
+            sh "make run-unit-test"
+            sh "make build-artefact"
+            sh "make run-integration-test"
+            sh "make run-contract-test"
+            sh "make publish-artefact"
+          }
+        }
+      }
+    }
+    stage("Deploy") {
+      parallel {
+        stage("Deploy: App") {
+          agent { label "jenkins-slave" }
+          steps {
+            sh "make provision-infractructure"
+            sh "make deploy-artefact"
+            sh "make apply-data-changes"
+            sh "make run-smoke-test"
+          }
+        }
+      }
+    }
+    stage("Test") {
+      agent { label "jenkins-slave" }
+      steps {
+        sh "make run-functional-test"
+        sh "make run-performance-test"
+        sh "make run-security-test"
+      }
+    }
+  }
+  post {
+    success { sh "make pipeline-on-success" }
+    failure { sh "make pipeline-on-failure" }
+  }
+}

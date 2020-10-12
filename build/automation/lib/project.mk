@@ -95,6 +95,18 @@ project-create-infrastructure: ### Create infrastructure from template - mandato
 
 project-create-pipeline: ### Create pipeline
 	make -s jenkins-create-pipeline-from-template
+# ==============================================================================
+
+project-is-development-branch-deployable: ### Check if branch can be deployed automatically - return: true|false
+	[ $(BUILD_BRANCH) == master ] && echo true && exit 0
+	[[ $(BUILD_BRANCH) =~ ^task/[A-Z]{2,5}-[0-9]{1,5}_[A-Za-z0-9_]{4,32}/ ]] && [[ $(BUILD_BRANCH) =~ /env$$ ]] && echo true && exit 0
+	[ $$(make project-is-development-branch-testable) == true ] && echo true && exit 0
+	echo false
+
+project-is-development-branch-testable: ### Check if branch can be tested automatically - return: true|false
+	[ $(BUILD_BRANCH) == master ] && echo true && exit 0
+	[[ $(BUILD_BRANCH) =~ ^task/[A-Z]{2,5}-[0-9]{1,5}_[A-Za-z0-9_]{4,32}/ ]] && [[ $(BUILD_BRANCH) =~ /(test|test-func|test-perf|test-sec|test-fit)$$ ]] && echo true && exit 0
+	echo false
 
 # ==============================================================================
 
@@ -104,4 +116,6 @@ project-create-pipeline: ### Create pipeline
 	project-create-image \
 	project-create-infrastructure \
 	project-create-pipeline \
-	project-create-profile
+	project-create-profile \
+	project-is-development-branch-deployable \
+	project-is-development-branch-testable
