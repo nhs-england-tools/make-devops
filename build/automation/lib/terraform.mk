@@ -95,7 +95,7 @@ terraform-delete-state: ### Delete the Terraform state - mandatory: STACK|STACKS
 terraform-export-variables: ### Get environment variables as TF_VAR_[name] variables - return: [variables export]
 	make terraform-export-variables-from-shell PATTERN="^(AWS|TX|TEXAS)"
 	make terraform-export-variables-from-shell PATTERN="^(DB|DATABASE|APP|APPLICATION|UI|API|SERVER|HOST|URL)"
-	make terraform-export-variables-from-shell PATTERN="^(PROFILE|BUILD|PROGRAMME|SERVICE|PROJECT)"
+	make terraform-export-variables-from-shell PATTERN="^(PROFILE|ENVIRONMENT|BUILD|PROGRAMME|SERVICE|PROJECT)"
 
 terraform-export-variables-from-secret: ### Get secret as TF_VAR_[name] variables - mandatory: NAME=[secret name]; return: [variables export]
 	if [ -n "$(NAME)" ]; then
