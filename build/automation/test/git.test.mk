@@ -7,6 +7,7 @@ test-git:
 		test-git-commit-has-changed-directory \
 		test-git-commit-get-hash \
 		test-git-commit-get-timestamp \
+		test-git-commit-get-message \
 		test-git-tag-is-release-candidate \
 		test-git-tag-is-environment-deployment \
 		test-git-tag-create-release-candidate \
@@ -73,6 +74,9 @@ test-git-commit-get-hash:
 	mk_test_skip
 
 test-git-commit-get-timestamp:
+	mk_test_skip
+
+test-git-commit-get-message:
 	mk_test_skip
 
 test-git-tag-is-release-candidate:

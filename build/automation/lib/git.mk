@@ -37,11 +37,14 @@ git-secrets-scan-history: ### Scan git histroy for any secrets
 git-commit-has-changed-directory: ### Determin if any file changed in directory - mandatory: DIR=[directory]; return: true|false
 	git diff --name-only --diff-filter=AMDR --cached HEAD^ | grep --quiet '$(DIR)' && echo true || echo false
 
-git-commit-get-hash: ### Get short commit hash - optional: COMMIT=[commit, defaults to HEAD]
+git-commit-get-hash git-hash: ### Get short commit hash - optional: COMMIT=[commit, defaults to HEAD]
 	git rev-parse --short $(or $(COMMIT), HEAD) 2> /dev/null || echo unknown
 
-git-commit-get-timestamp: ### Get commit timestamp - optional: COMMIT=[commit, defaults to HEAD]
+git-commit-get-timestamp git-ts: ### Get commit timestamp - optional: COMMIT=[commit, defaults to HEAD]
 	TZ=UTC git show -s --format=%cd --date=format-local:%Y%m%d%H%M%S $(or $(COMMIT), HEAD) | cat 2> /dev/null || echo unknown
+
+git-commit-get-message git-msg: ### Get commit message - optional: COMMIT=[commit, defaults to HEAD]
+	git log --format=%B -n 1 $(or $(COMMIT), HEAD)
 
 # ==============================================================================
 
@@ -105,8 +108,9 @@ git-tag-clear: ### Remove tags from the specified commit - optional: COMMIT=[co
 # ==============================================================================
 
 .SILENT: \
-	git-commit-get-hash \
-	git-commit-get-timestamp \
+	git-commit-get-hash git-hash \
+	git-commit-get-message git-msg \
+	git-commit-get-timestamp git-ts \
 	git-commit-has-changed-directory \
 	git-tag-get-environment-deployment \
 	git-tag-get-latest \

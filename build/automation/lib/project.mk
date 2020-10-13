@@ -106,6 +106,12 @@ project-is-development-branch-deployable: ### Check if branch can be deployed au
 project-is-development-branch-testable: ### Check if branch can be tested automatically - return: true|false
 	[ $(BUILD_BRANCH) == master ] && echo true && exit 0
 	[[ $(BUILD_BRANCH) =~ ^task/[A-Z]{2,5}-[0-9]{1,5}_[A-Za-z0-9_]{4,32}/ ]] && [[ $(BUILD_BRANCH) =~ /(test|test-func|test-perf|test-sec|test-fit)$$ ]] && echo true && exit 0
+
+project-message-conatains: ### Check if git commit message contains any give string - mandatory STR=[comma-separated strings]
+	msg="$$(make git-msg)"
+	for str in $$(echo $(STR) | sed "s/,/ /g"); do
+		echo "$$msg" | grep -Eoq "\[ci .*$${str}.*\]" && echo true && exit 0
+	done
 	echo false
 
 # ==============================================================================
@@ -118,4 +124,5 @@ project-is-development-branch-testable: ### Check if branch can be tested automa
 	project-create-pipeline \
 	project-create-profile \
 	project-is-development-branch-deployable \
-	project-is-development-branch-testable
+	project-is-development-branch-testable \
+	project-message-conatains
