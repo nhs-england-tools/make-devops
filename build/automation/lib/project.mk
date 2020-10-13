@@ -99,13 +99,14 @@ project-create-pipeline: ### Create pipeline
 
 project-is-development-branch-deployable: ### Check if branch can be deployed automatically - return: true|false
 	[ $(BUILD_BRANCH) == master ] && echo true && exit 0
-	[[ $(BUILD_BRANCH) =~ ^task/[A-Z]{2,5}-[0-9]{1,5}_[A-Za-z0-9_]{4,32}/ ]] && [[ $(BUILD_BRANCH) =~ /env$$ ]] && echo true && exit 0
+	[[ $(BUILD_BRANCH) =~ ^$(GIT_TASK_BRANCH_PATTERN) ]] && [ $$(project-message-conatains STR=create-env) ] && echo true && exit 0
 	[ $$(make project-is-development-branch-testable) == true ] && echo true && exit 0
 	echo false
 
 project-is-development-branch-testable: ### Check if branch can be tested automatically - return: true|false
 	[ $(BUILD_BRANCH) == master ] && echo true && exit 0
-	[[ $(BUILD_BRANCH) =~ ^task/[A-Z]{2,5}-[0-9]{1,5}_[A-Za-z0-9_]{4,32}/ ]] && [[ $(BUILD_BRANCH) =~ /(test|test-func|test-perf|test-sec|test-fit)$$ ]] && echo true && exit 0
+	[[ $(BUILD_BRANCH) =~ ^$(GIT_TASK_BRANCH_PATTERN) ]] && [ $$(project-message-conatains STR=run-test,run-func-test,run-perf-test,run-sec-test,run-fit-test) ] && echo true && exit 0
+	echo false
 
 project-message-conatains: ### Check if git commit message contains any give string - mandatory STR=[comma-separated strings]
 	msg="$$(make git-msg)"
