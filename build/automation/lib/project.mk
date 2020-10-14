@@ -99,32 +99,32 @@ project-create-pipeline: ### Create pipeline
 
 project-branch-deploy: ### Check if development branch can be deployed automatically - return: true|false
 	[ $(BUILD_BRANCH) == master ] && echo true && exit 0
-	[[ $(BUILD_BRANCH) =~ ^$(GIT_TASK_BRANCH_PATTERN) ]] && [ $$(project-message-conatains KEYWORD=deploy) ] && echo true && exit 0
+	[[ $(BUILD_BRANCH) =~ ^$(GIT_TASK_BRANCH_PATTERN) ]] && [ $$(make project-message-contains KEYWORD=deploy) == true ] && echo true && exit 0
 	[ $$(make project-branch-test) == true ] && echo true && exit 0
 	echo false
 
 project-branch-test: ### Check if development branch can be tested automatically - return: true|false
 	[ $(BUILD_BRANCH) == master ] && echo true && exit 0
-	[[ $(BUILD_BRANCH) =~ ^$(GIT_TASK_BRANCH_PATTERN) ]] && [ $$(project-message-conatains KEYWORD=test,func-test,perf-test,sec-test) ] && echo true && exit 0
+	[[ $(BUILD_BRANCH) =~ ^$(GIT_TASK_BRANCH_PATTERN) ]] && [ $$(make project-message-contains KEYWORD=test,func-test,perf-test,sec-test) == true ] && echo true && exit 0
 	echo false
 
 project-branch-func-test:
 	[ $(BUILD_BRANCH) == master ] && echo true && exit 0
-	[[ $(BUILD_BRANCH) =~ ^$(GIT_TASK_BRANCH_PATTERN) ]] && [ $$(project-message-conatains KEYWORD=test,func-test) ] && echo true && exit 0
+	[[ $(BUILD_BRANCH) =~ ^$(GIT_TASK_BRANCH_PATTERN) ]] && [ $$(make project-message-contains KEYWORD=test,func-test) == true ] && echo true && exit 0
 	echo false
 
 project-branch-perf-test:
 	[ $(BUILD_BRANCH) == master ] && echo true && exit 0
-	[[ $(BUILD_BRANCH) =~ ^$(GIT_TASK_BRANCH_PATTERN) ]] && [ $$(project-message-conatains KEYWORD=test,perf-test) ] && echo true && exit 0
+	[[ $(BUILD_BRANCH) =~ ^$(GIT_TASK_BRANCH_PATTERN) ]] && [ $$(make project-message-contains KEYWORD=test,perf-test) == true ] && echo true && exit 0
 	echo false
 
 project-branch-sec-test:
 	[ $(BUILD_BRANCH) == master ] && echo true && exit 0
-	[[ $(BUILD_BRANCH) =~ ^$(GIT_TASK_BRANCH_PATTERN) ]] && [ $$(project-message-conatains KEYWORD=test,sec-test) ] && echo true && exit 0
+	[[ $(BUILD_BRANCH) =~ ^$(GIT_TASK_BRANCH_PATTERN) ]] && [ $$(make project-message-contains KEYWORD=test,sec-test) == true ] && echo true && exit 0
 	echo false
 
-project-message-conatains: ### Check if git commit message contains any give keyword - mandatory KEYWORD=[comma-separated keywords]
-	msg="$$(make git-msg)"
+project-message-contains: ### Check if git commit message contains any give keyword - mandatory KEYWORD=[comma-separated keywords]
+	msg=$$(make git-msg)
 	for str in $$(echo $(KEYWORD) | sed "s/,/ /g"); do
 		echo "$$msg" | grep -E '[ci .*]' | grep -Eoq "\[ci .*$${str}[^-].*" && echo true && exit 0
 	done
@@ -144,4 +144,4 @@ project-message-conatains: ### Check if git commit message contains any give ke
 	project-create-infrastructure \
 	project-create-pipeline \
 	project-create-profile \
-	project-message-conatains
+	project-message-contains
