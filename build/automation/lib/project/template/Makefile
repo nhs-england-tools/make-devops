@@ -83,7 +83,7 @@ run-performance-test:
 	echo TODO: $(@)
 
 run-security-test:
-	[ $$(make project-branch-func-test) != true ] && exit 0
+	[ $$(make project-branch-sec-test) != true ] && exit 0
 	echo TODO: $(@)
 
 # --------------------------------------

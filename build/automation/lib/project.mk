@@ -108,17 +108,17 @@ project-branch-test: ### Check if development branch can be tested automatically
 	[[ $(BUILD_BRANCH) =~ ^$(GIT_TASK_BRANCH_PATTERN) ]] && [ $$(make project-message-contains KEYWORD=test,func-test,perf-test,sec-test) == true ] && echo true && exit 0
 	echo false
 
-project-branch-func-test:
+project-branch-func-test: ### Check if development branch can be tested (functional) automatically - return: true|false
 	[ $(BUILD_BRANCH) == master ] && echo true && exit 0
 	[[ $(BUILD_BRANCH) =~ ^$(GIT_TASK_BRANCH_PATTERN) ]] && [ $$(make project-message-contains KEYWORD=test,func-test) == true ] && echo true && exit 0
 	echo false
 
-project-branch-perf-test:
+project-branch-perf-test: ### Check if development branch can be tested (performance) automatically - return: true|false
 	[ $(BUILD_BRANCH) == master ] && echo true && exit 0
 	[[ $(BUILD_BRANCH) =~ ^$(GIT_TASK_BRANCH_PATTERN) ]] && [ $$(make project-message-contains KEYWORD=test,perf-test) == true ] && echo true && exit 0
 	echo false
 
-project-branch-sec-test:
+project-branch-sec-test: ### Check if development branch can be tested (security) automatically - return: true|false
 	[ $(BUILD_BRANCH) == master ] && echo true && exit 0
 	[[ $(BUILD_BRANCH) =~ ^$(GIT_TASK_BRANCH_PATTERN) ]] && [ $$(make project-message-contains KEYWORD=test,sec-test) == true ] && echo true && exit 0
 	echo false
