@@ -75,12 +75,15 @@ run-contract-test:
 	echo TODO: $(@)
 
 run-functional-test:
+	[ $$(make project-branch-func-test) != true ] && exit 0
 	echo TODO: $(@)
 
 run-performance-test:
+	[ $$(make project-branch-perf-test) != true ] && exit 0
 	echo TODO: $(@)
 
 run-security-test:
+	[ $$(make project-branch-func-test) != true ] && exit 0
 	echo TODO: $(@)
 
 # --------------------------------------

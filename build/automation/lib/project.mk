@@ -97,33 +97,51 @@ project-create-pipeline: ### Create pipeline
 	make -s jenkins-create-pipeline-from-template
 # ==============================================================================
 
-project-is-development-branch-deployable: ### Check if branch can be deployed automatically - return: true|false
+project-branch-deploy: ### Check if development branch can be deployed automatically - return: true|false
 	[ $(BUILD_BRANCH) == master ] && echo true && exit 0
-	[[ $(BUILD_BRANCH) =~ ^$(GIT_TASK_BRANCH_PATTERN) ]] && [ $$(project-message-conatains STR=create-env) ] && echo true && exit 0
-	[ $$(make project-is-development-branch-testable) == true ] && echo true && exit 0
+	[[ $(BUILD_BRANCH) =~ ^$(GIT_TASK_BRANCH_PATTERN) ]] && [ $$(project-message-conatains KEYWORD=deploy) ] && echo true && exit 0
+	[ $$(make project-branch-test) == true ] && echo true && exit 0
 	echo false
 
-project-is-development-branch-testable: ### Check if branch can be tested automatically - return: true|false
+project-branch-test: ### Check if development branch can be tested automatically - return: true|false
 	[ $(BUILD_BRANCH) == master ] && echo true && exit 0
-	[[ $(BUILD_BRANCH) =~ ^$(GIT_TASK_BRANCH_PATTERN) ]] && [ $$(project-message-conatains STR=run-test,run-func-test,run-perf-test,run-sec-test,run-fit-test) ] && echo true && exit 0
+	[[ $(BUILD_BRANCH) =~ ^$(GIT_TASK_BRANCH_PATTERN) ]] && [ $$(project-message-conatains KEYWORD=test,func-test,perf-test,sec-test) ] && echo true && exit 0
 	echo false
 
-project-message-conatains: ### Check if git commit message contains any give string - mandatory STR=[comma-separated strings]
+project-branch-func-test:
+	[ $(BUILD_BRANCH) == master ] && echo true && exit 0
+	[[ $(BUILD_BRANCH) =~ ^$(GIT_TASK_BRANCH_PATTERN) ]] && [ $$(project-message-conatains KEYWORD=test,func-test) ] && echo true && exit 0
+	echo false
+
+project-branch-perf-test:
+	[ $(BUILD_BRANCH) == master ] && echo true && exit 0
+	[[ $(BUILD_BRANCH) =~ ^$(GIT_TASK_BRANCH_PATTERN) ]] && [ $$(project-message-conatains KEYWORD=test,perf-test) ] && echo true && exit 0
+	echo false
+
+project-branch-sec-test:
+	[ $(BUILD_BRANCH) == master ] && echo true && exit 0
+	[[ $(BUILD_BRANCH) =~ ^$(GIT_TASK_BRANCH_PATTERN) ]] && [ $$(project-message-conatains KEYWORD=test,sec-test) ] && echo true && exit 0
+	echo false
+
+project-message-conatains: ### Check if git commit message contains any give keyword - mandatory KEYWORD=[comma-separated keywords]
 	msg="$$(make git-msg)"
-	for str in $$(echo $(STR) | sed "s/,/ /g"); do
-		echo "$$msg" | grep -Eoq "\[ci .*$${str}.*\]" && echo true && exit 0
+	for str in $$(echo $(KEYWORD) | sed "s/,/ /g"); do
+		echo "$$msg" | grep -E '[ci .*]' | grep -Eoq "\[ci .*$${str}[^-].*" && echo true && exit 0
 	done
 	echo false
 
 # ==============================================================================
 
 .SILENT: \
+	project-branch-deploy \
+	project-branch-func-test \
+	project-branch-perf-test \
+	project-branch-sec-test \
+	project-branch-test \
 	project-create-contract-test \
 	project-create-deployment \
 	project-create-image \
 	project-create-infrastructure \
 	project-create-pipeline \
 	project-create-profile \
-	project-is-development-branch-deployable \
-	project-is-development-branch-testable \
 	project-message-conatains

@@ -36,7 +36,7 @@ pipeline {
     stage("Deploy") {
       when {
         beforeAgent true
-        expression { sh(returnStdout: true, script: "make project-is-development-branch-deployable").trim() == "true" }
+        expression { sh(returnStdout: true, script: "make project-branch-deploy").trim() == "true" }
       }
       parallel {
         stage("Deploy: App") {
@@ -53,7 +53,7 @@ pipeline {
     stage("Test") {
       when {
         beforeAgent true
-        expression { sh(returnStdout: true, script: "make project-is-development-branch-testable").trim() == "true" }
+        expression { sh(returnStdout: true, script: "make project-branch-test").trim() == "true" }
       }
       agent { label "jenkins-slave" }
       steps {
