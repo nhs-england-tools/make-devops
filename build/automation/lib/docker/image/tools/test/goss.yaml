@@ -35,11 +35,11 @@ package:
     installed: true
 
 command:
-  pip list | grep -iE 'awscli-local.*0.8':
+  pip list | grep -iE 'awscli-local.*0.9':
     exit-status: 0
   pip list | grep -iE 'awscli.*1.18':
     exit-status: 0
-  pip list | grep -iE 'boto3.*1.14':
+  pip list | grep -iE 'boto3.*1.15':
     exit-status: 0
   pip list | grep -iE 'requests.*2.24':
     exit-status: 0
