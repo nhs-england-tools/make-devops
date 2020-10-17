@@ -106,7 +106,7 @@ aws-iam-policy-exists: ### Check if IAM policy exists - mandatory: NAME=[policy 
 aws-iam-role-create: ### Create IAM role - mandatory: NAME=[role name],DESCRIPTION=[role description],FILE=[path to json file]
 	file=$(TMP_DIR_REL)/$(@)_$(BUILD_ID)
 	make file-copy-and-replace SRC=$(FILE) DEST=$$file && trap "rm -f $$file" EXIT
-	tags='[{"Key":"Programme","Value":"$(PROGRAMME)"},{"Key":"Service","Value":"$(SERVICE_TAG)"},{"Key":"Environment","Value":"$(PROFILE)"}]'
+	tags='[{"Key":"Programme","Value":"$(PROGRAMME)"},{"Key":"Service","Value":"$(SERVICE_TAG)"},{"Key":"Environment","Value":"$(ENVIRONMENT)"},{"Key":"Profile","Value":"$(PROFILE)"}]'
 	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) iam create-role \
 			--role-name $(NAME) \
@@ -152,7 +152,7 @@ aws-s3-create: ### Create secure bucket - mandatory: NAME=[bucket name]
 			--bucket $(NAME) \
 			--versioning-configuration "Status=Enabled" \
 	"
-	tags='TagSet=[{Key=Programme,Value=$(PROGRAMME)},{Key=Service,Value=$(SERVICE_TAG)},{Key=Environment,Value=$(PROFILE)}]'
+	tags='TagSet=[{Key=Programme,Value=$(PROGRAMME)},{Key=Service,Value=$(SERVICE_TAG)},{Key=Environment,Value=$(ENVIRONMENT)},{Key=Profile,Value=$(PROFILE)}]'
 	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) s3api put-bucket-tagging \
 			--bucket $(NAME) \
@@ -182,45 +182,45 @@ aws-s3-exists: ### Check if bucket exists - mandatory: NAME=[bucket name]
 		2>&1 | grep -q NoSuchBucket \
 	" > /dev/null 2>&1 && echo false || echo true
 
-aws-dynamodb-create: ### Create DynamoDB table - mandatory: TABLE_NAME=[table name],ATTRIBUTE_DEFINITIONS,KEY_SCHEMA; optional: PROVISIONED_THROUGHPUT
+aws-dynamodb-create: ### Create DynamoDB table - mandatory: NAME=[table name],ATTRIBUTE_DEFINITIONS,KEY_SCHEMA; optional: PROVISIONED_THROUGHPUT
 	default_throughput="ReadCapacityUnits=1,WriteCapacityUnits=1"
 	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) dynamodb create-table \
-			--table-name $(TABLE_NAME) \
+			--table-name $(NAME) \
 			--attribute-definitions $(ATTRIBUTE_DEFINITIONS) \
 			--key-schema $(KEY_SCHEMA) \
 			--provisioned-throughput $(or $(PROVISIONED_THROUGHPUT), $$default_throughput) \
-			--tags Key=Programme,Value=$(PROGRAMME) Key=Service,Value=$(SERVICE_TAG) Key=Environment,Value=$(PROFILE) \
+			--tags Key=Programme,Value=$(PROGRAMME) Key=Service,Value=$(SERVICE_TAG) Key=Environment,Value=$(ENVIRONMENT) Key=Profile,Value=$(PROFILE) \
 	"
 
-aws-dynamodb-put: ### Create DynamoDB item - mandatory: TABLE_NAME=[table name],ITEM=[json or file://file.json]
+aws-dynamodb-put: ### Create DynamoDB item - mandatory: NAME=[table name],ITEM=[json or file://file.json]
 	file=$$(echo '$(ITEM)' | grep -E "^file://" > /dev/null 2>&1 && echo $(ITEM) | sed 's;file://;;g' ||:)
 	[ -n "$$file" ] && volume="--volume $$file:$$file" || volume=
 	json='$(ITEM)'
 	make -s docker-run-tools ARGS="$$volume $$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) dynamodb put-item \
-			--table-name $(TABLE_NAME) \
+			--table-name $(NAME) \
 			--item '$$json' \
 			--return-consumed-capacity TOTAL \
 			--return-item-collection-metrics SIZE \
 	"
 
-aws-dynamodb-query: ### Query DynamoDB table - mandatory: TABLE_NAME=[table name],CONDITION_EXPRESSION,EXPRESSION_ATTRIBUTES=[json or file://file.json]
+aws-dynamodb-query: ### Query DynamoDB table - mandatory: NAME=[table name],CONDITION_EXPRESSION,EXPRESSION_ATTRIBUTES=[json or file://file.json]
 	file=$$(echo '$(EXPRESSION_ATTRIBUTES)' | grep -E "^file://" > /dev/null 2>&1 && echo $(EXPRESSION_ATTRIBUTES) | sed 's;file://;;g' ||:)
 	[ -n "$$file" ] && volume="--volume $$file:$$file" || volume=
 	json='$(EXPRESSION_ATTRIBUTES)'
 	make -s docker-run-tools ARGS="$$volume $$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) dynamodb query \
-			--table-name $(TABLE_NAME) \
+			--table-name $(NAME) \
 			--key-condition-expression "$(CONDITION_EXPRESSION)" \
 			--expression-attribute-values '$$json' \
 	"
 
-aws-dynamodb-exists: ### Check if DynamoDB table exists - mandatory: TABLE_NAME=[table name]
+aws-dynamodb-exists: ### Check if DynamoDB table exists - mandatory: NAME=[table name]
 	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) dynamodb describe-table \
-			--table-name $(TABLE_NAME) \
-			2>&1 | grep -q '\"TableName\": \"$(TABLE_NAME)\"' \
+			--table-name $(NAME) \
+			2>&1 | grep -q '\"TableName\": \"$(NAME)\"' \
 	" > /dev/null 2>&1 && echo true || echo false
 
 aws-rds-describe-instance: ### Describe RDS instance - mandatory: DB_INSTANCE

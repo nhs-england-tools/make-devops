@@ -52,9 +52,9 @@ git-tag-is-release-candidate: ### Check if a commit is tagged as release candida
 	commit=$(or $(COMMIT), master)
 	(git show-ref --tags -d | grep $$(git rev-parse $$commit) | sed -e 's;.* refs/tags/;;' -e 's;\^{};;' | grep -- -rc$$) > /dev/null 2>&1 && echo true || echo false
 
-git-tag-is-environment-deployment: ### Check if a commit is tagged as environment deployment - mandatory: PROFILE=[profile name]; optional: COMMIT=[commit, defaults to master]; return: true|false
+git-tag-is-environment-deployment: ### Check if a commit is tagged as environment deployment - mandatory: ENVIRONMENT=[environment name]; optional: COMMIT=[commit, defaults to master]; return: true|false
 	commit=$(or $(COMMIT), master)
-	(git show-ref --tags -d | grep $$(git rev-parse $$commit) | sed -e 's;.* refs/tags/;;' -e 's;\^{};;' | grep -- -$(PROFILE)$$) > /dev/null 2>&1 && echo true || echo false
+	(git show-ref --tags -d | grep $$(git rev-parse $$commit) | sed -e 's;.* refs/tags/;;' -e 's;\^{};;' | grep -- -$(ENVIRONMENT)$$) > /dev/null 2>&1 && echo true || echo false
 
 git-tag-create: ### Tag a commit - mandatory: TAG=[tag name]; optional: COMMIT=[commit, defaults to master]
 	commit=$(or $(COMMIT), master)
@@ -66,11 +66,11 @@ git-tag-create-release-candidate: ### Tag release candidate as `[YYYYmmddHHMMSS]
 	tag=$(BUILD_TIMESTAMP)-rc
 	make git-tag-create TAG=$$tag COMMIT=$$commit
 
-git-tag-create-environment-deployment: ### Tag environment deployment as `[YYYYmmddHHMMSS]-[env]` - mandatory: PROFILE=[profile name]; optional: COMMIT=[release candidate tag name, defaults to master]
-	[ $(PROFILE) = local ] && (echo "ERROR: Please, specify the PROFILE"; exit 1)
+git-tag-create-environment-deployment: ### Tag environment deployment as `[YYYYmmddHHMMSS]-[env]` - mandatory: ENVIRONMENT=[environment name]; optional: COMMIT=[release candidate tag name, defaults to master]
+	[ $(ENVIRONMENT) == local ] && (echo "ERROR: Please, specify the ENVIRONMENT"; exit 1)
 	commit=$(or $(COMMIT), master)
 	if [ $$(make git-tag-is-release-candidate COMMIT=$$commit) = true ]; then
-		tag=$(BUILD_TIMESTAMP)-$(PROFILE)
+		tag=$(BUILD_TIMESTAMP)-$(ENVIRONMENT)
 		make git-tag-create TAG=$$tag COMMIT=$$commit
 	fi
 
@@ -81,21 +81,21 @@ git-tag-get-release-candidate: ### Get the latest release candidate tag for the 
 		git show-ref --tags -d | grep ^$$(git rev-parse --short $(COMMIT)) | sed -e 's;.* refs/tags/;;' -e 's;\^{};;' | grep -- -rc$$ | sort -r | head -n 1
 	fi
 
-git-tag-get-environment-deployment: ### Get the latest environment deployment tag for the whole repository or just the specified commit - mandatory: PROFILE=[profile name]; optional: COMMIT=[commit]
-	[ $(PROFILE) = local ] && (echo "ERROR: Please, specify the PROFILE"; exit 1)
+git-tag-get-environment-deployment: ### Get the latest environment deployment tag for the whole repository or just the specified commit - mandatory: ENVIRONMENT=[environment name]; optional: COMMIT=[commit]
+	[ $(ENVIRONMENT) = local ] && (echo "ERROR: Please, specify the ENVIRONMENT"; exit 1)
 	if [ -z "$(COMMIT)" ]; then
-		git show-ref --tags -d | grep ^$(COMMIT) | sed -e 's;.* refs/tags/;;' -e 's;\^{};;' | grep -- -$(PROFILE)$$ | sort -r | head -n 1
+		git show-ref --tags -d | grep ^$(COMMIT) | sed -e 's;.* refs/tags/;;' -e 's;\^{};;' | grep -- -$(ENVIRONMENT)$$ | sort -r | head -n 1
 	else
-		git show-ref --tags -d | grep ^$$(git rev-parse --short $(COMMIT)) | sed -e 's;.* refs/tags/;;' -e 's;\^{};;' | grep -- -$(PROFILE)$$ | sort -r | head -n 1
+		git show-ref --tags -d | grep ^$$(git rev-parse --short $(COMMIT)) | sed -e 's;.* refs/tags/;;' -e 's;\^{};;' | grep -- -$(ENVIRONMENT)$$ | sort -r | head -n 1
 	fi
 
 git-tag-get-latest: ### Get the latest tag on the current branch - return [YYYYmmddHHMMSS]-[*]
 	git tag --sort version:refname | grep '^[0-9]*'| sort -r | head -n 1
 
-git-tag-list: ### List tags of a commit - optional: COMMIT=[commit, defaults to master],PROFILE=[profile name]
+git-tag-list: ### List tags of a commit - optional: COMMIT=[commit, defaults to master],ENVIRONMENT=[environment name]
 	commit=$(or $(COMMIT), master)
 	tags=$$(git show-ref --tags -d | grep $$(git rev-parse $$commit) | sed -e 's;.* refs/tags/;;' -e 's;\^{};;' | grep -Eo ^[0-9]*-[a-z]*$$ ||:)
-	[ $(PROFILE) != local ] && tags=$$(echo "$$tags" | grep -- -$(PROFILE)$$)
+	[ $(ENVIRONMENT) != local ] && tags=$$(echo "$$tags" | grep -- -$(ENVIRONMENT)$$)
 	echo "$$tags"
 
 git-tag-clear: ### Remove tags from the specified commit - optional: COMMIT=[commit, defaults to master]

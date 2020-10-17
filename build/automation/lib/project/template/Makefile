@@ -38,6 +38,12 @@ trust-certificate: ssl-trust-certificate-project ## Trust the SSL development ce
 create-artefact-repositories: ## Create ECR repositories to store the artefacts
 	make docker-create-repository NAME=NAME_TEMPLATE_TO_REPLACE
 
+create-deployment-resources: ## Create all the pipeline deployment supporting resources - mandatory: PROFILE=[name]
+	#make aws-dynamodb-create NAME=$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)-deployment-events ATTRIBUTE_DEFINITIONS= KEY_SCHEMA=
+	#make aws-dynamodb-create NAME=$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)-deployment-resources ATTRIBUTE_DEFINITIONS= KEY_SCHEMA=
+	make aws-s3-create NAME=$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)-$(PROFILE)-deployment
+	make aws-secret-create NAME=$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)-$(PROFILE)/deployment
+
 # ==============================================================================
 # Pipeline targets
 

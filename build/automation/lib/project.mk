@@ -58,11 +58,11 @@ project-tag-as-release-candidate: ### Tag release candidate - mandatory: ARTEFAC
 			COMMIT=$$commit
 	done
 
-project-tag-as-environment-deployment: ### Tag environment deployment - mandatory: ARTEFACT|ARTEFACTS=[comma-separated image names],PROFILE=[profile name]; optional: COMMIT=[git release candidate tag name, defaults to master]
-	[ $(PROFILE) = local ] && (echo "ERROR: Please, specify the PROFILE"; exit 1)
+project-tag-as-environment-deployment: ### Tag environment deployment - mandatory: ARTEFACT|ARTEFACTS=[comma-separated image names],ENVIRONMENT=[environment name]; optional: COMMIT=[git release candidate tag name, defaults to master]
+	[ $(ENVIRONMENT) = local ] && (echo "ERROR: Please, specify the ENVIRONMENT"; exit 1)
 	commit=$(or $(COMMIT), master)
-	make git-tag-create-environment-deployment COMMIT=$$commit PROFILE=$(PROFILE)
-	tag=$$(make git-tag-get-environment-deployment COMMIT=$$commit PROFILE=$(PROFILE) )
+	make git-tag-create-environment-deployment COMMIT=$$commit ENVIRONMENT=$(ENVIRONMENT)
+	tag=$$(make git-tag-get-environment-deployment COMMIT=$$commit ENVIRONMENT=$(ENVIRONMENT))
 	for image in $$(echo $(or $(ARTEFACTS), $(ARTEFACT)) | tr "," "\n"); do
 		make docker-image-find-and-tag-as \
 			TAG=$$tag \

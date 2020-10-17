@@ -86,14 +86,14 @@ If you hear your teams or individuals saying _"It will take days to onboard a ne
   - Naming
     - Service tag: `$(PROJECT_GROUP_SHORT)` or its prefix
     - ECR image: `$(PROJECT_GROUP_SHORT)/$(PROJECT_NAME_SHORT)/$(NAME)`
-    - K8s namespace: `$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)-$(PROFILE)` or `$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)-$(PROFILE)-job`
-    - Terraform state: `$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)/$(PROFILE)/$(STACK)`
-    - AWS tags: `TagSet=[{Key=Programme,Value=$(PROGRAMME)},{Key=Service,Value=$(SERVICE_TAG),{Key=Environment,Value=$(PROFILE)}]`
+    - K8s namespace: `$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)-$(ENVIRONMENT)` or `$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)-$(ENVIRONMENT)-job`
+    - Terraform state: `$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)/$(ENVIRONMENT)/$(STACK)`
+    - AWS tags: `TagSet=[{Key=Programme,Value=$(PROGRAMME)},{Key=Service,Value=$(SERVICE_TAG),{Key=Environment,Value=$(ENVIRONMENT)},{Key=Profile,Value=$(PROFILE)}]`
     - AWS resources prefix: `$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)-*`
     - AWS secret name for deployment: `$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)-$(PROFILE)/deployment`
     - AWS bucket name for deployment: `$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)-$(PROFILE)-deployment`
-    - AWS table name for deployment: `$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)-$(PROFILE)-deployment-[events|resources]`
-    - AWS database instance: `$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)-$(PROFILE)` or `$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)-$(NAME)-$(PROFILE)`
+    - AWS table name for deployment: `$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)-deployment-[events|resources]`
+    - AWS database instance: `$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)-$(ENVIRONMENT)` or `$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)-$(NAME)-$(ENVIRONMENT)`
     - Local domain names: `$(PROJECT_NAME_SHORT).local`, `$(PROJECT_NAME).local`, `$(PROJECT_NAME_SHORT)-$(PROJECT_GROUP_SHORT).local`
   - SSL certificate
     - A default SSL certificate for development is going to be created by the automation scripts in the `build/automation/etc/certificate` directory
