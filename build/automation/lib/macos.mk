@@ -428,6 +428,7 @@ _macos-config-visual-studio-code:
 	code --force --install-extension esbenp.prettier-vscode
 	code --force --install-extension felixfbecker.php-debug
 	code --force --install-extension felixfbecker.php-intellisense
+	code --force --install-extension fosshaas.fontsize-shortcuts
 	code --force --install-extension gabrielbb.vscode-lombok
 	code --force --install-extension gruntfuggly.todo-tree
 	code --force --install-extension hashicorp.terraform

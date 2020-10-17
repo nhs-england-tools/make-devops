@@ -30,6 +30,13 @@
     "files.insertFinalNewline": true,
     "files.trimFinalNewlines": true,
     "files.trimTrailingWhitespace": true,
+    "files.watcherExclude": {
+      "**/.git": true,
+      "**/log": true,
+      "**/node_modules": true,
+      "**/target": true,
+      "**/tmp": true
+    },
     "java.completion.enabled": true,
     "java.configuration.updateBuildConfiguration": "automatic",
     "java.format.enabled": false,
@@ -47,6 +54,13 @@
     "python.linting.pylintPath": "~/.pyenv/versions/3.8.5/bin/pylint",
     "python.pythonPath": "~/.pyenv/versions/3.8.5/bin/python",
     "python.terminal.activateEnvironment": false,
+    "search.exclude": {
+      "**/.git": true,
+      "**/log": true,
+      "**/node_modules": true,
+      "**/target": true,
+      "**/tmp": true
+    },
     "telemetry.enableCrashReporter": false,
     "telemetry.enableTelemetry": false,
     "terminal.integrated.fontFamily": "Hack Nerd Font",
