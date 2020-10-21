@@ -113,6 +113,15 @@ If you hear your teams or individuals saying _"It will take days to onboard a ne
 - A pipeline can run anywhere, e.g. any \*NIX like system
 - Technology agnostic and universal design that can support Java, .NET, Python, Go, Node and others
 
+## Maintenance
+
+- Update software versions
+  - Docker base images version in the `build/automation/lib/docker.mk` file and all the related modules
+  - Python packages version from the `PYTHON_BASE_PACKAGES` list in the `build/automation/lib/python.mk` file
+  - Tools version in the `build/automation/lib/docker/image/tools/Dockerfile` file
+  - Docker library images version in any `build/automation/lib/docker/image/*/VERSION` file
+  - Terraform `terraform-aws-modules/rds/aws` module version in `build/automation/lib/terraform/template/modules/rds/main.tf`
+
 ## CI/CD Design
 
 ![DevOps Pipelines](documentation/DevOps-Pipelines.png)
