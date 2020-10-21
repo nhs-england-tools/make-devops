@@ -11,8 +11,9 @@
   - [Development](#development)
   - [Testing](#testing)
   - [Deployment](#deployment)
-    - [From the Command-line](#from-the-command-line)
-    - [Using CI/CD Pipelines](#using-cicd-pipelines)
+    - [AWS Access](#aws-access)
+    - [Deployment From the Command-line](#deployment-from-the-command-line)
+    - [CI/CD Pipelines](#cicd-pipelines)
   - [Architecture](#architecture)
     - [System Context](#system-context)
     - [Container Diagram](#container-diagram)
@@ -29,7 +30,7 @@
 
 ### Development Recommendations
 
-- Use iTerm2 and Visual Studio Code
+- Use iTerm2 and Visual Studio Code, which will be installed automatically for you in the next steps
 - Before starting any work, please read [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ### Local Environment Configuration
@@ -63,11 +64,18 @@ List all the type of test suites included and provide instructions how to execut
 
 ## Deployment
 
-### From the Command-line
+### AWS Access
+
+To be able to interact with a remote environment, please make sure you have set up your AWS CLI credentials and
+MFA to the right AWS account using the following command
+
+    tx-mfa
+
+### Deployment From the Command-line
 
     make deploy PROFILE=dev
 
-### Using CI/CD Pipelines
+### CI/CD Pipelines
 
 List all the pipelines and their purpose
 
@@ -123,7 +131,7 @@ What are the links of the supporting systems?
 List all the environments
 
 - dev
-- perf
+- test
 - demo
 - live
 

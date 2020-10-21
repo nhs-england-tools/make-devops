@@ -95,6 +95,7 @@ project-create-infrastructure: ### Create infrastructure from template - mandato
 
 project-create-pipeline: ### Create pipeline
 	make -s jenkins-create-pipeline-from-template
+
 # ==============================================================================
 
 project-branch-deploy: ### Check if development branch can be deployed automatically - return: true|false

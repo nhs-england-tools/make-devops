@@ -5,10 +5,12 @@ JENKINS_WORKSPACE_BUCKET_URI = $(JENKINS_WORKSPACE_BUCKET_NAME)/$(or $(JENKINS_J
 # ==============================================================================
 
 jenkins-create-pipeline-from-template: ### Create Jenkins pipeline from template
-	if [ ! -f $(PROJECT_DIR)/build/Jenkinsfile ]; then
+	if [ ! -f $(PROJECT_DIR)/build/jenkins/Jenkinsfile.development ]; then
+		mkdir -p $(PROJECT_DIR)/build/jenkins
 		cp -rfv \
-			$(LIB_DIR)/project/template/build/Jenkinsfile \
-			$(PROJECT_DIR)/build
+			$(LIB_DIR)/jenkins/Jenkinsfile.* \
+			$(PROJECT_DIR)/build/jenkins
+		make -s file-replace-variables-in-dir DIR=$(PROJECT_DIR)/build/jenkins
 	fi
 
 # ==============================================================================
