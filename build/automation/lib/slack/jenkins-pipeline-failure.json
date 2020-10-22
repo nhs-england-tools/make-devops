@@ -14,10 +14,10 @@
           "type": "section",
           "text": {
             "type": "mrkdwn",
-            "text": "Environment: *ENVIRONMENT_TO_REPLACE* | Profile: *PROFILE_TO_REPLACE* | Build Date: *BUILD_DATE_TO_REPLACE*
+            "text": "Project: *${PROJECT_GROUP_SHORT_TO_REPLACE}-${PROJECT_NAME_SHORT_TO_REPLACE}* | Environment: *ENVIRONMENT_TO_REPLACE* | Profile: *PROFILE_TO_REPLACE*
+Build: <BUILD_URL_TO_REPLACE|#${BUILD_ID_TO_REPLACE}> on *BUILD_DATE_TO_REPLACE*
 Commit: *BUILD_COMMIT_HASH_TO_REPLACE* on *BUILD_BRANCH_TO_REPLACE* by <mailto:BUILD_COMMIT_AUTHOR_EMAIL_TO_REPLACE|BUILD_COMMIT_AUTHOR_NAME_TO_REPLACE>
-Repository: BUILD_REPO_TO_REPLACE
-For more information click <BUILD_URL_TO_REPLACE|here>
+<RUN_DISPLAY_URL_TO_REPLACE|Pipeline> | <RUN_ARTIFACTS_DISPLAY_URL_TO_REPLACE|Artefects> | <RUN_CHANGES_DISPLAY_URL_TO_REPLACE|Changes> | <BUILD_REPO_TO_REPLACE|Repository>
 SLACK_EXTRA_DETAILS_TO_REPLACE"
           }
         }

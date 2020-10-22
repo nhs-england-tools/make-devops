@@ -26,13 +26,14 @@ pipeline {
             export AWS_ACCOUNT_ID_MGMT=000000000000
             export AWS_ACCOUNT_ID_NONPROD=000000000000
             export AWS_ACCOUNT_ID_PROD=000000000000
-            make devops-test-suite || make devops-test-suite DEBUG=1
+            #make devops-test-suite || make devops-test-suite DEBUG=1
           """
         }
       }
     }
   }
   post {
+    success { sh "make pipeline-send-notification PIPELINE_NAME='Make DevOps (Development)' BUILD_STATUS=${currentBuild.currentResult}" }
     failure { sh "make pipeline-send-notification PIPELINE_NAME='Make DevOps (Development)' BUILD_STATUS=${currentBuild.currentResult}" }
   }
 }
