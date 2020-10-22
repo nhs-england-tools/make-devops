@@ -35,6 +35,6 @@ pipeline {
   }
   post {
     success { sh "make pipeline-send-notification PIPELINE_NAME='Make DevOps (Development)' BUILD_STATUS=${currentBuild.currentResult}" }
-    failure { sh "make pipeline-send-notification PIPELINE_NAME='Make DevOps (Development)' BUILD_STATUS=${currentBuild.currentResult}" }
+    failure { sh "make pipeline-send-notification PIPELINE_NAME=${currentBuild.projectName} BUILD_STATUS=${currentBuild.currentResult}" }
   }
 }

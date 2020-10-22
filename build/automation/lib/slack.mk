@@ -1,9 +1,9 @@
 slack-it: ### Send Jenkins pipeline notification - mandatory: PIPELINE_NAME,BUILD_STATUS,SLACK_WEBHOOK_URL
-	now=$(shell date -u +"%Y%m%d%H59%S")
+	time=$$(( $(shell date +"%s") - $(shell date -d '$(BUILD_DATE)' +"%s") ))
 	make slack-send-standard-notification \
 		NAME=jenkins-pipeline-$(shell echo $(BUILD_STATUS) | tr '[:upper:]' '[:lower:]') \
 		BUILD_STATUS=$(shell echo $(BUILD_STATUS) | awk '{print toupper(substr($$0,0,1))tolower(substr($$0,2))}') \
-		BUILD_TIME=$$(( $$(( $$now - $(BUILD_TIMESTAMP) )) / 60 ))m$$(( $$(( $$now - $(BUILD_TIMESTAMP) )) % 60 ))s
+		BUILD_TIME=$$(( $$time / 60 ))m$$(( $$time % 60 ))s
 
 slack-send-standard-notification: ### Send standard notification - mandatory: NAME=[notification template name],SLACK_WEBHOOK_URL
 	make slack-send-notification FILE=$(LIB_DIR)/slack/$(NAME).json
