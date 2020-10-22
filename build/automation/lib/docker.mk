@@ -271,7 +271,7 @@ docker-image-start: ### Start container - mandatory: NAME; optional: CMD,DIR,ARG
 	docker run --interactive $(_TTY) $$(echo $(ARGS) | grep -- "--attach" > /dev/null 2>&1 && : || echo "--detach") \
 		--name $(NAME)$(shell [ -n "$(EXAMPLE)" ] && echo -example)-$(BUILD_COMMIT_HASH)-$(BUILD_ID) \
 		--env-file <(env | grep -Ei "^(AWS|TX|TEXAS)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
-		--env-file <(env | grep -Ei "^(DB|DATABASE|APP|APPLICATION|UI|API|SERVER|HOST|URL)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
+		--env-file <(env | grep -Ei "^(DB|DATABASE|SMTP|APP|APPLICATION|UI|API|SERVER|HOST|URL)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(env | grep -Ei "^(PROFILE|ENVIRONMENT|BUILD|PROGRAMME|SERVICE|PROJECT)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(make _docker-get-variables-from-file VARS_FILE=$(VARS_FILE)) \
 		--volume $(PROJECT_DIR):/project \
@@ -333,7 +333,7 @@ docker-run: ### Run specified image - mandatory: IMAGE; optional: CMD,SH=true,DI
 			--name $$container \
 			--user $$(id -u):$$(id -g) \
 			--env-file <(env | grep -Ei "^(AWS|TX|TEXAS)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
-			--env-file <(env | grep -Ei "^(DB|DATABASE|APP|APPLICATION|UI|API|SERVER|HOST|URL)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
+			--env-file <(env | grep -Ei "^(DB|DATABASE|SMTP|APP|APPLICATION|UI|API|SERVER|HOST|URL)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 			--env-file <(env | grep -Ei "^(PROFILE|ENVIRONMENT|BUILD|PROGRAMME|SERVICE|PROJECT)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 			--env-file <(make _docker-get-variables-from-file VARS_FILE=$(VARS_FILE)) \
 			--volume $(PROJECT_DIR):/project \
@@ -347,7 +347,7 @@ docker-run: ### Run specified image - mandatory: IMAGE; optional: CMD,SH=true,DI
 			--name $$container \
 			--user $$(id -u):$$(id -g) \
 			--env-file <(env | grep -Ei "^(AWS|TX|TEXAS)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
-			--env-file <(env | grep -Ei "^(DB|DATABASE|APP|APPLICATION|UI|API|SERVER|HOST|URL)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
+			--env-file <(env | grep -Ei "^(DB|DATABASE|SMTP|APP|APPLICATION|UI|API|SERVER|HOST|URL)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 			--env-file <(env | grep -Ei "^(PROFILE|ENVIRONMENT|BUILD|PROGRAMME|SERVICE|PROJECT)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 			--env-file <(make _docker-get-variables-from-file VARS_FILE=$(VARS_FILE)) \
 			--volume $(PROJECT_DIR):/project \
@@ -369,7 +369,7 @@ docker-run-composer: ### Run composer container - mandatory: CMD; optional: DIR,
 		--name $$container \
 		--user $$(id -u):$$(id -g) \
 		--env-file <(env | grep -Ei "^(AWS|TX|TEXAS)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
-		--env-file <(env | grep -Ei "^(DB|DATABASE|APP|APPLICATION|UI|API|SERVER|HOST|URL)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
+		--env-file <(env | grep -Ei "^(DB|DATABASE|SMTP|APP|APPLICATION|UI|API|SERVER|HOST|URL)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(env | grep -Ei "^(PROFILE|ENVIRONMENT|BUILD|PROGRAMME|SERVICE|PROJECT)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(make _docker-get-variables-from-file VARS_FILE=$(VARS_FILE)) \
 		--volume $(PROJECT_DIR):/project \
@@ -388,7 +388,7 @@ docker-run-dotnet: ### Run dotnet container - mandatory: CMD; optional: DIR,ARGS
 		--name $$container \
 		--user $$(id -u):$$(id -g) \
 		--env-file <(env | grep -Ei "^(AWS|TX|TEXAS)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
-		--env-file <(env | grep -Ei "^(DB|DATABASE|APP|APPLICATION|UI|API|SERVER|HOST|URL)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
+		--env-file <(env | grep -Ei "^(DB|DATABASE|SMTP|APP|APPLICATION|UI|API|SERVER|HOST|URL)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(env | grep -Ei "^(PROFILE|ENVIRONMENT|BUILD|PROGRAMME|SERVICE|PROJECT)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(make _docker-get-variables-from-file VARS_FILE=$(VARS_FILE)) \
 		--volume $(PROJECT_DIR):/project \
@@ -407,7 +407,7 @@ docker-run-gradle: ### Run gradle container - mandatory: CMD; optional: DIR,ARGS
 		--name $$container \
 		--user $$(id -u):$$(id -g) \
 		--env-file <(env | grep -Ei "^(AWS|TX|TEXAS)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
-		--env-file <(env | grep -Ei "^(DB|DATABASE|APP|APPLICATION|UI|API|SERVER|HOST|URL)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
+		--env-file <(env | grep -Ei "^(DB|DATABASE|SMTP|APP|APPLICATION|UI|API|SERVER|HOST|URL)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(env | grep -Ei "^(PROFILE|ENVIRONMENT|BUILD|PROGRAMME|SERVICE|PROJECT)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(make _docker-get-variables-from-file VARS_FILE=$(VARS_FILE)) \
 		--env GRADLE_USER_HOME=/home/gradle/.gradle \
@@ -435,7 +435,7 @@ docker-run-mvn: ### Run maven container - mandatory: CMD; optional: DIR,ARGS=[Do
 		--name $$container \
 		--user $$(id -u):$$(id -g) \
 		--env-file <(env | grep -Ei "^(AWS|TX|TEXAS)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
-		--env-file <(env | grep -Ei "^(DB|DATABASE|APP|APPLICATION|UI|API|SERVER|HOST|URL)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
+		--env-file <(env | grep -Ei "^(DB|DATABASE|SMTP|APP|APPLICATION|UI|API|SERVER|HOST|URL)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(env | grep -Ei "^(PROFILE|ENVIRONMENT|BUILD|PROGRAMME|SERVICE|PROJECT)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(make _docker-get-variables-from-file VARS_FILE=$(VARS_FILE)) \
 		--env MAVEN_CONFIG=/var/maven/.m2 \
@@ -457,7 +457,7 @@ docker-run-node: ### Run node container - mandatory: CMD; optional: DIR,ARGS=[Do
 	docker run --interactive $(_TTY) --rm \
 		--name $$container \
 		--env-file <(env | grep -Ei "^(AWS|TX|TEXAS)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
-		--env-file <(env | grep -Ei "^(DB|DATABASE|APP|APPLICATION|UI|API|SERVER|HOST|URL)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
+		--env-file <(env | grep -Ei "^(DB|DATABASE|SMTP|APP|APPLICATION|UI|API|SERVER|HOST|URL)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(env | grep -Ei "^(PROFILE|ENVIRONMENT|BUILD|PROGRAMME|SERVICE|PROJECT)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(make _docker-get-variables-from-file VARS_FILE=$(VARS_FILE)) \
 		--volume $(PROJECT_DIR):/project \
@@ -488,7 +488,7 @@ docker-run-pulumi: ### Run pulumi container - mandatory: CMD; optional: DIR,ARGS
 		--name $$container \
 		--user $$(id -u):$$(id -g) \
 		--env-file <(env | grep -Ei "^(AWS|TX|TEXAS)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
-		--env-file <(env | grep -Ei "^(DB|DATABASE|APP|APPLICATION|UI|API|SERVER|HOST|URL)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
+		--env-file <(env | grep -Ei "^(DB|DATABASE|SMTP|APP|APPLICATION|UI|API|SERVER|HOST|URL)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(env | grep -Ei "^(PROFILE|ENVIRONMENT|BUILD|PROGRAMME|SERVICE|PROJECT)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(env | grep -Ei "^TF_VAR_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(env | grep -Ei "^PULUMI_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
@@ -511,7 +511,7 @@ docker-run-python: ### Run python container - mandatory: CMD; optional: SH=true,
 			--name $$container \
 			--user $$(id -u):$$(id -g) \
 			--env-file <(env | grep -Ei "^(AWS|TX|TEXAS)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
-			--env-file <(env | grep -Ei "^(DB|DATABASE|APP|APPLICATION|UI|API|SERVER|HOST|URL)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
+			--env-file <(env | grep -Ei "^(DB|DATABASE|SMTP|APP|APPLICATION|UI|API|SERVER|HOST|URL)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 			--env-file <(env | grep -Ei "^(PROFILE|ENVIRONMENT|BUILD|PROGRAMME|SERVICE|PROJECT)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 			--env-file <(make _docker-get-variables-from-file VARS_FILE=$(VARS_FILE)) \
 			--env PIP_TARGET=/tmp/.packages \
@@ -530,7 +530,7 @@ docker-run-python: ### Run python container - mandatory: CMD; optional: SH=true,
 			--name $$container \
 			--user $$(id -u):$$(id -g) \
 			--env-file <(env | grep -Ei "^(AWS|TX|TEXAS)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
-			--env-file <(env | grep -Ei "^(DB|DATABASE|APP|APPLICATION|UI|API|SERVER|HOST|URL)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
+			--env-file <(env | grep -Ei "^(DB|DATABASE|SMTP|APP|APPLICATION|UI|API|SERVER|HOST|URL)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 			--env-file <(env | grep -Ei "^(PROFILE|ENVIRONMENT|BUILD|PROGRAMME|SERVICE|PROJECT)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 			--env-file <(make _docker-get-variables-from-file VARS_FILE=$(VARS_FILE)) \
 			--env PIP_TARGET=/tmp/.packages \
@@ -556,7 +556,7 @@ docker-run-terraform: ### Run terraform container - mandatory: CMD; optional: DI
 		--name $$container \
 		--user $$(id -u):$$(id -g) \
 		--env-file <(env | grep -Ei "^(AWS|TX|TEXAS)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
-		--env-file <(env | grep -Ei "^(DB|DATABASE|APP|APPLICATION|UI|API|SERVER|HOST|URL)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
+		--env-file <(env | grep -Ei "^(DB|DATABASE|SMTP|APP|APPLICATION|UI|API|SERVER|HOST|URL)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(env | grep -Ei "^(PROFILE|ENVIRONMENT|BUILD|PROGRAMME|SERVICE|PROJECT)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(env | grep -Ei "^TF_VAR_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(make _docker-get-variables-from-file VARS_FILE=$(VARS_FILE)) \
@@ -578,7 +578,7 @@ docker-run-postgres: ### Run postgres container - mandatory: CMD; optional: DIR,
 		--name $$container \
 		--user $$(id -u):$$(id -g) \
 		--env-file <(env | grep -Ei "^(AWS|TX|TEXAS)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
-		--env-file <(env | grep -Ei "^(DB|DATABASE|APP|APPLICATION|UI|API|SERVER|HOST|URL)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
+		--env-file <(env | grep -Ei "^(DB|DATABASE|SMTP|APP|APPLICATION|UI|API|SERVER|HOST|URL)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(env | grep -Ei "^(PROFILE|ENVIRONMENT|BUILD|PROGRAMME|SERVICE|PROJECT)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 		--env-file <(make _docker-get-variables-from-file VARS_FILE=$(VARS_FILE)) \
 		--volume $(PROJECT_DIR):/project \
@@ -600,7 +600,7 @@ docker-run-tools: ### Run tools (Python) container - mandatory: CMD; optional: S
 			--name $$container \
 			--user $$(id -u):$$(id -g) \
 			--env-file <(env | grep -Ei "^(AWS|TX|TEXAS)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
-			--env-file <(env | grep -Ei "^(DB|DATABASE|APP|APPLICATION|UI|API|SERVER|HOST|URL)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
+			--env-file <(env | grep -Ei "^(DB|DATABASE|SMTP|APP|APPLICATION|UI|API|SERVER|HOST|URL)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 			--env-file <(env | grep -Ei "^(PROFILE|ENVIRONMENT|BUILD|PROGRAMME|SERVICE|PROJECT)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 			--env-file <(make _docker-get-variables-from-file VARS_FILE=$(VARS_FILE)) \
 			--env HOME=/tmp \
@@ -624,7 +624,7 @@ docker-run-tools: ### Run tools (Python) container - mandatory: CMD; optional: S
 			--name $$container \
 			--user $$(id -u):$$(id -g) \
 			--env-file <(env | grep -Ei "^(AWS|TX|TEXAS)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
-			--env-file <(env | grep -Ei "^(DB|DATABASE|APP|APPLICATION|UI|API|SERVER|HOST|URL)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
+			--env-file <(env | grep -Ei "^(DB|DATABASE|SMTP|APP|APPLICATION|UI|API|SERVER|HOST|URL)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 			--env-file <(env | grep -Ei "^(PROFILE|ENVIRONMENT|BUILD|PROGRAMME|SERVICE|PROJECT)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
 			--env-file <(make _docker-get-variables-from-file VARS_FILE=$(VARS_FILE)) \
 			--env HOME=/tmp \

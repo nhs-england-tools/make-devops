@@ -15,6 +15,7 @@
     - [Deployment From the Command-line](#deployment-from-the-command-line)
     - [CI/CD Pipelines](#cicd-pipelines)
   - [Architecture](#architecture)
+    - [Technology Stack](#technology-stack)
     - [System Context](#system-context)
     - [Container Diagram](#container-diagram)
     - [Component Diagram](#component-diagram)
@@ -47,7 +48,10 @@
 
 ## Development
 
-- Describe how to switch each individual component to the dev mode
+- Describe how to
+  - Connect to a local database
+  - Interact with a mock component
+  - Switch each individual component to the dev mode
 - Provide guidance on how to use feature toggles and branching by abstraction
 
 ## Testing
@@ -79,7 +83,16 @@ MFA to the right AWS account using the following command
 
 List all the pipelines and their purpose
 
+- Development
+- Test
+- Cleanup
+- Production (deployment)
+
 ## Architecture
+
+### Technology Stack
+
+What are the technologies and programing languages used to implement the solution
 
 ### System Context
 
@@ -128,7 +141,7 @@ What are the links of the supporting systems?
 
 ### Cloud Environments
 
-List all the environments
+List all the environments and their relation to profiles
 
 - dev
 - test

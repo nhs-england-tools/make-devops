@@ -33,7 +33,7 @@ pipeline {
     }
   }
   post {
-    success { sh "make pipeline-on-success" }
-    failure { sh "make pipeline-on-failure" }
+    success { sh "make pipeline-send-notification PIPELINE_NAME='Make DevOps (Cleanup)' BUILD_STATUS=${currentBuild.currentResult}" }
+    failure { sh "make pipeline-send-notification PIPELINE_NAME='Make DevOps (Cleanup)' BUILD_STATUS=${currentBuild.currentResult}" }
   }
 }

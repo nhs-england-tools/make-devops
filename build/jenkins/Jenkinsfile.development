@@ -1,20 +1,24 @@
 pipeline {
+  /*
+    Description: TODO:
+   */
   agent { label "jenkins-slave" }
   options {
     buildDiscarder(logRotator(daysToKeepStr: "7", numToKeepStr: "13"))
     disableConcurrentBuilds()
     parallelsAlwaysFailFast()
-    timeout(time: 60, unit: "MINUTES")
+    timeout(time: 90, unit: "MINUTES")
   }
   environment {
     BUILD_DATE = sh(returnStdout: true, script: "date -u +'%Y-%m-%dT%H:%M:%S%z'").trim()
+    PROFILE = "dev"
   }
   triggers { pollSCM("* * * * *") }
   stages {
     stage("Show Configuration") {
       steps { sh "make show-configuration" }
     }
-    stage("Run Test Suite") {
+    stage("Test") {
       steps {
         script {
           sh """
@@ -29,6 +33,6 @@ pipeline {
     }
   }
   post {
-    always { sh "make devops-test-cleanup" }
+    failure { sh "make pipeline-send-notification PIPELINE_NAME='Make DevOps (Development)' BUILD_STATUS=${currentBuild.currentResult}" }
   }
 }

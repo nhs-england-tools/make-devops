@@ -184,6 +184,7 @@ devops-update devops-synchronise: ### Update/upgrade the DevOps automation toolc
 			$(PARENT_PROJECT_DIR)/build/automation/lib/fix \
 			$(PARENT_PROJECT_DIR)/build/automation/lib/k8s/template/deployment/stacks/stack/base/template/network-policy \
 			$(PARENT_PROJECT_DIR)/build/automation/lib/k8s/template/deployment/stacks/stack/base/template/STACK_TEMPLATE_TO_REPLACE/network-policy.yaml \
+			$(PARENT_PROJECT_DIR)/build/automation/lib/slack/jenkins-pipeline.json \
 			$(PARENT_PROJECT_DIR)/build/automation/var/helpers.mk.default \
 			$(PARENT_PROJECT_DIR)/build/automation/var/override.mk.default \
 			$(PARENT_PROJECT_DIR)/build/docker/Dockerfile.metadata
@@ -328,6 +329,8 @@ BUILD_REPO := $(or $(shell git config --get remote.origin.url 2> /dev/null ||:),
 BUILD_BRANCH := $(if $(shell git rev-parse --abbrev-ref HEAD 2> /dev/null | grep -E ^HEAD$ ||:),$(or $(shell git name-rev --name-only HEAD 2> /dev/null | sed "s;remotes/origin/;;g" ||:), unknown),$(or $(shell git rev-parse --abbrev-ref HEAD 2> /dev/null | sed "s;remotes/origin/;;g" ||:), unknown))
 BUILD_COMMIT_HASH := $(or $(shell git rev-parse --short HEAD 2> /dev/null ||:), unknown)
 BUILD_COMMIT_DATE := $(or $(shell TZ=UTC git show -s --format=%cd --date=format-local:%Y-%m-%dT%H:%M:%S%z HEAD 2> /dev/null ||:), unknown)
+BUILD_COMMIT_AUTHOR_NAME := $(shell git show -s --format='%an' HEAD)
+BUILD_COMMIT_AUTHOR_EMAIL := $(shell git show -s --format='%ae' HEAD)
 PROFILE := $(or $(PROFILE), local)
 ENVIRONMENT := $(or $(ENVIRONMENT), $(shell ([ $(PROFILE) = local ] && echo local) || ( echo $(BUILD_BRANCH) | grep -Eoq '^task/[A-Z]{2,5}-[0-9]{1,5}_[A-Za-z0-9_]{4,32}' && (echo $(BUILD_BRANCH) | grep -Eo '^task/[A-Z]{2,5}-[0-9]{1,5}' | grep -Eo '[A-Z]{2,5}-[0-9]{1,5}' | tr '[:upper:]' '[:lower:]') || ([ $(BUILD_BRANCH) = master ] && echo $(PROFILE)))))
 USER_ID := $(shell id -u)

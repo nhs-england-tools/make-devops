@@ -43,6 +43,7 @@ aws-secret-create: ### Create a new secret and save the value - mandatory: NAME=
 			$(AWSCLI) secretsmanager create-secret \
 				--name $(NAME) \
 				--region $(AWS_REGION) \
+				--tags Key=Programme,Value=$(PROGRAMME) Key=Service,Value=$(SERVICE_TAG) Key=Environment,Value=$(ENVIRONMENT) Key=Profile,Value=$(PROFILE) \
 				--output text \
 		"
 	else
