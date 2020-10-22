@@ -26,6 +26,7 @@ pipeline {
             export AWS_ACCOUNT_ID_MGMT=000000000000
             export AWS_ACCOUNT_ID_NONPROD=000000000000
             export AWS_ACCOUNT_ID_PROD=000000000000
+            exit 1
             #make devops-test-suite || make devops-test-suite DEBUG=1
           """
         }
