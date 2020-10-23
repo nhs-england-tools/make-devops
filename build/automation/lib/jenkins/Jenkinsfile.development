@@ -64,7 +64,7 @@ pipeline {
     }
   }
   post {
-    success { sh "make pipeline-send-notification PIPELINE_NAME='Make DevOps (Development)' BUILD_STATUS=${currentBuild.currentResult}" }
-    failure { sh "make pipeline-send-notification PIPELINE_NAME='Make DevOps (Development)' BUILD_STATUS=${currentBuild.currentResult}" }
+    success { sh "make pipeline-send-notification PIPELINE_NAME='PROJECT_DISPLAY_NAME_TO_REPLACE (Development)' BUILD_STATUS=${currentBuild.currentResult}" }
+    failure { sh "make pipeline-send-notification PIPELINE_NAME='PROJECT_DISPLAY_NAME_TO_REPLACE (Development)' BUILD_STATUS=${currentBuild.currentResult}" }
   }
 }
