@@ -9,7 +9,12 @@ function main() {
 }
 
 function prepare_configuration_files() {
-  for template in $(ls -1 /etc/nginx/*.template /etc/nginx/conf.d/*.template 2> /dev/null); do
+  if [ -n "$REVERS_PROXY_UI_HOST" ] && [ -n "$REVERS_PROXY_API_HOST" ]; then
+    config="reverse-proxy"
+  else
+    config="default"
+  fi
+  for template in $(ls -1 /etc/nginx/*.conf.template /etc/nginx/conf.d/$config.conf.template 2> /dev/null); do
     file=$(echo $template | sed "s;.template;;g")
     cp -fv $template $file
     _replace_variables $file
