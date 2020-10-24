@@ -95,7 +95,7 @@ terraform-delete-state: ### Delete the Terraform state - mandatory: STACK|STACKS
 terraform-export-variables: ### Get environment variables as TF_VAR_[name] variables - return: [variables export]
 	make terraform-export-variables-from-shell PATTERN="^(AWS|TX|TEXAS)"
 	make terraform-export-variables-from-shell PATTERN="^(DB|DATABASE|APP|APPLICATION|UI|API|SERVER|HOST|URL)"
-	make terraform-export-variables-from-shell PATTERN="^(PROFILE|ENVIRONMENT|BUILD|PROGRAMME|SERVICE|PROJECT)"
+	make terraform-export-variables-from-shell PATTERN="^(PROFILE|ENVIRONMENT|BUILD|PROGRAMME|SERVICE|PROJECT)" EXCLUDE="^(BUILD_COMMIT_MESSAGE)"
 
 terraform-export-variables-from-secret: ### Get secret as TF_VAR_[name] variables - mandatory: NAME=[secret name]; return: [variables export]
 	if [ -n "$(NAME)" ]; then
@@ -104,9 +104,10 @@ terraform-export-variables-from-secret: ### Get secret as TF_VAR_[name] variable
 		echo "$$exports"
 	fi
 
-terraform-export-variables-from-shell: ### Convert environment variables as TF_VAR_[name] variables - mandatory: VARS=[comma-separated environment variable names]|PATTERN="^AWS_"; return: [variables export]
+terraform-export-variables-from-shell: ### Convert environment variables as TF_VAR_[name] variables - mandatory: VARS=[comma-separated environment variable names]|PATTERN="^AWS_"; optional: EXCLUDE=[pattern]; return: [variables export]
 	if [ -n "$(PATTERN)" ]; then
-		for str in $$(env | grep -iE "$(PATTERN)"); do
+		[ -n "$(EXCLUDE)" ] && exclude="$(EXCLUDE)" || exclude=$$(make secret-random)
+		for str in $$(env | grep -iE "$(PATTERN)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$' | grep -Ev "$$exclude"); do
 			key=$$(cut -d "=" -f1 <<<"$$str" | tr '[:upper:]' '[:lower:]')
 			value=$$(cut -d "=" -f2- <<<"$$str")
 			echo "export TF_VAR_$${key}=$${value}"
