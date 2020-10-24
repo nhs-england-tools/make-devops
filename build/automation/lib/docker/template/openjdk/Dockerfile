@@ -29,7 +29,7 @@ RUN set -eux && \
         --no-man-pages \
         --strip-java-debug-attributes \
         --module-path /opt/java/openjdk/jmods \
-        --add-modules java.base,java.desktop,java.instrument,java.logging,java.management,java.naming,java.net.http,java.security.jgss \
+        --add-modules java.base,java.desktop,java.instrument,java.logging,java.management,java.naming,java.net.http,java.security.jgss,jdk.attach,jdk.unsupported \
         --verbose \
         --compress 2 \
         --output /jdk
