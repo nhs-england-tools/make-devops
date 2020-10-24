@@ -17,3 +17,5 @@ command:
     exit-status: 0
   python --version:
     exit-status: 0
+  pip list | grep 'instana':
+    exit-status: 0
