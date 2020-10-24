@@ -31,6 +31,8 @@ file:
 command:
   gosu --version:
     exit-status: 0
+  nginx -t 2>&1 | grep Instana:
+    exit-status: 0
 
 process:
   nginx:

@@ -1,15 +1,24 @@
 server {
   listen 8080;
+  server_name DOMAIN_TO_REPLACE;
+  error_log /dev/stdout info;
   location / {
     root /application;
+    opentracing_propagate_context;
   }
 }
 server {
   listen 8443 ssl;
   server_name DOMAIN_TO_REPLACE;
+  error_log /dev/stdout info;
   ssl_certificate /certificate/certificate.crt;
   ssl_certificate_key /certificate/certificate.key;
   location / {
     root /application;
+    opentracing_propagate_context;
+  }
+  location /nginx_status {
+    stub_status on;
+    access_log off;
   }
 }

@@ -119,6 +119,7 @@ If you hear your teams or individuals saying _"It will take days to onboard a ne
   - Docker base images version in the `build/automation/lib/docker.mk` file and all the related modules
   - Python packages version from the `PYTHON_BASE_PACKAGES` list in the `build/automation/lib/python.mk` file
   - Tools version in the `build/automation/lib/docker/image/tools/Dockerfile` file
+  - NGINX Instana module `build/automation/lib/docker/image/nginx/Makefile:dependencies`
   - Docker library images version in any `build/automation/lib/docker/image/*/VERSION` file
   - Terraform `terraform-aws-modules/rds/aws` module version in `build/automation/lib/terraform/template/modules/rds/main.tf`
 

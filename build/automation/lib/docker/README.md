@@ -22,6 +22,7 @@ Some of the benefits of using the library images
 - `prepare_configuration_files`, `replace_variables` and `set_file_permissions` functions
 - Process debugging and tracing functionality
 - Support to run process as a non-root system user
+- [Instana](https://www.instana.com/) support
 
 ## Template images
 
