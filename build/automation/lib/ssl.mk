@@ -1,6 +1,8 @@
 SSL_CERTIFICATE_DIR = $(ETC_DIR)/certificate
 SSL_CERTIFICATE_VALID_DAYS = 397
 
+# ==============================================================================
+
 ssl-generate-certificate-project: ### Generate self-signed certificate for the project - optional: SSL_DOMAINS='*.domain1,*.domain2'
 	domains="localhost,DNS:$(PROJECT_NAME_SHORT).local,DNS:*.$(PROJECT_NAME_SHORT).local,DNS:$(PROJECT_NAME).local,DNS:*.$(PROJECT_NAME).local,"
 	domains+="DNS:$(PROJECT_NAME_SHORT)-$(PROJECT_GROUP_SHORT).local,DNS:*.$(PROJECT_NAME_SHORT)-$(PROJECT_GROUP_SHORT).local,"
@@ -22,8 +24,16 @@ ssl-copy-certificate-project: ### Copy self-signed certificate for the project -
 	fi
 
 ssl-trust-certificate-project: ### Trust self-signed certificate for the project
+	if [ ! -f $(SSL_CERTIFICATE_DIR)/certificate.pem ]; then
+		make ssl-generate-certificate-project
+	fi
 	make ssl-trust-certificate \
 		FILE=$(SSL_CERTIFICATE_DIR)/certificate.pem
+
+# ==============================================================================
+
+ssl-request-certificate-prod: ### Request production certificate for the service - mandatory: SSL_DOMAINS_PROD='*.domain1,*.domain2'
+	# TODO:
 
 # ==============================================================================
 

@@ -3,6 +3,8 @@ PROJECT_CONFIG_TIMESTAMP_FILE = $(TMP_DIR)/project-config-timestamp
 #PROJECT_CONFIG_TIMESTAMP
 #PROJECT_CONFIG_FORCE
 
+# ==============================================================================
+
 project-config: ### Configure project environment
 	make \
 		git-config \
@@ -109,7 +111,12 @@ project-message-contains: ### Check if git commit message contains any give keyw
 project-get-tag: ### Return the default tag
 	echo $(BUILD_TIMESTAMP)-$(BUILD_COMMIT_HASH)
 
-# ------------------------------------------------------------------------------
+project-list-profiles: ### List all the profiles
+	for profile in $$(cd $(VAR_DIR)/profile; ls *.mk 2> /dev/null | sed 's/.mk//'); do
+		[ $$profile != local ] && echo $$profile ||:
+	done
+
+# --------------------------------------
 
 project-tag-as-release-candidate: ### Tag release candidate - mandatory: ARTEFACT|ARTEFACTS=[comma-separated image names]; optional: COMMIT=[git commit hash, defaults to master]
 	commit=$(or $(COMMIT), master)
@@ -149,4 +156,5 @@ project-tag-as-environment-deployment: ### Tag environment deployment - mandator
 	project-create-pipeline \
 	project-create-profile \
 	project-get-tag \
+	project-list-profiles \
 	project-message-contains

@@ -15,8 +15,11 @@ pipeline {
   }
   triggers { cron(env.BRANCH_NAME == "master" ? "0 20 * * *" : "") }
   stages {
-    stage("Show Configuration") {
-      steps { sh "make show-configuration" }
+    stage("Configuration") {
+      steps {
+        sh "make show-configuration"
+        sh "make pipeline-check-resources"
+      }
     }
     stage("Clean up") {
       parallel {
@@ -33,7 +36,6 @@ pipeline {
     }
   }
   post {
-    success { sh "make pipeline-send-notification PIPELINE_NAME='PROJECT_DISPLAY_NAME_TO_REPLACE (Cleanup)' BUILD_STATUS=${currentBuild.currentResult}" }
-    failure { sh "make pipeline-send-notification PIPELINE_NAME='PROJECT_DISPLAY_NAME_TO_REPLACE (Cleanup)' BUILD_STATUS=${currentBuild.currentResult}" }
+    always { sh "make pipeline-finalise PIPELINE_NAME='PROJECT_DISPLAY_NAME_TO_REPLACE (Development)' BUILD_STATUS=${currentBuild.currentResult}" }
   }
 }

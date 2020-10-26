@@ -1,5 +1,7 @@
 # Jenkins
 
+## Setup
+
 Here are the items to consider and a pattern for setting up a Jenkins pipeline:
 
 - Item name: `$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)-development|test|tag|production|cleanup`

@@ -269,7 +269,7 @@ test-aws-dynamodb-put-query:
 		ATTRIBUTE_DEFINITIONS="AttributeName=Artist,AttributeType=S AttributeName=SongTitle,AttributeType=S" \
 		KEY_SCHEMA="AttributeName=Artist,KeyType=HASH AttributeName=SongTitle,KeyType=RANGE"
 	# act
-	make aws-dynamodb-put \
+	make aws-dynamodb-put-item \
 		NAME=$(@)-table \
 		ITEM='{"Artist": {"S": "No One You Know"},"SongTitle": {"S": "Call Me Today"},"AlbumTitle": {"S": "Somewhat Famous"}}'
 	output=$$(make aws-dynamodb-query \

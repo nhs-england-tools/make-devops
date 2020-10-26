@@ -194,7 +194,7 @@ aws-dynamodb-create: ### Create DynamoDB table - mandatory: NAME=[table name],AT
 			--tags Key=Programme,Value=$(PROGRAMME) Key=Service,Value=$(SERVICE_TAG) Key=Environment,Value=$(ENVIRONMENT) Key=Profile,Value=$(PROFILE) \
 	"
 
-aws-dynamodb-put: ### Create DynamoDB item - mandatory: NAME=[table name],ITEM=[json or file://file.json]
+aws-dynamodb-put-item: ### Create DynamoDB item - mandatory: NAME=[table name],ITEM=[json or file://file.json]
 	file=$$(echo '$(ITEM)' | grep -E "^file://" > /dev/null 2>&1 && echo $(ITEM) | sed 's;file://;;g' ||:)
 	[ -n "$$file" ] && volume="--volume $$file:$$file" || volume=
 	json='$(ITEM)'

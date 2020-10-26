@@ -15,8 +15,11 @@ pipeline {
   }
   triggers { pollSCM("* * * * *") }
   stages {
-    stage("Show Configuration") {
-      steps { sh "make show-configuration" }
+    stage("Configuration") {
+      steps {
+        sh "make show-configuration"
+        sh "make pipeline-check-resources"
+      }
     }
     stage("Build") {
       parallel {
@@ -37,6 +40,9 @@ pipeline {
       when {
         beforeAgent true
         expression { sh(returnStdout: true, script: "make project-branch-deploy").trim() == "true" }
+      }
+      environment {
+        ARTEFACT_TAG = sh(returnStdout: true, script: "make project-get-tag").trim()
       }
       parallel {
         stage("Deploy: App") {
@@ -64,7 +70,6 @@ pipeline {
     }
   }
   post {
-    success { sh "make pipeline-send-notification PIPELINE_NAME='PROJECT_DISPLAY_NAME_TO_REPLACE (Development)' BUILD_STATUS=${currentBuild.currentResult}" }
-    failure { sh "make pipeline-send-notification PIPELINE_NAME='PROJECT_DISPLAY_NAME_TO_REPLACE (Development)' BUILD_STATUS=${currentBuild.currentResult}" }
+    always { sh "make pipeline-finalise PIPELINE_NAME='PROJECT_DISPLAY_NAME_TO_REPLACE (Development)' BUILD_STATUS=${currentBuild.currentResult}" }
   }
 }
