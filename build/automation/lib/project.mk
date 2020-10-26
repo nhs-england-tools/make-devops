@@ -47,31 +47,6 @@ project-document-infrastructure: ### Generate infrastructure diagram - optional:
 
 # ==============================================================================
 
-project-tag-as-release-candidate: ### Tag release candidate - mandatory: ARTEFACT|ARTEFACTS=[comma-separated image names]; optional: COMMIT=[git commit hash, defaults to master]
-	commit=$(or $(COMMIT), master)
-	make git-tag-create-release-candidate COMMIT=$$commit
-	tag=$$(make git-tag-get-release-candidate COMMIT=$$commit)
-	for image in $$(echo $(or $(ARTEFACTS), $(ARTEFACT)) | tr "," "\n"); do
-		make docker-image-find-and-tag-as \
-			TAG=$$tag \
-			IMAGE=$$image \
-			COMMIT=$$commit
-	done
-
-project-tag-as-environment-deployment: ### Tag environment deployment - mandatory: ARTEFACT|ARTEFACTS=[comma-separated image names],ENVIRONMENT=[environment name]; optional: COMMIT=[git release candidate tag name, defaults to master]
-	[ $(ENVIRONMENT) = local ] && (echo "ERROR: Please, specify the ENVIRONMENT"; exit 1)
-	commit=$(or $(COMMIT), master)
-	make git-tag-create-environment-deployment COMMIT=$$commit ENVIRONMENT=$(ENVIRONMENT)
-	tag=$$(make git-tag-get-environment-deployment COMMIT=$$commit ENVIRONMENT=$(ENVIRONMENT))
-	for image in $$(echo $(or $(ARTEFACTS), $(ARTEFACT)) | tr "," "\n"); do
-		make docker-image-find-and-tag-as \
-			TAG=$$tag \
-			IMAGE=$$image \
-			COMMIT=$$commit
-	done
-
-# ==============================================================================
-
 project-create-profile: ### Create profile file - mandatory: NAME=[profile name]
 	cp -fv $(VAR_DIR_REL)/profile/dev.mk.default $(VAR_DIR_REL)/profile/$(NAME).mk
 
@@ -131,6 +106,34 @@ project-message-contains: ### Check if git commit message contains any give keyw
 	done
 	echo false
 
+project-get-tag: ### Return the default tag
+	echo $(BUILD_TIMESTAMP)-$(BUILD_COMMIT_HASH)
+
+# ------------------------------------------------------------------------------
+
+project-tag-as-release-candidate: ### Tag release candidate - mandatory: ARTEFACT|ARTEFACTS=[comma-separated image names]; optional: COMMIT=[git commit hash, defaults to master]
+	commit=$(or $(COMMIT), master)
+	make git-tag-create-release-candidate COMMIT=$$commit
+	tag=$$(make git-tag-get-release-candidate COMMIT=$$commit)
+	for image in $$(echo $(or $(ARTEFACTS), $(ARTEFACT)) | tr "," "\n"); do
+		make docker-image-find-and-tag-as \
+			TAG=$$tag \
+			IMAGE=$$image \
+			COMMIT=$$commit
+	done
+
+project-tag-as-environment-deployment: ### Tag environment deployment - mandatory: ARTEFACT|ARTEFACTS=[comma-separated image names],ENVIRONMENT=[environment name]; optional: COMMIT=[git release candidate tag name, defaults to master]
+	[ $(ENVIRONMENT) = local ] && (echo "ERROR: Please, specify the ENVIRONMENT"; exit 1)
+	commit=$(or $(COMMIT), master)
+	make git-tag-create-environment-deployment COMMIT=$$commit ENVIRONMENT=$(ENVIRONMENT)
+	tag=$$(make git-tag-get-environment-deployment COMMIT=$$commit ENVIRONMENT=$(ENVIRONMENT))
+	for image in $$(echo $(or $(ARTEFACTS), $(ARTEFACT)) | tr "," "\n"); do
+		make docker-image-find-and-tag-as \
+			TAG=$$tag \
+			IMAGE=$$image \
+			COMMIT=$$commit
+	done
+
 # ==============================================================================
 
 .SILENT: \
@@ -145,4 +148,5 @@ project-message-contains: ### Check if git commit message contains any give keyw
 	project-create-infrastructure \
 	project-create-pipeline \
 	project-create-profile \
+	project-get-tag \
 	project-message-contains
