@@ -111,6 +111,9 @@ pipeline-send-notification: ## Send Slack notification with the pipeline status
 
 pipeline-check-resources: ## Check all the pipeline deployment supporting resources - optional: PROFILE=[name]
 	profiles="$$(make project-list-profiles)"
+	# for each profile
+	#export PROFILE=$$profile
+	# TODO:
 	# table: $(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)-deployment
 	# secret: $(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)-$(PROFILE)/deployment
 	# bucket: $(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)-$(PROFILE)-deployment
@@ -119,10 +122,17 @@ pipeline-check-resources: ## Check all the pipeline deployment supporting resour
 
 pipeline-create-resources: ## Create all the pipeline deployment supporting resources - optional: PROFILE=[name]
 	profiles="$$(make project-list-profiles)"
+	# for each profile
+	#export PROFILE=$$profile
+	# TODO:
+	# Per AWS accoount, i.e. `nonprod` and `prod`
+	eval "$$(make aws-assume-role-export-variables)"
 	#make aws-dynamodb-create NAME=$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)-deployment ATTRIBUTE_DEFINITIONS= KEY_SCHEMA=
 	#make secret-create NAME=$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)-$(PROFILE)/deployment VARS=DB_PASSWORD,SMTP_PASSWORD,SLACK_WEBHOOK_URL
 	#make aws-s3-create NAME=$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)-$(PROFILE)-deployment
 	#make ssl-request-certificate-prod SSL_DOMAINS_PROD
+	# Centralised, i.e. `mgmt`
+	eval "$$(make aws-assume-role-export-variables AWS_ACCOUNT_ID=$(AWS_ACCOUNT_ID_MGMT))"
 	#make docker-create-repository NAME=NAME_TEMPLATE_TO_REPLACE
 
 # ==============================================================================

@@ -2,7 +2,7 @@ aws-session-fail-if-invalid: ### Fail if the session variables are not set
 	([ -z "$$AWS_ACCESS_KEY_ID" ] || [ -z "$$AWS_SECRET_ACCESS_KEY" ] || [ -z "$$AWS_SESSION_TOKEN" ]) \
 		&& exit 1 ||:
 
-aws-assume-role-export-variables: ### Get assume role export for the Jenkins user - optional: PROFILE=[profile name to load relevant platform configuration file]
+aws-assume-role-export-variables: ### Get assume role export for the Jenkins user - optional: AWS_ACCOUNT_ID|PROFILE=[profile name to load relevant platform configuration file]
 	if [ $(AWS_ROLE) == $(AWS_ROLE_JENKINS) ]; then
 		if [ $(AWS_ACCOUNT_ID) == "$$(make aws-account-get-id)" ]; then
 			echo "Already assumed arn:aws:iam::$(AWS_ACCOUNT_ID):role/$(AWS_ROLE)" >&2
@@ -301,7 +301,7 @@ aws-ecr-create-repository: ### Create ECR repository to store an image - mandato
 	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) ecr create-repository \
 			--repository-name $(PROJECT_GROUP_SHORT)/$(PROJECT_NAME_SHORT)/$(NAME) \
-			--tags Key=Service,Value=$(SERVICE_TAG) \
+			--tags Key=Programme,Value=$(PROGRAMME) Key=Service,Value=$(SERVICE_TAG) \
 	"
 	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) ecr set-repository-policy \

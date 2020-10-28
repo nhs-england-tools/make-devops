@@ -34,8 +34,12 @@ git-secrets-scan-history: ### Scan git histroy for any secrets
 
 # ==============================================================================
 
-git-commit-has-changed-directory: ### Determin if any file changed in directory - mandatory: DIR=[directory]; return: true|false
-	git diff --name-only --diff-filter=AMDR --cached HEAD^ | grep --quiet '$(DIR)' && echo true || echo false
+git-commit-has-changed-directory: ### Determin if any file changed in directory - mandatory: DIR=[directory]; optional: PRECOMMIT=true; return: true|false
+	if [ "$(PRECOMMIT)" == true ]; then
+		git diff --name-only --cached HEAD --diff-filter=ACDMRT | grep --quiet '^$(DIR)' && echo true || echo false
+	else
+		git diff --name-only --cached HEAD^ --diff-filter=ACDMRT | grep --quiet '^$(DIR)' && echo true || echo false
+	fi
 
 git-commit-get-hash git-hash: ### Get short commit hash - optional: COMMIT=[commit, defaults to HEAD]
 	git rev-parse --short $(or $(COMMIT), HEAD) 2> /dev/null || echo unknown

@@ -44,8 +44,7 @@
       "Effect": "Deny",
       "NotPrincipal": {
         "AWS": [
-          "arn:aws:iam::AWS_ACCOUNT_ID_MGMT_TO_REPLACE:role/jenkins_host_role",
-          "arn:aws:iam::AWS_ACCOUNT_ID_MGMT_TO_REPLACE:role/jenkins_prod_host_role"
+          "arn:aws:iam::AWS_ACCOUNT_ID_MGMT_TO_REPLACE:role/jenkins_assume_role"
         ]
       },
       "Action": ["ecr:BatchDeleteImage", "ecr:DeleteRepository"]
