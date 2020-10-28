@@ -236,6 +236,7 @@ docker-image-set-version: ### Set effective Docker image version - mandatory: NA
 			sed "s/HH/$$(date --date=$(BUILD_DATE) -u +"%H")/g" | \
 			sed "s/MM/$$(date --date=$(BUILD_DATE) -u +"%M")/g" | \
 			sed "s/ss/$$(date --date=$(BUILD_DATE) -u +"%S")/g" | \
+			sed "s/SS/$$(date --date=$(BUILD_DATE) -u +"%S")/g" | \
 			sed "s/hash/$$(git rev-parse --short HEAD)/g" \
 		> $$dir/.version
 	fi
