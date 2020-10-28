@@ -15,8 +15,11 @@ pipeline {
   }
   triggers { pollSCM("* * * * *") }
   stages {
-    stage("Show Configuration") {
-      steps { sh "make show-configuration" }
+    stage("Configuration") {
+      steps {
+        sh "make show-configuration"
+        sh "make pipeline-check-resources"
+      }
     }
     stage("Test") {
       steps {
@@ -33,6 +36,6 @@ pipeline {
     }
   }
   post {
-    failure { sh "make pipeline-send-notification PIPELINE_NAME='Make DevOps (Development)' BUILD_STATUS=${currentBuild.currentResult}" }
+    failure { sh "make pipeline-finalise PIPELINE_NAME='Make DevOps (Development)' BUILD_STATUS=${currentBuild.currentResult}" }
   }
 }
