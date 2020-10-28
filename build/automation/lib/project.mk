@@ -38,8 +38,17 @@ project-stop: ### Stop Docker Compose
 project-log: ### Print log from Docker Compose
 	make docker-compose-log
 
-project-deploy: ### Deploy application service stack to the Kubernetes cluster - mandatory: PROFILE=[profile name]
-	make k8s-deploy STACK=$(or $(NAME), service)
+project-deploy: ### Deploy application stack to the Kubernetes cluster - mandatory: STACK|STACKS|DEPLOYMENT_STACKS=[comma-separated names],PROFILE=[profile name]
+	make k8s-deploy STACK=$(or $(STACK), $(or $(STACKS), $(DEPLOYMENT_STACKS)))
+
+project-undeploy: ### Undeploy application stack from the Kubernetes cluster - mandatory: PROFILE=[profile name]
+	make k8s-undeploy
+
+project-deploy-job: ### Deploy job stack to the Kubernetes cluster - mandatory: STACK|STACKS|DEPLOYMENT_STACKS=[comma-separated names],PROFILE=[profile name]
+	make k8s-deploy-job STACK=$(or $(STACK), $(or $(STACKS), $(DEPLOYMENT_STACKS)))
+
+project-undeploy-job: ### Undeploy job stack from the Kubernetes cluster - mandatory: PROFILE=[profile name]
+	make k8s-undeploy-job
 
 project-document-infrastructure: ### Generate infrastructure diagram - optional: FIN=[Python file path, defaults to infrastructure/diagram.py],FOUT=[PNG file path, defaults to documentation/Infrastructure_Diagram]
 	make docker-run-tools CMD="python \

@@ -7,4 +7,4 @@ patchesStrategicMerge:
 namespace: K8S_APP_NAMESPACE_TO_REPLACE
 
 commonLabels:
-  env: PROFILE_TO_REPLACE
+  env: ENVIRONMENT_TO_REPLACE

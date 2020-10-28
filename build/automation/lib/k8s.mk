@@ -30,18 +30,20 @@ k8s-create-overlay-from-template: ### Create Kubernetes overlay deployment from 
 
 # ==============================================================================
 
-k8s-deploy: ### Deploy application to the Kubernetes cluster - mandatory: STACK=[name],PROFILE=[name]
+k8s-deploy: ### Deploy application to the Kubernetes cluster - mandatory: STACK|STACKS|DEPLOYMENT_STACKS=[comma-separated names],PROFILE=[name]
 	# set up
 	eval "$$(make aws-assume-role-export-variables)"
 	make k8s-kubeconfig-get
 	eval "$$(make k8s-kubeconfig-export-variables)"
 	# deploy
-	make k8s-replace-variables STACK=$(STACK) PROFILE=$(PROFILE)
-	kubectl apply -k $$(make -s _k8s-get-deployment-directory)
-	make k8s-clean # TODO: Create a flag to switch it off
-	make k8s-sts
+	for stack in $$(echo $(or $(STACK), $(or $(STACKS), $(DEPLOYMENT_STACKS))) | tr "," "\n"); do
+		make k8s-replace-variables STACK=$$stack PROFILE=$(PROFILE)
+		kubectl apply -k $$(make -s _k8s-get-deployment-directory STACK=$$stack)
+		make k8s-clean STACK=$$stack # TODO: Create a flag to switch it off
+		make k8s-sts
+	done
 
-k8s-undeploy: ### Remove Kubernetes resources
+k8s-undeploy: ### Remove Kubernetes resources from the application namespace - mandatory: PROFILE=[name]
 	# set up
 	eval "$$(make aws-assume-role-export-variables)"
 	make k8s-kubeconfig-get
@@ -51,20 +53,22 @@ k8s-undeploy: ### Remove Kubernetes resources
 		kubectl delete namespace $(K8S_APP_NAMESPACE)
 	fi
 
-k8s-deploy-job: ### Deploy job to the Kubernetes cluster - mandatory: STACK=[name],PROFILE=[name]
+k8s-deploy-job: ### Deploy job to the Kubernetes cluster - mandatory: STACK|STACKS|DEPLOYMENT_STACKS=[comma-separated names],PROFILE=[name]
 	# set up
 	eval "$$(make aws-assume-role-export-variables)"
 	make k8s-kubeconfig-get
 	eval "$$(make k8s-kubeconfig-export-variables)"
 	# deploy
-	make k8s-replace-variables STACK=$(STACK) PROFILE=$(PROFILE)
-	kubectl delete jobs --all -n $(K8S_JOB_NAMESPACE)
-	kubectl apply -k $$(make -s _k8s-get-deployment-directory)
-	make k8s-clean # TODO: Create a flag to switch it off
-	make k8s-job
-	make k8s-job-wait-to-complete
+	for stack in $$(echo $(or $(STACK), $(or $(STACKS), $(DEPLOYMENT_STACKS))) | tr "," "\n"); do
+		make k8s-replace-variables STACK=$$stack PROFILE=$(PROFILE)
+		kubectl delete jobs --all -n $(K8S_JOB_NAMESPACE)
+		kubectl apply -k $$(make -s _k8s-get-deployment-directory STACK=$$stack)
+		make k8s-clean STACK=$$stack # TODO: Create a flag to switch it off
+		make k8s-job
+		make k8s-job-wait-to-complete
+	done
 
-k8s-undeploy-job: ### Remove Kubernetes resources from job namespace
+k8s-undeploy-job: ### Remove Kubernetes resources from the job namespace - mandatory: PROFILE=[name]
 	# set up
 	eval "$$(make aws-assume-role-export-variables)"
 	make k8s-kubeconfig-get
@@ -82,10 +86,10 @@ k8s-alb-get-ingress-endpoint: ### Get ALB ingress enpoint - mandatory: PROFILE=[
 	# get ingress endpoint
 	kubectl get ingress \
 		--namespace=$(K8S_APP_NAMESPACE) \
-		--selector="env=$(PROFILE)" \
+		--selector="env=$(ENVIRONMENT)" \
 		--output=json \
 	| make -s docker-run-tools CMD="jq -rf $(JQ_DIR_REL)/k8s-alb-get-ingress-endpoint.jq"
-	# TODO: Check `https://$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)-$(PROFILE)-proxy-ingress.$(TEXAS_HOSTED_ZONE)`
+	# TODO: Check `https://$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)-$(ENVIRONMENT)-proxy-ingress.$(TEXAS_HOSTED_ZONE)`
 
 k8s-pod-get-status-phase: ### Get the pod status phase - return: [phase name]
 	eval "$$(make k8s-kubeconfig-export-variables)"
@@ -119,18 +123,18 @@ k8s-job-log: ### Show the job pod logs
 	kubectl logs $$(make k8s-job-get-pod-name) \
 		--namespace=$(K8S_NAMESPACE)
 
-k8s-job-get-name: ### Get the name of the job - return: [job name]
+k8s-job-get-name: ### Get the name of the job - mandatory: PROFILE=[name]; return: [job name]
 	eval "$$(make k8s-kubeconfig-export-variables)"
 	kubectl get jobs \
 		--namespace=$(K8S_NAMESPACE) \
-		--selector "env=$(PROFILE)" \
+		--selector "env=$(ENVIRONMENT)" \
 		--output jsonpath='{.items..metadata.name}'
 
-k8s-job-get-pod-name: ### Get the name of the job pod - return: [pod name]
+k8s-job-get-pod-name: ### Get the name of the job pod - mandatory: PROFILE=[name]; return: [pod name]
 	eval "$$(make k8s-kubeconfig-export-variables)"
 	kubectl get pods \
 		--namespace=$(K8S_NAMESPACE) \
-		--selector "env=$(PROFILE)" \
+		--selector "env=$(ENVIRONMENT)" \
 		--output jsonpath='{.items..metadata.name}'
 
 k8s-job-has-completed: ### Show whether the job completed - return: [true|""]
@@ -194,7 +198,7 @@ k8s-clean: ### Clean Kubernetes files - mandatory: STACK=[name]
 
 # ==============================================================================
 
-_k8s-get-deployment-directory:
+_k8s-get-deployment-directory: ### Get deployment directory - mandatory: STACK=[name],PROFILE=[name]
 	if [ -d $(K8S_DIR)/$(STACK)/overlays/$(PROFILE) ]; then
 		echo $(K8S_DIR)/$(STACK)/overlays/$(PROFILE)
 	else
@@ -204,36 +208,36 @@ _k8s-get-deployment-directory:
 # ==============================================================================
 # TODO: This section needs a review
 
-k8s-cnf: ### Show configmaps
+k8s-cnf: ### Show configmaps - mandatory: PROFILE=[name]
 	eval "$$(make k8s-kubeconfig-export-variables)"
 	echo
 	kubectl get configmaps \
 		--namespace=$(K8S_APP_NAMESPACE) \
-		--selector "env=$(PROFILE)" \
+		--selector "env=$(ENVIRONMENT)" \
 		--output json
 	echo
 
-k8s-log: ### Show logs
+k8s-log: ### Show logs - mandatory: PROFILE=[name]
 	eval "$$(make k8s-kubeconfig-export-variables)"
 	echo
 	kubectl logs \
 		--namespace=$(K8S_APP_NAMESPACE) \
-		--selector "env=$(PROFILE)" \
+		--selector "env=$(ENVIRONMENT)" \
 		--max-log-requests=20 \
 		--all-containers=true \
 		--since=60s \
 		--follow=true
 	echo
 
-k8s-net: ### Show network policies
+k8s-net: ### Show network policies - mandatory: PROFILE=[name]
 	eval "$$(make k8s-kubeconfig-export-variables)"
 	echo
 	kubectl describe networkpolicies \
 		--namespace=$(K8S_APP_NAMESPACE) \
-		--selector "env=$(PROFILE)"
+		--selector "env=$(ENVIRONMENT)"
 	echo
 
-k8s-sts: ### Show status of pods and services
+k8s-sts: ### Show status of pods and services - mandatory: PROFILE=[name]
 	eval "$$(make k8s-kubeconfig-export-variables)"
 	echo -e "\nDisplay namespaces"
 	kubectl get namespace \
@@ -242,24 +246,24 @@ k8s-sts: ### Show status of pods and services
 	echo -e "\nDisplay configmaps"
 	kubectl get configmaps \
 		--namespace=$(K8S_APP_NAMESPACE) \
-		--selector "env=$(PROFILE)"
+		--selector "env=$(ENVIRONMENT)"
 	echo -e "\nDisplay networkpolicies"
 	kubectl get networkpolicies \
 		--namespace=$(K8S_APP_NAMESPACE) \
-		--selector "env=$(PROFILE)"
+		--selector "env=$(ENVIRONMENT)"
 	echo -e "\nDisplay pods"
 	kubectl get pods \
 		--namespace=$(K8S_APP_NAMESPACE) \
-		--selector "env=$(PROFILE)" \
+		--selector "env=$(ENVIRONMENT)" \
 		--output wide
 	echo -e "\nDisplay services"
 	kubectl get services \
 		--namespace=$(K8S_APP_NAMESPACE) \
-		--selector "env=$(PROFILE)"
+		--selector "env=$(ENVIRONMENT)"
 	echo -e "\nDisplay ingress"
 	kubectl get ingress \
 		--namespace=$(K8S_APP_NAMESPACE) \
-		--selector "env=$(PROFILE)"
+		--selector "env=$(ENVIRONMENT)"
 	echo -e "\nDisplay events"
 	kubectl get events \
 		--namespace=$(K8S_APP_NAMESPACE)
@@ -267,7 +271,7 @@ k8s-sts: ### Show status of pods and services
 # ==============================================================================
 # TODO: This section needs a review
 
-k8s-job: ### Show status of jobs
+k8s-job: ### Show status of jobs - mandatory: PROFILE=[name]
 	eval "$$(make k8s-kubeconfig-export-variables)"
 	echo -e "\nDisplay namespaces"
 	kubectl get namespace \
@@ -276,20 +280,20 @@ k8s-job: ### Show status of jobs
 	echo -e "\nDisplay configmaps"
 	kubectl get configmaps \
 		--namespace=$(K8S_JOB_NAMESPACE) \
-		--selector "env=$(PROFILE)"
+		--selector "env=$(ENVIRONMENT)"
 	echo -e "\nDisplay networkpolicies"
 	kubectl get networkpolicies \
 		--namespace=$(K8S_JOB_NAMESPACE) \
-		--selector "env=$(PROFILE)"
+		--selector "env=$(ENVIRONMENT)"
 	echo -e "\nDisplay pods"
 	kubectl get pods \
 		--namespace=$(K8S_JOB_NAMESPACE) \
-		--selector "env=$(PROFILE)" \
+		--selector "env=$(ENVIRONMENT)" \
 		--output wide
 	echo -e "\nDisplay jobs"
 	kubectl get jobs \
 		--namespace=$(K8S_JOB_NAMESPACE) \
-		--selector "env=$(PROFILE)"
+		--selector "env=$(ENVIRONMENT)"
 	echo -e "\nDisplay events"
 	kubectl get events \
 		--namespace=$(K8S_JOB_NAMESPACE)
