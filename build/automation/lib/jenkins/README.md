@@ -15,6 +15,13 @@ Here are the items to consider and a pattern for setting up a Jenkins pipeline:
 - Branch Sources - Git - Property strategy: `Suppress automatic SCM triggering`
 - Build Configuration - Script Path: `build/jenkins/Jenkinsfile.development|test|tag|production|cleanup`
 
+For production:
+
+- Branch Sources - Git - Behaviours:
+  - `Discover tags` only
+- Branch Sources - Git - Build strategies:
+  - `Tags`, `Ignore tags older than` set to 1
+
 ## GitHub Integration
 
 For an integration with a GitHub repository make use of the GitHub Apps, i.e. the `Texas Jenkins (read-only)`.
