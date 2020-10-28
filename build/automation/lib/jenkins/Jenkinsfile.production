@@ -38,6 +38,6 @@ pipeline {
     }
   }
   post {
-    always { sh "make pipeline-finalise PIPELINE_NAME='PROJECT_DISPLAY_NAME_TO_REPLACE (Development)' BUILD_STATUS=${currentBuild.currentResult}" }
+    always { sh "make pipeline-finalise PIPELINE_NAME='PROJECT_DISPLAY_NAME_TO_REPLACE (Production)' BUILD_STATUS=${currentBuild.currentResult}" }
   }
 }
