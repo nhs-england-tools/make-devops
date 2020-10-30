@@ -14,7 +14,7 @@ pipeline {
     //GIT_TAG = sh(returnStdout: true, script: "git get current ref ...").trim()
     //PROFILE = [get it from the GIT_TAG ...]
   }
-  triggers { pollSCM("* * * * *") }
+  triggers { pollSCM(env.BRANCH_NAME == "master" ? "* * * * *" : "") }
   stages {
     stage("Configuration") {
       steps {

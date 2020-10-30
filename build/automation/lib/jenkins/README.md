@@ -24,7 +24,6 @@ Here are the items to consider and a pattern for setting up a Jenkins pipeline.
   - `Discover branches`
   - `Check out to matching local branch`
   - `Filter by name (with wildcards)`, e.g. `master`, `task/*`
-- Branch Sources - Git - Property strategy: `Suppress automatic SCM triggering`
 - Build Configuration - Script Path: `build/jenkins/Jenkinsfile.development|test|tag|production|cleanup`
 
 For production
@@ -33,6 +32,8 @@ For production
   - `Discover tags` only
 - Branch Sources - Git - Build strategies:
   - `Tags`, `Ignore tags older than` set to 1
+- Scan Multibranch Pipeline Triggers - Periodically if not otherwise run
+  - Interval set to `1 minute`
 
 ## GitHub Integration
 
