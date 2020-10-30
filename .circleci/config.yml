@@ -16,6 +16,21 @@ jobs:
           name: Show Configuration
           command: |
             make show-configuration
+
+      # The 'tools' image has to be built first!
+      - run:
+          name: Push 'tools' image
+          command: |
+            [ true == $(make git-commit-has-changed-directory DIR=build/automation/lib/docker/image/tools) ] || exit 0
+            make docker-login DOCKER_USERNAME=$DOCKER_USERNAME DOCKER_PASSWORD=$DOCKER_PASSWORD
+            cd build/automation/lib/docker/image/tools
+            make \
+              build \
+              test \
+              push \
+              clean
+            curl --request POST "https://hooks.microbadger.com/images/nhsd/tools/D3mmi11C-dT0VlRZZv2vqimdYJ0="
+
       - run:
           name: Push 'elasticsearch' image
           command: |
@@ -88,18 +103,6 @@ jobs:
               push \
               clean
             curl --request POST "https://hooks.microbadger.com/images/nhsd/python-app/4eMOA9iHngrFwZ0fTWlMq4KR9Kk="
-      - run:
-          name: Push 'tools' image
-          command: |
-            [ true == $(make git-commit-has-changed-directory DIR=build/automation/lib/docker/image/tools) ] || exit 0
-            make docker-login DOCKER_USERNAME=$DOCKER_USERNAME DOCKER_PASSWORD=$DOCKER_PASSWORD
-            cd build/automation/lib/docker/image/tools
-            make \
-              build \
-              test \
-              push \
-              clean
-            curl --request POST "https://hooks.microbadger.com/images/nhsd/tools/D3mmi11C-dT0VlRZZv2vqimdYJ0="
       - run:
           name: Run Test Suite
           command: |
