@@ -13,7 +13,7 @@ pipeline {
     BUILD_DATE = sh(returnStdout: true, script: "date -u +'%Y-%m-%dT%H:%M:%S%z'").trim()
     PROFILE = "test"
   }
-  triggers { cron(env.BRANCH_NAME == "master" ? "0 4 * * *" : "") }
+  triggers { cron(env.BRANCH_NAME == "master" ? "0 5 * * *" : "") }
   stages {
     stage("Configuration") {
       steps {
