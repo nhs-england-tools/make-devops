@@ -18,19 +18,30 @@ PYTHON_BASE_PACKAGES = \
 	pyyaml \
 	requests==2.24.0
 
-python-virtualenv: ### Setup Python virtual environment - optional: PYTHON_VERSION
+python-virtualenv: ### Setup Python virtual environment - optional: PYTHON_VERSION,PYTHON_VENV_NAME
 	brew update
 	brew upgrade pyenv
 	pyenv install --skip-existing $(PYTHON_VERSION)
-	pyenv local $(PYTHON_VERSION)
-	pip install --upgrade pip || pyenv install $(PYTHON_VERSION) && pip install --upgrade pip
-	pip install $(PYTHON_BASE_PACKAGES)
-	sed -i 's;    "python.linting.flake8Path":.*;    "python.linting.flake8Path": "~/.pyenv/versions/$(PYTHON_VERSION)/bin/flake8",;g' project.code-workspace
-	sed -i 's;    "python.linting.mypyPath":.*;    "python.linting.mypyPath": "~/.pyenv/versions/$(PYTHON_VERSION)/bin/mypy",;g' project.code-workspace
-	sed -i 's;    "python.linting.pylintPath":.*;    "python.linting.pylintPath": "~/.pyenv/versions/$(PYTHON_VERSION)/bin/pylint",;g' project.code-workspace
-	sed -i 's;    "python.pythonPath":.*;    "python.pythonPath": "~/.pyenv/versions/$(PYTHON_VERSION)/bin/python",;g' project.code-workspace
+	if [ -z "$(PYTHON_VENV_NAME)" ]; then
+		pyenv local $(PYTHON_VERSION)
+		pip install --upgrade pip || pyenv install $(PYTHON_VERSION) && pip install --upgrade pip
+		pip install $(PYTHON_BASE_PACKAGES)
+		sed -i 's;    "python.linting.flake8Path":.*;    "python.linting.flake8Path": "~/.pyenv/versions/$(PYTHON_VERSION)/bin/flake8",;g' project.code-workspace
+		sed -i 's;    "python.linting.mypyPath":.*;    "python.linting.mypyPath": "~/.pyenv/versions/$(PYTHON_VERSION)/bin/mypy",;g' project.code-workspace
+		sed -i 's;    "python.linting.pylintPath":.*;    "python.linting.pylintPath": "~/.pyenv/versions/$(PYTHON_VERSION)/bin/pylint",;g' project.code-workspace
+		sed -i 's;    "python.pythonPath":.*;    "python.pythonPath": "~/.pyenv/versions/$(PYTHON_VERSION)/bin/python",;g' project.code-workspace
+	else
+		pyenv virtualenv $(PYTHON_VERSION) $(PYTHON_VENV_NAME)
+		pyenv local $(PYTHON_VENV_NAME)
+		pip install --upgrade pip
+		pip install $(PYTHON_BASE_PACKAGES)
+		sed -i 's;    "python.linting.flake8Path":.*;    "python.linting.flake8Path": "~/.pyenv/versions/$(PYTHON_VENV_NAME)/bin/flake8",;g' project.code-workspace
+		sed -i 's;    "python.linting.mypyPath":.*;    "python.linting.mypyPath": "~/.pyenv/versions/$(PYTHON_VENV_NAME)/bin/mypy",;g' project.code-workspace
+		sed -i 's;    "python.linting.pylintPath":.*;    "python.linting.pylintPath": "~/.pyenv/versions/$(PYTHON_VENV_NAME)/bin/pylint",;g' project.code-workspace
+		sed -i 's;    "python.pythonPath":.*;    "python.pythonPath": "~/.pyenv/versions/$(PYTHON_VENV_NAME)/bin/python",;g' project.code-workspace
+	fi
 
-python-virtualenv-clean: ### Clean up Python virtual environment - optional: PYTHON_VERSION
+python-virtualenv-clean: ### Clean up Python virtual environment - optional: PYTHON_VERSION=[version or venv name]
 	pyenv uninstall --force $(PYTHON_VERSION)
 	rm -rf .python-version
 	pyenv global system
