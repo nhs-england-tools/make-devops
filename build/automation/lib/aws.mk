@@ -333,11 +333,11 @@ aws-ses-verify-email-identity: ### Verify SES email address - mandatory: NAME
 # make aws-elasticsearch-create-snapshot DOMAIN=sf1-nonprod BUCKET=uec-tools-make-devops-jenkins-workspace IAM_ROLE=dan-role
 
 aws-elasticsearch-create-snapshot: ### Create an Elasticsearch snapshot - mandatory: DOMAIN=[Elasticsearch domain name],SNAPSHOT_NAME
-	endpoint=$$(make _aws-elasticsearch-get-endpoint DOMAIN=$(DOMAIN))
+	endpoint=$$(make aws-elasticsearch-get-endpoint DOMAIN=$(DOMAIN))
 	make _aws-elasticsearch-register-snapshot-repository ENDPOINT="$$endpoint"
 	#curl -XPUT "https://$$endpoint/_snapshot/snapshot-repository-$(DOMAIN)/$(SNAPSHOT_NAME)"
 
-_aws-elasticsearch-get-endpoint: ### Get Elasticsearch endpoint - mandatory: DOMAIN=[Elasticsearch domain name]
+aws-elasticsearch-get-endpoint: ### Get Elasticsearch endpoint - mandatory: DOMAIN=[Elasticsearch domain name]
 	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) es describe-elasticsearch-domain \
 			--domain-name $(DOMAIN) \
@@ -364,7 +364,6 @@ _aws-elasticsearch-register-snapshot-repository: ### Register Elasticsearch snap
 # ==============================================================================
 
 .SILENT: \
-	_aws-elasticsearch-get-endpoint \
 	aws-account-check-id \
 	aws-account-get-id \
 	aws-assume-role-export-variables \
@@ -375,6 +374,7 @@ _aws-elasticsearch-register-snapshot-repository: ### Register Elasticsearch snap
 	aws-dynamodb-query \
 	aws-ecr-get-image-digest \
 	aws-ecr-get-login-password \
+	aws-elasticsearch-get-endpoint \
 	aws-iam-policy-exists \
 	aws-iam-role-exists \
 	aws-rds-describe-instance \
