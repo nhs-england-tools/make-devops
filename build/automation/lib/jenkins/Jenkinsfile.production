@@ -1,8 +1,8 @@
 pipeline {
   /*
     Description: TODO:
+      # This should be triggered by the Jenkinsfile.tag
    */
-  agent { label "jenkins-slave" }
   options {
     buildDiscarder(logRotator(daysToKeepStr: "7", numToKeepStr: "13"))
     disableConcurrentBuilds()
@@ -11,8 +11,9 @@ pipeline {
   }
   environment {
     BUILD_DATE = sh(returnStdout: true, script: "date -u +'%Y-%m-%dT%H:%M:%S%z'").trim()
-    //GIT_TAG = sh(returnStdout: true, script: "git get current ref ...").trim()
-    //PROFILE = [get it from the GIT_TAG ...]
+    //GIT_HASH = sh(returnStdout: true, script: "git rev-parse --short HEAD").trim()
+    //GIT_TAG = sh(returnStdout: true, script: "git tag --points-at HEAD").trim()
+    //PROFILE = [derive it from the GIT_TAG e.g. for `YYmmddHHMMSS-live` it is `live` ...]
   }
   triggers { pollSCM(env.BRANCH_NAME == "master" ? "* * * * *" : "") }
   stages {
@@ -23,17 +24,12 @@ pipeline {
       }
     }
     stage("Deploy") {
-      parallel {
-        stage("Deploy: App") {
-          agent { label "jenkins-slave" }
-          steps {
-            sh "make backup-data"
-            sh "make provision-infractructure"
-            sh "make deploy-artefact"
-            sh "make apply-data-changes"
-            sh "make run-smoke-test"
-          }
-        }
+      steps {
+        sh "make backup-data"
+        sh "make provision-infractructure"
+        sh "make deploy-artefact"
+        sh "make apply-data-changes"
+        sh "make run-smoke-test"
       }
     }
   }
