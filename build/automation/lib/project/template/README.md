@@ -1,40 +1,63 @@
-# Project Name
+# PROJECT_NAME_TO_REPLACE
 
 ## Table of Contents
 
-- [Project Name](#project-name)
+- [PROJECT_NAME_TO_REPLACE](#project_name_to_replace)
   - [Table of Contents](#table-of-contents)
   - [Quick Start](#quick-start)
-    - [Development Recommendations](#development-recommendations)
+    - [Development Requirements](#development-requirements)
     - [Local Environment Configuration](#local-environment-configuration)
     - [Local Project Setup](#local-project-setup)
   - [Development](#development)
   - [Testing](#testing)
   - [Deployment](#deployment)
-    - [AWS Access](#aws-access)
-    - [Deployment From the Command-line](#deployment-from-the-command-line)
+    - [Artefact Versioning](#artefact-versioning)
     - [CI/CD Pipelines](#cicd-pipelines)
+    - [Deployment From the Command-line](#deployment-from-the-command-line)
+    - [Secrets](#secrets)
+    - [AWS Access](#aws-access)
   - [Architecture](#architecture)
+    - [Diagrams](#diagrams)
+      - [System Context Diagram](#system-context-diagram)
+      - [Container Diagram](#container-diagram)
+      - [Component Diagram](#component-diagram)
+      - [Processes and Data Flow](#processes-and-data-flow)
+      - [Infrastructure](#infrastructure)
+      - [Networking](#networking)
+    - [Integration](#integration)
+      - [Interfaces](#interfaces)
+      - [Dependencies](#dependencies)
+    - [Data](#data)
+    - [Authentication and authorisation](#authentication-and-authorisation)
     - [Technology Stack](#technology-stack)
-    - [System Context](#system-context)
-    - [Container Diagram](#container-diagram)
-    - [Component Diagram](#component-diagram)
-    - [Processes and Data Flow](#processes-and-data-flow)
-    - [Interfaces](#interfaces)
+    - [Key Architectural Decisions](#key-architectural-decisions)
     - [System Quality Attributes](#system-quality-attributes)
+    - [Guiding Principles](#guiding-principles)
   - [Operation](#operation)
+    - [Error Handling](#error-handling)
     - [Observability](#observability)
+    - [Auditing](#auditing)
     - [Backups](#backups)
     - [Cloud Environments](#cloud-environments)
+    - [Runbooks](#runbooks)
+  - [Product](#product)
+    - [Communications](#communications)
+    - [Documentation](#documentation)
+
+A few sentences what business problem this project solves...
 
 ## Quick Start
 
-### Development Recommendations
+### Development Requirements
 
-- Use iTerm2 and Visual Studio Code, which will be installed automatically for you in the next steps
+- macOS operating system
+- `iTerm2` command-line terminal and `Visual Studio Code` source code editor, which will be installed automatically for you in the next steps
 - Before starting any work, please read [CONTRIBUTING.md](CONTRIBUTING.md)
 
 ### Local Environment Configuration
+
+    git clone [project-url]
+    cd ./[project-dir]
 
     make macos-setup
     make devops-setup-aws-accounts
@@ -50,8 +73,14 @@
 
 - Describe how to
   - Connect to a local database
-  - Interact with a mock component
+  - Interact with mock components
   - Switch each individual component to the dev mode
+- Branching strategy
+- Git hooks
+- Code formatting
+- Code quality
+- Reference the `TODO.md` file
+- Reference the `CONTRIBUTING.md` file
 - Provide guidance on how to use feature toggles and branching by abstraction
 
 ## Testing
@@ -66,18 +95,13 @@ List all the type of test suites included and provide instructions how to execut
 - Security
 - Smoke
 
+How the test data set is produced
+
 ## Deployment
 
-### AWS Access
+### Artefact Versioning
 
-To be able to interact with a remote environment, please make sure you have set up your AWS CLI credentials and
-MFA to the right AWS account using the following command
-
-    tx-mfa
-
-### Deployment From the Command-line
-
-    make deploy PROFILE=dev
+E.g. semantic versioning vs. timestamp-based
 
 ### CI/CD Pipelines
 
@@ -88,51 +112,128 @@ List all the pipelines and their purpose
 - Cleanup
 - Production (deployment)
 
+Reference the `jenkins/README.md` file
+
+### Deployment From the Command-line
+
+    make deploy PROFILE=dev
+
+### Secrets
+
+Where are the secrets located
+
+### AWS Access
+
+To be able to interact with a remote environment, please make sure you have set up your AWS CLI credentials and
+MFA to the right AWS account using the following command
+
+    tx-mfa
+
 ## Architecture
+
+### Diagrams
+
+#### System Context Diagram
+
+Include a link to the System Context diagram
+
+#### Container Diagram
+
+Include a link to the Container diagram
+
+#### Component Diagram
+
+Include a link to the Component diagram
+
+#### Processes and Data Flow
+
+Include a link to the Processes and Data Flow diagram
+
+#### Infrastructure
+
+Include a link to the Infrastructure diagram
+
+#### Networking
+
+Include a link to the Networking diagram
+
+### Integration
+
+#### Interfaces
+
+Document all the system external interfaces
+
+#### Dependencies
+
+Document all the system external dependencies and integration points
+
+### Data
+
+What sort of data system operates on and processes
+
+- Data set
+- Consistency and integrity
+- Persistence
+
+### Authentication and authorisation
 
 ### Technology Stack
 
 What are the technologies and programing languages used to implement the solution
 
-### System Context
+### Key Architectural Decisions
 
-Include a link to the System Context diagram
-
-### Container Diagram
-
-Include a link to the Container diagram
-
-### Component Diagram
-
-Include a link to the Component diagram
-
-### Processes and Data Flow
-
-Include a link to the Processes and Data Flow diagram
-
-### Interfaces
-
-Document all the system external interfaces
+Link or include the abbreviated list of the ADRs
 
 ### System Quality Attributes
 
 - Accessibility, usability
 - Resilience, durability, fault-tolerance
 - Scalability, elasticity
+- Consistency
+- Performance
 - Interoperability
 - Security
+- Supportability
+
+### Guiding Principles
+
+List of the high level principles that a product /development team must adhere to:
+
+- The solution has to be coded in the open - e.g. NHSD GitHub org
+- Be based on the open standards, frameworks and libraries
+- API-first design
+- Test-first approach
+- Apply the automate everything pattern
+- AWS-based cloud solution deployable to the NHSD CPaaS Texas platform
+- Use of the Make DevOps automation scripts (macOS and Linux)
 
 ## Operation
+
+### Error Handling
+
+- What is the system response under the erroneous conditions
 
 ### Observability
 
 - Logging
+  - Indexes
+  - Format
 - Tracing
+  - Correlation ID
 - Monitoring
+  - Dashboards
 - Alerting
+  - Triggers
+  - Service status
 - Fitness functions
+  - What do we measure?
 
 What are the links of the supporting systems?
+
+### Auditing
+
+Are there any auditing requirements in accordance with the data retention policies?
 
 ### Backups
 
@@ -149,3 +250,25 @@ List all the environments and their relation to profiles
 - live
 
 Describe how to provision and deploy to a task branch environment
+
+### Runbooks
+
+List all the operational runbooks
+
+## Product
+
+### Communications
+
+- Slack channels
+  - Development, e.g. `[team-name]-dev`
+  - Service status, e.g. `[team-name]-status`
+- Email addresses in use
+  - Application mailbox, e.g. `[product.name]@nhs.net`
+
+### Documentation
+
+- Sprint board link
+- Backlog link
+- Roadmap link
+- Risks register link
+- Documentation workspace link
