@@ -1,8 +1,8 @@
 pipeline {
   /*
     Description: TODO:
+      make project-tag-as-environment-deployment PROFILE=[from the user input] COMMIT=[from the user input] ARTEFACTS=proxy,ui,api
       make git-tag-create-environment-deployment PROFILE=[from the user input] COMMIT=[from the user input]
-      make project-tag-as-environment-deployment ARTEFACTS=proxy,ui,api
       # This should trigger the Jenkinsfile.production
    */
   agent { label "jenkins-slave" }

@@ -51,11 +51,6 @@ git-commit-get-message git-msg: ### Get commit message - optional: COMMIT=[comm
 	git log --format=%B -n 1 $(or $(COMMIT), HEAD)
 
 # ==============================================================================
-# TODO: Remove the `git-*-release-*` targets
-
-git-tag-is-release-candidate: ### Check if a commit is tagged as release candidate - optional: COMMIT=[commit, defaults to master]; return: true|false
-	commit=$(or $(COMMIT), master)
-	(git show-ref --tags -d | grep $$(git rev-parse $$commit) | sed -e 's;.* refs/tags/;;' -e 's;\^{};;' | grep -- -rc$$) > /dev/null 2>&1 && echo true || echo false
 
 git-tag-is-environment-deployment: ### Check if a commit is tagged as environment deployment - mandatory: PROFILE=[profile name]; optional: COMMIT=[commit, defaults to master]; return: true|false
 	commit=$(or $(COMMIT), master)
@@ -66,23 +61,11 @@ git-tag-create: ### Tag a commit - mandatory: TAG=[tag name]; optional: COMMIT=[
 	git tag $(TAG) $$commit
 	git push origin $(TAG)
 
-git-tag-create-release-candidate: ### Tag release candidate as `[YYYYmmddHHMMSS]-rc` - optional: COMMIT=[commit, defaults to master]
-	commit=$(or $(COMMIT), master)
-	tag=$(BUILD_TIMESTAMP)-rc
-	make git-tag-create TAG=$$tag COMMIT=$$commit
-
 git-tag-create-environment-deployment: ### Tag environment deployment as `[YYYYmmddHHMMSS]-[env]` - mandatory: PROFILE=[profile name]; optional: COMMIT=[release candidate tag name, defaults to master]
 	[ $(PROFILE) == local ] && (echo "ERROR: Please, specify the PROFILE"; exit 1)
 	commit=$(or $(COMMIT), master)
 	tag=$(BUILD_TIMESTAMP)-$(ENVIRONMENT)
 	make git-tag-create TAG=$$tag COMMIT=$$commit
-
-git-tag-get-release-candidate: ### Get the latest release candidate tag for the whole repository or just the specified commit - optional: COMMIT=[commit]
-	if [ -z "$(COMMIT)" ]; then
-		git show-ref --tags -d | sed -e 's;.* refs/tags/;;' -e 's;\^{};;' | grep -- -rc$$ | sort -r | head -n 1
-	else
-		git show-ref --tags -d | grep ^$$(git rev-parse --short $(COMMIT)) | sed -e 's;.* refs/tags/;;' -e 's;\^{};;' | grep -- -rc$$ | sort -r | head -n 1
-	fi
 
 git-tag-get-environment-deployment: ### Get the latest environment deployment tag for the whole repository or just the specified commit - mandatory: PROFILE=[profile name]; optional: COMMIT=[commit]
 	[ $(PROFILE) = local ] && (echo "ERROR: Please, specify the PROFILE"; exit 1)
@@ -117,7 +100,5 @@ git-tag-clear: ### Remove tags from the specified commit - optional: COMMIT=[co
 	git-commit-has-changed-directory \
 	git-tag-get-environment-deployment \
 	git-tag-get-latest \
-	git-tag-get-release-candidate \
 	git-tag-is-environment-deployment \
-	git-tag-is-release-candidate \
 	git-tag-list

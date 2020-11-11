@@ -59,8 +59,8 @@ This is a generic onboarding template that can be used by any team to help to br
 ### Before joining
 
 - Get a MacBook, minimum Intel Core i5 4 cores processor and 16GM memory
-- Install the latest version of the macOS operating system and all the updates
-- Encrypt the storage
+- Install the latest version of the macOS operating system and all the updates unless there are known compatibility issues, usually it is a good practice to wait a couple of weeks after a new major version release
+- Encrypt the disk storage
 - Request the NHSmail account, usually this will be done by a Delivery Manager
 
 ### Day 1 and 2

@@ -23,9 +23,8 @@ test-docker:
 		test-docker-image-save \
 		test-docker-image-load \
 		test-docker-image-get-digest \
+		test-docker-image-find-and-version-as \
 		test-docker-tag \
-		test-docker-tag-as-release-candidate \
-		test-docker-tag-as-environment-deployment \
 		test-docker-get-variables-from-file \
 		test-docker-run \
 		test-docker-run-composer \
@@ -215,6 +214,9 @@ test-docker-image-load:
 test-docker-image-get-digest:
 	mk_test_skip
 
+test-docker-image-find-and-version-as:
+	mk_test_skip
+
 test-docker-tag:
 	# arrange
 	make docker-image-clean NAME=postgres
@@ -223,12 +225,6 @@ test-docker-tag:
 	make docker-tag NAME=postgres VERSION=version
 	# assert
 	mk_test "1 -eq $$(docker images --filter=reference=$(DOCKER_LIBRARY_REGISTRY)/postgres:version --quiet | wc -l)"
-
-test-docker-tag-as-release-candidate:
-	mk_test_skip
-
-test-docker-tag-as-environment-deployment:
-	mk_test_skip
 
 test-docker-get-variables-from-file:
 	# act

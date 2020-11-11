@@ -3,6 +3,7 @@ pipeline {
     Description: TODO:
       # This should be triggered by the Jenkinsfile.tag
    */
+  agent { label "jenkins-slave" }
   options {
     buildDiscarder(logRotator(daysToKeepStr: "7", numToKeepStr: "13"))
     disableConcurrentBuilds()
@@ -24,12 +25,16 @@ pipeline {
       }
     }
     stage("Deploy") {
-      steps {
-        sh "make backup-data"
-        sh "make provision-infractructure"
-        sh "make deploy-artefact"
-        sh "make apply-data-changes"
-        sh "make run-smoke-test"
+      parallel {
+        stage("Deploy: App") {
+          steps {
+            sh "make backup-data"
+            sh "make provision-infractructure"
+            sh "make deploy-artefact"
+            sh "make apply-data-changes"
+            sh "make run-smoke-test"
+          }
+        }
       }
     }
   }

@@ -130,8 +130,8 @@ project-tag-as-environment-deployment: ### Tag environment deployment - mandator
 	commit=$(or $(COMMIT), master)
 	git_tag=$$(make git-tag-get-environment-deployment COMMIT=$$commit ENVIRONMENT=$(ENVIRONMENT))
 	for image in $$(echo $(or $(ARTEFACTS), $(ARTEFACT)) | tr "," "\n"); do
-		make docker-image-find-and-tag-as \
-			TAG=$$git_tag \
+		make docker-image-find-and-version-as \
+			VERSION=$$git_tag \
 			IMAGE=$$image \
 			COMMIT=$$commit
 	done

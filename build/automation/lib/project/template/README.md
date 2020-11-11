@@ -120,7 +120,7 @@ Reference the `jenkins/README.md` file
 
 ### Secrets
 
-Where are the secrets located
+Where are the secrets located, i.e. AWS Secrets Manager, under the `$(PROJECT_ID)-$(PROFILE)/deployment` secret name
 
 ### AWS Access
 
@@ -163,6 +163,8 @@ Include a link to the Networking diagram
 
 Document all the system external interfaces
 
+- API documentation should be generated automatically
+
 #### Dependencies
 
 Document all the system external dependencies and integration points
@@ -176,6 +178,11 @@ What sort of data system operates on and processes
 - Persistence
 
 ### Authentication and authorisation
+
+- Default user login for testing
+- Different user roles
+- Authosrisation type
+- Authentication method
 
 ### Technology Stack
 
