@@ -50,7 +50,7 @@ A few sentences what business problem this project solves...
 
 ### Development Requirements
 
-- macOS operating system
+- macOS operating system provisioned with the `curl -L bit.ly/make-devops-macos | bash` command
 - `iTerm2` command-line terminal and `Visual Studio Code` source code editor, which will be installed automatically for you in the next steps
 - Before starting any work, please read [CONTRIBUTING.md](CONTRIBUTING.md)
 
@@ -76,7 +76,13 @@ A few sentences what business problem this project solves...
   - Interact with mock components
   - Switch each individual component to the dev mode
 - Branching strategy
-- Git hooks
+  - [Trunk-based development](https://trunkbaseddevelopment.com/)
+  - Naming convention `^(master|main|develop)$|^(task|story|epic|spike|fix|test|release|migration)/[A-Za-z]{2,5}-[0-9]{1,5}_[A-Za-z0-9_]{4,32}$`
+- Git hooks located in `build/automation/etc/githooks/scripts`
+  - `branch-name-pre-commit.sh`
+  - `editorconfig-pre-commit.sh`
+  - `git-secret-pre-commit.sh`
+  - `terraform-format-pre-commit.sh`
 - Code formatting
 - Code quality
 - Reference the `TODO.md` file

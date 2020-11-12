@@ -85,29 +85,39 @@ project-create-pipeline: ### Create pipeline
 # ==============================================================================
 
 project-branch-deploy: ### Check if development branch can be deployed automatically - return: true|false
-	[ $(BUILD_BRANCH) == master ] && echo true && exit 0
-	[[ $(BUILD_BRANCH) =~ ^$(GIT_TASK_BRANCH_PATTERN) ]] && [ $$(make project-message-contains KEYWORD=deploy) == true ] && echo true && exit 0
+	[[ $(BUILD_BRANCH) =~ $(GIT_BRANCH_PATTERN_MAIN) ]] && echo true && exit 0
+	[[ $(BUILD_BRANCH) =~ $(GIT_BRANCH_PATTERN_PREFIX)/$(GIT_BRANCH_PATTERN_SUFFIX) ]] && \
+		[ $$(make project-message-contains KEYWORD=deploy) == true ] && \
+			echo true && exit 0
 	[ $$(make project-branch-test) == true ] && echo true && exit 0
 	echo false
 
 project-branch-test: ### Check if development branch can be tested automatically - return: true|false
-	[ $(BUILD_BRANCH) == master ] && echo true && exit 0
-	[[ $(BUILD_BRANCH) =~ ^$(GIT_TASK_BRANCH_PATTERN) ]] && [ $$(make project-message-contains KEYWORD=test,func-test,perf-test,sec-test) == true ] && echo true && exit 0
+	[[ $(BUILD_BRANCH) =~ $(GIT_BRANCH_PATTERN_MAIN) ]] && echo true && exit 0
+	[[ $(BUILD_BRANCH) =~ $(GIT_BRANCH_PATTERN_PREFIX)/$(GIT_BRANCH_PATTERN_SUFFIX) ]] && \
+		[ $$(make project-message-contains KEYWORD=test,func-test,perf-test,sec-test) == true ] && \
+			echo true && exit 0
 	echo false
 
 project-branch-func-test: ### Check if development branch can be tested (functional) automatically - return: true|false
-	[ $(BUILD_BRANCH) == master ] && echo true && exit 0
-	[[ $(BUILD_BRANCH) =~ ^$(GIT_TASK_BRANCH_PATTERN) ]] && [ $$(make project-message-contains KEYWORD=test,func-test) == true ] && echo true && exit 0
+	[[ $(BUILD_BRANCH) =~ $(GIT_BRANCH_PATTERN_MAIN) ]] && echo true && exit 0
+	[[ $(BUILD_BRANCH) =~ $(GIT_BRANCH_PATTERN_PREFIX)/$(GIT_BRANCH_PATTERN_SUFFIX) ]] && \
+		[ $$(make project-message-contains KEYWORD=test,func-test) == true ] && \
+			echo true && exit 0
 	echo false
 
 project-branch-perf-test: ### Check if development branch can be tested (performance) automatically - return: true|false
-	[ $(BUILD_BRANCH) == master ] && echo true && exit 0
-	[[ $(BUILD_BRANCH) =~ ^$(GIT_TASK_BRANCH_PATTERN) ]] && [ $$(make project-message-contains KEYWORD=test,perf-test) == true ] && echo true && exit 0
+	[[ $(BUILD_BRANCH) =~ $(GIT_BRANCH_PATTERN_MAIN) ]] && echo true && exit 0
+	[[ $(BUILD_BRANCH) =~ $(GIT_BRANCH_PATTERN_PREFIX)/$(GIT_BRANCH_PATTERN_SUFFIX) ]] && \
+		[ $$(make project-message-contains KEYWORD=test,perf-test) == true ] && \
+			echo true && exit 0
 	echo false
 
 project-branch-sec-test: ### Check if development branch can be tested (security) automatically - return: true|false
-	[ $(BUILD_BRANCH) == master ] && echo true && exit 0
-	[[ $(BUILD_BRANCH) =~ ^$(GIT_TASK_BRANCH_PATTERN) ]] && [ $$(make project-message-contains KEYWORD=test,sec-test) == true ] && echo true && exit 0
+	[[ $(BUILD_BRANCH) =~ $(GIT_BRANCH_PATTERN_MAIN) ]] && echo true && exit 0
+	[[ $(BUILD_BRANCH) =~ $(GIT_BRANCH_PATTERN_PREFIX)/$(GIT_BRANCH_PATTERN_SUFFIX) ]] && \
+		[ $$(make project-message-contains KEYWORD=test,sec-test) == true ] && \
+			echo true && exit 0
 	echo false
 
 project-message-contains: ### Check if git commit message contains any give keyword - mandatory KEYWORD=[comma-separated keywords]
