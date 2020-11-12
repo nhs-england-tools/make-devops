@@ -89,7 +89,7 @@ docker-build docker-image: ### Build Docker image - mandatory: NAME; optional: V
 	dir=$$(make _docker-get-dir)
 	export IMAGE=$$reg/$(NAME)$(shell [ -n "$(EXAMPLE)" ] && echo -example)
 	export VERSION=$$(make docker-image-get-version)
-	make file-replace-variables FILE=$$dir/Dockerfile.effective
+	make -s file-replace-variables FILE=$$dir/Dockerfile.effective
 	docker build --rm \
 		--build-arg IMAGE=$$IMAGE \
 		--build-arg VERSION=$$VERSION \
@@ -205,25 +205,28 @@ docker-create-dockerfile: ### Create effective Dockerfile - mandatory: NAME; op
 	cd $$(make _docker-get-dir)
 	cat $(or $(FILE), Dockerfile) $(DOCKER_LIB_DIR)/image/Dockerfile.metadata > Dockerfile.effective
 	sed -i " \
-		s#FROM $(DOCKER_LIBRARY_REGISTRY)/elasticsearch:latest#FROM $(DOCKER_LIBRARY_REGISTRY)/elasticsearch:${DOCKER_LIBRARY_ELASTICSEARCH_VERSION}#g; \
-		s#FROM $(DOCKER_LIBRARY_REGISTRY)/nginx:latest#FROM $(DOCKER_LIBRARY_REGISTRY)/nginx:${DOCKER_LIBRARY_NGINX_VERSION}#g; \
-		s#FROM $(DOCKER_LIBRARY_REGISTRY)/node:latest#FROM $(DOCKER_LIBRARY_REGISTRY)/node:${DOCKER_LIBRARY_NODE_VERSION}#g; \
-		s#FROM $(DOCKER_LIBRARY_REGISTRY)/postgres:latest#FROM $(DOCKER_LIBRARY_REGISTRY)/postgres:${DOCKER_LIBRARY_POSTGRES_VERSION}#g; \
-		s#FROM $(DOCKER_LIBRARY_REGISTRY)/python:latest#FROM $(DOCKER_LIBRARY_REGISTRY)/python:${DOCKER_LIBRARY_PYTHON_VERSION}#g; \
-		s#FROM $(DOCKER_LIBRARY_REGISTRY)/python-app:latest#FROM $(DOCKER_LIBRARY_REGISTRY)/python-app:${DOCKER_LIBRARY_PYTHON_APP_VERSION}#g; \
-		s#FROM $(DOCKER_LIBRARY_REGISTRY)/tools:latest#FROM $(DOCKER_LIBRARY_REGISTRY)/tools:${DOCKER_LIBRARY_TOOLS_VERSION}#g; \
-		s#FROM alpine:latest#FROM alpine:${DOCKER_ALPINE_VERSION}#g; \
-		s#FROM bitnami/elasticsearch:latest#FROM bitnami/elasticsearch:${DOCKER_ELASTICSEARCH_VERSION}#g; \
-		s#FROM gradle:latest#FROM gradle:${DOCKER_GRADLE_VERSION}#g; \
-		s#FROM maven:latest#FROM maven:${DOCKER_MAVEN_VERSION}#g; \
-		s#FROM mcr.microsoft.com/dotnet/core/sdk:latest#FROM mcr.microsoft.com/dotnet/core/sdk:${DOCKER_DOTNET_VERSION}#g; \
-		s#FROM nginx:latest#FROM nginx:${DOCKER_NGINX_VERSION}#g; \
-		s#FROM node:latest#FROM node:${DOCKER_NODE_VERSION}#g; \
-		s#FROM openjdk:latest#FROM openjdk:${DOCKER_OPENJDK_VERSION}#g; \
-		s#FROM postgres:latest#FROM postgres:${DOCKER_POSTGRES_VERSION}#g; \
-		s#FROM postman/newman:latest#FROM postman/newman:${DOCKER_POSTMAN_NEWMAN_VERSION}#g; \
-		s#FROM python:latest#FROM python:${DOCKER_PYTHON_VERSION}#g; \
-		s#FROM rodolpheche/wiremock:latest#FROM rodolpheche/wiremock:${DOCKER_WIREMOCK_VERSION}#g; \
+		s#DOCKER_REGISTRY#$(DOCKER_REGISTRY)#g; \
+		s#AWS_ECR#$(AWS_ECR)#g; \
+		s#AWS_ACCOUNT_ID_MGMT#$(AWS_ACCOUNT_ID_MGMT)#g; \
+		s#FROM $(DOCKER_LIBRARY_REGISTRY)/elasticsearch:latest#FROM $(DOCKER_LIBRARY_REGISTRY)/elasticsearch:$(DOCKER_LIBRARY_ELASTICSEARCH_VERSION)#g; \
+		s#FROM $(DOCKER_LIBRARY_REGISTRY)/nginx:latest#FROM $(DOCKER_LIBRARY_REGISTRY)/nginx:$(DOCKER_LIBRARY_NGINX_VERSION)#g; \
+		s#FROM $(DOCKER_LIBRARY_REGISTRY)/node:latest#FROM $(DOCKER_LIBRARY_REGISTRY)/node:$(DOCKER_LIBRARY_NODE_VERSION)#g; \
+		s#FROM $(DOCKER_LIBRARY_REGISTRY)/postgres:latest#FROM $(DOCKER_LIBRARY_REGISTRY)/postgres:$(DOCKER_LIBRARY_POSTGRES_VERSION)#g; \
+		s#FROM $(DOCKER_LIBRARY_REGISTRY)/python:latest#FROM $(DOCKER_LIBRARY_REGISTRY)/python:$(DOCKER_LIBRARY_PYTHON_VERSION)#g; \
+		s#FROM $(DOCKER_LIBRARY_REGISTRY)/python-app:latest#FROM $(DOCKER_LIBRARY_REGISTRY)/python-app:$(DOCKER_LIBRARY_PYTHON_APP_VERSION)#g; \
+		s#FROM $(DOCKER_LIBRARY_REGISTRY)/tools:latest#FROM $(DOCKER_LIBRARY_REGISTRY)/tools:$(DOCKER_LIBRARY_TOOLS_VERSION)#g; \
+		s#FROM alpine:latest#FROM alpine:$(DOCKER_ALPINE_VERSION)#g; \
+		s#FROM bitnami/elasticsearch:latest#FROM bitnami/elasticsearch:$(DOCKER_ELASTICSEARCH_VERSION)#g; \
+		s#FROM gradle:latest#FROM gradle:$(DOCKER_GRADLE_VERSION)#g; \
+		s#FROM maven:latest#FROM maven:$(DOCKER_MAVEN_VERSION)#g; \
+		s#FROM mcr.microsoft.com/dotnet/core/sdk:latest#FROM mcr.microsoft.com/dotnet/core/sdk:$(DOCKER_DOTNET_VERSION)#g; \
+		s#FROM nginx:latest#FROM nginx:$(DOCKER_NGINX_VERSION)#g; \
+		s#FROM node:latest#FROM node:$(DOCKER_NODE_VERSION)#g; \
+		s#FROM openjdk:latest#FROM openjdk:$(DOCKER_OPENJDK_VERSION)#g; \
+		s#FROM postgres:latest#FROM postgres:$(DOCKER_POSTGRES_VERSION)#g; \
+		s#FROM postman/newman:latest#FROM postman/newman:$(DOCKER_POSTMAN_NEWMAN_VERSION)#g; \
+		s#FROM python:latest#FROM python:$(DOCKER_PYTHON_VERSION)#g; \
+		s#FROM rodolpheche/wiremock:latest#FROM rodolpheche/wiremock:$(DOCKER_WIREMOCK_VERSION)#g; \
 	" Dockerfile.effective
 	cd $$dir
 
