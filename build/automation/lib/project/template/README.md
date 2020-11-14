@@ -141,15 +141,15 @@ MFA to the right AWS account using the following command
 
 #### System Context Diagram
 
-Include a link to the System Context diagram
+Include a link to the [C4 model](https://c4model.com/) System Context diagram
 
 #### Container Diagram
 
-Include a link to the Container diagram
+Include a link to the [C4 model](https://c4model.com/) Container diagram
 
 #### Component Diagram
 
-Include a link to the Component diagram
+Include a link to the [C4 model](https://c4model.com/) Component diagram
 
 #### Processes and Data Flow
 
@@ -157,11 +157,11 @@ Include a link to the Processes and Data Flow diagram
 
 #### Infrastructure
 
-Include a link to the Infrastructure diagram
+Include a link to the Infrastructure diagram. Please, be aware that any sensitive information that can be potentially misused either directly or indirectly must not be stored and accessible publicly. This could be IP addresses, domain names or detailed infrastructure information.
 
 #### Networking
 
-Include a link to the Networking diagram
+Include a link to the Networking diagram. Please, be aware that any sensitive information must not be stored and accessible publicly. This could be IP addresses, domain names or detailed networking information.
 
 ### Integration
 
@@ -189,6 +189,8 @@ What sort of data system operates on and processes
 - Different user roles
 - Authosrisation type
 - Authentication method
+
+It is recommended that any other documentation related to the aspect of security should be stored in a private workspace.
 
 ### Technology Stack
 
