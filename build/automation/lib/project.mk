@@ -6,7 +6,7 @@ PROJECT_CONFIG_TIMESTAMP_FILE = $(TMP_DIR)/project-config-timestamp
 # ==============================================================================
 
 project-config: ### Configure project environment
-	make \
+	make -s \
 		git-config \
 		docker-config
 	if [ ! -f $(PROJECT_DIR)/project.code-workspace ]; then

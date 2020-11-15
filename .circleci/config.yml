@@ -29,7 +29,6 @@ jobs:
               test \
               push \
               clean
-            curl --request POST "https://hooks.microbadger.com/images/nhsd/tools/D3mmi11C-dT0VlRZZv2vqimdYJ0="
 
       - run:
           name: Push 'elasticsearch' image
@@ -42,7 +41,6 @@ jobs:
               test \
               push \
               clean
-            curl --request POST "https://hooks.microbadger.com/images/nhsd/elasticsearch/CUcLDfBRSM2kIctxQbBVTM47W4w="
       - run:
           name: Push 'nginx' image
           command: |
@@ -54,7 +52,6 @@ jobs:
               test \
               push \
               clean
-            curl --request POST "https://hooks.microbadger.com/images/nhsd/nginx/Yig4ioTnvCL1zCIJnBTypPLR1ic="
       - run:
           name: Push 'node' image
           command: |
@@ -66,7 +63,17 @@ jobs:
               test \
               push \
               clean
-            curl --request POST "https://hooks.microbadger.com/images/nhsd/node/94ikQd3QKszS1_Y3eGlMcbt5iiI="
+      - run:
+          name: Push 'pipeline' image
+          command: |
+            [ true == $(make git-commit-has-changed-directory DIR=build/automation/lib/docker/image/pipeline) ] || exit 0
+            make docker-login DOCKER_USERNAME=$DOCKER_USERNAME DOCKER_PASSWORD=$DOCKER_PASSWORD
+            cd build/automation/lib/docker/image/pipeline
+            make \
+              build \
+              test \
+              push \
+              clean
       - run:
           name: Push 'postgres' image
           command: |
@@ -78,7 +85,6 @@ jobs:
               test \
               push \
               clean
-            curl --request POST "https://hooks.microbadger.com/images/nhsd/postgres/ei_kYbqtiwOtONIc5PV9_ZB-ANQ="
       - run:
           name: Push 'python' image
           command: |
@@ -90,7 +96,6 @@ jobs:
               test \
               push \
               clean
-            curl --request POST "https://hooks.microbadger.com/images/nhsd/python/CIrtN8vL4NBjH75NnXxM7rWFAbg="
       - run:
           name: Push 'python-app' image
           command: |
@@ -102,7 +107,6 @@ jobs:
               test \
               push \
               clean
-            curl --request POST "https://hooks.microbadger.com/images/nhsd/python-app/4eMOA9iHngrFwZ0fTWlMq4KR9Kk="
       - run:
           name: Run Test Suite
           command: |

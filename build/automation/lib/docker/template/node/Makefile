@@ -8,7 +8,7 @@ dependencies:
 	tar -czf $(DOCKER_DIR)/NAME_TEMPLATE_TO_REPLACE/assets/application.tar.gz *
 
 build: dependencies project-config _copy-ssl-certificate
-	make docker-build NAME=NAME_TEMPLATE_TO_REPLACE
+	make -s docker-build NAME=NAME_TEMPLATE_TO_REPLACE
 
 test:
 	make docker-test NAME=NAME_TEMPLATE_TO_REPLACE GOSS_OPTS="GOSS_SLEEP=3"

@@ -1,0 +1,19 @@
+command:
+  docker --version:
+    exit-status: 0
+
+package:
+  bash:
+    installed: true
+  ca-certificates:
+    installed: true
+  curl:
+    installed: true
+  git:
+    installed: true
+  gnupg:
+    installed: true
+  make:
+    installed: true
+  wget:
+    installed: true

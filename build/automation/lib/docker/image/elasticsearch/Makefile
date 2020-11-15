@@ -5,7 +5,7 @@ include $(abspath $(PROJECT_DIR)/build/automation/init.mk)
 
 build: project-config
 	[ -n "$(FORCE)" ] && target=docker-build || target="docker-image-pull-or-build VERSION=$(DOCKER_LIBRARY_ELASTICSEARCH_VERSION) LATEST=true"
-	make $$target NAME=elasticsearch FROM_CACHE=$(or $(FROM_CACHE), true)
+	make -s $$target NAME=elasticsearch FROM_CACHE=$(or $(FROM_CACHE), true)
 
 test:
 	make docker-test NAME=elasticsearch \

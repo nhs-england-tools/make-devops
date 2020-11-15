@@ -5,7 +5,7 @@ include $(abspath $(PROJECT_DIR)/build/automation/init.mk)
 
 build: project-config _copy-ssl-certificate
 	[ -n "$(FORCE)" ] && target=docker-build || target="docker-image-pull-or-build VERSION=$(DOCKER_LIBRARY_NODE_VERSION) LATEST=true"
-	make $$target NAME=node
+	make -s $$target NAME=node
 
 test:
 	make docker-test NAME=node CMD="bash"
