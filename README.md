@@ -4,7 +4,7 @@ If you hear your teams or individuals saying _"It will take days to onboard a ne
 
 ## Use cases
 
-- CI/CD building blocks to support a clean implementation of your pipelines
+- CI/CD building blocks to support a clean implementation of your pipelines, and vendor agnostic
 - Development workflow with highly customisable project automation scripts (inspired by dotfiles) for advanced \*NIX shell scripting
 - macOS setup to complement the above and fully automate development environment provisioning
 
@@ -12,7 +12,7 @@ If you hear your teams or individuals saying _"It will take days to onboard a ne
 
 - Set up your development environment on a macOS `curl -L bit.ly/make-devops-macos | bash`
 - Instrument your project with the automation scripts `curl -L bit.ly/make-devops-project | bash`
-- Use make targets to support your CI/CD flow
+- Use the make targets to support your CI/CD flow
 
 ## Features
 
@@ -28,15 +28,15 @@ If you hear your teams or individuals saying _"It will take days to onboard a ne
   - [AWS](build/automation/lib/aws.mk)
   - SonarQube (coming soon)
   - Twistlock (coming soon)
-  - Notifications, e.g. email and Slack (coming soon)
-  - Technology radar (coming soon)
+  - Notifications, e.g. email and Slack
+  - Technology radar
   - [macOS](build/automation/lib/macos.mk)
 - Unit and integration [tests](build/automation/test)
 - Example of a monolithic repository structure that consists of multiple projects
-- Architectural decision record [template](documentation/adr/README.md)
+- Architectural decision record [template](build/automation/lib/project/template/documentation/adr/README.md)
 - Deployment [profiles](build/automation/var/profile/README.md)
-- Data Docker image to [run SQL scripts](build/docker/data/assets/sbin/entrypoint.sh) against a database instance
-- Tools Docker image with [various command-line utilities](build/docker/tools/Dockerfile) pre-installed
+- Data Docker image to [run SQL scripts](build/automation/lib/docker/image/postgres/assets/sbin/run.sh) against a database instance
+- Tools Docker image with [various command-line utilities](build/automation/lib/docker/image/tools/Dockerfile) pre-installed
 - [Git hooks](build/automation/etc/githooks)
 - [Git secrets](https://github.com/awslabs/git-secrets)
 - Visual Studio Code and iTerm configuration
@@ -126,7 +126,7 @@ If you hear your teams or individuals saying _"It will take days to onboard a ne
 
 ## CI/CD Design
 
-![DevOps Pipelines](documentation/DevOps-Pipelines.png)
+![DevOps Pipelines](build/automation/lib/project/template/documentation/diagrams/DevOps-Pipelines.png)
 
 ## Status
 

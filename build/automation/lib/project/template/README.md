@@ -52,7 +52,7 @@ A few sentences what business problem this project solves...
 
 - macOS operating system provisioned with the `curl -L bit.ly/make-devops-macos | bash` command
 - `iTerm2` command-line terminal and `Visual Studio Code` source code editor, which will be installed automatically for you in the next steps
-- Before starting any work, please read [CONTRIBUTING.md](CONTRIBUTING.md)
+- Before starting any work, please read [CONTRIBUTING.md](build/automation/lib/project/template/CONTRIBUTING.md)
 
 ### Local Environment Configuration
 
@@ -85,8 +85,8 @@ A few sentences what business problem this project solves...
   - `terraform-format-pre-commit.sh`
 - Code formatting
 - Code quality
-- Reference the `TODO.md` file
-- Reference the `CONTRIBUTING.md` file
+- Reference the [TODO.md](build/automation/lib/project/template/TODO.md) file
+- Reference the [CONTRIBUTING.md](build/automation/lib/project/template/CONTRIBUTING.md) file
 - Provide guidance on how to use feature toggles and branching by abstraction
 
 ## Testing
@@ -118,7 +118,7 @@ List all the pipelines and their purpose
 - Cleanup
 - Production (deployment)
 
-Reference the `jenkins/README.md` file
+Reference the [jenkins/README.md](build/automation/lib/jenkins/README.md) file
 
 ### Deployment From the Command-line
 

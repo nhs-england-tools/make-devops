@@ -440,6 +440,7 @@ _macos-config-visual-studio-code:
 	code --force --install-extension ms-azuretools.vscode-docker
 	code --force --install-extension ms-python.anaconda-extension-pack
 	code --force --install-extension ms-python.python
+	code --force --install-extension ms-toolsai.jupyter
 	code --force --install-extension ms-vsliveshare.vsliveshare-pack
 	code --force --install-extension msjsdiag.debugger-for-chrome
 	code --force --install-extension msjsdiag.vscode-react-native

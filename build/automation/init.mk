@@ -78,6 +78,11 @@ devops-test-cleanup: ### Clean up adter the tests
 devops-copy: ### Copy the DevOps automation toolchain scripts to given destination - optional: DIR
 	function sync() {
 		cd $(PROJECT_DIR)
+		mkdir -p \
+			$(DIR)/.github \
+			$(DIR)/documentation/adr \
+			$(DIR)/documentation/diagrams
+		# Library files
 		rsync -rav \
 			--include=build/ \
 			--exclude=automation/etc/certificate/certificate.* \
@@ -85,21 +90,27 @@ devops-copy: ### Copy the DevOps automation toolchain scripts to given destinati
 			--exclude=Jenkinsfile \
 			build/* \
 			$(DIR)/build
+		cp -fv .github/CODEOWNERS $(DIR)/.github/CODEOWNERS && sed -i "s;@nhsd-exeter/admins;@nhsd-exeter/maintainers;" $(DIR)/.github/CODEOWNERS
+		cp -fv LICENSE.md $(DIR)/build/automation/LICENSE.md
 		[ -f $(DIR)/build/automation/etc/certificate/*.pem ] && rm -fv $(DIR)/build/automation/etc/certificate/.gitignore
 		[ -f $(DIR)/build/docker/docker-compose.yml ] && rm -fv $(DIR)/build/docker/.gitkeep
-		mkdir -p \
-			$(DIR)/.github \
-			$(DIR)/documentation/adr
-		cp -fv .github/CODEOWNERS $(DIR)/.github/CODEOWNERS && sed -i "s;@nhsd-exeter/admins;@nhsd-exeter/maintainers;" $(DIR)/.github/CODEOWNERS
-		cp -fv build/automation/lib/project/template/.gitattributes $(DIR)
-		cp -fv build/automation/lib/project/template/project.code-workspace $(DIR)
-		cp -fv documentation/adr/README.md $(DIR)/documentation/adr
-		cp -fv .editorconfig $(DIR)
-		cp -fv .gitignore $(DIR)
-		cp -fv CONTRIBUTING.md $(DIR)
-		cp -fv LICENSE.md $(DIR)/build/automation/LICENSE.md
+		# Project key files
 		[ ! -f $(DIR)/Makefile ] && cp -fv build/automation/lib/project/template/Makefile $(DIR)
+		cp -fv build/automation/lib/project/template/.editorconfig $(DIR)
+		cp -fv build/automation/lib/project/template/.gitattributes $(DIR)
+		cp -fv build/automation/lib/project/template/.gitignore $(DIR)
+		cp -fv build/automation/lib/project/template/project.code-workspace $(DIR)
+		# Project documentation
 		[ ! -f $(DIR)/README.md ] && cp -fv build/automation/lib/project/template/README.md $(DIR)
+		[ ! -f $(DIR)/TODO.md ] && cp -fv build/automation/lib/project/template/TODO.md $(DIR)/documentation
+		cp -fv build/automation/lib/project/template/CONTRIBUTING.md $(DIR)/documentation
+		cp -fv build/automation/lib/project/template/ONBOARDING.md $(DIR)/documentation
+		cp -fv build/automation/lib/project/template/documentation/adr/README.md $(DIR)/documentation/adr
+		cp -fv build/automation/lib/project/template/documentation/diagrams/DevOps-Pipelines.png $(DIR)/documentation/diagrams
+		# ---
+		[ -f $(DIR)/CONTRIBUTING.md ] && mv -fv $(DIR)/CONTRIBUTING.md $(DIR)/documentation
+		[ -f $(DIR)/TODO.md ] && mv -fv $(DIR)/TODO.md $(DIR)/documentation
+		# ---
 		return 0
 	}
 	function version() {
@@ -129,6 +140,11 @@ devops-update devops-synchronise: ### Update/upgrade the DevOps automation toolc
 	}
 	function sync() {
 		cd $(PROJECT_DIR)
+		mkdir -p \
+			$(PARENT_PROJECT_DIR)/.github \
+			$(PARENT_PROJECT_DIR)/documentation/adr \
+			$(PARENT_PROJECT_DIR)/documentation/diagrams
+		# Library files
 		rsync -rav \
 			--include=build/ \
 			--exclude=automation/etc/certificate/certificate.* \
@@ -136,21 +152,27 @@ devops-update devops-synchronise: ### Update/upgrade the DevOps automation toolc
 			--exclude=Jenkinsfile \
 			build/* \
 			$(PARENT_PROJECT_DIR)/build
+		cp -fv .github/CODEOWNERS $(PARENT_PROJECT_DIR)/.github/CODEOWNERS && sed -i "s;@nhsd-exeter/admins;@nhsd-exeter/maintainers;" $(PARENT_PROJECT_DIR)/.github/CODEOWNERS
+		cp -fv LICENSE.md $(PARENT_PROJECT_DIR)/build/automation/LICENSE.md
 		[ -f $(PARENT_PROJECT_DIR)/build/automation/etc/certificate/*.pem ] && rm -fv $(PARENT_PROJECT_DIR)/build/automation/etc/certificate/.gitignore
 		[ -f $(PARENT_PROJECT_DIR)/docker/docker-compose.yml ] && rm -fv $(PARENT_PROJECT_DIR)/docker/.gitkeep
-		mkdir -p \
-			$(PARENT_PROJECT_DIR)/.github \
-			$(PARENT_PROJECT_DIR)/documentation/adr
-		cp -fv .github/CODEOWNERS $(PARENT_PROJECT_DIR)/.github/CODEOWNERS && sed -i "s;@nhsd-exeter/admins;@nhsd-exeter/maintainers;" $(PARENT_PROJECT_DIR)/.github/CODEOWNERS
-		cp -fv build/automation/lib/project/template/.gitattributes $(PARENT_PROJECT_DIR)
-		cp -fv build/automation/lib/project/template/project.code-workspace $(PARENT_PROJECT_DIR)
-		cp -fv documentation/adr/README.md $(PARENT_PROJECT_DIR)/documentation/adr
-		cp -fv .editorconfig $(PARENT_PROJECT_DIR)
-		cp -fv .gitignore $(PARENT_PROJECT_DIR)
-		cp -fv CONTRIBUTING.md $(PARENT_PROJECT_DIR)
-		cp -fv LICENSE.md $(PARENT_PROJECT_DIR)/build/automation/LICENSE.md
+		# Project key files
 		[ ! -f $(PARENT_PROJECT_DIR)/Makefile ] && cp -fv build/automation/lib/project/template/Makefile $(PARENT_PROJECT_DIR)
+		cp -fv build/automation/lib/project/template/.editorconfig $(PARENT_PROJECT_DIR)
+		cp -fv build/automation/lib/project/template/.gitattributes $(PARENT_PROJECT_DIR)
+		cp -fv build/automation/lib/project/template/.gitignore $(PARENT_PROJECT_DIR)
+		cp -fv build/automation/lib/project/template/project.code-workspace $(PARENT_PROJECT_DIR)
+		# Project documentation
 		[ ! -f $(PARENT_PROJECT_DIR)/README.md ] && cp -fv build/automation/lib/project/template/README.md $(PARENT_PROJECT_DIR)
+		[ ! -f $(PARENT_PROJECT_DIR)/TODO.md ] && cp -fv build/automation/lib/project/template/TODO.md $(PARENT_PROJECT_DIR)/documentation
+		cp -fv build/automation/lib/project/template/CONTRIBUTING.md $(PARENT_PROJECT_DIR)/documentation
+		cp -fv build/automation/lib/project/template/ONBOARDING.md $(PARENT_PROJECT_DIR)/documentation
+		cp -fv build/automation/lib/project/template/documentation/adr/README.md $(PARENT_PROJECT_DIR)/documentation/adr
+		cp -fv build/automation/lib/project/template/documentation/diagrams/DevOps-Pipelines.png $(PARENT_PROJECT_DIR)/documentation/diagrams
+		# ---
+		[ -f $(PARENT_PROJECT_DIR)/CONTRIBUTING.md ] && mv -fv $(PARENT_PROJECT_DIR)/CONTRIBUTING.md $(PARENT_PROJECT_DIR)/documentation
+		[ -f $(PARENT_PROJECT_DIR)/TODO.md ] && mv -fv $(PARENT_PROJECT_DIR)/TODO.md $(PARENT_PROJECT_DIR)/documentation
+		# ---
 		return 0
 	}
 	function version() {
@@ -162,12 +184,9 @@ devops-update devops-synchronise: ### Update/upgrade the DevOps automation toolc
 	function cleanup() {
 		cd $(PARENT_PROJECT_DIR)
 		# Remove not needed project files
-		rm -f \
-			$(PARENT_PROJECT_DIR)/build/docker/.gitkeep
+		rm -f $(PARENT_PROJECT_DIR)/build/docker/.gitkeep
 		# Remove empty project directories
-		rmdir \
-			$(PARENT_PROJECT_DIR)/build/docker \
-			||:
+		rmdir $(PARENT_PROJECT_DIR)/build/docker ||:
 		# Remove old project files and directories
 		rm -rf \
 			~/bin/docker-compose-processor \
@@ -187,7 +206,10 @@ devops-update devops-synchronise: ### Update/upgrade the DevOps automation toolc
 			$(PARENT_PROJECT_DIR)/build/automation/lib/slack/jenkins-pipeline.json \
 			$(PARENT_PROJECT_DIR)/build/automation/var/helpers.mk.default \
 			$(PARENT_PROJECT_DIR)/build/automation/var/override.mk.default \
-			$(PARENT_PROJECT_DIR)/build/docker/Dockerfile.metadata
+			$(PARENT_PROJECT_DIR)/build/docker/Dockerfile.metadata \
+			$(PARENT_PROJECT_DIR)/documentation/DevOps-Pipelines.png \
+			$(PARENT_PROJECT_DIR)/documentation/DevOps.drawio
+		# ---
 		rm -rf \
 			$(PROJECT_DIR) \
 			.git/modules/build \
