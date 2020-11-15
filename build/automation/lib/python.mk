@@ -4,9 +4,9 @@ PYTHON_VERSION_PATCH = 0
 PYTHON_VERSION = $(PYTHON_VERSION_MAJOR).$(PYTHON_VERSION_MINOR).$(PYTHON_VERSION_PATCH)
 PYTHON_BASE_PACKAGES = \
 	awscli-local==0.9 \
-	awscli==1.18.159 \
+	awscli==1.18.178 \
 	black==20.8b1 \
-	boto3==1.15.18 \
+	boto3==1.16.18 \
 	bpython \
 	configparser \
 	coverage \
@@ -16,7 +16,7 @@ PYTHON_BASE_PACKAGES = \
 	pygments \
 	pylint \
 	pyyaml \
-	requests==2.24.0
+	requests==2.25.0
 
 python-virtualenv: ### Setup Python virtual environment - optional: PYTHON_VERSION,PYTHON_VENV_NAME
 	brew update

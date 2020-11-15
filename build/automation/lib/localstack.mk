@@ -1,5 +1,5 @@
 LOCALSTACK_HOST = localstack.$(PROJECT_NAME_SHORT).local
-LOCALSTACK_VERSION = 0.11.4
+LOCALSTACK_VERSION = 0.12.2
 
 localstack-start: ### Start localstack
 	mkdir -p $(TMP_DIR)/localstack
