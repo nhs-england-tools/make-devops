@@ -10,8 +10,8 @@ If you hear your teams or individuals saying _"It will take days to onboard a ne
 
 ## Installation
 
-- Set up your development environment on a macOS `curl -L bit.ly/make-devops-macos | bash`
-- Instrument your project with the automation scripts `curl -L bit.ly/make-devops-project | bash`
+- Set up your development environment on a macOS - this command will install/update and configure your OS packages: `curl -L bit.ly/make-devops-macos | bash`
+- Instrument your project with the automation scripts - this command will create the project structure in the current directory: `curl -L bit.ly/make-devops-project | bash`
 - Use the make targets to support your CI/CD flow
 
 ## Features
@@ -26,14 +26,17 @@ If you hear your teams or individuals saying _"It will take days to onboard a ne
   - [Kubernetes](build/automation/lib/k8s.mk)
   - [Terraform](build/automation/lib/terraform.mk)
   - [AWS](build/automation/lib/aws.mk)
-  - SonarQube (coming soon)
-  - Twistlock (coming soon)
   - Notifications, e.g. email and Slack
   - Technology radar
   - [macOS](build/automation/lib/macos.mk)
+- Documentation templates
+  - [ONBOARDING.md](build/automation/lib/project/template/ONBOARDING.md)
+  - [README.md](build/automation/lib/project/template/README.md)
+  - [CONTRIBUTING.md](build/automation/lib/project/template/CONTRIBUTING.md)
+  - [TODO.md](build/automation/lib/project/template/TODO.md)
+  - [Architectural Decision Record](build/automation/lib/project/template/documentation/adr/README.md)
 - Unit and integration [tests](build/automation/test)
-- Example of a monolithic repository structure that consists of multiple projects
-- Architectural decision record [template](build/automation/lib/project/template/documentation/adr/README.md)
+- Example of the repository structure that can consist of a single or multiple projects
 - Deployment [profiles](build/automation/var/profile/README.md)
 - Data Docker image to [run SQL scripts](build/automation/lib/docker/image/postgres/assets/sbin/run.sh) against a database instance
 - Tools Docker image with [various command-line utilities](build/automation/lib/docker/image/tools/Dockerfile) pre-installed
