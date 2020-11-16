@@ -134,7 +134,7 @@ docker-test: ### Test image - mandatory: NAME; optional: ARGS,CMD,GOSS_OPTS,EXAM
 		$(CMD)
 
 docker-login: ### Log into the Docker registry - optional: DOCKER_USERNAME,DOCKER_PASSWORD
-	if [ -n "$(DOCKER_USERNAME)" ] && [ -n "$(DOCKER_PASSWORD)" ]; then
+	if [ -n "$(DOCKER_USERNAME)" ] && [ -n "$$(make _docker-get-login-password)" ]; then
 		make _docker-get-login-password | docker login --username "$(DOCKER_USERNAME)" --password-stdin
 	else
 		make aws-ecr-get-login-password | docker login --username AWS --password-stdin $(AWS_ECR)
@@ -768,4 +768,5 @@ docker-image-find-and-version-as: ### Find image based on git commit hash and ta
 	_docker-is-lib-image \
 	docker-image-get-digest \
 	docker-image-get-version \
-	docker-image-set-version
+	docker-image-set-version \
+	docker-login
