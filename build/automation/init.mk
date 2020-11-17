@@ -27,6 +27,9 @@ devops-print-variables show-configuration: ### Print all the variables
 		)
 	)
 
+devops-get-variable get-variable: ### Get the specified variable - mandatory: NAME=[variable name]
+	echo $${$(NAME)}
+
 devops-test-suite: ### Run the DevOps unit test suite - optional: DEBUG=true
 	make _devops-test DEBUG=$(DEBUG) TESTS=" \
 		test-file \
@@ -349,7 +352,7 @@ GIT_BRANCH_PATTERN_PREFIX := ^(task|story|epic|spike|fix|test|release|migration)
 GIT_BRANCH_PATTERN_SUFFIX := [A-Za-z]{2,5}-[0-9]{1,5}_[A-Za-z0-9_]{4,32}$$
 GIT_BRANCH_PATTERN := $(GIT_BRANCH_PATTERN_MAIN)|$(GIT_BRANCH_PATTERN_PREFIX)/$(GIT_BRANCH_PATTERN_SUFFIX)
 
-BUILD_ID := $(or $(or $(BUILD_ID), $(CIRCLE_BUILD_NUM)), 0)
+BUILD_ID := $(or $(or $(or $(BUILD_ID), $(CIRCLE_BUILD_NUM)), $(CODEBUILD_BUILD_NUMBER)), 0)
 BUILD_DATE := $(or $(BUILD_DATE), $(shell date -u +"%Y-%m-%dT%H:%M:%S%z"))
 BUILD_TIMESTAMP := $(shell date --date=$(BUILD_DATE) -u +"%Y%m%d%H%M%S")
 BUILD_REPO := $(or $(shell git config --get remote.origin.url 2> /dev/null ||:), unknown)
@@ -522,6 +525,7 @@ endif
 	_devops-synchronise-select-tag-to-install \
 	_devops-test \
 	devops-copy \
+	devops-get-variable get-variable \
 	devops-print-variables show-configuration \
 	devops-setup-aws-accounts \
 	devops-test-single \
