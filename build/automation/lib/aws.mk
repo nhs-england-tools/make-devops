@@ -321,8 +321,56 @@ aws-ses-verify-email-identity: ### Verify SES email address - mandatory: NAME
 	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) ses verify-email-identity \
 			--email-address $(NAME) \
-			--region $(AWS_SES_REGION) \
+			--region $(AWS_ALTERNATIVE_REGION) \
 	"
+
+aws-codeartefact-crate-domain: ### Create CodeArtefact domain - optional: DOMAIN_NAME=[domain name]
+	domain_name=$(or $(DOMAIN_NAME), $(ORG_NAME))
+	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
+		$(AWSCLI) codeartifact create-domain \
+			--domain $$domain_name \
+			--tags key=Service,value=$(SERVICE_TAG_COMMON) \
+			--region $(AWS_ALTERNATIVE_REGION) \
+	"
+
+aws-codeartefact-create-repository: ### Create CodeArtefact repository - mandatory: REPOSITORY_NAME=[repository name],UPSTREAMS=[]; optional: DOMAIN_NAME=[domain name]
+	domain_name=$(or $(DOMAIN_NAME), $(ORG_NAME))
+	upstreams=$$([ -n "$(UPSTREAMS)" ] && echo --upstreams $(UPSTREAMS) ||:)
+	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
+		$(AWSCLI) codeartifact create-repository \
+			--domain $$domain_name \
+			--repository $(REPOSITORY_NAME) \
+			$$upstreams \
+			--tags key=Programme,value=$(PROGRAMME) key=Service,value=$(SERVICE_TAG) \
+			--region $(AWS_ALTERNATIVE_REGION) \
+	"
+
+aws-codeartefact-associate-external-repository: ### Create CodeArtefact external repository association - mandatory: REPOSITORY_NAME=[repository name],EXTERNAL_NAME=[external repository name]; optional: DOMAIN_NAME=[domain name]
+	domain_name=$(or $(DOMAIN_NAME), $(ORG_NAME))
+	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
+		$(AWSCLI) codeartifact associate-external-connection \
+			--domain $$domain_name \
+			--repository $(REPOSITORY_NAME) \
+			--external-connection public:$(EXTERNAL_NAME) \
+			--region $(AWS_ALTERNATIVE_REGION) \
+	"
+
+aws-codeartefact-setup: ### Set up CodeArtefact - mandatory: REPOSITORY_NAME=[repository name]; optional: DOMAIN_NAME=[domain name]
+	repository_name=$(or $(REPOSITORY_NAME), $(PROJECT_ID))
+	make aws-codeartefact-crate-domain ||:
+	# public:npmjs
+	make aws-codeartefact-create-repository REPOSITORY_NAME=$${repository_name}-npmjs-upstream ||:
+	make aws-codeartefact-associate-external-repository REPOSITORY_NAME=$${repository_name}-npmjs-upstream EXTERNAL_NAME=npmjs ||:
+	# public:pypi
+	make aws-codeartefact-create-repository REPOSITORY_NAME=$${repository_name}-pypi-upstream ||:
+	make aws-codeartefact-associate-external-repository REPOSITORY_NAME=$${repository_name}-pypi-upstream EXTERNAL_NAME=pypi ||:
+	# public:maven-central
+	make aws-codeartefact-create-repository REPOSITORY_NAME=$${repository_name}-maven-central-upstream ||:
+	make aws-codeartefact-associate-external-repository REPOSITORY_NAME=$${repository_name}-maven-central-upstream EXTERNAL_NAME=maven-central ||:
+	# project
+	make aws-codeartefact-create-repository \
+		REPOSITORY_NAME=$$repository_name \
+		UPSTREAMS="repositoryName=$${repository_name}-npmjs-upstream repositoryName=$${repository_name}-pypi-upstream repositoryName=$${repository_name}-maven-central-upstream"
 
 # ==============================================================================
 
