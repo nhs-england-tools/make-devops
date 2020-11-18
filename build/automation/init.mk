@@ -313,7 +313,7 @@ devops-setup-aws-accounts: ### Ask user to input valid AWS account IDs to be use
 DEVOPS_PROJECT_ORG := nhsd-exeter
 DEVOPS_PROJECT_NAME := make-devops
 DEVOPS_PROJECT_DIR := $(abspath $(lastword $(MAKEFILE_LIST))/..)
-DEVOPS_PROJECT_VERSION := $(or $(shell git tag --points-at HEAD | sed "s/v//g"), $(shell echo $$(git show -s --format=%cd --date=format:%Y%m%d%H%M%S)-$$(git rev-parse --short HEAD)))
+DEVOPS_PROJECT_VERSION := $(or $(shell git tag --points-at HEAD 2> /dev/null | sed "s/v//g" ||:), $(shell echo $$(git show -s --format=%cd --date=format:%Y%m%d%H%M%S 2> /dev/null ||:)-$$(git rev-parse --short HEAD 2> /dev/null ||:)))
 
 BIN_DIR := $(abspath $(DEVOPS_PROJECT_DIR)/bin)
 BIN_DIR_REL := $(shell echo $(BIN_DIR) | sed "s;$(PROJECT_DIR);;g")
