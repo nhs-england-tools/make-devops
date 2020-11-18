@@ -180,9 +180,7 @@ devops-update devops-synchronise: ### Update/upgrade the DevOps automation toolc
 	}
 	function version() {
 		cd $(PROJECT_DIR)
-		tag=$$([ -n "$$(git tag --points-at HEAD)" ] && echo $$(git tag --points-at HEAD) || echo v$$(git show -s --format=%cd --date=format:%Y%m%d%H%M%S))
-		hash=$$(git rev-parse --short HEAD)
-		echo "$${tag:1}-$${hash}" > $(PARENT_PROJECT_DIR)/build/automation/VERSION
+		make get-variable NAME=DEVOPS_PROJECT_VERSION > $(PARENT_PROJECT_DIR)/build/automation/VERSION
 	}
 	function cleanup() {
 		cd $(PARENT_PROJECT_DIR)
@@ -221,10 +219,12 @@ devops-update devops-synchronise: ### Update/upgrade the DevOps automation toolc
 		git reset -- build/automation/tmp/$(DEVOPS_PROJECT_NAME)
 	}
 	function commit() {
+		cd $(PROJECT_DIR)
+		version=$$(make get-variable NAME=DEVOPS_PROJECT_VERSION)
 		cd $(PARENT_PROJECT_DIR)
 		if [ 0 -lt $$(git status -s | wc -l) ]; then
 			git add .
-			git commit -S -m "Update the DevOps automation toolchain scripts"
+			git commit -S -m "Update the DevOps automation toolchain scripts to $$version"
 		fi
 	}
 	if [ -z "$(__DEVOPS_SYNCHRONISE)" ]; then
@@ -313,6 +313,7 @@ devops-setup-aws-accounts: ### Ask user to input valid AWS account IDs to be use
 DEVOPS_PROJECT_ORG := nhsd-exeter
 DEVOPS_PROJECT_NAME := make-devops
 DEVOPS_PROJECT_DIR := $(abspath $(lastword $(MAKEFILE_LIST))/..)
+DEVOPS_PROJECT_VERSION := $(or $(shell git tag --points-at HEAD | sed "s/v//g"), $(shell echo $$(git show -s --format=%cd --date=format:%Y%m%d%H%M%S)-$$(git rev-parse --short HEAD)))
 
 BIN_DIR := $(abspath $(DEVOPS_PROJECT_DIR)/bin)
 BIN_DIR_REL := $(shell echo $(BIN_DIR) | sed "s;$(PROJECT_DIR);;g")
