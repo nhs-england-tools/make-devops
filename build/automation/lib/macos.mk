@@ -68,6 +68,7 @@ macos-install-essential:: ### Install essential development dependencies - optio
 	brew $$install kustomize ||:
 	brew $$install make ||:
 	brew $$install mas ||:
+	brew $$install minikube ||:
 	brew $$install nvm ||:
 	brew $$install pulumi ||:
 	brew $$install pyenv ||:
