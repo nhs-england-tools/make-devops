@@ -114,6 +114,8 @@ devops-copy: ### Copy the DevOps automation toolchain scripts to given destinati
 		[ -f $(DIR)/CONTRIBUTING.md ] && mv -fv $(DIR)/CONTRIBUTING.md $(DIR)/documentation
 		[ -f $(DIR)/TODO.md ] && mv -fv $(DIR)/TODO.md $(DIR)/documentation
 		# ---
+		make _devops-project-clean DIR=$(DIR)
+		# ---
 		return 0
 	}
 	function version() {
@@ -176,6 +178,8 @@ devops-update devops-synchronise: ### Update/upgrade the DevOps automation toolc
 		[ -f $(PARENT_PROJECT_DIR)/CONTRIBUTING.md ] && mv -fv $(PARENT_PROJECT_DIR)/CONTRIBUTING.md $(PARENT_PROJECT_DIR)/documentation
 		[ -f $(PARENT_PROJECT_DIR)/TODO.md ] && mv -fv $(PARENT_PROJECT_DIR)/TODO.md $(PARENT_PROJECT_DIR)/documentation
 		# ---
+		make _devops-project-clean DIR=$(PARENT_PROJECT_DIR)
+		# ---
 		return 0
 	}
 	function version() {
@@ -183,34 +187,6 @@ devops-update devops-synchronise: ### Update/upgrade the DevOps automation toolc
 		make get-variable NAME=DEVOPS_PROJECT_VERSION > $(PARENT_PROJECT_DIR)/build/automation/VERSION
 	}
 	function cleanup() {
-		cd $(PARENT_PROJECT_DIR)
-		# Remove not needed project files
-		rm -f $(PARENT_PROJECT_DIR)/build/docker/.gitkeep
-		# Remove empty project directories
-		rmdir $(PARENT_PROJECT_DIR)/build/docker ||:
-		# Remove old project files and directories
-		rm -rf \
-			~/bin/docker-compose-processor \
-			~/bin/texas-mfa \
-			~/bin/texas-mfa-clear.sh \
-			~/bin/toggle-natural-scrolling.sh \
-			$(PARENT_PROJECT_DIR)/build/automation/bin/markdown.pl \
-			$(PARENT_PROJECT_DIR)/build/automation/etc/githooks/scripts/*.default \
-			$(PARENT_PROJECT_DIR)/build/automation/etc/platform-texas* \
-			$(PARENT_PROJECT_DIR)/build/automation/lib/dev.mk \
-			$(PARENT_PROJECT_DIR)/build/automation/lib/docker/nginx \
-			$(PARENT_PROJECT_DIR)/build/automation/lib/docker/postgres \
-			$(PARENT_PROJECT_DIR)/build/automation/lib/docker/tools \
-			$(PARENT_PROJECT_DIR)/build/automation/lib/fix \
-			$(PARENT_PROJECT_DIR)/build/automation/lib/k8s/template/deployment/stacks/stack/base/template/network-policy \
-			$(PARENT_PROJECT_DIR)/build/automation/lib/k8s/template/deployment/stacks/stack/base/template/STACK_TEMPLATE_TO_REPLACE/network-policy.yaml \
-			$(PARENT_PROJECT_DIR)/build/automation/lib/slack/jenkins-pipeline.json \
-			$(PARENT_PROJECT_DIR)/build/automation/var/helpers.mk.default \
-			$(PARENT_PROJECT_DIR)/build/automation/var/override.mk.default \
-			$(PARENT_PROJECT_DIR)/build/docker/Dockerfile.metadata \
-			$(PARENT_PROJECT_DIR)/documentation/DevOps-Pipelines.png \
-			$(PARENT_PROJECT_DIR)/documentation/DevOps.drawio
-		# ---
 		rm -rf \
 			$(PROJECT_DIR) \
 			.git/modules/build \
@@ -243,6 +219,38 @@ devops-update devops-synchronise: ### Update/upgrade the DevOps automation toolc
 		fi
 		sync && version && cleanup && commit
 	fi
+
+_devops-project-clean: ### Clean up the project structure - mandatory: DIR=[project directory]
+	# Remove not needed project files
+	[ -n "$(DIR)" ] && rm -f $(DIR)/build/docker/.gitkeep
+	# Remove empty project directories
+	[ -n "$(DIR)" ] && rmdir $(DIR)/build/docker ||:
+	# Remove old project files and directories
+	rm -rf \
+		~/bin/docker-compose-processor \
+		~/bin/texas-mfa \
+		~/bin/texas-mfa-clear.sh \
+		~/bin/toggle-natural-scrolling.sh \
+		~/usr/mfa-aliases
+	[ -n "$(DIR)" ] && rm -rf \
+		$(DIR)/build/automation/bin/markdown.pl \
+		$(DIR)/build/automation/etc/githooks/scripts/*.default \
+		$(DIR)/build/automation/etc/platform-texas* \
+		$(DIR)/build/automation/lib/dev.mk \
+		$(DIR)/build/automation/lib/docker/nginx \
+		$(DIR)/build/automation/lib/docker/postgres \
+		$(DIR)/build/automation/lib/docker/tools \
+		$(DIR)/build/automation/lib/fix \
+		$(DIR)/build/automation/lib/k8s/template/deployment/stacks/stack/base/template/network-policy \
+		$(DIR)/build/automation/lib/k8s/template/deployment/stacks/stack/base/template/STACK_TEMPLATE_TO_REPLACE/network-policy.yaml \
+		$(DIR)/build/automation/lib/slack/jenkins-pipeline.json \
+		$(DIR)/build/automation/usr/mfa-aliases \
+		$(DIR)/build/automation/var/helpers.mk.default \
+		$(DIR)/build/automation/var/override.mk.default \
+		$(DIR)/build/docker/Dockerfile.metadata \
+		$(DIR)/documentation/DevOps-Pipelines.png \
+		$(DIR)/documentation/DevOps.drawio
+	exit 0
 
 _devops-synchronise-select-tag-to-install: ### TODO: This is WIP
 	cd $(TMP_DIR)/$(DEVOPS_PROJECT_NAME)

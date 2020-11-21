@@ -30,6 +30,7 @@
 
 - `tns` - Toggle natural scrolling
 - `tx-mfa` - Prompt for new AWS MFA session, use `tx-mfa-clear` to clear it
+- `tx-ssm-connect` - Prompt for new AWS SSM session
 - `nvm` (Node), `pyenv` (Python), `jenv` (Java), `gvm` (Go) to set up and switch virtual environments
 - Git
   - `gs` (git status --short)

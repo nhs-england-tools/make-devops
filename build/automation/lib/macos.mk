@@ -134,6 +134,11 @@ macos-install-additional:: ### Install additional development dependencies - opt
 	# brew cask reinstall --force \
 	# 	https://raw.githubusercontent.com/Homebrew/homebrew-cask/5a0a2b2322e35ec867f6633ca985ee485255f0b1/Casks/virtualbox-extension-pack.rb ||:
 	brew cask $$install virtualbox-extension-pack ||:
+	# AWS SSM Session Manager
+	curl -fsSL https://s3.amazonaws.com/session-manager-downloads/plugin/latest/mac/sessionmanager-bundle.zip -o /tmp/sessionmanager-bundle.zip
+	unzip /tmp/sessionmanager-bundle.zip -d /tmp
+	sudo /tmp/sessionmanager-bundle/install -i /usr/local/sessionmanagerplugin -b /usr/local/bin/session-manager-plugin
+	rm -rf /tmp/sessionmanager-bundle*
 
 macos-install-corporate:: ### Install corporate dependencies - optional: REINSTALL=true
 	install="install"
@@ -353,6 +358,7 @@ _macos-config-command-line:
 	[ ! -f ~/.aws/credentials ] && echo -e "[default]\naws_access_key_id = xxx\naws_secret_access_key = xxx\n\n# TODO: Add AWS credentials" > ~/.aws/credentials
 	cp $(BIN_DIR)/* ~/bin
 	cp $(USR_DIR)/* ~/usr
+	make _devops-project-clean DIR=
 	chmod 700 ~/.ssh
 	rm -f ~/.zcompdump*
 	mkdir -p $(DEV_OHMYZSH_DIR)/plugins/$(DEVOPS_PROJECT_NAME)

@@ -13,6 +13,7 @@ PYTHON_BASE_PACKAGES = \
 	diagrams \
 	flake8 \
 	mypy \
+	prettytable \
 	pygments \
 	pylint \
 	pyyaml \

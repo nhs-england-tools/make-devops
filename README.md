@@ -44,7 +44,8 @@ If you hear your teams or individuals saying _"It will take days to onboard a ne
 - [Git secrets](https://github.com/awslabs/git-secrets)
 - Visual Studio Code and iTerm configuration
 - Virtual environments for Python, Go, Java and Node.js
-- AWS MFA [script](build/automation/bin/texas-mfa.py)
+- Texas AWS MFA [script](build/automation/bin/texas-mfa.py)
+- Texas AWS SSM Session Manager [script](build/automation/bin/texas-ssm-connect.py)
 - Toggle natural scrolling [script](build/automation/bin/toggle-natural-scrolling)
 - Remote pair programming and [live collaboration](https://marketplace.visualstudio.com/items?itemName=MS-vsliveshare.vsliveshare)
 
