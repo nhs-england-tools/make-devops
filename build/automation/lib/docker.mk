@@ -471,6 +471,8 @@ docker-run-mvn: ### Run maven container - mandatory: CMD; optional: DIR,ARGS=[Do
 docker-run-node: ### Run node container - mandatory: CMD; optional: DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file],IMAGE=[image name],CONTAINER=[container name]
 	make docker-config > /dev/null 2>&1
 	mkdir -p $(TMP_DIR)/.cache
+	touch $(TMP_DIR)/.npmrc
+	touch $(TMP_DIR)/.yarnrc
 	image=$$([ -n "$(IMAGE)" ] && echo $(IMAGE) || echo node:$(DOCKER_NODE_VERSION))
 	container=$$([ -n "$(CONTAINER)" ] && echo $(CONTAINER) || echo node-$(BUILD_COMMIT_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7))
 	docker run --interactive $(_TTY) --rm \
@@ -481,6 +483,8 @@ docker-run-node: ### Run node container - mandatory: CMD; optional: DIR,ARGS=[Do
 		--env-file <(make _docker-get-variables-from-file VARS_FILE=$(VARS_FILE)) \
 		--volume $(PROJECT_DIR):/project \
 		--volume $(TMP_DIR)/.cache:/home/default/.cache \
+		--volume $(TMP_DIR)/.npmrc:/home/default/.npmrc \
+		--volume $(TMP_DIR)/.yarnrc:/home/default/.yarnrc \
 		--network $(DOCKER_NETWORK) \
 		--workdir /project/$(shell echo $(abspath $(DIR)) | sed "s;$(PROJECT_DIR);;g") \
 		$(ARGS) \

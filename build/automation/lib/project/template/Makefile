@@ -134,6 +134,7 @@ pipeline-create-resources: ## Create all the pipeline deployment supporting reso
 	# Centralised, i.e. `mgmt`
 	eval "$$(make aws-assume-role-export-variables AWS_ACCOUNT_ID=$(AWS_ACCOUNT_ID_MGMT))"
 	#make docker-create-repository NAME=NAME_TEMPLATE_TO_REPLACE
+	#make aws-codeartifact-setup REPOSITORY_NAME=$(PROJECT_GROUP_SHORT)
 
 # ==============================================================================
 

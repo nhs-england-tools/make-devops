@@ -43,7 +43,7 @@ aws-secret-create: ### Create a new secret and save the value - mandatory: NAME=
 			$(AWSCLI) secretsmanager create-secret \
 				--name $(NAME) \
 				--region $(AWS_REGION) \
-				--tags Key=Programme,Value=$(PROGRAMME) Key=Service,Value=$(SERVICE_TAG) Key=Environment,Value=$(ENVIRONMENT) Key=Profile,Value=$(PROFILE) \
+				--tags key=Programme,value=$(PROGRAMME) key=Service,value=$(SERVICE_TAG) key=Environment,value=$(ENVIRONMENT) key=Profile,value=$(PROFILE) \
 				--output text \
 		"
 	else
@@ -153,7 +153,7 @@ aws-s3-create: ### Create secure bucket - mandatory: NAME=[bucket name]
 			--bucket $(NAME) \
 			--versioning-configuration "Status=Enabled" \
 	"
-	tags='TagSet=[{Key=Programme,Value=$(PROGRAMME)},{Key=Service,Value=$(SERVICE_TAG)},{Key=Environment,Value=$(ENVIRONMENT)},{Key=Profile,Value=$(PROFILE)}]'
+	tags='TagSet=[{key=Programme,value=$(PROGRAMME)},{key=Service,value=$(SERVICE_TAG)},{key=Environment,value=$(ENVIRONMENT)},{key=Profile,value=$(PROFILE)}]'
 	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) s3api put-bucket-tagging \
 			--bucket $(NAME) \
@@ -191,7 +191,7 @@ aws-dynamodb-create: ### Create DynamoDB table - mandatory: NAME=[table name],AT
 			--attribute-definitions $(ATTRIBUTE_DEFINITIONS) \
 			--key-schema $(KEY_SCHEMA) \
 			--provisioned-throughput $(or $(PROVISIONED_THROUGHPUT), $$default_throughput) \
-			--tags Key=Programme,Value=$(PROGRAMME) Key=Service,Value=$(SERVICE_TAG) Key=Environment,Value=$(ENVIRONMENT) Key=Profile,Value=$(PROFILE) \
+			--tags key=Programme,value=$(PROGRAMME) key=Service,value=$(SERVICE_TAG) key=Environment,value=$(ENVIRONMENT) key=Profile,value=$(PROFILE) \
 	"
 
 aws-dynamodb-put-item: ### Create DynamoDB item - mandatory: NAME=[table name],ITEM=[json or file://file.json]
@@ -301,7 +301,7 @@ aws-ecr-create-repository: ### Create ECR repository to store an image - mandato
 	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) ecr create-repository \
 			--repository-name $(PROJECT_GROUP_SHORT)/$(PROJECT_NAME_SHORT)/$(NAME) \
-			--tags Key=Programme,Value=$(PROGRAMME) Key=Service,Value=$(SERVICE_TAG) \
+			--tags key=Programme,value=$(PROGRAMME) key=Service,value=$(SERVICE_TAG) \
 	"
 	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) ecr set-repository-policy \
@@ -324,7 +324,7 @@ aws-ses-verify-email-identity: ### Verify SES email address - mandatory: NAME
 			--region $(AWS_ALTERNATIVE_REGION) \
 	"
 
-aws-codeartefact-crate-domain: ### Create CodeArtefact domain - optional: DOMAIN_NAME=[domain name]
+aws-codeartifact-crate-domain: ### Create CodeArtifact domain - optional: DOMAIN_NAME=[domain name]
 	domain_name=$(or $(DOMAIN_NAME), $(ORG_NAME))
 	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) codeartifact create-domain \
@@ -333,7 +333,7 @@ aws-codeartefact-crate-domain: ### Create CodeArtefact domain - optional: DOMAIN
 			--region $(AWS_ALTERNATIVE_REGION) \
 	"
 
-aws-codeartefact-create-repository: ### Create CodeArtefact repository - mandatory: REPOSITORY_NAME=[repository name],UPSTREAMS=[]; optional: DOMAIN_NAME=[domain name]
+aws-codeartifact-create-repository: ### Create CodeArtifact repository - mandatory: REPOSITORY_NAME=[repository name],UPSTREAMS=[]; optional: DOMAIN_NAME=[domain name]
 	domain_name=$(or $(DOMAIN_NAME), $(ORG_NAME))
 	upstreams=$$([ -n "$(UPSTREAMS)" ] && echo --upstreams $(UPSTREAMS) ||:)
 	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
@@ -345,7 +345,7 @@ aws-codeartefact-create-repository: ### Create CodeArtefact repository - mandato
 			--region $(AWS_ALTERNATIVE_REGION) \
 	"
 
-aws-codeartefact-associate-external-repository: ### Create CodeArtefact external repository association - mandatory: REPOSITORY_NAME=[repository name],EXTERNAL_NAME=[external repository name]; optional: DOMAIN_NAME=[domain name]
+aws-codeartifact-associate-external-repository: ### Create CodeArtifact external repository association - mandatory: REPOSITORY_NAME=[repository name],EXTERNAL_NAME=[external repository name]; optional: DOMAIN_NAME=[domain name]
 	domain_name=$(or $(DOMAIN_NAME), $(ORG_NAME))
 	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) codeartifact associate-external-connection \
@@ -355,22 +355,31 @@ aws-codeartefact-associate-external-repository: ### Create CodeArtefact external
 			--region $(AWS_ALTERNATIVE_REGION) \
 	"
 
-aws-codeartefact-setup: ### Set up CodeArtefact - mandatory: REPOSITORY_NAME=[repository name]; optional: DOMAIN_NAME=[domain name]
+aws-codeartifact-setup: ### Set up CodeArtifact - mandatory: REPOSITORY_NAME=[repository name]; optional: DOMAIN_NAME=[domain name]
 	repository_name=$(or $(REPOSITORY_NAME), $(PROJECT_ID))
-	make aws-codeartefact-crate-domain ||:
+	make aws-codeartifact-crate-domain ||:
 	# public:npmjs
-	make aws-codeartefact-create-repository REPOSITORY_NAME=$${repository_name}-npmjs-upstream ||:
-	make aws-codeartefact-associate-external-repository REPOSITORY_NAME=$${repository_name}-npmjs-upstream EXTERNAL_NAME=npmjs ||:
+	make aws-codeartifact-create-repository REPOSITORY_NAME=$${repository_name}-npmjs-upstream ||:
+	make aws-codeartifact-associate-external-repository REPOSITORY_NAME=$${repository_name}-npmjs-upstream EXTERNAL_NAME=npmjs ||:
 	# public:pypi
-	make aws-codeartefact-create-repository REPOSITORY_NAME=$${repository_name}-pypi-upstream ||:
-	make aws-codeartefact-associate-external-repository REPOSITORY_NAME=$${repository_name}-pypi-upstream EXTERNAL_NAME=pypi ||:
+	make aws-codeartifact-create-repository REPOSITORY_NAME=$${repository_name}-pypi-upstream ||:
+	make aws-codeartifact-associate-external-repository REPOSITORY_NAME=$${repository_name}-pypi-upstream EXTERNAL_NAME=pypi ||:
 	# public:maven-central
-	make aws-codeartefact-create-repository REPOSITORY_NAME=$${repository_name}-maven-central-upstream ||:
-	make aws-codeartefact-associate-external-repository REPOSITORY_NAME=$${repository_name}-maven-central-upstream EXTERNAL_NAME=maven-central ||:
+	make aws-codeartifact-create-repository REPOSITORY_NAME=$${repository_name}-maven-central-upstream ||:
+	make aws-codeartifact-associate-external-repository REPOSITORY_NAME=$${repository_name}-maven-central-upstream EXTERNAL_NAME=maven-central ||:
 	# project
-	make aws-codeartefact-create-repository \
+	make aws-codeartifact-create-repository \
 		REPOSITORY_NAME=$$repository_name \
 		UPSTREAMS="repositoryName=$${repository_name}-npmjs-upstream repositoryName=$${repository_name}-pypi-upstream repositoryName=$${repository_name}-maven-central-upstream"
+
+aws-codeartifact-config-npm: ### Configure npm client to use CodeArtifact - mandatory: REPOSITORY_NAME=[repository name]; optional: DOMAIN_NAME=[domain name]
+	domain_name=$(or $(DOMAIN_NAME), $(ORG_NAME))
+	token=$$(make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
+		$(AWSCLI) codeartifact get-authorization-token --domain $$domain_name --domain-owner $(AWS_ACCOUNT_ID_MGMT) --region $(AWS_ALTERNATIVE_REGION) --query authorizationToken --output text \
+	")
+	echo registry=https://$$domain_name-$(AWS_ACCOUNT_ID_MGMT).d.codeartifact.$(AWS_ALTERNATIVE_REGION).amazonaws.com/npm/$(REPOSITORY_NAME)/ > $(TMP_DIR)/.npmrc
+	echo //$$domain_name-$(AWS_ACCOUNT_ID_MGMT).d.codeartifact.$(AWS_ALTERNATIVE_REGION).amazonaws.com/npm/$(REPOSITORY_NAME)/:always-auth=true >> $(TMP_DIR)/.npmrc
+	echo //$$domain_name-$(AWS_ACCOUNT_ID_MGMT).d.codeartifact.$(AWS_ALTERNATIVE_REGION).amazonaws.com/npm/$(REPOSITORY_NAME)/:_authToken=$$token >> $(TMP_DIR)/.npmrc
 
 # ==============================================================================
 
