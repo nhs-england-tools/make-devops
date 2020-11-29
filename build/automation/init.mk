@@ -416,21 +416,21 @@ USR_DIR_REL := $(shell echo $(USR_DIR) | sed "s;$(PROJECT_DIR);;g")
 VAR_DIR := $(abspath $(DEVOPS_PROJECT_DIR)/var)
 VAR_DIR_REL := $(shell echo $(VAR_DIR) | sed "s;$(PROJECT_DIR);;g")
 
-APPLICATION_DIR := $(abspath $(or $(APPLICATION_DIR), $(PROJECT_DIR)/application)) # customisable
+APPLICATION_DIR := $(abspath $(or $(APPLICATION_DIR), $(PROJECT_DIR)/application))
 APPLICATION_DIR_REL = $(shell echo $(APPLICATION_DIR) | sed "s;$(PROJECT_DIR);;g")
 APPLICATION_TEST_DIR := $(abspath $(or $(APPLICATION_TEST_DIR), $(PROJECT_DIR)/test))
 APPLICATION_TEST_DIR_REL = $(shell echo $(APPLICATION_TEST_DIR) | sed "s;$(PROJECT_DIR);;g")
-CONFIG_DIR := $(abspath $(or $(CONFIG_DIR), $(PROJECT_DIR)/config)) # customisable
+CONFIG_DIR := $(abspath $(or $(CONFIG_DIR), $(PROJECT_DIR)/config))
 CONFIG_DIR_REL = $(shell echo $(CONFIG_DIR) | sed "s;$(PROJECT_DIR);;g")
-DATA_DIR := $(abspath $(or $(DATA_DIR), $(PROJECT_DIR)/data)) # customisable
+DATA_DIR := $(abspath $(or $(DATA_DIR), $(PROJECT_DIR)/data))
 DATA_DIR_REL = $(shell echo $(DATA_DIR) | sed "s;$(PROJECT_DIR);;g")
-DEPLOYMENT_DIR := $(abspath $(or $(DEPLOYMENT_DIR), $(PROJECT_DIR)/deployment)) # customisable
+DEPLOYMENT_DIR := $(abspath $(or $(DEPLOYMENT_DIR), $(PROJECT_DIR)/deployment))
 DEPLOYMENT_DIR_REL = $(shell echo $(DEPLOYMENT_DIR) | sed "s;$(PROJECT_DIR);;g")
 GITHOOKS_DIR := $(abspath $(ETC_DIR)/githooks)
 GITHOOKS_DIR_REL = $(shell echo $(GITHOOKS_DIR) | sed "s;$(PROJECT_DIR);;g")
-DOCUMENTATION_DIR := $(abspath $(or $(DOCUMENTATION_DIR), $(PROJECT_DIR)/documentation)) # customisable
+DOCUMENTATION_DIR := $(abspath $(or $(DOCUMENTATION_DIR), $(PROJECT_DIR)/documentation))
 DOCUMENTATION_DIR_REL = $(shell echo $(DOCUMENTATION_DIR) | sed "s;$(PROJECT_DIR);;g")
-INFRASTRUCTURE_DIR := $(abspath $(or $(INFRASTRUCTURE_DIR), $(PROJECT_DIR)/infrastructure)) # customisable
+INFRASTRUCTURE_DIR := $(abspath $(or $(INFRASTRUCTURE_DIR), $(PROJECT_DIR)/infrastructure))
 INFRASTRUCTURE_DIR_REL = $(shell echo $(INFRASTRUCTURE_DIR) | sed "s;$(PROJECT_DIR);;g")
 JQ_DIR_REL := $(shell echo $(abspath $(LIB_DIR)/jq) | sed "s;$(PROJECT_DIR);;g")
 
