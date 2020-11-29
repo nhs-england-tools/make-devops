@@ -315,6 +315,84 @@ devops-setup-aws-accounts: ### Ask user to input valid AWS account IDs to be use
 		printf "\nERROR: Please, before proceeding run \`make macos-setup\`\n\n"
 	fi
 
+devops-setup-aws-accounts-for-service: ### Ask user to input valid AWS account IDs to be used by the DevOps automation toolchain scripts for service accounts
+	file=$(DEV_OHMYZSH_DIR)/plugins/$(DEVOPS_PROJECT_NAME)/aws-platform-default.zsh
+	[ ! -f $$file ] && cp -vf $(DEV_OHMYZSH_DIR)/plugins/$(DEVOPS_PROJECT_NAME)/aws-platform.zsh $$file
+	printf "\nWhat's the service name?\n\n"
+	read -p "PROJECT_ID : " project_id
+	file=$(DEV_OHMYZSH_DIR)/plugins/$(DEVOPS_PROJECT_NAME)/aws-platform-$$project_id.zsh
+	(
+		echo
+		echo "# export: AWS platform variables"
+		echo "export AWS_ACCOUNT_ID_TOOLS=000000000000"
+		echo "export AWS_ACCOUNT_ID_NONPROD=000000000000"
+		echo "export AWS_ACCOUNT_ID_PROD=000000000000"
+		echo
+	) > $$file
+	tools_id=$$(cat $$file | grep "export AWS_ACCOUNT_ID_TOOLS=" | sed "s/export AWS_ACCOUNT_ID_TOOLS=//")
+	nonprod_id=$$(cat $$file | grep "export AWS_ACCOUNT_ID_NONPROD=" | sed "s/export AWS_ACCOUNT_ID_NONPROD=//")
+	prod_id=$$(cat $$file | grep "export AWS_ACCOUNT_ID_PROD=" | sed "s/export AWS_ACCOUNT_ID_PROD=//")
+	printf "\nPlease, provide valid AWS account IDs or press ENTER to leave it unchanged.\n\n"
+	read -p "AWS_ACCOUNT_ID_TOOLS       ($$tools_id) : " new_tools_id
+	read -p "AWS_ACCOUNT_ID_NONPROD     ($$nonprod_id) : " new_nonprod_id
+	read -p "AWS_ACCOUNT_ID_PROD        ($$prod_id) : " new_prod_id
+	printf "\n"
+	if [ -n "$$new_tools_id" ]; then
+		make -s file-replace-content \
+			FILE=$$file \
+			OLD="export AWS_ACCOUNT_ID_TOOLS=$$tools_id" \
+			NEW="export AWS_ACCOUNT_ID_TOOLS=$$new_tools_id" \
+		> /dev/null 2>&1
+	fi
+	if [ -n "$$new_nonprod_id" ]; then
+		make -s file-replace-content \
+			FILE=$$file \
+			OLD="export AWS_ACCOUNT_ID_NONPROD=$$nonprod_id" \
+			NEW="export AWS_ACCOUNT_ID_NONPROD=$$new_nonprod_id" \
+		> /dev/null 2>&1
+	fi
+	if [ -n "$$new_prod_id" ]; then
+		make -s file-replace-content \
+			FILE=$$file \
+			OLD="export AWS_ACCOUNT_ID_PROD=$$prod_id" \
+			NEW="export AWS_ACCOUNT_ID_PROD=$$new_prod_id" \
+		> /dev/null 2>&1
+	fi
+	printf "FILE: $$file\n"
+	cat $$file
+	make -s file-replace-content \
+		FILE=$(DEV_OHMYZSH_DIR)/plugins/$(DEVOPS_PROJECT_NAME)/$(DEVOPS_PROJECT_NAME).plugin.zsh \
+		OLD="\. .*/plugins/$(DEVOPS_PROJECT_NAME)/aws-platform(.)*\.zsh" \
+		NEW="\. $$file" \
+	> /dev/null 2>&1
+	printf "Please, run \`reload\` to make sure that this change takes effect\n\n"
+
+devops-switch-aws-accounts: ### Switch among the set of AWS accounts to be used by the DevOps automation toolchain scripts
+	printf "\n"
+	i=1
+	for service in $$(ls -1 $(DEV_OHMYZSH_DIR)/plugins/$(DEVOPS_PROJECT_NAME)/aws-platform-*.zsh | sed "s;.*/plugins/$(DEVOPS_PROJECT_NAME)/aws-platform-;;g" | sed "s;.zsh;;g"); do
+		echo $$i $$service
+		i=$$((i+1))
+	done
+	printf "\nPlease, select the service? "
+	read -p "" service_id
+	i=1
+	for service in $$(ls -1 $(DEV_OHMYZSH_DIR)/plugins/$(DEVOPS_PROJECT_NAME)/aws-platform-*.zsh | sed "s;.*/plugins/$(DEVOPS_PROJECT_NAME)/aws-platform-;;g" | sed "s;.zsh;;g"); do
+		if [ $$i == "$$service_id" ]; then
+			make -s file-replace-content \
+				FILE=$(DEV_OHMYZSH_DIR)/plugins/$(DEVOPS_PROJECT_NAME)/$(DEVOPS_PROJECT_NAME).plugin.zsh \
+				OLD="\. .*/plugins/$(DEVOPS_PROJECT_NAME)/aws-platform(.)*\.zsh" \
+				NEW="\. $(DEV_OHMYZSH_DIR)/plugins/$(DEVOPS_PROJECT_NAME)/aws-platform-$$service.zsh"
+			printf "FILE: $(DEV_OHMYZSH_DIR)/plugins/$(DEVOPS_PROJECT_NAME)/aws-platform-$$service.zsh\n"
+			cat $(DEV_OHMYZSH_DIR)/plugins/$(DEVOPS_PROJECT_NAME)/aws-platform-$$service.zsh
+			printf "Please, run \`reload\` to make sure that this change takes effect\n\n"
+			break
+		fi
+		i=$$((i+1))
+	done
+
+# TODO: Refactor `devops-setup-aws-accounts`, `devops-setup-aws-accounts-for-service` and `devops-switch-aws-accounts`
+
 # ==============================================================================
 # Project configuration
 
@@ -547,6 +625,8 @@ endif
 	devops-get-variable get-variable \
 	devops-print-variables show-configuration \
 	devops-setup-aws-accounts \
+	devops-setup-aws-accounts-for-service \
+	devops-switch-aws-accounts \
 	devops-test-single \
 	devops-test-suite \
 	help \
