@@ -1,7 +1,10 @@
+# ==============================================================================
+# Settings
+
 provider "aws" {
   region                      = "eu-west-2"
-  access_key                  = "accesskey"
-  secret_key                  = "secretkey"
+  access_key                  = "localstack"
+  secret_key                  = "localstack"
   skip_credentials_validation = true
   skip_requesting_account_id  = true
   skip_metadata_api_check     = true

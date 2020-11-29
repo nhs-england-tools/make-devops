@@ -14,6 +14,9 @@ services:
       - DEBUG=1
       - DATA_DIR=$TMP_DIR/localstack/data
       - DOCKER_HOST=unix:///var/run/docker.sock
+      - AWS_ACCESS_KEY_ID=localstack
+      - AWS_SECRET_ACCESS_KEY=localstack
+      - AWS_DEFAULT_REGION=eu-west-2
     volumes:
       - "$TMP_DIR/localstack:/tmp/localstack"
     networks:

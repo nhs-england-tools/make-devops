@@ -361,6 +361,11 @@ _macos-config-command-line:
 	make _devops-project-clean DIR=
 	chmod 700 ~/.ssh
 	rm -f ~/.zcompdump*
+	make \
+		_macos-config-command-line-make-devops \
+		_macos-config-command-line-aws
+
+_macos-config-command-line-make-devops:
 	mkdir -p $(DEV_OHMYZSH_DIR)/plugins/$(DEVOPS_PROJECT_NAME)
 	(
 		echo
@@ -397,6 +402,8 @@ _macos-config-command-line:
 		echo ". $(DEV_OHMYZSH_DIR)/plugins/$(DEVOPS_PROJECT_NAME)/aws-platform.zsh"
 		echo
 	) > $(DEV_OHMYZSH_DIR)/plugins/$(DEVOPS_PROJECT_NAME)/$(DEVOPS_PROJECT_NAME).plugin.zsh
+
+_macos-config-command-line-aws:
 	if [ ! -f $(DEV_OHMYZSH_DIR)/plugins/$(DEVOPS_PROJECT_NAME)/aws-platform.zsh ]; then
 		(
 			echo

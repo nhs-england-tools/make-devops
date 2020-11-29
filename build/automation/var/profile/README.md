@@ -11,3 +11,4 @@ Profile is a list of configuration options specific to an environment expressed 
 * `test` - test profile that runs nightly in the CI pipeline
 * `demo` - production, UX
 * `live` - production, service
+* `pipeline` - CI/CD execution environment

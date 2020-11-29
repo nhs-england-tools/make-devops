@@ -96,7 +96,6 @@ devops-copy: ### Copy the DevOps automation toolchain scripts to given destinati
 		cp -fv .github/CODEOWNERS $(DIR)/.github/CODEOWNERS && sed -i "s;@nhsd-exeter/admins;@nhsd-exeter/maintainers;" $(DIR)/.github/CODEOWNERS
 		cp -fv LICENSE.md $(DIR)/build/automation/LICENSE.md
 		[ -f $(DIR)/build/automation/etc/certificate/*.pem ] && rm -fv $(DIR)/build/automation/etc/certificate/.gitignore
-		[ -f $(DIR)/build/docker/docker-compose.yml ] && rm -fv $(DIR)/build/docker/.gitkeep
 		# Project key files
 		[ ! -f $(DIR)/Makefile ] && cp -fv build/automation/lib/project/template/Makefile $(DIR)
 		cp -fv build/automation/lib/project/template/.editorconfig $(DIR)
@@ -247,6 +246,7 @@ _devops-project-clean: ### Clean up the project structure - mandatory: DIR=[proj
 		$(DIR)/build/automation/usr/mfa-aliases \
 		$(DIR)/build/automation/var/helpers.mk.default \
 		$(DIR)/build/automation/var/override.mk.default \
+		$(DIR)/build/automation/var/platform-texas/account-*.mk \
 		$(DIR)/build/docker/Dockerfile.metadata \
 		$(DIR)/documentation/DevOps-Pipelines.png \
 		$(DIR)/documentation/DevOps.drawio
@@ -338,22 +338,22 @@ USR_DIR_REL := $(shell echo $(USR_DIR) | sed "s;$(PROJECT_DIR);;g")
 VAR_DIR := $(abspath $(DEVOPS_PROJECT_DIR)/var)
 VAR_DIR_REL := $(shell echo $(VAR_DIR) | sed "s;$(PROJECT_DIR);;g")
 
-APPLICATION_DIR := $(abspath $(or $(APPLICATION_DIR), $(PROJECT_DIR)/application))
-APPLICATION_DIR_REL := $(shell echo $(APPLICATION_DIR) | sed "s;$(PROJECT_DIR);;g")
+APPLICATION_DIR := $(abspath $(or $(APPLICATION_DIR), $(PROJECT_DIR)/application)) # customisable
+APPLICATION_DIR_REL = $(shell echo $(APPLICATION_DIR) | sed "s;$(PROJECT_DIR);;g")
 APPLICATION_TEST_DIR := $(abspath $(or $(APPLICATION_TEST_DIR), $(PROJECT_DIR)/test))
-APPLICATION_TEST_DIR_REL := $(shell echo $(APPLICATION_TEST_DIR) | sed "s;$(PROJECT_DIR);;g")
-CONFIG_DIR := $(abspath $(or $(CONFIG_DIR), $(PROJECT_DIR)/config))
-CONFIG_DIR_REL := $(shell echo $(CONFIG_DIR) | sed "s;$(PROJECT_DIR);;g")
-DATA_DIR := $(abspath $(or $(DATA_DIR), $(PROJECT_DIR)/data))
-DATA_DIR_REL := $(shell echo $(DATA_DIR) | sed "s;$(PROJECT_DIR);;g")
-DEPLOYMENT_DIR := $(abspath $(or $(DEPLOYMENT_DIR), $(PROJECT_DIR)/deployment))
-DEPLOYMENT_DIR_REL := $(shell echo $(DEPLOYMENT_DIR) | sed "s;$(PROJECT_DIR);;g")
+APPLICATION_TEST_DIR_REL = $(shell echo $(APPLICATION_TEST_DIR) | sed "s;$(PROJECT_DIR);;g")
+CONFIG_DIR := $(abspath $(or $(CONFIG_DIR), $(PROJECT_DIR)/config)) # customisable
+CONFIG_DIR_REL = $(shell echo $(CONFIG_DIR) | sed "s;$(PROJECT_DIR);;g")
+DATA_DIR := $(abspath $(or $(DATA_DIR), $(PROJECT_DIR)/data)) # customisable
+DATA_DIR_REL = $(shell echo $(DATA_DIR) | sed "s;$(PROJECT_DIR);;g")
+DEPLOYMENT_DIR := $(abspath $(or $(DEPLOYMENT_DIR), $(PROJECT_DIR)/deployment)) # customisable
+DEPLOYMENT_DIR_REL = $(shell echo $(DEPLOYMENT_DIR) | sed "s;$(PROJECT_DIR);;g")
 GITHOOKS_DIR := $(abspath $(ETC_DIR)/githooks)
-GITHOOKS_DIR_REL := $(shell echo $(GITHOOKS_DIR) | sed "s;$(PROJECT_DIR);;g")
-DOCUMENTATION_DIR := $(abspath $(or $(DOCUMENTATION_DIR), $(PROJECT_DIR)/documentation))
-DOCUMENTATION_DIR_REL := $(shell echo $(DOCUMENTATION_DIR) | sed "s;$(PROJECT_DIR);;g")
-INFRASTRUCTURE_DIR := $(abspath $(or $(INFRASTRUCTURE_DIR), $(PROJECT_DIR)/infrastructure))
-INFRASTRUCTURE_DIR_REL := $(shell echo $(INFRASTRUCTURE_DIR) | sed "s;$(PROJECT_DIR);;g")
+GITHOOKS_DIR_REL = $(shell echo $(GITHOOKS_DIR) | sed "s;$(PROJECT_DIR);;g")
+DOCUMENTATION_DIR := $(abspath $(or $(DOCUMENTATION_DIR), $(PROJECT_DIR)/documentation)) # customisable
+DOCUMENTATION_DIR_REL = $(shell echo $(DOCUMENTATION_DIR) | sed "s;$(PROJECT_DIR);;g")
+INFRASTRUCTURE_DIR := $(abspath $(or $(INFRASTRUCTURE_DIR), $(PROJECT_DIR)/infrastructure)) # customisable
+INFRASTRUCTURE_DIR_REL = $(shell echo $(INFRASTRUCTURE_DIR) | sed "s;$(PROJECT_DIR);;g")
 JQ_DIR_REL := $(shell echo $(abspath $(LIB_DIR)/jq) | sed "s;$(PROJECT_DIR);;g")
 
 GIT_BRANCH_PATTERN_MAIN := ^(master|main|develop)$$
@@ -371,15 +371,15 @@ BUILD_COMMIT_DATE := $(or $(shell TZ=UTC git show -s --format=%cd --date=format-
 BUILD_COMMIT_AUTHOR_NAME := $(shell git show -s --format='%an' HEAD 2> /dev/null ||:)
 BUILD_COMMIT_AUTHOR_EMAIL := $(shell git show -s --format='%ae' HEAD 2> /dev/null ||:)
 BUILD_COMMIT_MESSAGE := $(shell git log -1 --pretty=%B HEAD 2> /dev/null ||:)
-PROFILE := $(or $(PROFILE), local)
-ENVIRONMENT := $(or $(ENVIRONMENT), $(shell ([ $(PROFILE) = local ] && echo local) || ( echo $(BUILD_BRANCH) | grep -Eoq '$(GIT_BRANCH_PATTERN_SUFFIX)' && (echo $(BUILD_BRANCH) | grep -Eo '[A-Za-z]{2,5}-[0-9]{1,5}' | tr '[:upper:]' '[:lower:]') || ([ $(BUILD_BRANCH) = master ] && echo $(PROFILE)))))
 USER_ID := $(shell id -u)
 GROUP_ID := $(shell id -g)
 TTY_ENABLE := $(or $(TTY_ENABLE), $(shell [ $(BUILD_ID) -eq 0 ] && echo true || echo false))
 _TTY := $$([ -t 0 ] && [ $(TTY_ENABLE) = true ] && echo "--tty")
-
 GOSS_PATH := $(BIN_DIR)/goss-linux-amd64
 SETUP_COMPLETE_FLAG_FILE := $(TMP_DIR)/.make-devops-setup-complete
+
+PROFILE := $(or $(PROFILE), local)
+ENVIRONMENT := $(or $(ENVIRONMENT), $(shell ([ $(PROFILE) = local ] && echo local) || ( echo $(BUILD_BRANCH) | grep -Eoq '$(GIT_BRANCH_PATTERN_SUFFIX)' && (echo $(BUILD_BRANCH) | grep -Eo '[A-Za-z]{2,5}-[0-9]{1,5}' | tr '[:upper:]' '[:lower:]') || ([ $(BUILD_BRANCH) = master ] && echo $(PROFILE)))))
 
 # ==============================================================================
 # `make` configuration
@@ -427,6 +427,7 @@ endif
 ifeq (true, $(shell [ "local" == "$(PROFILE)" ] && echo true))
 AWS_ACCOUNT_ID_LIVE_PARENT := $(or $(AWS_ACCOUNT_ID_LIVE_PARENT), 000000000000)
 AWS_ACCOUNT_ID_MGMT := $(or $(AWS_ACCOUNT_ID_MGMT), 000000000000)
+AWS_ACCOUNT_ID_TOOLS := $(or $(AWS_ACCOUNT_ID_TOOLS), 000000000000)
 AWS_ACCOUNT_ID_NONPROD := $(or $(AWS_ACCOUNT_ID_NONPROD), 000000000000)
 AWS_ACCOUNT_ID_PROD := $(or $(AWS_ACCOUNT_ID_PROD), 000000000000)
 endif
@@ -446,6 +447,12 @@ endif
 ifndef PROJECT_NAME_SHORT
 $(error PROJECT_NAME_SHORT is not set in build/automation/var/project.mk)
 endif
+ifndef PROJECT_DISPLAY_NAME
+$(error PROJECT_DISPLAY_NAME is not set in build/automation/var/project.mk)
+endif
+ifndef PROJECT_ID
+$(error PROJECT_ID is not set in build/automation/var/project.mk)
+endif
 ifndef PROGRAMME
 $(error PROGRAMME is not set in build/automation/var/project.mk)
 endif
@@ -460,11 +467,14 @@ ifndef ROLE_PREFIX
 $(error ROLE_PREFIX is not set in build/automation/var/project.mk)
 endif
 
-ifndef AWS_ACCOUNT_ID_LIVE_PARENT
+ifeq (true, $(shell [ -z "$(AWS_ACCOUNT_ID_LIVE_PARENT)" ] && [ -z "$(AWS_ACCOUNT_ID_TOOLS)" ] && echo true))
 $(info AWS_ACCOUNT_ID_LIVE_PARENT is not set in ~/.dotfiles/oh-my-zsh/plugins/make-devops/aws-platform.zsh or in your CI config, run `make devops-setup-aws-accounts`)
 endif
-ifndef AWS_ACCOUNT_ID_MGMT
+ifeq (true, $(shell [ -z "$(AWS_ACCOUNT_ID_MGMT)" ] && [ -z "$(AWS_ACCOUNT_ID_TOOLS)" ] && echo true))
 $(info AWS_ACCOUNT_ID_MGMT is not set in ~/.dotfiles/oh-my-zsh/plugins/make-devops/aws-platform.zsh or in your CI config, run `make devops-setup-aws-accounts`)
+endif
+ifeq (true, $(shell [ -z "$(AWS_ACCOUNT_ID_TOOLS)" ] && ([ -z "$(AWS_ACCOUNT_ID_MGMT)" ] || [ -z "$(AWS_ACCOUNT_ID_LIVE_PARENT)" ]) && echo true))
+$(info AWS_ACCOUNT_ID_TOOLS is not set in ~/.dotfiles/oh-my-zsh/plugins/make-devops/aws-platform.zsh or in your CI config, run `make devops-setup-aws-accounts`)
 endif
 ifndef AWS_ACCOUNT_ID_NONPROD
 $(info AWS_ACCOUNT_ID_NONPROD is not set in ~/.dotfiles/oh-my-zsh/plugins/make-devops/aws-platform.zsh or in your CI config, run `make devops-setup-aws-accounts`)

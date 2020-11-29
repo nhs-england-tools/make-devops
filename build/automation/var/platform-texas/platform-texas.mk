@@ -1,10 +1,10 @@
-AWS_ECR := $(or $(AWS_ACCOUNT_ID_MGMT), 000000000000).dkr.ecr.eu-west-2.amazonaws.com
+AWS_ECR = $(or $(AWS_ACCOUNT_ID_MGMT), 000000000000).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com
 AWS_REGION = eu-west-2
 AWS_DEFAULT_REGION = $(AWS_REGION)
 AWS_ALTERNATIVE_REGION = eu-west-1
 AWS_ROLE_JENKINS = jenkins_assume_role
 AWS_ROLE_SESSION = jenkins
-AWS_ROLE := $(if $(HUDSON_URL),$(AWS_ROLE_JENKINS),Developer)
+AWS_ROLE = $(if $(HUDSON_URL),$(AWS_ROLE_JENKINS),Developer)
 
 # ==============================================================================
 

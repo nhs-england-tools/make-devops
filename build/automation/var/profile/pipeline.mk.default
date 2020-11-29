@@ -1,4 +1,4 @@
-include $(VAR_DIR)/platform-texas/default/account-live-k8s-nonprod.mk
+include $(VAR_DIR)/platform-texas/revamp/account-tools.mk
 
 # ==============================================================================
 # Service variables
@@ -6,5 +6,5 @@ include $(VAR_DIR)/platform-texas/default/account-live-k8s-nonprod.mk
 # ==============================================================================
 # Infrastructure variables
 
-DEPLOYMENT_STACKS = application
-INFRASTRUCTURE_STACKS = database
+DEPLOYMENT_STACKS = pipeline
+INFRASTRUCTURE_STACKS = pipeline

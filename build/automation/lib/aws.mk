@@ -43,7 +43,7 @@ aws-secret-create: ### Create a new secret and save the value - mandatory: NAME=
 			$(AWSCLI) secretsmanager create-secret \
 				--name $(NAME) \
 				--region $(AWS_REGION) \
-				--tags key=Programme,value=$(PROGRAMME) key=Service,value=$(SERVICE_TAG) key=Environment,value=$(ENVIRONMENT) key=Profile,value=$(PROFILE) \
+				--tags Key=Programme,Value=$(PROGRAMME) Key=Service,Value=$(SERVICE_TAG) Key=Environment,Value=$(ENVIRONMENT) Key=Profile,Value=$(PROFILE) \
 				--output text \
 		"
 	else
@@ -153,7 +153,7 @@ aws-s3-create: ### Create secure bucket - mandatory: NAME=[bucket name]
 			--bucket $(NAME) \
 			--versioning-configuration "Status=Enabled" \
 	"
-	tags='TagSet=[{key=Programme,value=$(PROGRAMME)},{key=Service,value=$(SERVICE_TAG)},{key=Environment,value=$(ENVIRONMENT)},{key=Profile,value=$(PROFILE)}]'
+	tags='TagSet=[{Key=Programme,Value=$(PROGRAMME)},{Key=Service,Value=$(SERVICE_TAG)},{Key=Environment,Value=$(ENVIRONMENT)},{Key=Profile,Value=$(PROFILE)}]'
 	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) s3api put-bucket-tagging \
 			--bucket $(NAME) \
@@ -191,7 +191,7 @@ aws-dynamodb-create: ### Create DynamoDB table - mandatory: NAME=[table name],AT
 			--attribute-definitions $(ATTRIBUTE_DEFINITIONS) \
 			--key-schema $(KEY_SCHEMA) \
 			--provisioned-throughput $(or $(PROVISIONED_THROUGHPUT), $$default_throughput) \
-			--tags key=Programme,value=$(PROGRAMME) key=Service,value=$(SERVICE_TAG) key=Environment,value=$(ENVIRONMENT) key=Profile,value=$(PROFILE) \
+			--tags Key=Programme,Value=$(PROGRAMME) Key=Service,Value=$(SERVICE_TAG) Key=Environment,Value=$(ENVIRONMENT) Key=Profile,Value=$(PROFILE) \
 	"
 
 aws-dynamodb-put-item: ### Create DynamoDB item - mandatory: NAME=[table name],ITEM=[json or file://file.json]
@@ -301,7 +301,7 @@ aws-ecr-create-repository: ### Create ECR repository to store an image - mandato
 	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) ecr create-repository \
 			--repository-name $(PROJECT_GROUP_SHORT)/$(PROJECT_NAME_SHORT)/$(NAME) \
-			--tags key=Programme,value=$(PROGRAMME) key=Service,value=$(SERVICE_TAG) \
+			--tags Key=Programme,Value=$(PROGRAMME) Key=Service,Value=$(SERVICE_TAG) \
 	"
 	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) ecr set-repository-policy \

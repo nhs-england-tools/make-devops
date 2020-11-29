@@ -86,7 +86,10 @@ If you hear your teams or individuals saying _"It will take days to onboard a ne
   - Sort a group of variables alphabetically if there is no direct correlation between them, e.g. `TF_VAR_route53_terraform_state_key`, `TF_VAR_vpc_terraform_state_key`
   - Never modify library files, except the `Makefile` and files that are in the `build/automation/var` directory which are project-specific
   - Always use a single tab character for code indentations
-  - Follow the variables assignment [rules](https://www.gnu.org/software/make/manual/html_node/Flavors.html#Flavors) to avoid an unexpected result
+  - Follow the variable assignment [rules](https://www.gnu.org/software/make/manual/html_node/Flavors.html#Flavors) to avoid an unexpected result
+    - Any project or profile specific variable should be recursively expanded by using the `=` operator
+    - Best practice is to keep all the modules variable assignments as recursively expanded which will allow to override and customise the configuration
+    - However, within the `build/automation/init.mk` simply expanded variables (using `:=`) are preferred as this will enable to inherit value from a corresponding shell variable e.g. `export PROFILE=dev` will work as expected in line `PROFILE := $(or $(PROFILE), local)` and set the profile to `dev`
   - Naming
     - Service tag: `$(PROJECT_GROUP_SHORT)` or its prefix
     - ECR image: `$(PROJECT_GROUP_SHORT)/$(PROJECT_NAME_SHORT)/$(NAME)`

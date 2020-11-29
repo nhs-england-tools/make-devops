@@ -1,4 +1,4 @@
-TERRAFORM_DIR = $(PROJECT_DIR)/infrastructure/stacks
+TERRAFORM_DIR = $(INFRASTRUCTURE_DIR)/stacks
 TERRAFORM_DIR_REL = $(shell echo $(TERRAFORM_DIR) | sed "s;$(PROJECT_DIR);;g")
 TERRAFORM_STATE_KEY = $(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)/$(ENVIRONMENT)
 TERRAFORM_STATE_LOCK = $(or $(TEXAS_TERRAFORM_STATE_LOCK), terraform-service-state-lock-$(ENVIRONMENT))
@@ -31,44 +31,44 @@ terraform-create-stack-from-template: ### Create Terraform stack from template -
 
 # ==============================================================================
 
-terraform-apply-auto-approve: ### Set up infrastructure - mandatory: STACK|STACKS|INFRASTRUCTURE_STACKS=[comma-separated names]; optional: PROFILE=[name],INIT=false,OPTS=[Terraform options]
+terraform-apply-auto-approve: ### Set up infrastructure - mandatory: STACK|STACKS|INFRASTRUCTURE_STACKS=[comma-separated names]; optional: PROFILE=[name],TERRAFORM_INIT=false,OPTS=[Terraform options]
 	make terraform-apply \
 		STACKS="$(or $(STACK), $(or $(STACKS), $(INFRASTRUCTURE_STACKS)))" \
 		CMD="apply" \
 		OPTS="-auto-approve $(OPTS)"
 
-terraform-apply: ### Set up infrastructure - mandatory: STACK|STACKS|INFRASTRUCTURE_STACKS=[comma-separated names]; optional: PROFILE=[name],INIT=false,OPTS=[Terraform options]
+terraform-apply: ### Set up infrastructure - mandatory: STACK|STACKS|INFRASTRUCTURE_STACKS=[comma-separated names]; optional: PROFILE=[name],TERRAFORM_INIT=false,OPTS=[Terraform options]
 	make _terraform-stacks \
 		STACKS="$(or $(STACK), $(or $(STACKS), $(INFRASTRUCTURE_STACKS)))" \
 		CMD="apply $(OPTS)"
 
-terraform-destroy-auto-approve: ### Tear down infrastructure - mandatory: STACK|STACKS|INFRASTRUCTURE_STACKS=[comma-separated names]; optional: PROFILE=[name],INIT=false,OPTS=[Terraform options]
+terraform-destroy-auto-approve: ### Tear down infrastructure - mandatory: STACK|STACKS|INFRASTRUCTURE_STACKS=[comma-separated names]; optional: PROFILE=[name],TERRAFORM_INIT=false,OPTS=[Terraform options]
 	make terraform-destroy \
 		STACKS="$(or $(STACK), $(or $(STACKS), $(INFRASTRUCTURE_STACKS)))" \
 		CMD="destroy" \
 		OPTS="-auto-approve $(OPTS)"
 
-terraform-destroy: ### Tear down infrastructure - mandatory: STACK|STACKS|INFRASTRUCTURE_STACKS=[comma-separated names]; optional: PROFILE=[name],INIT=false,OPTS=[Terraform options]
+terraform-destroy: ### Tear down infrastructure - mandatory: STACK|STACKS|INFRASTRUCTURE_STACKS=[comma-separated names]; optional: PROFILE=[name],TERRAFORM_INIT=false,OPTS=[Terraform options]
 	make _terraform-stacks \
 		STACKS="$(or $(STACK), $(or $(STACKS), $(INFRASTRUCTURE_STACKS)))" \
 		CMD="destroy $(OPTS)"
 
-terraform-plan: ### Show plan - mandatory: STACK|STACKS|INFRASTRUCTURE_STACKS=[comma-separated names]; optional: PROFILE=[name],INIT=false,OPTS=[Terraform options]
+terraform-plan: ### Show plan - mandatory: STACK|STACKS|INFRASTRUCTURE_STACKS=[comma-separated names]; optional: PROFILE=[name],TERRAFORM_INIT=false,OPTS=[Terraform options]
 	make _terraform-stacks \
 		STACKS="$(or $(STACK), $(or $(STACKS), $(INFRASTRUCTURE_STACKS)))" \
 		CMD="plan $(OPTS)"
 
-terraform-output: ### Extract output variables - mandatory: STACK|STACKS|INFRASTRUCTURE_STACKS=[comma-separated names]; optional: PROFILE=[name],INIT=false,OPTS=[Terraform options]
+terraform-output: ### Extract output variables - mandatory: STACK|STACKS|INFRASTRUCTURE_STACKS=[comma-separated names]; optional: PROFILE=[name],TERRAFORM_INIT=false,OPTS=[Terraform options]
 	make -s _terraform-stacks \
 		STACKS="$(or $(STACK), $(or $(STACKS), $(INFRASTRUCTURE_STACKS)))" \
 		CMD="output $(OPTS)"
 
-terraform-show: ### Show state - mandatory: STACK|STACKS|INFRASTRUCTURE_STACKS=[comma-separated names]; optional: PROFILE=[name],INIT=false,OPTS=[Terraform options]
+terraform-show: ### Show state - mandatory: STACK|STACKS|INFRASTRUCTURE_STACKS=[comma-separated names]; optional: PROFILE=[name],TERRAFORM_INIT=false,OPTS=[Terraform options]
 	make -s _terraform-stacks \
 		STACKS="$(or $(STACK), $(or $(STACKS), $(INFRASTRUCTURE_STACKS)))" \
 		CMD="show $(OPTS)"
 
-terraform-unlock: ### Remove state lock - mandatory: STACK|STACKS|INFRASTRUCTURE_STACKS=[comma-separated names],ID=[lock ID]; optional: PROFILE=[name],INIT=false,OPTS=-force
+terraform-unlock: ### Remove state lock - mandatory: STACK|STACKS|INFRASTRUCTURE_STACKS=[comma-separated names],ID=[lock ID]; optional: PROFILE=[name],TERRAFORM_INIT=false,OPTS=-force
 	make _terraform-stacks \
 		STACKS="$(or $(STACK), $(or $(STACKS), $(INFRASTRUCTURE_STACKS)))" \
 		CMD="force-unlock $(ID) $(OPTS)"
@@ -130,7 +130,7 @@ terraform-export-variables-from-json: ### Convert JSON to Terraform input export
 
 # ==============================================================================
 
-_terraform-stacks: ### Set up infrastructure for a given list of stacks - mandatory: STACK|STACKS|INFRASTRUCTURE_STACKS=[comma-separated names],CMD=[Terraform command]; optional: INIT=false,PROFILE=[name]
+_terraform-stacks: ### Set up infrastructure for a given list of stacks - mandatory: STACK|STACKS|INFRASTRUCTURE_STACKS=[comma-separated names],CMD=[Terraform command]; optional: TERRAFORM_INIT=false,PROFILE=[name]
 	# set up
 	eval "$$(make aws-assume-role-export-variables)"
 	eval "$$(make terraform-export-variables)"
@@ -139,9 +139,9 @@ _terraform-stacks: ### Set up infrastructure for a given list of stacks - mandat
 		make _terraform-stack STACK="$$stack" CMD="$(CMD)"
 	done
 
-_terraform-stack: ### Set up infrastructure for a single stack - mandatory: STACK=[name],CMD=[Terraform command]; optional: INIT=false,PROFILE=[name]
-	if ! [[ "$(INIT)" =~ ^(false|no|n|off|0|FALSE|NO|N|OFF)$$ ]]; then
-		make _terraform-reinitialise DIR="$(DIR)" STACK="$(STACK)"
+_terraform-stack: ### Set up infrastructure for a single stack - mandatory: STACK=[name],CMD=[Terraform command]; optional: TERRAFORM_INIT=false,PROFILE=[name]
+	if ! [[ "$(TERRAFORM_INIT)" =~ ^(false|no|n|off|0|FALSE|NO|N|OFF)$$ ]]; then
+		make _terraform-reinitialise DIR="$(TERRAFORM_DIR)" STACK="$(STACK)"
 	fi
 	make docker-run-terraform DIR="$(TERRAFORM_DIR)/$(STACK)" CMD="$(CMD)"
 
@@ -155,7 +155,7 @@ _terraform-initialise: ### Initialise infrastructure state - mandatory: STACK=[n
 			-backend-config="bucket=$(TERRAFORM_STATE_STORE)" \
 			-backend-config="dynamodb_table=$(TERRAFORM_STATE_LOCK)" \
 			-backend-config="encrypt=true" \
-			-backend-config="key=$(PROJECT_GROUP_SHORT)-$(PROJECT_NAME_SHORT)/$(ENVIRONMENT)/$(STACK)/terraform.state" \
+			-backend-config="key=$(TERRAFORM_STATE_KEY)/$(STACK)/terraform.state" \
 			-backend-config="region=$(AWS_REGION)" \
 	"
 

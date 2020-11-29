@@ -1,3 +1,5 @@
+INFRASTRUCTURE_DIR = $(abspath $(TEST_DIR)/terraform/infrastructure)
+TERRAFORM_INIT = false
 TF_VAR_localstack_host = $(LOCALSTACK_HOST)
 
 test-terraform:
