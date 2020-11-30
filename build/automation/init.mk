@@ -89,6 +89,7 @@ devops-copy: ### Copy the DevOps automation toolchain scripts to given destinati
 		rsync -rav \
 			--include=build/ \
 			--exclude=automation/etc/certificate/certificate.* \
+			--exclude=automation/tmp/* \
 			--exclude=automation/var/project.mk \
 			--exclude=Jenkinsfile \
 			build/* \
@@ -104,14 +105,11 @@ devops-copy: ### Copy the DevOps automation toolchain scripts to given destinati
 		cp -fv build/automation/lib/project/template/project.code-workspace $(DIR)
 		# Project documentation
 		[ ! -f $(DIR)/README.md ] && cp -fv build/automation/lib/project/template/README.md $(DIR)
-		[ ! -f $(DIR)/TODO.md ] && cp -fv build/automation/lib/project/template/TODO.md $(DIR)/documentation
+		[ -f $(DIR)/TODO.md ] && mv -fv $(DIR)/TODO.md $(DIR)/documentation; [ ! -f $(DIR)/documentation/TODO.md ] && cp -fv build/automation/lib/project/template/TODO.md $(DIR)/documentation
 		cp -fv build/automation/lib/project/template/CONTRIBUTING.md $(DIR)/documentation
 		cp -fv build/automation/lib/project/template/ONBOARDING.md $(DIR)/documentation
 		cp -fv build/automation/lib/project/template/documentation/adr/README.md $(DIR)/documentation/adr
 		cp -fv build/automation/lib/project/template/documentation/diagrams/DevOps-Pipelines.png $(DIR)/documentation/diagrams
-		# ---
-		[ -f $(DIR)/CONTRIBUTING.md ] && mv -fv $(DIR)/CONTRIBUTING.md $(DIR)/documentation
-		[ -f $(DIR)/TODO.md ] && mv -fv $(DIR)/TODO.md $(DIR)/documentation
 		# ---
 		make _devops-project-clean DIR=$(DIR)
 		# ---
@@ -168,14 +166,11 @@ devops-update devops-synchronise: ### Update/upgrade the DevOps automation toolc
 		cp -fv build/automation/lib/project/template/project.code-workspace $(PARENT_PROJECT_DIR)
 		# Project documentation
 		[ ! -f $(PARENT_PROJECT_DIR)/README.md ] && cp -fv build/automation/lib/project/template/README.md $(PARENT_PROJECT_DIR)
-		[ ! -f $(PARENT_PROJECT_DIR)/TODO.md ] && cp -fv build/automation/lib/project/template/TODO.md $(PARENT_PROJECT_DIR)/documentation
+		[ -f $(PARENT_PROJECT_DIR)/TODO.md ] && mv -fv $(PARENT_PROJECT_DIR)/TODO.md $(PARENT_PROJECT_DIR)/documentation; [ ! -f $(PARENT_PROJECT_DIR)/documentation/TODO.md ] && cp -fv build/automation/lib/project/template/TODO.md $(PARENT_PROJECT_DIR)/documentation
 		cp -fv build/automation/lib/project/template/CONTRIBUTING.md $(PARENT_PROJECT_DIR)/documentation
 		cp -fv build/automation/lib/project/template/ONBOARDING.md $(PARENT_PROJECT_DIR)/documentation
 		cp -fv build/automation/lib/project/template/documentation/adr/README.md $(PARENT_PROJECT_DIR)/documentation/adr
 		cp -fv build/automation/lib/project/template/documentation/diagrams/DevOps-Pipelines.png $(PARENT_PROJECT_DIR)/documentation/diagrams
-		# ---
-		[ -f $(PARENT_PROJECT_DIR)/CONTRIBUTING.md ] && mv -fv $(PARENT_PROJECT_DIR)/CONTRIBUTING.md $(PARENT_PROJECT_DIR)/documentation
-		[ -f $(PARENT_PROJECT_DIR)/TODO.md ] && mv -fv $(PARENT_PROJECT_DIR)/TODO.md $(PARENT_PROJECT_DIR)/documentation
 		# ---
 		make _devops-project-clean DIR=$(PARENT_PROJECT_DIR)
 		# ---
@@ -223,7 +218,7 @@ _devops-project-clean: ### Clean up the project structure - mandatory: DIR=[proj
 	# Remove not needed project files
 	[ -n "$(DIR)" ] && rm -f $(DIR)/build/docker/.gitkeep
 	# Remove empty project directories
-	[ -n "$(DIR)" ] && rmdir $(DIR)/build/docker ||:
+	[ -n "$(DIR)" ] && rmdir $(DIR)/build/docker 2> /dev/null ||:
 	# Remove old project files and directories
 	rm -rf \
 		~/bin/docker-compose-processor \
@@ -249,7 +244,8 @@ _devops-project-clean: ### Clean up the project structure - mandatory: DIR=[proj
 		$(DIR)/build/automation/var/platform-texas/account-*.mk \
 		$(DIR)/build/docker/Dockerfile.metadata \
 		$(DIR)/documentation/DevOps-Pipelines.png \
-		$(DIR)/documentation/DevOps.drawio
+		$(DIR)/documentation/DevOps.drawio \
+		$(DIR)/CONTRIBUTING.md
 	exit 0
 
 _devops-synchronise-select-tag-to-install: ### TODO: This is WIP
