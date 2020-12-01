@@ -243,9 +243,11 @@ _devops-project-clean: ### Clean up the project structure - mandatory: DIR=[proj
 		$(DIR)/build/automation/lib/k8s/template/deployment/stacks/stack/base/template/STACK_TEMPLATE_TO_REPLACE/network-policy.yaml \
 		$(DIR)/build/automation/lib/slack/jenkins-pipeline.json \
 		$(DIR)/build/automation/usr/mfa-aliases \
+		$(DIR)/build/automation/var/*.mk.default \
 		$(DIR)/build/automation/var/helpers.mk.default \
 		$(DIR)/build/automation/var/override.mk.default \
 		$(DIR)/build/automation/var/platform-texas/account-*.mk \
+		$(DIR)/build/automation/var/profile/*.mk.default \
 		$(DIR)/build/docker/Dockerfile.metadata \
 		$(DIR)/documentation/DevOps-Pipelines.png \
 		$(DIR)/documentation/DevOps.drawio \
@@ -484,13 +486,13 @@ ifneq ("$(wildcard $(VAR_DIR)/*.mk)", "")
 	include $(VAR_DIR)/*.mk
 else
 	# Load only if the service project file doesn't exist
-	-include $(VAR_DIR)/project.mk.default
+	-include $(LIB_DIR)/project/template/build/automation/var/project.mk
 endif
 ifneq ("$(wildcard $(VAR_DIR)/profile/$(PROFILE).mk)", "")
 	include $(VAR_DIR)/profile/$(PROFILE).mk
 else
 	# Load only if the service profile file doesn't exist
-	-include $(VAR_DIR)/profile/$(PROFILE).mk.default
+	-include $(LIB_DIR)/project/template/build/automation/var/profile/$(PROFILE).mk
 endif
 ifeq ("$(_DEVOPS_RUN_TEST)", "true")
 	include $(TEST_DIR)/*.mk

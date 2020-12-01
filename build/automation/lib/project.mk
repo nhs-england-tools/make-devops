@@ -59,7 +59,7 @@ project-document-infrastructure: ### Generate infrastructure diagram - optional:
 # ==============================================================================
 
 project-create-profile: ### Create profile file - mandatory: NAME=[profile name]
-	cp -fv $(VAR_DIR_REL)/profile/$(NAME).mk.default $(VAR_DIR_REL)/profile/$(NAME).mk
+	cp -fv $(LIB_DIR_REL)/project/template/build/automation/var/profile/$(NAME).mk $(VAR_DIR_REL)/profile/$(NAME).mk
 
 project-create-contract-test: ### Create contract test project structure from template
 	rm -rf $(APPLICATION_TEST_DIR)/contract
