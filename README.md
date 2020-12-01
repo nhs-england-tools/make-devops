@@ -129,7 +129,10 @@ If you hear your teams or individuals saying _"It will take days to onboard a ne
   - NGINX Instana module by running the `build/automation/lib/docker/image/nginx/Makefile:dependencies` target
   - Gunicorn version in the `build/automation/lib/docker/image/python-app/Dockerfile` file
   - Docker library images version in any `build/automation/lib/docker/image/*/VERSION` file
-  - Terraform `terraform-aws-modules/rds/aws` module version in `build/automation/lib/terraform/template/modules/rds/main.tf`
+  - Terraform modules
+    - `terraform-aws-modules/dynamodb-table/aws` module version in `build/automation/lib/terraform/template/modules/dynamodb/main.tf`
+    - `terraform-aws-modules/rds/aws` module version in `build/automation/lib/terraform/template/modules/rds/main.tf`
+    - `terraform-aws-modules/s3-bucket/aws` module version in `build/automation/lib/terraform/template/modules/s3/main.tf`
 
 ## CI/CD Design
 

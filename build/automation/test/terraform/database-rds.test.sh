@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Arrange
-make project-create-infrastructure STACK=database TEMPLATE=rds
+make project-create-infrastructure MODULE_TEMPLATE=rds STACK_TEMPLATE=rds STACK=database
 make project-create-profile NAME=dev
 cat << HEREDOC >> build/automation/var/profile/dev.mk
 DB_INSTANCE = \$(PROJECT_GROUP_SHORT)-\$(PROJECT_NAME_SHORT)-\$(DB_NAME)-\$(PROFILE)

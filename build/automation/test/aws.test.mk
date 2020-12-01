@@ -8,6 +8,7 @@ test-aws:
 		test-aws-session-fail-if-invalid \
 		test-aws-session-fail-if-invalid-error \
 		test-aws-assume-role-export-variables \
+		test-aws-user-get-role \
 		test-aws-account-check-id \
 		test-aws-account-get-id \
 		test-aws-secret-create-value \
@@ -82,6 +83,9 @@ test-aws-session-fail-if-invalid-error:
 	mk_test "1 = $$ret_code"
 
 test-aws-assume-role-export-variables:
+	mk_test_skip
+
+test-aws-user-get-role:
 	mk_test_skip
 
 test-aws-account-check-id:

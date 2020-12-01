@@ -9,21 +9,25 @@ locals {
     aws_region       = var.aws_region
     aws_profile      = var.aws_profile
 
-    programme           = var.programme
-    project_group       = var.project_group
-    project_group_short = var.project_group_short
-    project_name        = var.project_name
-    project_name_short  = var.project_name_short
-    service_tag         = var.service_tag
-    project_tag         = var.project_tag
-    profile             = var.profile
-    environment         = var.profile
+    org_name             = var.org_name
+    programme            = var.programme
+    project_group        = var.project_group
+    project_group_short  = var.project_group_short
+    project_name         = var.project_name
+    project_name_short   = var.project_name_short
+    project_display_name = var.project_display_name
+    project_id           = var.project_id
+    project_tag          = var.project_tag
+    service_tag          = var.service_tag
+    profile              = var.profile
+    environment          = var.environment
 
     tags = {
       Programme   = var.programme
-      Service     = var.service_tag
       Project     = var.project_tag
-      Environment = var.profile
+      Service     = var.service_tag
+      Profile     = var.profile
+      Environment = var.environment
     }
 
   }
@@ -40,25 +44,15 @@ variable "aws_profile" {}
 # ==============================================================================
 # Project variables set by the Make DevOps automation scripts
 
+variable "org_name" {}
 variable "programme" {}
 variable "project_group" {}
 variable "project_group_short" {}
 variable "project_name" {}
 variable "project_name_short" {}
-variable "service_tag" {}
+variable "project_display_name" {}
+variable "project_id" {}
 variable "project_tag" {}
+variable "service_tag" {}
 variable "profile" {}
-
-# ==============================================================================
-# Settings
-
-provider "aws" {
-  profile = var.aws_profile
-  region  = var.aws_region
-}
-
-terraform {
-  backend "s3" {
-    encrypt = true
-  }
-}
+variable "environment" {}
