@@ -133,6 +133,7 @@ If you hear your teams or individuals saying _"It will take days to onboard a ne
     - `terraform-aws-modules/dynamodb-table/aws` module version in `build/automation/lib/terraform/template/modules/dynamodb/main.tf`
     - `terraform-aws-modules/rds/aws` module version in `build/automation/lib/terraform/template/modules/rds/main.tf`
     - `terraform-aws-modules/s3-bucket/aws` module version in `build/automation/lib/terraform/template/modules/s3/main.tf`
+    - `terraform-aws-modules/vpc/aws` module version in `build/automation/lib/terraform/template/modules/vpc/main.tf`
 
 ## CI/CD Design
 
