@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import boto3
-import configparser
 import os
 import sys
 from prettytable import PrettyTable
@@ -85,7 +84,7 @@ if __name__ == "__main__":
     region = None
     try:
         region = sys.argv[1]
-    except:
+    except IndexError:
         region = input("\nWhich region (default: eu-west-2): ")
         if region == "":
             region = "eu-west-2"
