@@ -1,6 +1,22 @@
 {
   "folders": [
     {
+      "name": "Project Template",
+      "path": "./build/automation/lib/project/template"
+    },
+    {
+      "name": "Terraform Modules & Stacks",
+      "path": "./build/automation/lib/terraform/template"
+    },
+    {
+      "name": "Docker Images",
+      "path": "./build/automation/lib/docker/image"
+    },
+    {
+      "name": "Configuration",
+      "path": "./build/automation/var"
+    },
+    {
       "name": "[Repository]",
       "path": "."
     }
@@ -43,6 +59,7 @@
     "java.home": "/Library/Java/JavaVirtualMachines/adoptopenjdk-14.jdk/Contents/Home",
     "python.formatting.blackArgs": ["--line-length", "120"],
     "python.formatting.provider": "black",
+    "python.languageServer": "Pylance",
     "python.linting.flake8Args": ["--max-line-length=120"],
     "python.linting.flake8Enabled": true,
     "python.linting.flake8Path": "~/.pyenv/versions/3.9.0/bin/flake8",

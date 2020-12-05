@@ -39,7 +39,11 @@ command:
     exit-status: 0
   pip list | grep -iE 'awscli.*1.18':
     exit-status: 0
+  pip list | grep -iE 'black.*20.8':
+    exit-status: 0
   pip list | grep -iE 'boto3.*1.16':
+    exit-status: 0
+  pip list | grep -iE 'diagrams.*0.18':
     exit-status: 0
   pip list | grep -iE 'requests.*2.25':
     exit-status: 0
