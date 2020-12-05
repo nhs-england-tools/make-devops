@@ -1,6 +1,4 @@
 # ==============================================================================
 # User variables
 
-variable "vpc_name" {
-  description = "The VPC network name"
-}
+variable "terraform_networking_vpc_name" { description = "The VPC network name" }
