@@ -91,13 +91,15 @@ devops-copy: ### Copy the DevOps automation toolchain scripts to given destinati
 			--exclude=automation/etc/certificate/certificate.* \
 			--exclude=automation/tmp/* \
 			--exclude=automation/var/project.mk \
-			--exclude=Jenkinsfile \
+			--exclude=jenkins/Jenkinsfile* \
 			build/* \
 			$(DIR)/build
 		cp -fv .github/CODEOWNERS $(DIR)/.github/CODEOWNERS && sed -i "s;@nhsd-exeter/admins;@nhsd-exeter/maintainers;" $(DIR)/.github/CODEOWNERS
+		cp -fv build/automation/tmp/.gitignore $(DIR)/build/automation/tmp/.gitignore
 		cp -fv LICENSE.md $(DIR)/build/automation/LICENSE.md
 		[ -f $(DIR)/build/automation/etc/certificate/*.pem ] && rm -fv $(DIR)/build/automation/etc/certificate/.gitignore
 		# Project key files
+		[ ! -f $(DIR)/build/automation/var/project.mk ] && cp -fv build/automation/lib/project/template/build/automation/var/project.mk $(DIR)/build/automation/var/project.mk
 		[ ! -f $(DIR)/Makefile ] && cp -fv build/automation/lib/project/template/Makefile $(DIR)
 		cp -fv build/automation/lib/project/template/.editorconfig $(DIR)
 		cp -fv build/automation/lib/project/template/.gitattributes $(DIR)
@@ -151,14 +153,16 @@ devops-update devops-synchronise: ### Update/upgrade the DevOps automation toolc
 			--include=build/ \
 			--exclude=automation/etc/certificate/certificate.* \
 			--exclude=automation/var/project.mk \
-			--exclude=Jenkinsfile \
+			--exclude=jenkins/Jenkinsfile* \
 			build/* \
 			$(PARENT_PROJECT_DIR)/build
 		cp -fv .github/CODEOWNERS $(PARENT_PROJECT_DIR)/.github/CODEOWNERS && sed -i "s;@nhsd-exeter/admins;@nhsd-exeter/maintainers;" $(PARENT_PROJECT_DIR)/.github/CODEOWNERS
+		cp -fv build/automation/tmp/.gitignore $(PARENT_PROJECT_DIR)/build/automation/tmp/.gitignore
 		cp -fv LICENSE.md $(PARENT_PROJECT_DIR)/build/automation/LICENSE.md
 		[ -f $(PARENT_PROJECT_DIR)/build/automation/etc/certificate/*.pem ] && rm -fv $(PARENT_PROJECT_DIR)/build/automation/etc/certificate/.gitignore
 		[ -f $(PARENT_PROJECT_DIR)/docker/docker-compose.yml ] && rm -fv $(PARENT_PROJECT_DIR)/docker/.gitkeep
 		# Project key files
+		[ ! -f $(PARENT_PROJECT_DIR)/build/automation/var/project.mk ] && cp -fv build/automation/lib/project/template/build/automation/var/project.mk $(PARENT_PROJECT_DIR)/build/automation/var/project.mk
 		[ ! -f $(PARENT_PROJECT_DIR)/Makefile ] && cp -fv build/automation/lib/project/template/Makefile $(PARENT_PROJECT_DIR)
 		cp -fv build/automation/lib/project/template/.editorconfig $(PARENT_PROJECT_DIR)
 		cp -fv build/automation/lib/project/template/.gitattributes $(PARENT_PROJECT_DIR)
@@ -453,7 +457,7 @@ GOSS_PATH := $(BIN_DIR)/goss-linux-amd64
 SETUP_COMPLETE_FLAG_FILE := $(TMP_DIR)/.make-devops-setup-complete
 
 PROFILE := $(or $(PROFILE), local)
-ENVIRONMENT := $(or $(ENVIRONMENT), $(shell ([ $(PROFILE) = local ] && echo local) || ( echo $(BUILD_BRANCH) | grep -Eoq '$(GIT_BRANCH_PATTERN_SUFFIX)' && (echo $(BUILD_BRANCH) | grep -Eo '[A-Za-z]{2,5}-[0-9]{1,5}' | tr '[:upper:]' '[:lower:]') || ([ $(BUILD_BRANCH) = master ] && echo $(PROFILE)))))
+ENVIRONMENT := $(or $(ENVIRONMENT), $(or $(shell ([ $(PROFILE) = local ] && echo local) || ( echo $(BUILD_BRANCH) | grep -Eoq '$(GIT_BRANCH_PATTERN_SUFFIX)' && (echo $(BUILD_BRANCH) | grep -Eo '[A-Za-z]{2,5}-[0-9]{1,5}' | tr '[:upper:]' '[:lower:]') || ([ $(BUILD_BRANCH) = master ] && echo $(PROFILE)))), unknown))
 
 # ==============================================================================
 # `make` configuration

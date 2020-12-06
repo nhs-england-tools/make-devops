@@ -1,6 +1,10 @@
 {
   "folders": [
     {
+      "name": "Configuration",
+      "path": "./build/automation/var"
+    },
+    {
       "name": "[Repository]",
       "path": "."
     }
