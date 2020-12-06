@@ -1,4 +1,4 @@
-include $(VAR_DIR)/platform-texas/revamp/account-tools.mk
+include $(VAR_DIR)/platform-texas/revamp/account-nonprod.mk
 
 # ==============================================================================
 # Service variables
@@ -6,5 +6,5 @@ include $(VAR_DIR)/platform-texas/revamp/account-tools.mk
 # ==============================================================================
 # Infrastructure variables
 
-DEPLOYMENT_STACKS = pipeline
-INFRASTRUCTURE_STACKS = pipeline
+DEPLOYMENT_STACKS =
+INFRASTRUCTURE_STACKS = terraform-state

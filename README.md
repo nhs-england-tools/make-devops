@@ -4,7 +4,8 @@ If you hear your teams or individuals saying _"It will take days to onboard a ne
 
 ## Use cases
 
-- CI/CD building blocks to support a clean implementation of your pipelines, and vendor agnostic
+- Service team AWS accounts setup with predefined base components to speed up configuration
+- CI/CD building blocks to support a clean implementation of your pipelines and make them vendor agnostic as much as it is feasible
 - Development workflow with highly customisable project automation scripts (inspired by dotfiles) for advanced \*NIX shell scripting
 - macOS setup to complement the above and fully automate development environment provisioning
 
@@ -13,6 +14,7 @@ If you hear your teams or individuals saying _"It will take days to onboard a ne
 - Set up your development environment on a macOS - this command will install/update and configure your OS packages: `curl -L bit.ly/make-devops-macos | bash`
 - Instrument your project with the automation scripts - this command will create the project structure in the current directory: `curl -L bit.ly/make-devops-project | bash`
 - Use the make targets to support your CI/CD flow
+- Configure AWS service team accounts using Terraform templates
 
 ## Features
 
@@ -60,7 +62,7 @@ If you hear your teams or individuals saying _"It will take days to onboard a ne
 ## Conventions
 
 - Set all the profile specific information in a `build/automation/var/profile/[name].mk` file
-- Set all the project specific information in the `build/automation/var/project.mk` file. There is set of mandatory variables that must be defined for the library to function correctly. For more details, please refer to the `build/automation/var/project.mk.default` file
+- Set all the project specific information in the `build/automation/var/project.mk` file. There is set of mandatory variables that must be defined for the library to function correctly. For more details, please refer to the `build/automation/var/project.mk` file from the Project Template workspace
 - Your development flow should be described in the main `Makefile` in the root directory of the project. Content of that file must meet certain implementation requirements and include some predefined sections
 - Create custom helper targets in the `Makefile` file or in the individual sub-project directories. These targets should be lower-level targets supporting your project's development flow
 - If a library target does not work in the expected way there are two ways of solving that issue
@@ -129,7 +131,11 @@ If you hear your teams or individuals saying _"It will take days to onboard a ne
   - NGINX Instana module by running the `build/automation/lib/docker/image/nginx/Makefile:dependencies` target
   - Gunicorn version in the `build/automation/lib/docker/image/python-app/Dockerfile` file
   - Docker library images version in any `build/automation/lib/docker/image/*/VERSION` file
-  - Terraform `terraform-aws-modules/rds/aws` module version in `build/automation/lib/terraform/template/modules/rds/main.tf`
+  - Terraform modules
+    - `terraform-aws-modules/dynamodb-table/aws` module version in `build/automation/lib/terraform/template/modules/dynamodb/main.tf`
+    - `terraform-aws-modules/rds/aws` module version in `build/automation/lib/terraform/template/modules/rds/main.tf`
+    - `terraform-aws-modules/s3-bucket/aws` module version in `build/automation/lib/terraform/template/modules/s3/main.tf`
+    - `terraform-aws-modules/vpc/aws` module version in `build/automation/lib/terraform/template/modules/vpc/main.tf`
 
 ## CI/CD Design
 

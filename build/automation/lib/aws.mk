@@ -2,8 +2,8 @@ aws-session-fail-if-invalid: ### Fail if the session variables are not set
 	([ -z "$$AWS_ACCESS_KEY_ID" ] || [ -z "$$AWS_SECRET_ACCESS_KEY" ] || [ -z "$$AWS_SESSION_TOKEN" ]) \
 		&& exit 1 ||:
 
-aws-assume-role-export-variables: ### Get assume role export for the Jenkins user - optional: AWS_ACCOUNT_ID|PROFILE=[profile name to load relevant platform configuration file]
-	if [ $(AWS_ROLE) == $(AWS_ROLE_JENKINS) ]; then
+aws-assume-role-export-variables: ### Get assume role export for the pipline user - optional: AWS_ACCOUNT_ID|PROFILE=[profile name to load relevant platform configuration file]
+	if [ "$(AWS_ROLE)" == $(AWS_ROLE_PIPELINE) ]; then
 		if [ $(AWS_ACCOUNT_ID) == "$$(make aws-account-get-id)" ]; then
 			echo "Already assumed arn:aws:iam::$(AWS_ACCOUNT_ID):role/$(AWS_ROLE)" >&2
 			exit
@@ -22,6 +22,13 @@ aws-assume-role-export-variables: ### Get assume role export for the Jenkins use
 		echo "export AWS_SECRET_ACCESS_KEY=$${array[1]}"
 		echo "export AWS_SESSION_TOKEN=$${array[2]}"
 	fi
+
+aws-user-get-role:
+	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
+		$(AWSCLI) sts get-caller-identity \
+		--query 'Arn' \
+		--output text \
+	" | grep -Eo 'assumed-role/.*/' | sed 's;assumed-role/;;g' | sed 's;/;;g' | tr -d '\r' | tr -d '\n'
 
 aws-account-check-id: ### Check if user has MFA'd into the account - mandatory: ID=[AWS account number]; return: true|false
 	if [ $(ID) == "$$(make aws-account-get-id)" ] && [ "$$TEXAS_SESSION_EXPIRY_TIME" -gt $$(date -u +"%Y%m%d%H%M%S") ]; then
@@ -441,4 +448,5 @@ _aws-elasticsearch-register-snapshot-repository: ### Register Elasticsearch snap
 	aws-secret-exists \
 	aws-secret-get \
 	aws-secret-get-and-format \
-	aws-secret-put
+	aws-secret-put \
+	aws-user-get-role

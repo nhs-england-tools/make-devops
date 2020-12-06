@@ -59,7 +59,8 @@ project-document-infrastructure: ### Generate infrastructure diagram - optional:
 # ==============================================================================
 
 project-create-profile: ### Create profile file - mandatory: NAME=[profile name]
-	cp -fv $(VAR_DIR_REL)/profile/dev.mk.default $(VAR_DIR_REL)/profile/$(NAME).mk
+	mkdir -p $(VAR_DIR_REL)/profile
+	cp -fv $(LIB_DIR_REL)/project/template/build/automation/var/profile/$(NAME).mk $(VAR_DIR_REL)/profile/$(NAME).mk
 
 project-create-contract-test: ### Create contract test project structure from template
 	rm -rf $(APPLICATION_TEST_DIR)/contract
@@ -74,10 +75,11 @@ project-create-deployment: ### Create deployment from template - mandatory: STAC
 	make -s k8s-create-overlay-from-template STACK=$(STACK) PROFILE=$(PROFILE)
 	make project-create-profile NAME=$(PROFILE)
 
-project-create-infrastructure: ### Create infrastructure from template - mandatory: STACK=[infrastructure name],TEMPLATE=[library template infrastructure name]
-	make -s terraform-create-module-from-template TEMPLATE=$(TEMPLATE)
-	make -s terraform-create-stack-from-template NAME=$(STACK) TEMPLATE=$(TEMPLATE)
-	cp -fv $(LIB_DIR_REL)/project/template/infrastructure/diagram.py $(INFRASTRUCTURE_DIR_REL)/diagram.py
+project-create-infrastructure: ### Create infrastructure from template - mandatory: MODULE_TEMPLATE|MODULE_TEMPLATES=[library template infrastructure module name],STACK_TEMPLATE=[library template infrastructure module name]; optional: STACK=[new stack name]
+	for module in $$(echo $(or $(MODULE_TEMPLATE), $(MODULE_TEMPLATES)) | tr "," "\n"); do
+		make -s terraform-create-module-from-template TEMPLATE=$$module
+	done
+	make -s terraform-create-stack-from-template NAME=$(or $(STACK), $(STACK_TEMPLATE)) TEMPLATE=$(STACK_TEMPLATE)
 
 project-create-pipeline: ### Create pipeline
 	make -s jenkins-create-pipeline-from-template

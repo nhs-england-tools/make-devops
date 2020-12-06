@@ -228,7 +228,7 @@ test-docker-tag:
 
 test-docker-get-variables-from-file:
 	# act
-	vars=$$(make _docker-get-variables-from-file VARS_FILE=$(VAR_DIR)/project.mk.default)
+	vars=$$(make _docker-get-variables-from-file VARS_FILE=$(LIB_DIR)/project/template/build/automation/var/project.mk)
 	# assert
 	mk_test "PROJECT_NAME= = $$(echo \"$$vars\" | grep -o PROJECT_NAME=)"
 
