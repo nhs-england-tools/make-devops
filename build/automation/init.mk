@@ -443,7 +443,7 @@ GIT_BRANCH_PATTERN := $(GIT_BRANCH_PATTERN_MAIN)|$(GIT_BRANCH_PATTERN_PREFIX)/$(
 
 BUILD_ID := $(or $(or $(or $(BUILD_ID), $(CIRCLE_BUILD_NUM)), $(CODEBUILD_BUILD_NUMBER)), 0)
 BUILD_DATE := $(or $(BUILD_DATE), $(shell date -u +"%Y-%m-%dT%H:%M:%S%z"))
-BUILD_TIMESTAMP := $(shell date --date=$(BUILD_DATE) -u +"%Y%m%d%H%M%S")
+BUILD_TIMESTAMP := $(shell date --date=$(BUILD_DATE) -u +"%Y%m%d%H%M%S" 2> /dev/null)
 BUILD_REPO := $(or $(shell git config --get remote.origin.url 2> /dev/null ||:), unknown)
 BUILD_BRANCH := $(if $(shell git rev-parse --abbrev-ref HEAD 2> /dev/null | grep -E ^HEAD$ ||:),$(or $(shell git name-rev --name-only HEAD 2> /dev/null | sed "s;remotes/origin/;;g" ||:), unknown),$(or $(shell git rev-parse --abbrev-ref HEAD 2> /dev/null | sed "s;remotes/origin/;;g" ||:), unknown))
 BUILD_COMMIT_HASH := $(or $(shell git rev-parse --short HEAD 2> /dev/null ||:), unknown)
@@ -573,47 +573,47 @@ ifneq (0, $(shell xcode-select -p > /dev/null 2>&1; echo $$?))
 $(info )
 $(info $(shell tput setaf 4; echo "Installation of the Xcode Command Line Tools has just been triggered automatically..."; tput sgr0))
 $(info )
-$(error $(shell tput setaf 1; echo "ERROR: Please, before proceeding install the Xcode Command Line Tools"; tput sgr0))
+$(error $(shell tput setaf 202; echo "WARNING: Please, before proceeding install the Xcode Command Line Tools"; tput sgr0))
 endif
 # macOS: Homebrew
 ifneq (0, $(shell which brew > /dev/null 2>&1; echo $$?))
 $(info )
 $(info Run $(shell tput setaf 4; echo '/usr/bin/ruby -e "$$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"'; tput sgr0))
 $(info )
-$(error $(shell tput setaf 1; echo "ERROR: Please, before proceeding install the brew package manager. Copy and paste in your terminal the above command, then execute it"; tput sgr0))
+$(error $(shell tput setaf 202; echo "WARNING: Please, before proceeding install the brew package manager. Copy and paste in your terminal the above command, then execute it"; tput sgr0))
 endif
 # macOS: GNU Make
 ifeq (true, $(shell [ ! -f /usr/local/opt/make/libexec/gnubin/make ] && echo true))
 $(info )
 $(info Run $(shell tput setaf 4; echo "brew install make"; tput sgr0))
 $(info )
-$(error $(shell tput setaf 1; echo "ERROR: Please, before proceeding install the GNU make tool. Copy and paste in your terminal the above command, then execute it"; tput sgr0))
+$(error $(shell tput setaf 202; echo "WARNING: Please, before proceeding install the GNU make tool. Copy and paste in your terminal the above command, then execute it"; tput sgr0))
 endif
 ifeq (, $(findstring oneshell, $(.FEATURES)))
 $(info )
 $(info Run $(shell tput setaf 4; echo "export PATH=$(PATH)"; tput sgr0))
 $(info )
-$(error $(shell tput setaf 1; echo "ERROR: Please, before proceeding make sure GNU make is included in your \$$PATH. Copy and paste in your terminal the above command, then execute it"; tput sgr0))
+$(error $(shell tput setaf 202; echo "WARNING: Please, before proceeding make sure GNU make is included in your \$$PATH. Copy and paste in your terminal the above command, then execute it"; tput sgr0))
 endif
 # macOS: $HOME
 ifeq (true, $(shell echo "$(HOME)" | grep -qE '[ ]+' && echo true))
 $(info )
 $(info The $$HOME variable is set to '$(HOME)')
 $(info )
-$(error $(shell tput setaf 1; echo "ERROR: Please, before proceeding make sure your \$$HOME directory does not include spaces"; tput sgr0))
+$(error $(shell tput setaf 202; echo "WARNING: Please, before proceeding make sure your \$$HOME directory does not include spaces"; tput sgr0))
 endif
 else
 # *NIX: GNU Make
 ifeq (, $(findstring oneshell, $(.FEATURES)))
-$(error $(shell tput setaf 1; echo "ERROR: Please, before proceeding make sure your GNU make version supports 'oneshell' feature. On Linux this may mean upgrading to the latest release version"; tput sgr0))
+$(error $(shell tput setaf 202; echo "WARNING: Please, before proceeding make sure your GNU make version supports 'oneshell' feature. On Linux this may mean upgrading to the latest release version"; tput sgr0))
 endif
 # *NIX: Docker
 ifneq (0, $(shell which docker > /dev/null 2>&1; echo $$?))
-$(error $(shell tput setaf 1; echo "ERROR: Please, before proceeding install Docker"; tput sgr0))
+$(error $(shell tput setaf 202; echo "WARNING: Please, before proceeding install Docker"; tput sgr0))
 endif
 # *NIX: Docker Compose
 ifneq (0, $(shell which docker-compose > /dev/null 2>&1; echo $$?))
-$(error $(shell tput setaf 1; echo "ERROR: Please, before proceeding install Docker Compose"; tput sgr0))
+$(error $(shell tput setaf 202; echo "WARNING: Please, before proceeding install Docker Compose"; tput sgr0))
 endif
 endif
 endif

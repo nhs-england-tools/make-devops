@@ -15,7 +15,7 @@ macos-setup devops-setup: ### Provision your MacBook (and become a DevOps ninja)
 	touch $(SETUP_COMPLETE_FLAG_FILE)
 
 macos-prepare:: ### Prepare for installation and configuration of the development dependencies
-	networksetup -setdnsservers Wi-Fi 8.8.8.8
+	networksetup -setdnsservers Wi-Fi 8.8.8.8 ||:
 	sudo chown -R $$(id -u) $$(brew --prefix)/*
 
 macos-update:: ### Update/upgrade all currently installed development dependencies
