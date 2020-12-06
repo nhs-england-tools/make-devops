@@ -4,7 +4,8 @@ If you hear your teams or individuals saying _"It will take days to onboard a ne
 
 ## Use cases
 
-- CI/CD building blocks to support a clean implementation of your pipelines, and vendor agnostic
+- Service team AWS accounts setup with predefined base components to speed up configuration
+- CI/CD building blocks to support a clean implementation of your pipelines and make them vendor agnostic as much as it is feasible
 - Development workflow with highly customisable project automation scripts (inspired by dotfiles) for advanced \*NIX shell scripting
 - macOS setup to complement the above and fully automate development environment provisioning
 
@@ -13,6 +14,7 @@ If you hear your teams or individuals saying _"It will take days to onboard a ne
 - Set up your development environment on a macOS - this command will install/update and configure your OS packages: `curl -L bit.ly/make-devops-macos | bash`
 - Instrument your project with the automation scripts - this command will create the project structure in the current directory: `curl -L bit.ly/make-devops-project | bash`
 - Use the make targets to support your CI/CD flow
+- Configure AWS service team accounts using Terraform templates
 
 ## Features
 
