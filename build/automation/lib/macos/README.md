@@ -4,7 +4,7 @@
 
 - Restart your macOS
 - Fully enable the `Avast Security` antivirus software
-- Open the `Docker Desktop` application and make sure it always starts when you log in and has sufficient resources allocated. e.g. at least 4GB memory and 4 CPUs
+- Open the `Docker Desktop` application and make sure it always starts when you log in and has sufficient resources allocated. e.g. at least 4GB memory and 4 CPUs, about 100GB of storage space
 - Use the `Spectacle`, `KeepingYouAwake` and `CheatSheet` applications to improve the ergonomics
 - Go to System Preferences > Security & Privacy > Privacy > Accessibility > [ Add iTerm to the list ]
 - Go to System Preferences > Security & Privacy > Privacy > Full Disk Access > [ Add iTerm to the list ]
@@ -18,7 +18,7 @@
 - Your AWS credentials are stored in `~/.aws/credentials`, check it
 - Run `make devops-setup-aws-accounts` or edit `~/.dotfiles/oh-my-zsh/plugins/make-devops/aws-platform.zsh` to set correct AWS platform variables, i.e. `AWS_ACCOUNT_ID_LIVE_PARENT`, `AWS_ACCOUNT_ID_MGMT`, `AWS_ACCOUNT_ID_NONPROD`, `AWS_ACCOUNT_ID_PROD`
 - Place the Kubernetes NONPROD configuration as `~/.kube/configs/lk8s-nonprod-kubeconfig` file and the `KUBECONFIG` environment variable will be set automatically when your shell session reloads
-- Follow [this](https://github.com/nhsd-exeter/make-devops/blob/master/CONTRIBUTING.md#signing-your-git-commitss) manual to set up signing your Git commits
+- Follow [this](https://github.com/nhsd-exeter/make-devops/blob/master/documentation/CONTRIBUTING.md#signing-your-git-commits) manual to set up signing your Git commits
 - From now on use `iTerm` as your terminal, `Visual Studio Code` as your IDE and `Firefox` for web development. These tools have been configured to support development in
   - Node
   - Python
