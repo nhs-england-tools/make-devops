@@ -573,27 +573,27 @@ ifneq (0, $(shell xcode-select -p > /dev/null 2>&1; echo $$?))
 $(info )
 $(info $(shell tput setaf 4; echo "Installation of the Xcode Command Line Tools has just been triggered automatically..."; tput sgr0))
 $(info )
-$(error $(shell tput setaf 202; echo "WARNING: Please, before proceeding install the Xcode Command Line Tools"; tput sgr0))
+$(error $(shell tput setaf 202; echo "WARNING: Please, before proceeding install the Xcode Command Line Tools. Then, run the \`curl\` installation command"; tput sgr0))
 endif
 # macOS: Homebrew
 ifneq (0, $(shell which brew > /dev/null 2>&1; echo $$?))
 $(info )
 $(info Run $(shell tput setaf 4; echo '/usr/bin/ruby -e "$$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"'; tput sgr0))
 $(info )
-$(error $(shell tput setaf 202; echo "WARNING: Please, before proceeding install the brew package manager. Copy and paste in your terminal the above command, then execute it"; tput sgr0))
+$(error $(shell tput setaf 202; echo "WARNING: Please, before proceeding install the brew package manager. Copy and paste in your terminal the above command and execute it. If it fails to install try setting your DNS server to 8.8.8.8. Then, run the \`curl\` installation command"; tput sgr0))
 endif
 # macOS: GNU Make
 ifeq (true, $(shell [ ! -f /usr/local/opt/make/libexec/gnubin/make ] && echo true))
 $(info )
 $(info Run $(shell tput setaf 4; echo "brew install make"; tput sgr0))
 $(info )
-$(error $(shell tput setaf 202; echo "WARNING: Please, before proceeding install the GNU make tool. Copy and paste in your terminal the above command, then execute it"; tput sgr0))
+$(error $(shell tput setaf 202; echo "WARNING: Please, before proceeding install the GNU make tool. Copy and paste in your terminal the above command and execute it. Then, run the \`curl\` installation command"; tput sgr0))
 endif
 ifeq (, $(findstring oneshell, $(.FEATURES)))
 $(info )
 $(info Run $(shell tput setaf 4; echo "export PATH=$(PATH)"; tput sgr0))
 $(info )
-$(error $(shell tput setaf 202; echo "WARNING: Please, before proceeding make sure GNU make is included in your \$$PATH. Copy and paste in your terminal the above command, then execute it"; tput sgr0))
+$(error $(shell tput setaf 202; echo "WARNING: Please, before proceeding make sure GNU make is included in your \$$PATH. Copy and paste in your terminal the above command and execute it. Then, run the \`curl\` installation command"; tput sgr0))
 endif
 # macOS: $HOME
 ifeq (true, $(shell echo "$(HOME)" | grep -qE '[ ]+' && echo true))

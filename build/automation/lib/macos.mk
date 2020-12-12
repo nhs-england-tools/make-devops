@@ -80,6 +80,7 @@ macos-install-essential:: ### Install essential development dependencies - optio
 	brew $$install tree ||:
 	brew $$install warrensbox/tap/tfswitch || brew uninstall --force terrafrom && brew reinstall --force warrensbox/tap/tfswitch ||:
 	brew $$install yq ||:
+	brew $$install zlib ||:
 	brew $$install zsh ||:
 	brew $$install zsh-autosuggestions ||:
 	brew $$install zsh-completions ||:
@@ -198,6 +199,7 @@ macos-check:: ### Check if the development dependencies are installed
 	brew list tree ||:
 	brew list warrensbox/tap/tfswitch ||:
 	brew list yq ||:
+	brew list zlib ||:
 	brew list zsh ||:
 	brew list zsh-autosuggestions ||:
 	brew list zsh-completions ||:
