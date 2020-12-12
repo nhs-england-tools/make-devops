@@ -137,8 +137,8 @@ macos-install-additional:: ### Install additional development dependencies - opt
 	brew cask $$install virtualbox-extension-pack ||:
 	# AWS SSM Session Manager
 	curl -fsSL https://s3.amazonaws.com/session-manager-downloads/plugin/latest/mac/sessionmanager-bundle.zip -o /tmp/sessionmanager-bundle.zip
-	unzip /tmp/sessionmanager-bundle.zip -d /tmp
-	sudo /tmp/sessionmanager-bundle/install -i /usr/local/sessionmanagerplugin -b /usr/local/bin/session-manager-plugin
+	unzip -o /tmp/sessionmanager-bundle.zip -d /tmp
+	sudo /tmp/sessionmanager-bundle/install -i /usr/local/sessionmanagerplugin -b /usr/local/bin/session-manager-plugin ||:
 	rm -rf /tmp/sessionmanager-bundle*
 
 macos-install-corporate:: ### Install corporate dependencies - optional: REINSTALL=true
