@@ -286,6 +286,8 @@ _macos-config-zsh:
 	chsh -s $$(brew --prefix)/bin/zsh
 
 _macos-config-oh-my-zsh:
+	# Backup oh-my-zsh plugin files
+	mkdir -p ~/tmp/make-devops-plugins && cp -f $(DEV_OHMYZSH_DIR)/plugins/$(DEVOPS_PROJECT_NAME)/aws-platform*.zsh ~/tmp/make-devops-plugins 2> /dev/null ||:
 	rm -rf $(DEV_OHMYZSH_DIR)
 	ZSH=$(DEV_OHMYZSH_DIR) sh -c "$$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)" "" --unattended ||:
 	git clone https://github.com/romkatv/powerlevel10k.git $(DEV_OHMYZSH_DIR)/custom/themes/powerlevel10k ||:
@@ -333,6 +335,8 @@ _macos-config-oh-my-zsh:
 	echo "ZSH_THEME=powerlevel10k/powerlevel10k" >> ~/.zshrc
 	echo "source \$$ZSH/oh-my-zsh.sh" >> ~/.zshrc
 	echo "# END: Custom configuration" >> ~/.zshrc
+	# Restore oh-my-zsh plugin files
+	mkdir -p $(DEV_OHMYZSH_DIR)/plugins/$(DEVOPS_PROJECT_NAME) && cp -f ~/tmp/make-devops-plugins/aws-platform*.zsh $(DEV_OHMYZSH_DIR)/plugins/$(DEVOPS_PROJECT_NAME) 2> /dev/null ||: && rm -rf ~/tmp/make-devops-plugins
 
 _macos-config-command-line:
 	sudo chown -R $$(id -u) $$(brew --prefix)/*
