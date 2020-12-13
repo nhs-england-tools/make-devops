@@ -85,11 +85,11 @@ macos-install-essential:: ### Install essential development dependencies - optio
 	brew $$install zsh-autosuggestions ||:
 	brew $$install zsh-completions ||:
 	brew $$install zsh-syntax-highlighting ||:
-	brew cask $$install adoptopenjdk$(JAVA_VERSION) ||:
-	brew cask $$install docker ||:
-	brew cask $$install font-hack-nerd-font ||:
-	brew cask $$install iterm2 ||:
-	brew cask $$install visual-studio-code && which code > /dev/null 2>&1 || brew cask reinstall --force visual-studio-code ||:
+	brew $$install --cask adoptopenjdk$(JAVA_VERSION) ||:
+	brew $$install --cask docker ||:
+	brew $$install --cask font-hack-nerd-font ||:
+	brew $$install --cask iterm2 ||:
+	brew $$install --cask visual-studio-code && which code > /dev/null 2>&1 || brew cask reinstall --force visual-studio-code ||:
 	# maven depends on java
 	brew $$install maven ||:
 
@@ -101,40 +101,40 @@ macos-install-additional:: ### Install additional development dependencies - opt
 	brew tap weaveworks/tap ||:
 	brew $$install github/gh/gh ||:
 	brew $$install weaveworks/tap/eksctl ||:
-	brew cask $$install appcleaner ||:
-	brew cask $$install atom ||:
-	brew cask $$install dbeaver-community ||:
-	brew cask $$install dcommander ||:
-	brew cask $$install drawio
-	brew cask $$install firefox-developer-edition ||:
-	brew cask $$install gimp ||:
-	brew cask $$install gitkraken ||:
-	brew cask $$install google-chrome ||:
-	brew cask $$install hammerspoon ||:
-	brew cask $$install istat-menus ||:
-	brew cask $$install karabiner-elements ||:
-	brew cask $$install keepingyouawake ||:
-	#brew cask $$install microsoft-remote-desktop-beta ||:
-	brew cask $$install postman ||:
-	brew cask $$install sourcetree ||:
-	brew cask $$install spectacle ||:
-	brew cask $$install tripmode ||:
-	brew cask $$install tunnelblick ||:
-	brew cask $$install vanilla ||:
-	brew cask $$install vlc ||:
-	brew cask $$install wifi-explorer ||:
+	brew $$install --cask appcleaner ||:
+	brew $$install --cask atom ||:
+	brew $$install --cask dbeaver-community ||:
+	brew $$install --cask dcommander ||:
+	brew $$install --cask drawio
+	brew $$install --cask firefox-developer-edition ||:
+	brew $$install --cask gimp ||:
+	brew $$install --cask gitkraken ||:
+	brew $$install --cask google-chrome ||:
+	brew $$install --cask hammerspoon ||:
+	brew $$install --cask istat-menus ||:
+	brew $$install --cask karabiner-elements ||:
+	brew $$install --cask keepingyouawake ||:
+	#brew $$install --cask microsoft-remote-desktop-beta ||:
+	brew $$install --cask postman ||:
+	brew $$install --cask sourcetree ||:
+	brew $$install --cask spectacle ||:
+	brew $$install --cask tripmode ||:
+	brew $$install --cask tunnelblick ||:
+	brew $$install --cask vanilla ||:
+	brew $$install --cask vlc ||:
+	brew $$install --cask wifi-explorer ||:
 	# # Pinned package: vagrant
 	# brew cask reinstall --force \
 	# 	https://raw.githubusercontent.com/Homebrew/homebrew-cask/ae2a540ffee555491ccbb2cefa4296c76355ef9f/Casks/vagrant.rb ||:
-	brew cask $$install vagrant ||:
+	brew $$install --cask vagrant ||:
 	# # Pinned package: virtualbox
 	# brew cask reinstall --force \
 	# 	https://raw.githubusercontent.com/Homebrew/homebrew-cask/33de1ad39862b4d31528e62f931480c1ba8a90f8/Casks/virtualbox.rb ||:
-	brew cask $$install virtualbox ||:
+	brew $$install --cask virtualbox ||:
 	# # Pinned package: virtualbox-extension-pack
 	# brew cask reinstall --force \
 	# 	https://raw.githubusercontent.com/Homebrew/homebrew-cask/5a0a2b2322e35ec867f6633ca985ee485255f0b1/Casks/virtualbox-extension-pack.rb ||:
-	brew cask $$install virtualbox-extension-pack ||:
+	brew $$install --cask virtualbox-extension-pack ||:
 	# AWS SSM Session Manager
 	curl -fsSL https://s3.amazonaws.com/session-manager-downloads/plugin/latest/mac/sessionmanager-bundle.zip -o /tmp/sessionmanager-bundle.zip
 	unzip -o /tmp/sessionmanager-bundle.zip -d /tmp
@@ -147,11 +147,11 @@ macos-install-corporate:: ### Install corporate dependencies - optional: REINSTA
 		install="reinstall --force"
 	fi
 	brew update
-	brew cask $$install microsoft-office ||:
-	brew cask $$install microsoft-teams ||:
-	brew cask $$install slack ||:
-	brew cask $$install vmware-horizon-client ||:
-	brew cask $$install avast-security ||:
+	brew $$install --cask microsoft-office ||:
+	brew $$install --cask microsoft-teams ||:
+	brew $$install --cask slack ||:
+	brew $$install --cask vmware-horizon-client ||:
+	brew $$install --cask avast-security ||:
 
 macos-check:: ### Check if the development dependencies are installed
 	# Essential dependencies
