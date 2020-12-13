@@ -276,6 +276,7 @@ _macos-config-mac:
 	defaults write -g InitialKeyRepeat -int 15
 	defaults write -g KeyRepeat -int 2
 	sudo mdutil -i off /
+	# Errors for Big Sur ->
 	sudo launchctl unload -w /System/Library/LaunchDaemons/com.apple.metadata.mds.plist
 	# Add images as attachments in Mail
 	defaults write com.apple.mail DisableInlineAttachmentViewing -bool yes
@@ -285,6 +286,7 @@ _macos-config-zsh:
 	chsh -s $$(brew --prefix)/bin/zsh
 
 _macos-config-oh-my-zsh:
+	rm -rf $(DEV_OHMYZSH_DIR)
 	ZSH=$(DEV_OHMYZSH_DIR) sh -c "$$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)" "" --unattended ||:
 	git clone https://github.com/romkatv/powerlevel10k.git $(DEV_OHMYZSH_DIR)/custom/themes/powerlevel10k ||:
 	cp ~/.zshrc ~/.zshrc.bak.$$(date -u +"%Y%m%d%H%M%S") ||:
