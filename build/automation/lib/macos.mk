@@ -335,12 +335,17 @@ _macos-config-oh-my-zsh:
 _macos-config-command-line:
 	sudo chown -R $$(id -u) $$(brew --prefix)/*
 	# configure Python
-	brew link --overwrite --force python@$(PYTHON_VERSION_MAJOR).$(PYTHON_VERSION_MINOR)
+	brew unlink python@$(PYTHON_VERSION_MAJOR).$(PYTHON_VERSION_MINOR) ||: && brew link --overwrite --force python@$(PYTHON_VERSION_MAJOR).$(PYTHON_VERSION_MINOR)
 	rm -f $$(brew --prefix)/bin/python
 	ln $$(brew --prefix)/bin/python3 $$(brew --prefix)/bin/python
 	curl -s https://bootstrap.pypa.io/get-pip.py | $$(brew --prefix)/bin/python3
 	$$(brew --prefix)/bin/pip3 install $(PYTHON_BASE_PACKAGES)
-	pyenv install --skip-existing $(PYTHON_VERSION)
+	(
+		export LDFLAGS="-L/usr/local/opt/zlib/lib"
+		export CPPFLAGS="-I/usr/local/opt/zlib/include"
+		export PKG_CONFIG_PATH="/usr/local/opt/zlib/lib/pkgconfig"
+		pyenv install --skip-existing $(PYTHON_VERSION)
+	)
 	pyenv global system
 	# configure Go
 	curl -sSL https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer | bash ||:
