@@ -320,7 +320,7 @@ aws-ecr-get-image-digest: ### Get ECR image digest by matching tag pattern - man
 	file=$(TMP_DIR_REL)/$(@)_$(BUILD_ID)
 	make file-copy-and-replace SRC=$(JQ_DIR_REL)/aws-ecr-get-image-digest.jq DEST=$$file >&2 && trap "rm -f $$file" EXIT
 	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
-		aws ecr list-images \
+		$(AWSCLI) ecr list-images \
 			--repository-name $(shell echo $(REPO) | sed "s;$(AWS_ECR)/;;g") \
 	" | make -s docker-run-tools CMD="jq -rf $$file" | head -n 1
 
