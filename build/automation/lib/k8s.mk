@@ -113,7 +113,7 @@ k8s-job-wait-to-complete: ### Wait for the job to complete - optional SECONDS=[n
 			exit 0
 		fi
 		sleep 1
-		((count++))
+		((count++)) ||:
 	done
 	echo "ERROR: The job did not complete in the given time of $$seconds seconds"
 	exit 1

@@ -27,6 +27,7 @@ macos-update:: ### Update/upgrade all currently installed development dependenci
 	brew cu --all --yes
 
 macos-install-essential:: ### Install essential development dependencies - optional: REINSTALL=true
+	export HOMEBREW_NO_AUTO_UPDATE=1
 	install="install"
 	if [[ "$$REINSTALL" =~ ^(true|yes|y|on|1|TRUE|YES|Y|ON)$$ ]]; then
 		install="reinstall --force"
@@ -94,6 +95,7 @@ macos-install-essential:: ### Install essential development dependencies - optio
 	brew $$install maven ||:
 
 macos-install-additional:: ### Install additional development dependencies - optional: REINSTALL=true
+	export HOMEBREW_NO_AUTO_UPDATE=1
 	install="install"
 	if [[ "$$REINSTALL" =~ ^(true|yes|y|on|1|TRUE|YES|Y|ON)$$ ]]; then
 		install="reinstall --force"
@@ -142,6 +144,7 @@ macos-install-additional:: ### Install additional development dependencies - opt
 	rm -rf /tmp/sessionmanager-bundle*
 
 macos-install-corporate:: ### Install corporate dependencies - optional: REINSTALL=true
+	export HOMEBREW_NO_AUTO_UPDATE=1
 	install="install"
 	if [[ "$$REINSTALL" =~ ^(true|yes|y|on|1|TRUE|YES|Y|ON)$$ ]]; then
 		install="reinstall --force"

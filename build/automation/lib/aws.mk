@@ -264,7 +264,7 @@ aws-rds-wait-for-snapshot: ### Wait for RDS snapshot to become available - manda
 			exit 0
 		fi
 		sleep 1s
-		((count++))
+		((count++)) ||:
 	done
 	echo "ERROR: The snapshot has not become available"
 	exit 1
