@@ -440,6 +440,7 @@ GIT_BRANCH_PATTERN_MAIN := ^(master|main|develop)$$
 GIT_BRANCH_PATTERN_PREFIX := ^(task|story|epic|spike|fix|test|release|migration)
 GIT_BRANCH_PATTERN_SUFFIX := [A-Za-z]{2,5}-[0-9]{1,5}_[A-Za-z0-9_]{4,32}$$
 GIT_BRANCH_PATTERN := $(GIT_BRANCH_PATTERN_MAIN)|$(GIT_BRANCH_PATTERN_PREFIX)/$(GIT_BRANCH_PATTERN_SUFFIX)
+GIT_TAG_PATTERN := [0-9]{12,14}-[a-z]{3,10}
 
 BUILD_ID := $(or $(or $(or $(BUILD_ID), $(CIRCLE_BUILD_NUM)), $(CODEBUILD_BUILD_NUMBER)), 0)
 BUILD_DATE := $(or $(BUILD_DATE), $(shell date -u +"%Y-%m-%dT%H:%M:%S%z"))
@@ -459,7 +460,7 @@ GOSS_PATH := $(BIN_DIR)/goss-linux-amd64
 SETUP_COMPLETE_FLAG_FILE := $(TMP_DIR)/.make-devops-setup-complete
 
 PROFILE := $(or $(PROFILE), local)
-ENVIRONMENT := $(or $(ENVIRONMENT), $(or $(shell ([ $(PROFILE) = local ] && echo local) || ( echo $(BUILD_BRANCH) | grep -Eoq '$(GIT_BRANCH_PATTERN_SUFFIX)' && (echo $(BUILD_BRANCH) | grep -Eo '[A-Za-z]{2,5}-[0-9]{1,5}' | tr '[:upper:]' '[:lower:]') || ([ $(BUILD_BRANCH) = master ] && echo $(PROFILE)))), unknown))
+ENVIRONMENT := $(or $(ENVIRONMENT), $(or $(shell ([ $(PROFILE) = local ] && echo local) || (echo $(BUILD_BRANCH) | grep -Eoq '$(GIT_BRANCH_PATTERN_SUFFIX)' && (echo $(BUILD_BRANCH) | grep -Eo '[A-Za-z]{2,5}-[0-9]{1,5}' | tr '[:upper:]' '[:lower:]') || (echo $(BUILD_BRANCH) | grep -Eoq '^tags/$(GIT_TAG_PATTERN)' && echo $(PROFILE)) || ([ $(BUILD_BRANCH) = master ] && echo $(PROFILE)))), unknown))
 
 # ==============================================================================
 # `make` configuration
