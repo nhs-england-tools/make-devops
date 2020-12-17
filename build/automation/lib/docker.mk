@@ -755,13 +755,13 @@ docker-image-get-digest: ### Get image digest by matching tag pattern - mandato
 		REPO=$$(make _docker-get-reg)/$(NAME) \
 		TAG=$(or $(VERSION), $(TAG))
 
-docker-image-find-and-version-as: ### Find image based on git commit hash and tag it - mandatory: VERSION|TAG=[new version/tag],IMAGE=[image name]; optional: COMMIT=[git commit hash, defaults to HEAD]
+docker-image-find-and-version-as: ### Find image based on git commit hash and tag it - mandatory: VERSION|TAG=[new version/tag],NAME=[image name]; optional: COMMIT=[git commit hash, defaults to HEAD]
 	commit=$(or $(COMMIT), master)
 	hash=$$(make git-commit-get-hash COMMIT=$$commit)
-	digest=$$(make docker-image-get-digest NAME=$(IMAGE) TAG=$$hash)
-	make docker-pull NAME=$(IMAGE) DIGEST=$$digest
-	make docker-tag NAME=$(IMAGE) DIGEST=$$digest TAG=$(or $(VERSION), $(TAG)
-	make docker-push NAME=$(IMAGE) TAG=$(or $(VERSION), $(TAG)
+	digest=$$(make docker-image-get-digest NAME=$(NAME) TAG=$$hash)
+	make docker-pull NAME=$(NAME) DIGEST=$$digest
+	make docker-tag NAME=$(NAME) DIGEST=$$digest TAG=$(or $(VERSION), $(TAG)
+	make docker-push NAME=$(NAME) TAG=$(or $(VERSION), $(TAG)
 
 # ==============================================================================
 
