@@ -19,6 +19,7 @@ macos-prepare:: ### Prepare for installation and configuration of the developmen
 	sudo chown -R $$(id -u) $$(brew --prefix)/*
 
 macos-update:: ### Update/upgrade all currently installed development dependencies
+	xcode-select --install 2> /dev/null ||:
 	which mas > /dev/null 2>&1 || brew install mas
 	mas upgrade $(mas list | grep -i xcode | awk '{ print $1 }')
 	brew update
@@ -107,10 +108,13 @@ macos-install-additional:: ### Install additional development dependencies - opt
 	brew $$install --cask atom ||:
 	brew $$install --cask dbeaver-community ||:
 	brew $$install --cask dcommander ||:
-	brew $$install --cask drawio
+	brew $$install --cask drawio ||:
+	brew $$install --cask dropbox ||:
+	brew $$install --cask enpass ||:
 	brew $$install --cask firefox-developer-edition ||:
 	brew $$install --cask gimp ||:
 	brew $$install --cask gitkraken ||:
+	brew $$install --cask google-backup-and-sync ||:
 	brew $$install --cask google-chrome ||:
 	brew $$install --cask hammerspoon ||:
 	brew $$install --cask istat-menus ||:
@@ -468,7 +472,6 @@ _macos-config-visual-studio-code:
 	code --force --install-extension mhutchie.git-graph
 	code --force --install-extension mrmlnc.vscode-apache
 	code --force --install-extension ms-azuretools.vscode-docker
-	code --force --install-extension ms-python.anaconda-extension-pack
 	code --force --install-extension ms-python.python
 	code --force --install-extension ms-python.vscode-pylance
 	code --force --install-extension ms-toolsai.jupyter
@@ -479,6 +482,7 @@ _macos-config-visual-studio-code:
 	code --force --install-extension oderwat.indent-rainbow
 	code --force --install-extension pivotal.vscode-spring-boot
 	code --force --install-extension redhat.java
+	code --force --install-extension redhat.vscode-yaml
 	code --force --install-extension shengchen.vscode-checkstyle
 	code --force --install-extension sonarsource.sonarlint-vscode
 	code --force --install-extension streetsidesoftware.code-spell-checker
