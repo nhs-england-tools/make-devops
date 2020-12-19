@@ -251,6 +251,7 @@ macos-config:: ### Configure development dependencies
 		_macos-config-zsh \
 		_macos-config-oh-my-zsh \
 		_macos-config-command-line \
+		_macos-config-git \
 		_macos-config-iterm2 \
 		_macos-config-visual-studio-code \
 		_macos-config-firefox
@@ -435,6 +436,20 @@ _macos-config-command-line-aws:
 			echo
 		) > $(DEV_OHMYZSH_DIR)/plugins/$(DEVOPS_PROJECT_NAME)/aws-platform.zsh
 	fi
+
+_macos-config-git:
+	git config --global branch.autosetupmerge false
+	git config --global branch.autosetuprebase always
+	git config --global commit.gpgsign true
+	git config --global core.autocrlf input
+	git config --global core.filemode true
+	git config --global core.hidedotfiles false
+	git config --global core.ignorecase false
+	git config --global pull.rebase true
+	git config --global push.default current
+	git config --global push.followTags true
+	git config --global rebase.autoStash true
+	git config --global remote.origin.prune true
 
 _macos-config-iterm2:
 	curl -fsSL https://raw.githubusercontent.com/stefaniuk/dotfiles/master/lib/resources/iterm/com.googlecode.iterm2.plist -o /tmp/com.googlecode.iterm2.plist
