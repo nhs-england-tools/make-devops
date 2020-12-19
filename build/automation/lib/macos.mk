@@ -371,8 +371,6 @@ _macos-config-command-line:
 	jenv global $(JAVA_VERSION)
 	# configure Terraform
 	tfswitch $(TERRAFORM_VERSION)
-	# configure Git
-	make git-config
 	# configure shell
 	mkdir -p ~/{.aws,.kube/configs,.ssh,bin,etc,tmp,usr,projects}
 	[ ! -f ~/.aws/config ] && echo -e "[default]\noutput = json\nregion = eu-west-2\n\n# TODO: Add AWS accounts\n" > ~/.aws/config
