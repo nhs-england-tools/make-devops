@@ -158,7 +158,7 @@ macos-install-corporate:: ### Install corporate dependencies - optional: REINSTA
 	brew $$install --cask microsoft-teams ||:
 	brew $$install --cask slack ||:
 	brew $$install --cask vmware-horizon-client ||:
-	brew $$install --cask avast-security ||:
+	brew $$install --cask avast-security ||: # https://support.avast.com/en-gb/article/Install-Mac-Security/
 
 macos-check:: ### Check if the development dependencies are installed
 	# Essential dependencies
