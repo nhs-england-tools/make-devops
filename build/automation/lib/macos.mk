@@ -91,7 +91,7 @@ macos-install-essential:: ### Install essential development dependencies - optio
 	brew $$install --cask docker ||:
 	brew $$install --cask font-hack-nerd-font ||:
 	brew $$install --cask iterm2 ||:
-	brew $$install --cask visual-studio-code && which code > /dev/null 2>&1 || brew cask reinstall --force visual-studio-code ||:
+	brew $$install --cask visual-studio-code && which code > /dev/null 2>&1 || brew reinstall --cask --force visual-studio-code ||:
 	# maven depends on java
 	brew $$install maven ||:
 
@@ -130,15 +130,15 @@ macos-install-additional:: ### Install additional development dependencies - opt
 	brew $$install --cask vlc ||:
 	brew $$install --cask wifi-explorer ||:
 	# # Pinned package: vagrant
-	# brew cask reinstall --force \
+	# brew reinstall --cask --force \
 	# 	https://raw.githubusercontent.com/Homebrew/homebrew-cask/ae2a540ffee555491ccbb2cefa4296c76355ef9f/Casks/vagrant.rb ||:
 	brew $$install --cask vagrant ||:
 	# # Pinned package: virtualbox
-	# brew cask reinstall --force \
+	# brew reinstall --cask --force \
 	# 	https://raw.githubusercontent.com/Homebrew/homebrew-cask/33de1ad39862b4d31528e62f931480c1ba8a90f8/Casks/virtualbox.rb ||:
 	brew $$install --cask virtualbox ||:
 	# # Pinned package: virtualbox-extension-pack
-	# brew cask reinstall --force \
+	# brew reinstall --cask --force \
 	# 	https://raw.githubusercontent.com/Homebrew/homebrew-cask/5a0a2b2322e35ec867f6633ca985ee485255f0b1/Casks/virtualbox-extension-pack.rb ||:
 	brew $$install --cask virtualbox-extension-pack ||:
 	# AWS SSM Session Manager
@@ -211,39 +211,39 @@ macos-check:: ### Check if the development dependencies are installed
 	brew list zsh-autosuggestions ||:
 	brew list zsh-completions ||:
 	brew list zsh-syntax-highlighting ||:
-	brew cask list adoptopenjdk$(JAVA_VERSION) ||:
-	brew cask list docker ||:
-	brew cask list font-hack-nerd-font ||:
-	brew cask list iterm2 ||:
-	brew cask list visual-studio-code ||:
+	brew list --cask adoptopenjdk$(JAVA_VERSION) ||:
+	brew list --cask docker ||:
+	brew list --cask font-hack-nerd-font ||:
+	brew list --cask iterm2 ||:
+	brew list --cask visual-studio-code ||:
 	# Additional dependencies
 	brew list github/gh/gh ||:
 	brew list weaveworks/tap/eksctl ||:
-	brew cask list appcleaner ||:
-	brew cask list atom ||:
-	brew cask list dbeaver-community ||:
-	brew cask list dcommander ||:
-	brew cask list drawio
-	brew cask list firefox-developer-edition ||:
-	brew cask list gimp ||:
-	brew cask list gitkraken ||:
-	brew cask list google-chrome ||:
-	brew cask list hammerspoon ||:
-	brew cask list istat-menus ||:
-	brew cask list karabiner-elements ||:
-	brew cask list keepingyouawake ||:
-	#brew cask list microsoft-remote-desktop-beta ||:
-	brew cask list postman ||:
-	brew cask list sourcetree ||:
-	brew cask list spectacle ||:
-	brew cask list tripmode ||:
-	brew cask list tunnelblick ||:
-	brew cask list vanilla ||:
-	brew cask list vlc ||:
-	brew cask list wifi-explorer ||:
-	brew cask list vagrant ||:
-	brew cask list virtualbox ||:
-	brew cask list virtualbox-extension-pack ||:
+	brew list --cask appcleaner ||:
+	brew list --cask atom ||:
+	brew list --cask dbeaver-community ||:
+	brew list --cask dcommander ||:
+	brew list --cask drawio
+	brew list --cask firefox-developer-edition ||:
+	brew list --cask gimp ||:
+	brew list --cask gitkraken ||:
+	brew list --cask google-chrome ||:
+	brew list --cask hammerspoon ||:
+	brew list --cask istat-menus ||:
+	brew list --cask karabiner-elements ||:
+	brew list --cask keepingyouawake ||:
+	#brew list --cask microsoft-remote-desktop-beta ||:
+	brew list --cask postman ||:
+	brew list --cask sourcetree ||:
+	brew list --cask spectacle ||:
+	brew list --cask tripmode ||:
+	brew list --cask tunnelblick ||:
+	brew list --cask vanilla ||:
+	brew list --cask vlc ||:
+	brew list --cask wifi-explorer ||:
+	brew list --cask vagrant ||:
+	brew list --cask virtualbox ||:
+	brew list --cask virtualbox-extension-pack ||:
 
 macos-config:: ### Configure development dependencies
 	make \
