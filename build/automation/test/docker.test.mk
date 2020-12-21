@@ -55,6 +55,7 @@ test-docker:
 		test-docker-compose-parallel-execution \
 		test-docker-clean \
 		test-docker-prune \
+		test-docker-repo-list-tags \
 	)
 	for test in $${tests[*]}; do
 		mk_test_initialise $$test
@@ -523,6 +524,12 @@ test-docker-compose-parallel-execution:
 	# clean up
 	docker rm --force --volumes $$(docker ps --all --filter "name=.*-$(BUILD_ID)_[1|2]" --quiet) #2> /dev/null ||:
 	docker network rm $$(docker network ls --filter "name=$(DOCKER_NETWORK)_[1|2]" --quiet)
+
+test-docker-repo-list-tags:
+	# act
+	output=$$(make docker-repo-list-tags REPO=python | wc -l)
+	# assert
+	mk_test "100 -eq $$output"
 
 # ==============================================================================
 

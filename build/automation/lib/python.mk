@@ -83,3 +83,11 @@ python-clean: ### Clean up Python project files - mandatory: DIR=[Python project
 		-name "coverage.xml" -o \
 		-name "db.sqlite3" -o \
 	\) -print | xargs rm -rfv
+
+python-check-versions: ### Check Python versions alignment
+	echo "library: $(PYTHON_VERSION) (current $(DEVOPS_PROJECT_VERSION))"
+	echo "virtual: $$(pyenv install --list | grep -v - | grep -v b | tail -1 | sed "s/^[[:space:]]*//g") (latest)"
+	echo " docker: $$(make docker-repo-list-tags REPO=python | grep "^[0-9]*\.[0-9]*\.[0-9]*-alpine$$" | sort -r | head -n 1 | sed "s/-alpine//g" | sed "s/^[[:space:]]*//g") (latest)"
+
+.SILENT: \
+	python-check-versions

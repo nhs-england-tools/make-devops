@@ -36,3 +36,11 @@ java-add-certificate-to-keystore: ### Add certificate to the Java keystore and i
 	if [ ! -f $(ETC_DIR)/keystore.jks ]; then
 		cp -fv $(JAVA_HOME)/lib/security/cacerts $(ETC_DIR)/keystore.jks
 	fi
+
+java-check-versions: ### Check Java versions alignment
+	echo "library: $(JAVA_VERSION) (current $(DEVOPS_PROJECT_VERSION))"
+	echo "virtual: $$(brew search --cask adoptopenjdk | grep "adoptopenjdk1[0-9]*\(\.[0-9]*\.[0-9]*\)\?$$" | sort -r | head -n 1 | grep -o "[0-9]*\(\.[0-9]*\.[0-9]*\)\?$$") (latest)"
+	echo " docker: $$(make docker-repo-list-tags REPO=openjdk | grep -w "^[0-9]*\(\.[0-9]*\.[0-9]*\)\?-alpine$$" | sort -r | head -n 1 | sed "s/-alpine//g" | sed "s/^[[:space:]]*//g") (latest)"
+
+.SILENT: \
+	java-check-versions

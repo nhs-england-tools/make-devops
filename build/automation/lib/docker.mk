@@ -763,6 +763,13 @@ docker-image-find-and-version-as: ### Find image based on git commit hash and ta
 	make docker-tag NAME=$(NAME) DIGEST=$$digest TAG=$(or $(VERSION), $(TAG)
 	make docker-push NAME=$(NAME) TAG=$(or $(VERSION), $(TAG)
 
+docker-repo-list-tags: ### List repository tags - mandatory: REPO=[repository name]
+	(
+		curl "https://registry.hub.docker.com/api/content/v1/repositories/public/library/$(REPO)/tags?page=1&page_size=100" 2>/dev/null | jq -r '.results[].name';
+		curl "https://registry.hub.docker.com/api/content/v1/repositories/public/library/$(REPO)/tags?page=2&page_size=100" 2>/dev/null | jq -r '.results[].name'
+		curl "https://registry.hub.docker.com/api/content/v1/repositories/public/library/$(REPO)/tags?page=3&page_size=100" 2>/dev/null | jq -r '.results[].name'
+	) | sort
+
 # ==============================================================================
 
 .SILENT: \
@@ -775,4 +782,5 @@ docker-image-find-and-version-as: ### Find image based on git commit hash and ta
 	docker-image-get-digest \
 	docker-image-get-version \
 	docker-image-set-version \
-	docker-login
+	docker-login \
+	docker-repo-list-tags
