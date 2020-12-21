@@ -4,11 +4,12 @@
 variable "db_instance" { description = "The DB instance identifier name" }
 variable "db_port" { description = "The DB instance port number" }
 variable "db_name" { description = "The DB instance schema name" }
-variable "db_username" { description = "The DB instance user name" }
+variable "db_username" { description = "The DB instance username" }
+variable "db_password" { description = "The DB instance password" }
 
-variable "vpc_id" { description = "VPC ID" }
-variable "subnet_ids" { description = "List of VPC subnet IDs" }
-variable "security_group_ids" { description = "List of VPC security groups to associate" }
+variable "vpc_id" { description = "The VPC network ID" }
+variable "subnet_ids" { description = "The list of VPC subnet IDs" }
+variable "security_group_ids" { description = "The list of VPC security groups to associate" }
 
 # ==============================================================================
 # Default variables

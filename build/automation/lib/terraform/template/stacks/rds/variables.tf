@@ -14,6 +14,10 @@ variable "db_name" {
   default     = "postgres"
 }
 variable "db_username" {
-  description = "The DB instance user name"
+  description = "The DB instance username"
+  default     = "postgres"
+}
+variable "db_password" {
+  description = "The DB instance password"
   default     = "postgres"
 }

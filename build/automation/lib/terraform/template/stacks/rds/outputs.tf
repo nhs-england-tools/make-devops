@@ -17,11 +17,11 @@ output "db_name" {
 }
 
 output "db_username" {
-  description = "The DB instance user name"
+  description = "The DB instance username"
   value       = module.STACK_TEMPLATE_TO_REPLACE.db_username
 }
 
 output "db_password" {
-  description = "The DB instance user password location in the AWS Secrets Manager"
+  description = "The DB instance password"
   value       = module.STACK_TEMPLATE_TO_REPLACE.db_password
 }

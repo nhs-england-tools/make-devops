@@ -9,12 +9,12 @@ module "rds" {
   port       = var.db_port
   name       = var.db_name
   username   = var.db_username
-  password   = random_password.password.result
+  password   = var.db_password
 
   allocated_storage     = var.db_allocated_storage
   max_allocated_storage = var.db_max_allocated_storage
   engine                = "postgres"
-  engine_version        = "RDS_POSTGRES_VERSION_TEMPLATE_TO_REPLACE"
+  engine_version        = "AWS_POSTGRES_VERSION_TEMPLATE_TO_REPLACE"
   instance_class        = var.db_instance_class
   storage_encrypted     = true
 
@@ -29,11 +29,16 @@ module "rds" {
   performance_insights_enabled = true
   skip_final_snapshot          = var.db_skip_final_snapshot
 
+  enabled_cloudwatch_logs_exports = ["postgresql", "upgrade"]
+  monitoring_interval             = "30"
+  monitoring_role_arn             = aws_iam_role.rds_enhanced_monitoring.arn
+
   vpc_security_group_ids = [aws_security_group.security_group.id]
+  subnet_ids             = var.subnet_ids
 
   # DB Parameter Group
 
-  family = "postgres${RDS_POSTGRES_VERSION_MAJOR_TEMPLATE_TO_REPLACE}"
+  family = "postgres${AWS_POSTGRES_VERSION_MAJOR_TEMPLATE_TO_REPLACE}"
   parameters = [
     {
       name         = "max_connections"
@@ -64,13 +69,9 @@ module "rds" {
 
   # DB Option Group
 
-  major_engine_version = "RDS_POSTGRES_VERSION_MAJOR_TEMPLATE_TO_REPLACE"
+  major_engine_version = "AWS_POSTGRES_VERSION_MAJOR_TEMPLATE_TO_REPLACE"
   options = [
   ]
-
-  # DB Subnet Group
-
-  subnet_ids = var.subnet_ids
 }
 
 ### Networking #################################################################
@@ -79,7 +80,7 @@ resource "aws_security_group" "security_group" {
   name        = "${var.db_instance}-rds-sg"
   vpc_id      = var.vpc_id
   tags        = var.context.tags
-  description = "Allow incoming connections to the RDS PostgreSQL instance from a VPC"
+  description = "Allow incoming connections to the RDS PostgreSQL instance from the specified VPC"
 }
 
 resource "aws_security_group_rule" "ingress" {
@@ -90,27 +91,28 @@ resource "aws_security_group_rule" "ingress" {
   protocol                 = "tcp"
   security_group_id        = aws_security_group.security_group.id
   source_security_group_id = each.value
-  description              = "Allow incoming connections to the RDS PostgreSQL instance from a Security Group"
+  description              = "A rule to allow incoming connections to the RDS PostgreSQL instance from the specified Security Groups"
 }
 
-### Password ###################################################################
+### IAM role for enhanced monitoring ###########################################
 
-resource "aws_secretsmanager_secret" "secret" {
-  name                    = "${var.db_instance}/deployment"
-  recovery_window_in_days = 0
-  description             = "Deployment secrets of the '${var.context.project_group}/${var.context.project_name}' project"
-  tags                    = var.context.tags
+resource "aws_iam_role" "rds_enhanced_monitoring" {
+  name_prefix        = "rds-enhanced-monitoring-"
+  assume_role_policy = data.aws_iam_policy_document.rds_enhanced_monitoring.json
 }
 
-resource "aws_secretsmanager_secret_version" "secret_version" {
-  secret_id     = aws_secretsmanager_secret.secret.id
-  secret_string = "{\"DB_PASSWORD\": \"${random_password.password.result}\"}"
+resource "aws_iam_role_policy_attachment" "rds_enhanced_monitoring" {
+  role       = aws_iam_role.rds_enhanced_monitoring.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole"
 }
 
-resource "random_password" "password" {
-  length      = 32
-  min_upper   = 4
-  min_lower   = 4
-  min_numeric = 4
-  special     = false
+data "aws_iam_policy_document" "rds_enhanced_monitoring" {
+  statement {
+    actions = ["sts:AssumeRole"]
+    effect  = "Allow"
+    principals {
+      type        = "Service"
+      identifiers = ["monitoring.rds.amazonaws.com"]
+    }
+  }
 }
