@@ -44,7 +44,7 @@
     "java.completion.enabled": true,
     "java.configuration.updateBuildConfiguration": "automatic",
     "java.format.enabled": false,
-    "java.home": "/Library/Java/JavaVirtualMachines/adoptopenjdk-14.jdk/Contents/Home",
+    "java.home": "/Library/Java/JavaVirtualMachines/adoptopenjdk-15.jdk/Contents/Home",
     "python.formatting.blackArgs": ["--line-length", "120"],
     "python.formatting.provider": "black",
     "python.languageServer": "Pylance",

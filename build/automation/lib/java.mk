@@ -1,4 +1,4 @@
-JAVA_VERSION = 14
+JAVA_VERSION = 15
 
 java-virtualenv: ### Setup Java virtual environment - optional: JAVA_VERSION
 	brew update

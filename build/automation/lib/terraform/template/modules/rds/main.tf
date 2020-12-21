@@ -1,6 +1,6 @@
 module "rds" {
   source  = "terraform-aws-modules/rds/aws"
-  version = "~> 2.20"
+  version = "2.20.0"
   tags    = var.context.tags
 
   # DB Instance

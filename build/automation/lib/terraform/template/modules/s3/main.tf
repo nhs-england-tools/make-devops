@@ -1,6 +1,6 @@
 module "s3" {
   source  = "terraform-aws-modules/s3-bucket/aws"
-  version = "1.16.0"
+  version = "1.17.0"
   tags    = var.context.tags
 
   bucket        = var.bucket_name

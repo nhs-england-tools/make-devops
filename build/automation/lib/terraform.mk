@@ -183,7 +183,42 @@ _terraform-delete-state-lock: ### Delete Terraform state lock - mandatory: STACK
 
 # ==============================================================================
 
+terraform-check-module-versions: ### Check Terraform module versions alignment
+	# dynamodb terraform-aws-modules/dynamodb-table/aws
+	name="terraform dynamodb terraform-aws-modules/dynamodb-table/aws"
+	lib_ver=$$(cat $(LIB_DIR_REL)/terraform/template/modules/dynamodb/main.tf | grep 'version[[:space:]]=[[:space:]]"[0-9]*\.[0-9]*\(\.[0-9]*\)\?"' | grep -o "[0-9]*\.[0-9]*\(\.[0-9]*\)\?" | uniq)
+	gh_ver=$$(curl -s https://github.com/terraform-aws-modules/terraform-aws-dynamodb-table/releases | grep "releases/tag" | grep -o "[0-9]*\.[0-9]*\(\.[0-9]*\)\?" | sort -V -r | head -n 1)
+	echo "$$name library: $$lib_ver (current $(DEVOPS_PROJECT_VERSION))"
+	echo "$$name github: $$gh_ver (latest)"
+	# iam-roles terraform-aws-modules/iam/aws
+	name="terraform iam-roles terraform-aws-modules/iam/aws"
+	lib_ver=$$(cat $(LIB_DIR_REL)/terraform/template/modules/iam-roles/main.tf | grep 'version[[:space:]]=[[:space:]]"[0-9]*\.[0-9]*\(\.[0-9]*\)\?"' | grep -o "[0-9]*\.[0-9]*\(\.[0-9]*\)\?" | uniq)
+	gh_ver=$$(curl -s https://github.com/terraform-aws-modules/terraform-aws-iam/releases | grep "releases/tag" | grep -o "[0-9]*\.[0-9]*\(\.[0-9]*\)\?" | sort -V -r | head -n 1)
+	echo "$$name library: $$lib_ver (current $(DEVOPS_PROJECT_VERSION))"
+	echo "$$name github: $$gh_ver (latest)"
+	# rds terraform-aws-modules/rds/aws
+	name="terraform rds terraform-aws-modules/rds/aws"
+	lib_ver=$$(cat $(LIB_DIR_REL)/terraform/template/modules/rds/main.tf | grep 'version[[:space:]]=[[:space:]]"[0-9]*\.[0-9]*\(\.[0-9]*\)\?"' | grep -o "[0-9]*\.[0-9]*\(\.[0-9]*\)\?" | uniq)
+	gh_ver=$$(curl -s https://github.com/terraform-aws-modules/terraform-aws-rds/releases | grep "releases/tag" | grep -o "[0-9]*\.[0-9]*\(\.[0-9]*\)\?" | sort -V -r | head -n 1)
+	echo "$$name library: $$lib_ver (current $(DEVOPS_PROJECT_VERSION))"
+	echo "$$name github: $$gh_ver (latest)"
+	# s3 terraform-aws-modules/s3-bucket/aws
+	name="terraform s3 terraform-aws-modules/s3-bucket/aws"
+	lib_ver=$$(cat $(LIB_DIR_REL)/terraform/template/modules/s3/main.tf | grep 'version[[:space:]]=[[:space:]]"[0-9]*\.[0-9]*\(\.[0-9]*\)\?"' | grep -o "[0-9]*\.[0-9]*\(\.[0-9]*\)\?" | uniq)
+	gh_ver=$$(curl -s https://github.com/terraform-aws-modules/terraform-aws-s3-bucket/releases | grep "releases/tag" | grep -o "[0-9]*\.[0-9]*\(\.[0-9]*\)\?" | sort -V -r | head -n 1)
+	echo "$$name library: $$lib_ver (current $(DEVOPS_PROJECT_VERSION))"
+	echo "$$name github: $$gh_ver (latest)"
+	# vpc terraform-aws-modules/vpc/aws
+	name="terraform vpc terraform-aws-modules/vpc/aws"
+	lib_ver=$$(cat $(LIB_DIR_REL)/terraform/template/modules/vpc/main.tf | grep 'version[[:space:]]=[[:space:]]"[0-9]*\.[0-9]*\(\.[0-9]*\)\?"' | grep -o "[0-9]*\.[0-9]*\(\.[0-9]*\)\?" | uniq)
+	gh_ver=$$(curl -s https://github.com/terraform-aws-modules/terraform-aws-vpc/releases | grep "releases/tag" | grep -o "[0-9]*\.[0-9]*\(\.[0-9]*\)\?" | sort -V -r | head -n 1)
+	echo "$$name library: $$lib_ver (current $(DEVOPS_PROJECT_VERSION))"
+	echo "$$name github: $$gh_ver (latest)"
+
+# ==============================================================================
+
 .SILENT: \
+	terraform-check-module-versions \
 	terraform-export-variables \
 	terraform-export-variables-from-json \
 	terraform-export-variables-from-secret \

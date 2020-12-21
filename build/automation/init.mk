@@ -399,6 +399,14 @@ devops-switch-aws-accounts aws-accounts-switch: ### Switch among the set of AWS 
 
 # TODO: Refactor `devops-setup-aws-accounts`, `devops-setup-aws-accounts-for-service` and `devops-switch-aws-accounts`
 
+devops-check-versions: ### Check Make DevOps library versions alignment
+	make \
+		java-check-versions \
+		node-check-versions \
+		postgres-check-versions \
+		python-check-versions \
+		terraform-check-module-versions
+
 # ==============================================================================
 # Project configuration
 
@@ -632,6 +640,7 @@ endif
 .SILENT: \
 	_devops-synchronise-select-tag-to-install \
 	_devops-test \
+	devops-check-versions \
 	devops-copy \
 	devops-get-variable get-variable \
 	devops-print-variables show-configuration \
