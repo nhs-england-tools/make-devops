@@ -40,9 +40,9 @@ data "terraform_remote_state" "vpc" {
 # ==============================================================================
 # Terraform state keys and store set by the Make DevOps automation scripts
 
+variable "terraform_platform_state_store" {}
+
 variable "route53_terraform_state_key" {}
 variable "security_groups_k8s_terraform_state_key" {}
 variable "security_groups_terraform_state_key" {}
 variable "vpc_terraform_state_key" {}
-
-variable "terraform_platform_state_store" {}

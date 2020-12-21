@@ -8,11 +8,11 @@ This stack provisions a number of AWS IAM roles to support a product.
 
 ### Create an operational stack from the template
 
-    make project-create-infrastructure MODULE_TEMPLATE=iam-roles STACK_TEMPLATE=service-roles
     make project-create-profile NAME=tools
     cat << HEREDOC >> build/automation/var/profile/tools.mk
     TERRAFORM_NHSD_IDENTITIES_ACCOUNT_ID = 123456789012
     HEREDOC
+    make project-create-infrastructure MODULE_TEMPLATE=iam-roles STACK_TEMPLATE=service-roles PROFILE=tools
 
 ### Provision the stack
 

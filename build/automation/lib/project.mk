@@ -75,7 +75,7 @@ project-create-deployment: ### Create deployment from template - mandatory: STAC
 	make -s k8s-create-overlay-from-template STACK=$(STACK) PROFILE=$(PROFILE)
 	make project-create-profile NAME=$(PROFILE)
 
-project-create-infrastructure: ### Create infrastructure from template - mandatory: MODULE_TEMPLATE|MODULE_TEMPLATES=[library template infrastructure module name],STACK_TEMPLATE=[library template infrastructure module name]; optional: STACK=[new stack name]
+project-create-infrastructure: ### Create infrastructure from template - mandatory: MODULE_TEMPLATE|MODULE_TEMPLATES=[library template infrastructure module name],STACK_TEMPLATE=[library template infrastructure module name]; optional: STACK=[new stack name],PROFILE=[profile name]
 	for module in $$(echo $(or $(MODULE_TEMPLATE), $(MODULE_TEMPLATES)) | tr "," "\n"); do
 		make -s terraform-create-module-from-template TEMPLATE=$$module
 	done

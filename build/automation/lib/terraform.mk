@@ -16,7 +16,7 @@ terraform-create-module-from-template: ### Create Terraform module from template
 	cp -fv $(LIB_DIR_REL)/terraform/template/.gitignore $(INFRASTRUCTURE_DIR_REL)
 	make -s file-replace-variables-in-dir DIR=$(INFRASTRUCTURE_DIR_REL)/modules/$(TEMPLATE) SUFFIX=_TEMPLATE_TO_REPLACE
 
-terraform-create-stack-from-template: ### Create Terraform stack from template - mandatory: NAME=[new stack name],TEMPLATE=[module template name]
+terraform-create-stack-from-template: ### Create Terraform stack from template - mandatory: NAME=[new stack name],TEMPLATE=[module template name],PROFILE=[profile name]
 	rm -rf $(INFRASTRUCTURE_DIR)/stacks/$(NAME)
 	mkdir -p $(INFRASTRUCTURE_DIR_REL)/stacks
 	cp -rfv \
@@ -25,6 +25,7 @@ terraform-create-stack-from-template: ### Create Terraform stack from template -
 	cp -rfv \
 		$(LIB_DIR_REL)/terraform/template/stacks/*.tf \
 		$(INFRASTRUCTURE_DIR_REL)/stacks/$(NAME)
+	cp -fv $(LIB_DIR_REL)/terraform/template/data-texas-$(TEXAS_VERSION).tf $(INFRASTRUCTURE_DIR_REL)/stacks/$(NAME)
 	cp -fv $(LIB_DIR_REL)/terraform/template/.gitignore $(INFRASTRUCTURE_DIR_REL)
 	make -s file-replace-variables-in-dir DIR=$(INFRASTRUCTURE_DIR_REL)/stacks/$(NAME) SUFFIX=_TEMPLATE_TO_REPLACE
 

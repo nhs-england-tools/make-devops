@@ -12,12 +12,12 @@ This stack provisions S3 bucket and DynamoDB table to store the Terraform state 
 
 ### Create an operational stack from the template
 
-    make project-create-infrastructure MODULE_TEMPLATE=s3,dynamodb STACK_TEMPLATE=terraform-state
     make project-create-profile NAME=tools
     cat << HEREDOC >> build/automation/var/profile/tools.mk
     TERRAFORM_STATE_BUCKET_NAME = \$(TERRAFORM_STATE_STORE)
     TERRAFORM_STATE_TABLE_NAME = \$(TERRAFORM_STATE_LOCK)
     HEREDOC
+    make project-create-infrastructure MODULE_TEMPLATE=s3,dynamodb STACK_TEMPLATE=terraform-state PROFILE=tools
 
 ### Provision the stack
 

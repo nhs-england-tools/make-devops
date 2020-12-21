@@ -273,7 +273,7 @@ _devops-synchronise-select-tag-to-install: ### TODO: This is WIP
 	# 	echo "$$choice"
 	# done
 
-devops-setup-aws-accounts: ### Ask user to input valid AWS account IDs to be used by the DevOps automation toolchain scripts
+devops-setup-aws-accounts aws-accounts-setup: ### Ask user to input valid AWS account IDs to be used by the DevOps automation toolchain scripts
 	file=$(DEV_OHMYZSH_DIR)/plugins/$(DEVOPS_PROJECT_NAME)/aws-platform.zsh
 	if [ -f $$file ]; then
 		parent_id=$$(cat $$file | grep "export AWS_ACCOUNT_ID_LIVE_PARENT=" | sed "s/export AWS_ACCOUNT_ID_LIVE_PARENT=//")
@@ -321,7 +321,7 @@ devops-setup-aws-accounts: ### Ask user to input valid AWS account IDs to be use
 		printf "\nERROR: Please, before proceeding run \`make macos-setup\`\n\n"
 	fi
 
-devops-setup-aws-accounts-for-service: ### Ask user to input valid AWS account IDs to be used by the DevOps automation toolchain scripts for service accounts
+devops-setup-aws-accounts-for-service aws-accounts-setup-for-service: ### Ask user to input valid AWS account IDs to be used by the DevOps automation toolchain scripts for service accounts
 	file=$(DEV_OHMYZSH_DIR)/plugins/$(DEVOPS_PROJECT_NAME)/aws-platform-default.zsh
 	[ ! -f $$file ] && cp -vf $(DEV_OHMYZSH_DIR)/plugins/$(DEVOPS_PROJECT_NAME)/aws-platform.zsh $$file
 	printf "\nWhat's the service name?\n\n"
@@ -373,7 +373,7 @@ devops-setup-aws-accounts-for-service: ### Ask user to input valid AWS account I
 	> /dev/null 2>&1
 	printf "Please, run \`reload\` to make sure that this change takes effect\n\n"
 
-devops-switch-aws-accounts: ### Switch among the set of AWS accounts to be used by the DevOps automation toolchain scripts
+devops-switch-aws-accounts aws-accounts-switch: ### Switch among the set of AWS accounts to be used by the DevOps automation toolchain scripts
 	printf "\n"
 	i=1
 	for service in $$(ls -1 $(DEV_OHMYZSH_DIR)/plugins/$(DEVOPS_PROJECT_NAME)/aws-platform-*.zsh | sed "s;.*/plugins/$(DEVOPS_PROJECT_NAME)/aws-platform-;;g" | sed "s;.zsh;;g"); do
