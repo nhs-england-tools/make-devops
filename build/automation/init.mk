@@ -247,6 +247,10 @@ _devops-project-clean: ### Clean up the project structure - mandatory: DIR=[proj
 		$(DIR)/build/automation/var/helpers.mk.default \
 		$(DIR)/build/automation/var/override.mk.default \
 		$(DIR)/build/automation/var/platform-texas/account-*.mk \
+		$(DIR)/build/automation/var/platform-texas/default \
+		$(DIR)/build/automation/var/platform-texas/platform-texas-revamp.mk \
+		$(DIR)/build/automation/var/platform-texas/platform-texas.mk \
+		$(DIR)/build/automation/var/platform-texas/revamp \
 		$(DIR)/build/automation/var/profile/*.mk.default \
 		$(DIR)/build/docker/Dockerfile.metadata \
 		$(DIR)/documentation/DevOps-Pipelines.png \

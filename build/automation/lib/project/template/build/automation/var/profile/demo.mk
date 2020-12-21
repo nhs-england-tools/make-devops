@@ -1,4 +1,4 @@
-include $(VAR_DIR)/platform-texas/default/account-live-k8s-prod.mk
+include $(VAR_DIR)/platform-texas/v1/account-live-k8s-prod.mk
 
 # It is a Texas requirement that production namespaces end with `-prod`
 K8S_APP_NAMESPACE := $(K8S_APP_NAMESPACE)-prod

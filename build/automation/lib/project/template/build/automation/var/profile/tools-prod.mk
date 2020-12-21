@@ -1,4 +1,4 @@
-include $(VAR_DIR)/platform-texas/revamp/account-prod.mk
+include $(VAR_DIR)/platform-texas/v2/account-prod.mk
 
 # ==============================================================================
 # Service variables

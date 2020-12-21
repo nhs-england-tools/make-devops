@@ -5,4 +5,4 @@ TF_VAR_terraform_platform_state_store = nhsd-texasplatform-terraform-state-store
 
 # ==============================================================================
 
-include $(VAR_DIR)/platform-texas/platform-texas.mk
+include $(VAR_DIR)/platform-texas/platform-texas-v1.mk
