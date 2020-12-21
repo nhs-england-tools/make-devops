@@ -38,9 +38,11 @@ java-add-certificate-to-keystore: ### Add certificate to the Java keystore and i
 	fi
 
 java-check-versions: ### Check Java versions alignment
-	echo "library: $(JAVA_VERSION) (current $(DEVOPS_PROJECT_VERSION))"
-	echo "virtual: $$(brew search --cask adoptopenjdk | grep "adoptopenjdk1[0-9]*\(\.[0-9]*\.[0-9]*\)\?$$" | sort -r | head -n 1 | grep -o "[0-9]*\(\.[0-9]*\.[0-9]*\)\?$$") (latest)"
-	echo " docker: $$(make docker-repo-list-tags REPO=openjdk | grep -w "^[0-9]*\(\.[0-9]*\.[0-9]*\)\?-alpine$$" | sort -r | head -n 1 | sed "s/-alpine//g" | sed "s/^[[:space:]]*//g") (latest)"
+	echo "java library: $(JAVA_VERSION) (current $(DEVOPS_PROJECT_VERSION))"
+	echo "java library aws: none"
+	echo "java virtual: $$(brew search --cask adoptopenjdk | grep "adoptopenjdk[0-9]*\(\.[0-9]*\(\.[0-9]*\)\?\)\?$$" | grep -o "[0-9]*\(\.[0-9]*\(\.[0-9]*\)\?\)\?$$" | sort -V -r | head -n 1 | sed "s/^[[:space:]]*//g") (latest)"
+	echo "java docker: $$(make docker-repo-list-tags REPO=openjdk | grep -w "^[0-9]*\(\.[0-9]*\(\.[0-9]*\)\?\)\?-alpine$$" | sort -V -r | head -n 1 | sed "s/-alpine//g" | sed "s/^[[:space:]]*//g") (latest)"
+	echo "java aws: unknown"
 
 .SILENT: \
 	java-check-versions
