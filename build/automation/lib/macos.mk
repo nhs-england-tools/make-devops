@@ -337,7 +337,7 @@ _macos-config-oh-my-zsh:
 	echo "POWERLEVEL9K_MODE=nerdfont-complete" >> ~/.zshrc
 	echo "POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir vcs)" >> ~/.zshrc
 	echo "POWERLEVEL9K_SHORTEN_DIR_LENGTH=3" >> ~/.zshrc
-	echo "POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status node_version pyenv jenv custom_texas root_indicator background_jobs time)" >> ~/.zshrc
+	echo "POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status nvm pyenv jenv custom_texas root_indicator background_jobs time)" >> ~/.zshrc
 	echo "POWERLEVEL9K_PROMPT_ON_NEWLINE=true" >> ~/.zshrc
 	echo "POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true" >> ~/.zshrc
 	echo "ZSH_THEME=powerlevel10k/powerlevel10k" >> ~/.zshrc
@@ -416,6 +416,24 @@ _macos-config-command-line-make-devops:
 		echo "export NVM_DIR=\$$HOME/.nvm"
 		echo ". /usr/local/opt/nvm/nvm.sh"
 		echo ". /usr/local/opt/nvm/etc/bash_completion.d/nvm"
+		echo "autoload -U add-zsh-hook"
+		echo "load-nvmrc() {"
+		echo "  local node_version=\"\$$(nvm version)\""
+		echo "  local nvmrc_path=\"\$$(nvm_find_nvmrc)\""
+		echo "  if [ -n \"\$$nvmrc_path\" ]; then"
+		echo "    local nvmrc_node_version=\$$(nvm version \"\$$(cat \"\$${nvmrc_path}\")\")"
+		echo "    if [ \"\$$nvmrc_node_version\" = \"N/A\" ]; then"
+		echo "      nvm install"
+		echo "    elif [ \"\$$nvmrc_node_version\" != \"\$$node_version\" ]; then"
+		echo "      nvm use"
+		echo "    fi"
+		echo "  elif [ \"\$$node_version\" != \"\$$(nvm version default)\" ]; then"
+		echo "    echo \"Reverting to nvm default version\""
+		echo "    nvm use default"
+		echo "  fi"
+		echo "}"
+		echo "add-zsh-hook chpwd load-nvmrc"
+		echo "load-nvmrc > /dev/null"
 		echo
 		echo "# AWS platform"
 		echo ". $(DEV_OHMYZSH_DIR)/plugins/$(DEVOPS_PROJECT_NAME)/aws-platform.zsh"

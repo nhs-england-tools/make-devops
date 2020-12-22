@@ -1,8 +1,10 @@
 NODE_VERSION = 15.4.0
 
 node-virtualenv: ### Setup Node.js virtual environment - optional: NODE_VERSION
+	. /usr/local/opt/nvm/nvm.sh
 	nvm install $(NODE_VERSION)
 	nvm use $(NODE_VERSION)
+	echo $(NODE_VERSION) > .nvmrc
 
 node-check-versions: ### Check Node.js versions alignment
 	echo "node library: $(NODE_VERSION) (current $(DEVOPS_PROJECT_VERSION))"
