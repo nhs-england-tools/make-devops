@@ -59,6 +59,7 @@ _devops-test:
 	[ "$(AWS_ACCOUNT_ID_MGMT)" == 000000000000 ] && echo "AWS_ACCOUNT_ID_MGMT has not been set with a valid AWS account ID (this might be desired for testing or local development)"
 	[ "$(AWS_ACCOUNT_ID_NONPROD)" == 000000000000 ] && echo "AWS_ACCOUNT_ID_NONPROD has not been set with a valid AWS account ID (this might be desired for testing or local development)"
 	[ "$(AWS_ACCOUNT_ID_PROD)" == 000000000000 ] && echo "AWS_ACCOUNT_ID_PROD has not been set with a valid AWS account ID (this might be desired for testing or local development)"
+	[ "$(AWS_ACCOUNT_ID_IDENTITIES)" == 000000000000 ] && echo "AWS_ACCOUNT_ID_IDENTITIES has not been set with a valid AWS account ID (this might be desired for testing or local development)"
 	export _DEVOPS_RUN_TEST=true
 	if [[ "$(DEBUG)" =~ ^(true|yes|y|on|1|TRUE|YES|Y|ON)$$ ]]; then
 		exec 3>&1
@@ -280,11 +281,13 @@ devops-setup-aws-accounts aws-accounts-setup: ### Ask user to input valid AWS ac
 		mgmt_id=$$(cat $$file | grep "export AWS_ACCOUNT_ID_MGMT=" | sed "s/export AWS_ACCOUNT_ID_MGMT=//")
 		nonprod_id=$$(cat $$file | grep "export AWS_ACCOUNT_ID_NONPROD=" | sed "s/export AWS_ACCOUNT_ID_NONPROD=//")
 		prod_id=$$(cat $$file | grep "export AWS_ACCOUNT_ID_PROD=" | sed "s/export AWS_ACCOUNT_ID_PROD=//")
+		identities_id=$$(cat $$file | grep "export AWS_ACCOUNT_ID_IDENTITIES=" | sed "s/export AWS_ACCOUNT_ID_IDENTITIES=//")
 		printf "\nPlease, provide valid AWS account IDs or press ENTER to leave it unchanged.\n\n"
 		read -p "AWS_ACCOUNT_ID_LIVE_PARENT ($$parent_id) : " new_parent_id
 		read -p "AWS_ACCOUNT_ID_MGMT        ($$mgmt_id) : " new_mgmt_id
 		read -p "AWS_ACCOUNT_ID_NONPROD     ($$nonprod_id) : " new_nonprod_id
 		read -p "AWS_ACCOUNT_ID_PROD        ($$prod_id) : " new_prod_id
+		read -p "AWS_ACCOUNT_ID_IDENTITIES  ($$identities_id) : " new_identities_id
 		printf "\n"
 		if [ -n "$$new_parent_id" ]; then
 			make -s file-replace-content \
@@ -314,6 +317,13 @@ devops-setup-aws-accounts aws-accounts-setup: ### Ask user to input valid AWS ac
 				NEW="export AWS_ACCOUNT_ID_PROD=$$new_prod_id" \
 			> /dev/null 2>&1
 		fi
+		if [ -n "$$new_identities_id" ]; then
+			make -s file-replace-content \
+				FILE=$$file \
+				OLD="export AWS_ACCOUNT_ID_IDENTITIES=$$identities_id" \
+				NEW="export AWS_ACCOUNT_ID_IDENTITIES=$$new_identities_id" \
+			> /dev/null 2>&1
+		fi
 		printf "FILE: $$file\n"
 		cat $$file
 		printf "Please, run \`reload\` to make sure that this change takes effect\n\n"
@@ -333,15 +343,18 @@ devops-setup-aws-accounts-for-service aws-accounts-setup-for-service: ### Ask us
 		echo "export AWS_ACCOUNT_ID_TOOLS=000000000000"
 		echo "export AWS_ACCOUNT_ID_NONPROD=000000000000"
 		echo "export AWS_ACCOUNT_ID_PROD=000000000000"
+		echo "export AWS_ACCOUNT_ID_IDENTITIES=000000000000"
 		echo
 	) > $$file
 	tools_id=$$(cat $$file | grep "export AWS_ACCOUNT_ID_TOOLS=" | sed "s/export AWS_ACCOUNT_ID_TOOLS=//")
 	nonprod_id=$$(cat $$file | grep "export AWS_ACCOUNT_ID_NONPROD=" | sed "s/export AWS_ACCOUNT_ID_NONPROD=//")
 	prod_id=$$(cat $$file | grep "export AWS_ACCOUNT_ID_PROD=" | sed "s/export AWS_ACCOUNT_ID_PROD=//")
+	identities_id=$$(cat $$file | grep "export AWS_ACCOUNT_ID_IDENTITIES=" | sed "s/export AWS_ACCOUNT_ID_IDENTITIES=//")
 	printf "\nPlease, provide valid AWS account IDs or press ENTER to leave it unchanged.\n\n"
 	read -p "AWS_ACCOUNT_ID_TOOLS       ($$tools_id) : " new_tools_id
 	read -p "AWS_ACCOUNT_ID_NONPROD     ($$nonprod_id) : " new_nonprod_id
 	read -p "AWS_ACCOUNT_ID_PROD        ($$prod_id) : " new_prod_id
+	read -p "AWS_ACCOUNT_ID_IDENTITIES  ($$identities_id) : " new_identities_id
 	printf "\n"
 	if [ -n "$$new_tools_id" ]; then
 		make -s file-replace-content \
@@ -362,6 +375,13 @@ devops-setup-aws-accounts-for-service aws-accounts-setup-for-service: ### Ask us
 			FILE=$$file \
 			OLD="export AWS_ACCOUNT_ID_PROD=$$prod_id" \
 			NEW="export AWS_ACCOUNT_ID_PROD=$$new_prod_id" \
+		> /dev/null 2>&1
+	fi
+	if [ -n "$$new_identities_id" ]; then
+		make -s file-replace-content \
+			FILE=$$file \
+			OLD="export AWS_ACCOUNT_ID_IDENTITIES=$$identities_id" \
+			NEW="export AWS_ACCOUNT_ID_IDENTITIES=$$new_identities_id" \
 		> /dev/null 2>&1
 	fi
 	printf "FILE: $$file\n"
@@ -527,6 +547,7 @@ AWS_ACCOUNT_ID_MGMT := $(or $(AWS_ACCOUNT_ID_MGMT), 000000000000)
 AWS_ACCOUNT_ID_TOOLS := $(or $(AWS_ACCOUNT_ID_TOOLS), 000000000000)
 AWS_ACCOUNT_ID_NONPROD := $(or $(AWS_ACCOUNT_ID_NONPROD), 000000000000)
 AWS_ACCOUNT_ID_PROD := $(or $(AWS_ACCOUNT_ID_PROD), 000000000000)
+AWS_ACCOUNT_ID_IDENTITIES := $(or $(AWS_ACCOUNT_ID_IDENTITIES), 000000000000)
 endif
 
 ifndef PROJECT_DIR
@@ -578,6 +599,9 @@ $(info AWS_ACCOUNT_ID_NONPROD is not set in ~/.dotfiles/oh-my-zsh/plugins/make-d
 endif
 ifndef AWS_ACCOUNT_ID_PROD
 $(info AWS_ACCOUNT_ID_PROD is not set in ~/.dotfiles/oh-my-zsh/plugins/make-devops/aws-platform.zsh or in your CI config, run `make devops-setup-aws-accounts`)
+endif
+ifndef AWS_ACCOUNT_ID_IDENTITIES
+$(info AWS_ACCOUNT_ID_IDENTITIES is not set in ~/.dotfiles/oh-my-zsh/plugins/make-devops/aws-platform.zsh or in your CI config, run `make devops-setup-aws-accounts`)
 endif
 
 # ==============================================================================
@@ -640,6 +664,9 @@ endif
 .SILENT: \
 	_devops-synchronise-select-tag-to-install \
 	_devops-test \
+	aws-accounts-setup \
+	aws-accounts-setup-for-service \
+	aws-accounts-switch \
 	devops-check-versions \
 	devops-copy \
 	devops-get-variable get-variable \

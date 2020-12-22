@@ -449,6 +449,7 @@ _macos-config-command-line-aws:
 			echo "export AWS_ACCOUNT_ID_MGMT=000000000000"
 			echo "export AWS_ACCOUNT_ID_NONPROD=000000000000"
 			echo "export AWS_ACCOUNT_ID_PROD=000000000000"
+			echo "export AWS_ACCOUNT_ID_IDENTITIES=000000000000"
 			echo
 		) > $(DEV_OHMYZSH_DIR)/plugins/$(DEVOPS_PROJECT_NAME)/aws-platform.zsh
 	fi
