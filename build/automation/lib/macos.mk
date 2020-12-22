@@ -366,7 +366,7 @@ _macos-config-command-line:
 	# configure Java
 	eval "$$(jenv init -)"
 	jenv enable-plugin export
-	jenv add $$(/usr/libexec/java_home -v$(JAVA_VERSION))
+	jenv add /Library/Java/JavaVirtualMachines/adoptopenjdk-$(JAVA_VERSION).jdk/Contents/Home
 	jenv versions # ls -1 /Library/Java/JavaVirtualMachines
 	jenv global $(JAVA_VERSION)
 	# configure Terraform
