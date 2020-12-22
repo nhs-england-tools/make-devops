@@ -1,10 +1,15 @@
 NODE_VERSION = 15.4.0
 
+# TODO: Print Node.js version in prompt always when `.nvmrc` file is present, not only if diffrent to global
+
 node-virtualenv: ### Setup Node.js virtual environment - optional: NODE_VERSION
 	. /usr/local/opt/nvm/nvm.sh
 	nvm install $(NODE_VERSION)
 	nvm use $(NODE_VERSION)
 	echo $(NODE_VERSION) > .nvmrc
+
+node-virtualenv-clean: ### Clean up Node.js virtual environment
+	rm -f .nvmrc
 
 node-check-versions: ### Check Node.js versions alignment
 	echo "node library: $(NODE_VERSION) (current $(DEVOPS_PROJECT_VERSION))"
