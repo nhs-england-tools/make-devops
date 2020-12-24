@@ -17,11 +17,6 @@ This stack provisions S3 bucket and DynamoDB table to store the Terraform state 
 
 ### Provision the stack
 
-Firstly, some of the sections of the code have to be temporary commented out as the S3 bucket to store the state has not yet been created, these are as follows
-
-- the backend section in the `infrastructure/stacks/terraform-state/terraform.tf` file
-- the data sections in the `infrastructure/stacks/terraform-state/data-texas-v2.tf` file
-
 ```
     make terraform-plan STACK=terraform-state TERRAFORM_USE_STATE_STORE=false PROFILE=tools
     make terraform-apply-auto-approve STACK=terraform-state TERRAFORM_USE_STATE_STORE=false PROFILE=tools
@@ -29,13 +24,11 @@ Firstly, some of the sections of the code have to be temporary commented out as 
 
 ### Store its own state
 
-Now, having created the S3 bucket to store the state and DynamoDB table to acquire the lock, it is time to upload the local state. Therefore, restore the content of the `terraform.tf` file back to what it was originally prior to executing the above instructions. Then proceed with uploading the state.
+Now, having created the S3 bucket to store the state and DynamoDB table to acquire the lock, it is time to upload the local state.
 
     make terraform-apply-auto-approve STACK=terraform-state TERRAFORM_DO_NOT_REMOVE_STATE_FILE=true PROFILE=tools
 
 You will be prompted with a question `Do you want to copy existing state to the new backend?`. Enter `yes` to copy the state into the S3 bucket and store it there.
-
-As the last thing to do is to restore the content of the Terraform data file.
 
 ### Configuration updates
 

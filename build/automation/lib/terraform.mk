@@ -26,7 +26,7 @@ terraform-create-stack-from-template: ### Create Terraform stack from template -
 	cp -rfv \
 		$(LIB_DIR_REL)/terraform/template/stacks/*.tf \
 		$(INFRASTRUCTURE_DIR_REL)/stacks/$(NAME)
-	cp -fv $(LIB_DIR_REL)/terraform/template/data-texas-$(TEXAS_VERSION).tf $(INFRASTRUCTURE_DIR_REL)/stacks/$(NAME)
+	[ -f $(LIB_DIR_REL)/terraform/template/data-texas-$(TEXAS_VERSION).tf ] && cp -fv $(LIB_DIR_REL)/terraform/template/data-texas-$(TEXAS_VERSION).tf $(INFRASTRUCTURE_DIR_REL)/stacks/$(NAME)/data.tf
 	cp -fv $(LIB_DIR_REL)/terraform/template/.gitignore $(INFRASTRUCTURE_DIR_REL)
 	make -s file-replace-variables-in-dir DIR=$(INFRASTRUCTURE_DIR_REL)/stacks/$(NAME) SUFFIX=_TEMPLATE_TO_REPLACE
 
@@ -99,7 +99,7 @@ terraform-delete-state: ### Delete the Terraform state - mandatory: STACK|STACKS
 terraform-export-variables: ### Get environment variables as TF_VAR_[name] variables - return: [variables export]
 	make terraform-export-variables-from-shell PATTERN="^(AWS|TX|TEXAS|NHSD|TERRAFORM)"
 	make terraform-export-variables-from-shell PATTERN="^(DB|DATABASE|APP|APPLICATION|UI|API|SERVER|HOST|URL)"
-	make terraform-export-variables-from-shell PATTERN="^(PROFILE|ENVIRONMENT|BUILD|PROGRAMME|ORG|SERVICE|PROJECT)" EXCLUDE="^(BUILD_COMMIT_MESSAGE|BUILD_COMMIT_AUTHOR_NAME)"
+	make terraform-export-variables-from-shell PATTERN="^(PROFILE|ENVIRONMENT|BUILD|PROGRAMME|ORG|SERVICE|PROJECT)"
 
 terraform-export-variables-from-secret: ### Get secret as TF_VAR_[name] variables - mandatory: NAME=[secret name]; return: [variables export]
 	if [ -n "$(NAME)" ]; then
@@ -109,28 +109,39 @@ terraform-export-variables-from-secret: ### Get secret as TF_VAR_[name] variable
 	fi
 
 terraform-export-variables-from-shell: ### Convert environment variables as TF_VAR_[name] variables - mandatory: VARS=[comma-separated environment variable names]|PATTERN="^AWS_"; optional: EXCLUDE=[pattern]; return: [variables export]
+	OLDIFS=$$IFS; IFS=$$'\n';
 	if [ -n "$(PATTERN)" ]; then
+		# `exclude` cannot be empty therefore set it to a random string
 		[ -n "$(EXCLUDE)" ] && exclude="$(EXCLUDE)" || exclude=$$(make secret-random)
-		for str in $$(env | grep -iE "$(PATTERN)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$' | grep -Ev "$$exclude"); do
+		for str in $$(env | grep -Ei "$(PATTERN)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '^[A-Za-z0-9_]+=$$' | sort | grep -Ev "$$exclude"); do
 			key=$$(cut -d "=" -f1 <<<"$$str" | tr '[:upper:]' '[:lower:]')
 			value=$$(cut -d "=" -f2- <<<"$$str")
+			# Do not export the variable if it contains one or more spaces
+			[[ $${value} == *" "* ]] && continue
 			echo "export TF_VAR_$${key}=$${value}"
 		done
 	fi
 	if [ -n "$(VARS)" ]; then
-		for str in $$(echo "$(VARS)" | sed 's/,/\n/g'); do
+		for str in $$(echo "$(VARS)" | sed 's/,/\n/g' | sort); do
 			key=$$(echo "$$str" | tr '[:upper:]' '[:lower:]')
 			value=$$(cut -d "=" -f2- <<<"$$str")
+			# Do not export the variable if it contains one or more spaces
+			[[ $${value} == *" "* ]] && continue
 			echo "export TF_VAR_$${key}=$${value}"
 		done
 	fi
+	IFS=$$OLDIFS
 
 terraform-export-variables-from-json: ### Convert JSON to Terraform input exported as TF_VAR_[name] variables - mandatory: JSON='{"key":"value"}'|JSON="$$(echo '$(JSON)')"; return: [variables export]
-	for str in $$(echo '$(JSON)' | make -s docker-run-tools CMD="jq -rf $(JQ_DIR_REL)/json-to-env-vars.jq"); do
+	OLDIFS=$$IFS; IFS=$$'\n';
+	for str in $$(echo '$(JSON)' | make -s docker-run-tools CMD="jq -rf $(JQ_DIR_REL)/json-to-env-vars.jq" | sort); do
 		key=$$(cut -d "=" -f1 <<<"$$str" | tr '[:upper:]' '[:lower:]')
 		value=$$(cut -d "=" -f2- <<<"$$str")
+		# Do not export the variable if it contains one or more spaces
+		[[ $${value} == *" "* ]] && continue
 		echo "export TF_VAR_$${key}=$${value}"
 	done
+	IFS=$$OLDIFS
 
 # ==============================================================================
 
@@ -144,6 +155,11 @@ _terraform-stacks: ### Set up infrastructure for a given list of stacks - mandat
 	done
 
 _terraform-stack: ### Set up infrastructure for a single stack - mandatory: STACK=[name],CMD=[Terraform command]; optional: TERRAFORM_REINIT=false,PROFILE=[name]
+	if [ "$(TERRAFORM_USE_STATE_STORE)" == false ]; then
+		sed -i 's/  backend "s3"/  #backend "s3"/g' $(TERRAFORM_DIR)/$(STACK)/terraform.tf
+	else
+		sed -i 's/  #backend "s3"/  backend "s3"/g' $(TERRAFORM_DIR)/$(STACK)/terraform.tf
+	fi
 	if [[ ! "$(TERRAFORM_REINIT)" =~ ^(false|no|n|off|0|FALSE|NO|N|OFF)$$ ]] || [ ! -f $(TERRAFORM_DIR)/$(STACK)/terraform.tfstate ]; then
 		make _terraform-reinitialise DIR="$(TERRAFORM_DIR)" STACK="$(STACK)"
 	fi

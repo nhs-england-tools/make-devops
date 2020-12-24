@@ -17,8 +17,6 @@ This stack provisions a Multi-AZ and multi-subnet VPC infrastructure with manage
 
 ### Provision the stack
 
-Depending on the order of execution some of the data sections (except the `terraform-state`) in the `infrastructure/stacks/networking/data-texas-v2.tf` file may need to be commented out temporary and restored right after.
-
     make terraform-plan STACK=networking PROFILE=tools
     make terraform-apply-auto-approve STACK=networking PROFILE=tools
 
