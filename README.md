@@ -12,7 +12,7 @@ If you hear your teams or individuals saying _"It will take days to onboard a ne
 ## Installation
 
 - Set up your development environment on a macOS - this command will install/update and configure your OS packages: `curl -L bit.ly/make-devops-macos | bash`
-- Instrument your project with the automation scripts - this command will create the project structure in the current directory: `curl -L bit.ly/make-devops-project | bash`
+- Instrument your project with the automation scripts - this command will update the existing git project structure in the current directory: `curl -L bit.ly/make-devops-project | bash`
 - Use the make targets to support your CI/CD flow
 - Configure AWS service team accounts using Terraform templates
 
