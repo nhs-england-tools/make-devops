@@ -155,10 +155,12 @@ _terraform-stacks: ### Set up infrastructure for a given list of stacks - mandat
 	done
 
 _terraform-stack: ### Set up infrastructure for a single stack - mandatory: STACK=[name],CMD=[Terraform command]; optional: TERRAFORM_REINIT=false,PROFILE=[name]
-	if [ "$(TERRAFORM_USE_STATE_STORE)" == false ]; then
-		sed -i 's/  backend "s3"/  #backend "s3"/g' $(TERRAFORM_DIR)/$(STACK)/terraform.tf
-	else
-		sed -i 's/  #backend "s3"/  backend "s3"/g' $(TERRAFORM_DIR)/$(STACK)/terraform.tf
+	if [ -f $(TERRAFORM_DIR)/$(STACK)/terraform.tf ]; then
+		if [ "$(TERRAFORM_USE_STATE_STORE)" == false ]; then
+				sed -i 's/  backend "s3"/  #backend "s3"/g' $(TERRAFORM_DIR)/$(STACK)/terraform.tf
+		else
+				sed -i 's/  #backend "s3"/  backend "s3"/g' $(TERRAFORM_DIR)/$(STACK)/terraform.tf
+		fi
 	fi
 	if [[ ! "$(TERRAFORM_REINIT)" =~ ^(false|no|n|off|0|FALSE|NO|N|OFF)$$ ]] || [ ! -f $(TERRAFORM_DIR)/$(STACK)/terraform.tfstate ]; then
 		make _terraform-reinitialise DIR="$(TERRAFORM_DIR)" STACK="$(STACK)"
