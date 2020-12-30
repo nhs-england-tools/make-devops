@@ -1,4 +1,4 @@
-module "STACK_TEMPLATE_TO_REPLACE" {
+module "NAME_TEMPLATE_TO_REPLACE-rds" {
   source = "../../modules/rds"
 
   db_instance = var.db_instance

@@ -17,10 +17,8 @@ This stack provisions S3 bucket and DynamoDB table to store the Terraform state 
 
 ### Provision the stack
 
-```
     make terraform-plan STACK=terraform-state TERRAFORM_USE_STATE_STORE=false PROFILE=tools
     make terraform-apply-auto-approve STACK=terraform-state TERRAFORM_USE_STATE_STORE=false PROFILE=tools
-```
 
 ### Store its own state
 

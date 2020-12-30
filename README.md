@@ -131,12 +131,7 @@ If you hear your teams or individuals saying _"It will take days to onboard a ne
   - NGINX Instana module by running the `build/automation/lib/docker/image/nginx/Makefile:dependencies` target
   - Gunicorn version in the `build/automation/lib/docker/image/python-app/Dockerfile` file
   - Docker library images version in any `build/automation/lib/docker/image/*/VERSION` file
-  - Terraform modules
-    - `terraform-aws-modules/dynamodb-table/aws` module version in `build/automation/lib/terraform/template/modules/dynamodb/main.tf`
-    - `terraform-aws-modules/iam/aws` module version in `build/automation/lib/terraform/template/modules/iam-roles/main.tf`
-    - `terraform-aws-modules/rds/aws` module version in `build/automation/lib/terraform/template/modules/rds/main.tf`
-    - `terraform-aws-modules/s3-bucket/aws` module version in `build/automation/lib/terraform/template/modules/s3/main.tf`
-    - `terraform-aws-modules/vpc/aws` module version in `build/automation/lib/terraform/template/modules/vpc/main.tf`
+  - Terraform modules in the `build/automation/lib/terraform/template/modules` directory
 
 You can also check the versions alignment across the library by running the `make devops-check-versions` command.
 

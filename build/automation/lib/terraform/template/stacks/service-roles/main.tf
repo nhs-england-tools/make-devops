@@ -1,4 +1,4 @@
-module "NAME_TEMPLATE_TO_REPLACE" {
+module "NAME_TEMPLATE_TO_REPLACE-iam-roles" {
   source = "../../modules/iam-roles"
 
   nhsd_identities_account_id = var.terraform_nhsd_identities_account_id

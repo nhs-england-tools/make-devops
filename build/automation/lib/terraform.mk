@@ -116,18 +116,14 @@ terraform-export-variables-from-shell: ### Convert environment variables as TF_V
 		for str in $$(env | grep -Ei "$(PATTERN)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '^[A-Za-z0-9_]+=$$' | sort | grep -Ev "$$exclude"); do
 			key=$$(cut -d "=" -f1 <<<"$$str" | tr '[:upper:]' '[:lower:]')
 			value=$$(cut -d "=" -f2- <<<"$$str")
-			# Do not export the variable if it contains one or more spaces
-			[[ $${value} == *" "* ]] && continue
-			echo "export TF_VAR_$${key}=$${value}"
+			echo "export TF_VAR_$${key}=$$(echo $${value} | sed -e 's/[[:space:]]/_/g')"
 		done
 	fi
 	if [ -n "$(VARS)" ]; then
 		for str in $$(echo "$(VARS)" | sed 's/,/\n/g' | sort); do
 			key=$$(echo "$$str" | tr '[:upper:]' '[:lower:]')
 			value=$$(cut -d "=" -f2- <<<"$$str")
-			# Do not export the variable if it contains one or more spaces
-			[[ $${value} == *" "* ]] && continue
-			echo "export TF_VAR_$${key}=$${value}"
+			echo "export TF_VAR_$${key}=$$(echo $${value} | sed -e 's/[[:space:]]/_/g')"
 		done
 	fi
 	IFS=$$OLDIFS
@@ -137,9 +133,7 @@ terraform-export-variables-from-json: ### Convert JSON to Terraform input export
 	for str in $$(echo '$(JSON)' | make -s docker-run-tools CMD="jq -rf $(JQ_DIR_REL)/json-to-env-vars.jq" | sort); do
 		key=$$(cut -d "=" -f1 <<<"$$str" | tr '[:upper:]' '[:lower:]')
 		value=$$(cut -d "=" -f2- <<<"$$str")
-		# Do not export the variable if it contains one or more spaces
-		[[ $${value} == *" "* ]] && continue
-		echo "export TF_VAR_$${key}=$${value}"
+		echo "export TF_VAR_$${key}=$$(echo $${value} | sed -e 's/[[:space:]]/_/g')"
 	done
 	IFS=$$OLDIFS
 
@@ -203,6 +197,18 @@ _terraform-delete-state-lock: ### Delete Terraform state lock - mandatory: STACK
 # ==============================================================================
 
 terraform-check-module-versions: ### Check Terraform module versions alignment
+	# acm terraform-aws-modules/acm/aws
+	name="terraform acm terraform-aws-modules/acm/aws"
+	lib_ver=$$(cat $(LIB_DIR_REL)/terraform/template/modules/acm/main.tf | grep 'version[[:space:]]=[[:space:]]"[0-9]*\.[0-9]*\(\.[0-9]*\)\?"' | grep -o "[0-9]*\.[0-9]*\(\.[0-9]*\)\?" | uniq)
+	gh_ver=$$(curl -s https://github.com/terraform-aws-modules/terraform-aws-acm/releases | grep "releases/tag" | grep -o "[0-9]*\.[0-9]*\(\.[0-9]*\)\?" | sort -V -r | head -n 1)
+	echo "$$name library: $$lib_ver (current $(DEVOPS_PROJECT_VERSION))"
+	echo "$$name github: $$gh_ver (latest)"
+	# alb terraform-aws-modules/alb/aws
+	name="terraform alb terraform-aws-modules/alb/aws"
+	lib_ver=$$(cat $(LIB_DIR_REL)/terraform/template/modules/alb/main.tf | grep 'version[[:space:]]=[[:space:]]"[0-9]*\.[0-9]*\(\.[0-9]*\)\?"' | grep -o "[0-9]*\.[0-9]*\(\.[0-9]*\)\?" | uniq)
+	gh_ver=$$(curl -s https://github.com/terraform-aws-modules/terraform-aws-alb/releases | grep "releases/tag" | grep -o "[0-9]*\.[0-9]*\(\.[0-9]*\)\?" | sort -V -r | head -n 1)
+	echo "$$name library: $$lib_ver (current $(DEVOPS_PROJECT_VERSION))"
+	echo "$$name github: $$gh_ver (latest)"
 	# dynamodb terraform-aws-modules/dynamodb-table/aws
 	name="terraform dynamodb terraform-aws-modules/dynamodb-table/aws"
 	lib_ver=$$(cat $(LIB_DIR_REL)/terraform/template/modules/dynamodb/main.tf | grep 'version[[:space:]]=[[:space:]]"[0-9]*\.[0-9]*\(\.[0-9]*\)\?"' | grep -o "[0-9]*\.[0-9]*\(\.[0-9]*\)\?" | uniq)
@@ -219,6 +225,12 @@ terraform-check-module-versions: ### Check Terraform module versions alignment
 	name="terraform rds terraform-aws-modules/rds/aws"
 	lib_ver=$$(cat $(LIB_DIR_REL)/terraform/template/modules/rds/main.tf | grep 'version[[:space:]]=[[:space:]]"[0-9]*\.[0-9]*\(\.[0-9]*\)\?"' | grep -o "[0-9]*\.[0-9]*\(\.[0-9]*\)\?" | uniq)
 	gh_ver=$$(curl -s https://github.com/terraform-aws-modules/terraform-aws-rds/releases | grep "releases/tag" | grep -o "[0-9]*\.[0-9]*\(\.[0-9]*\)\?" | sort -V -r | head -n 1)
+	echo "$$name library: $$lib_ver (current $(DEVOPS_PROJECT_VERSION))"
+	echo "$$name github: $$gh_ver (latest)"
+	# route53 terraform-aws-modules/route53/aws
+	name="terraform route53 terraform-aws-modules/route53/aws"
+	lib_ver=$$(cat $(LIB_DIR_REL)/terraform/template/modules/route53/main.tf | grep 'version[[:space:]]=[[:space:]]"[0-9]*\.[0-9]*\(\.[0-9]*\)\?"' | grep -o "[0-9]*\.[0-9]*\(\.[0-9]*\)\?" | uniq)
+	gh_ver=$$(curl -s https://github.com/terraform-aws-modules/terraform-aws-route53/releases | grep "releases/tag" | grep -o "[0-9]*\.[0-9]*\(\.[0-9]*\)\?" | sort -V -r | head -n 1)
 	echo "$$name library: $$lib_ver (current $(DEVOPS_PROJECT_VERSION))"
 	echo "$$name github: $$gh_ver (latest)"
 	# s3 terraform-aws-modules/s3-bucket/aws
