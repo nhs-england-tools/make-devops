@@ -1,5 +1,6 @@
 module "NAME_TEMPLATE_TO_REPLACE-iam-roles" {
-  source = "../../modules/iam-roles"
+  source  = "../../modules/iam-roles"
+  context = local.context
 
   nhsd_identities_account_id = var.terraform_nhsd_identities_account_id
 
@@ -8,6 +9,4 @@ module "NAME_TEMPLATE_TO_REPLACE-iam-roles" {
   readonly_role_policy_arns   = var.terraform_readonly_role_policy_arns
   deployment_role_policy_arns = var.terraform_deployment_role_policy_arns
   support_role_policy_arns    = var.terraform_support_role_policy_arns
-
-  context = local.context
 }

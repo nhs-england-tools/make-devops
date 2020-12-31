@@ -1,15 +1,7 @@
 # ==============================================================================
 # Mandatory variables
 
-variable "zone_name" { description = "The Route53 zone name" }
-
-# ==============================================================================
-# Default variables
-
-variable "records" {
-  description = "List of maps of DNS records"
-  default     = []
-}
+variable "name" { description = "Creates a unique name beginning with the specified prefix" }
 
 # ==============================================================================
 # Context

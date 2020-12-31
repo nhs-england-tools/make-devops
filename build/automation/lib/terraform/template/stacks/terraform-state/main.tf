@@ -1,13 +1,13 @@
 module "NAME_TEMPLATE_TO_REPLACE-store" {
-  source = "../../modules/s3"
+  source  = "../../modules/s3"
+  context = local.context
 
   bucket_name = var.terraform_state_bucket_name
-
-  context = local.context
 }
 
 module "NAME_TEMPLATE_TO_REPLACE-lock" {
-  source = "../../modules/dynamodb"
+  source  = "../../modules/dynamodb"
+  context = local.context
 
   table_name = var.terraform_state_table_name
   hash_key   = "LockID"
@@ -17,6 +17,4 @@ module "NAME_TEMPLATE_TO_REPLACE-lock" {
       type = "S"
     }
   ]
-
-  context = local.context
 }

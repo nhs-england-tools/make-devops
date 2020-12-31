@@ -1,5 +1,6 @@
 module "NAME_TEMPLATE_TO_REPLACE-rds" {
-  source = "../../modules/rds"
+  source  = "../../modules/rds"
+  context = local.context
 
   db_instance = var.db_instance
   db_port     = var.db_port
@@ -7,7 +8,6 @@ module "NAME_TEMPLATE_TO_REPLACE-rds" {
   db_username = var.db_username
   db_password = var.db_password
 
-  context            = local.context
   vpc_id             = data.terraform_remote_state.networking.outputs.vpc_id
   subnet_ids         = data.terraform_remote_state.networking.outputs.vpc_intra_subnets
   security_group_ids = [data.terraform_remote_state.networking.outputs.default_security_group_id]

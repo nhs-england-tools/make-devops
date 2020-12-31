@@ -29,6 +29,7 @@ module "iam-roles-default" {
 module "iam-role-deployment" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-assumable-role"
   version = "3.6.0"
+  tags    = var.context.tags
 
   max_session_duration = var.max_session_duration
   mfa_age              = var.mfa_age
@@ -39,12 +40,12 @@ module "iam-role-deployment" {
   role_name               = "NHSDServiceTeamDeploymentRole"
   custom_role_policy_arns = var.deployment_role_policy_arns
   role_requires_mfa       = true
-  tags                    = var.context.tags
 }
 
 module "iam-role-support" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-assumable-role"
   version = "3.6.0"
+  tags    = var.context.tags
 
   max_session_duration = var.max_session_duration
   mfa_age              = var.mfa_age
@@ -55,5 +56,4 @@ module "iam-role-support" {
   role_name               = "NHSDServiceTeamSupportRole"
   custom_role_policy_arns = var.support_role_policy_arns
   role_requires_mfa       = true
-  tags                    = var.context.tags
 }

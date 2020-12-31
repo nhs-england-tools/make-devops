@@ -17,6 +17,5 @@ module "route53-records" {
   depends_on = [module.route53-zone]
   zone_name  = keys(module.route53-zone.this_route53_zone_zone_id)[0]
 
-  records = [
-  ]
+  records = var.records
 }
