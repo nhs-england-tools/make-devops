@@ -35,7 +35,7 @@ package:
     installed: true
 
 command:
-  pip list | grep -iE 'awscli-local.*0.9':
+  pip list | grep -iE 'awscli-local.*0.13':
     exit-status: 0
   pip list | grep -iE 'awscli.*1.18':
     exit-status: 0
@@ -48,6 +48,8 @@ command:
   pip list | grep -iE 'requests.*2.25':
     exit-status: 0
   aws-iam-authenticator version:
+    exit-status: 0
+  ecs-cli --version:
     exit-status: 0
   jq --version:
     exit-status: 0

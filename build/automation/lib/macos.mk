@@ -40,6 +40,7 @@ macos-install-essential:: ### Install essential development dependencies - optio
 	brew tap homebrew/cask-versions ||:
 	brew tap johanhaleby/kubetail ||:
 	brew $$install ack ||:
+	brew $$install amazon-ecs-cli ||:
 	brew $$install aws-iam-authenticator ||:
 	brew $$install awscli ||:
 	brew $$install bash ||:
@@ -103,7 +104,6 @@ macos-install-additional:: ### Install additional development dependencies - opt
 	fi
 	brew tap weaveworks/tap ||:
 	brew $$install github/gh/gh ||:
-	brew $$install weaveworks/tap/eksctl ||:
 	brew $$install --cask appcleaner ||:
 	brew $$install --cask atom ||:
 	brew $$install --cask dbeaver-community ||:
@@ -164,6 +164,7 @@ macos-check:: ### Check if the development dependencies are installed
 	# Essential dependencies
 	mas list | grep -i "xcode" ||:
 	brew list ack ||:
+	brew list amazon-ecs-cli ||:
 	brew list aws-iam-authenticator ||:
 	brew list awscli ||:
 	brew list bash ||:
@@ -218,7 +219,6 @@ macos-check:: ### Check if the development dependencies are installed
 	brew list --cask visual-studio-code ||:
 	# Additional dependencies
 	brew list github/gh/gh ||:
-	brew list weaveworks/tap/eksctl ||:
 	brew list --cask appcleaner ||:
 	brew list --cask atom ||:
 	brew list --cask dbeaver-community ||:
