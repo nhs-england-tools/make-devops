@@ -1,8 +1,12 @@
-# service-roles
+# Terraform Stack: `service-roles`
 
 ## Description
 
 This stack provisions a number of AWS IAM roles to support a product.
+
+## Dependencies
+
+- `terraform-state` stack
 
 ## Usage
 

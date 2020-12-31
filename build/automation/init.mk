@@ -340,21 +340,29 @@ devops-setup-aws-accounts-for-service aws-accounts-setup-for-service: ### Ask us
 	(
 		echo
 		echo "# export: AWS platform variables"
-		echo "export AWS_ACCOUNT_ID_TOOLS=000000000000"
-		echo "export AWS_ACCOUNT_ID_NONPROD=000000000000"
-		echo "export AWS_ACCOUNT_ID_PROD=000000000000"
-		echo "export AWS_ACCOUNT_ID_IDENTITIES=000000000000"
+		echo "export AWS_ACCOUNT_ID_TOOLS=$${AWS_ACCOUNT_ID_TOOLS:-000000000000}"
+		echo "export AWS_ACCOUNT_ID_NONPROD=$${AWS_ACCOUNT_ID_NONPROD:-000000000000}"
+		echo "export AWS_ACCOUNT_ID_PROD=$${AWS_ACCOUNT_ID_PROD:-000000000000}"
+		echo "export AWS_ACCOUNT_ID_LIVE_PARENT=$${AWS_ACCOUNT_ID_LIVE_PARENT:-000000000000}"
+		echo "export AWS_ACCOUNT_ID_IDENTITIES=$${AWS_ACCOUNT_ID_IDENTITIES:-000000000000}"
+		echo
+		echo "# export: Texas platform variables"
+		echo "export TEXAS_TLD_NAME=$${TEXAS_TLD_NAME:-example.uk}"
 		echo
 	) > $$file
 	tools_id=$$(cat $$file | grep "export AWS_ACCOUNT_ID_TOOLS=" | sed "s/export AWS_ACCOUNT_ID_TOOLS=//")
 	nonprod_id=$$(cat $$file | grep "export AWS_ACCOUNT_ID_NONPROD=" | sed "s/export AWS_ACCOUNT_ID_NONPROD=//")
 	prod_id=$$(cat $$file | grep "export AWS_ACCOUNT_ID_PROD=" | sed "s/export AWS_ACCOUNT_ID_PROD=//")
+	parent_id=$$(cat $$file | grep "export AWS_ACCOUNT_ID_LIVE_PARENT=" | sed "s/export AWS_ACCOUNT_ID_LIVE_PARENT=//")
 	identities_id=$$(cat $$file | grep "export AWS_ACCOUNT_ID_IDENTITIES=" | sed "s/export AWS_ACCOUNT_ID_IDENTITIES=//")
+	texas_tld=$$(cat $$file | grep "export TEXAS_TLD_NAME=" | sed "s/export TEXAS_TLD_NAME=//")
 	printf "\nPlease, provide valid AWS account IDs or press ENTER to leave it unchanged.\n\n"
 	read -p "AWS_ACCOUNT_ID_TOOLS       ($$tools_id) : " new_tools_id
 	read -p "AWS_ACCOUNT_ID_NONPROD     ($$nonprod_id) : " new_nonprod_id
 	read -p "AWS_ACCOUNT_ID_PROD        ($$prod_id) : " new_prod_id
+	read -p "AWS_ACCOUNT_ID_LIVE_PARENT ($$parent_id) : " new_parent_id
 	read -p "AWS_ACCOUNT_ID_IDENTITIES  ($$identities_id) : " new_identities_id
+	read -p "TEXAS_TLD_NAME             ($$texas_tld) : " new_texas_tld
 	printf "\n"
 	if [ -n "$$new_tools_id" ]; then
 		make -s file-replace-content \
@@ -377,11 +385,25 @@ devops-setup-aws-accounts-for-service aws-accounts-setup-for-service: ### Ask us
 			NEW="export AWS_ACCOUNT_ID_PROD=$$new_prod_id" \
 		> /dev/null 2>&1
 	fi
+	if [ -n "$$new_parent_id" ]; then
+		make -s file-replace-content \
+			FILE=$$file \
+			OLD="export AWS_ACCOUNT_ID_LIVE_PARENT=$$parent_id" \
+			NEW="export AWS_ACCOUNT_ID_LIVE_PARENT=$$new_parent_id" \
+		> /dev/null 2>&1
+	fi
 	if [ -n "$$new_identities_id" ]; then
 		make -s file-replace-content \
 			FILE=$$file \
 			OLD="export AWS_ACCOUNT_ID_IDENTITIES=$$identities_id" \
 			NEW="export AWS_ACCOUNT_ID_IDENTITIES=$$new_identities_id" \
+		> /dev/null 2>&1
+	fi
+	if [ -n "$$new_texas_tld" ]; then
+		make -s file-replace-content \
+			FILE=$$file \
+			OLD="export TEXAS_TLD_NAME=$$texas_tld" \
+			NEW="export TEXAS_TLD_NAME=$$new_texas_tld" \
 		> /dev/null 2>&1
 	fi
 	printf "FILE: $$file\n"

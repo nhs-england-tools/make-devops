@@ -41,6 +41,18 @@ variable "aws_account_name" {}
 variable "aws_region" {}
 variable "aws_profile" {}
 
+variable "aws_account_id_tools" {}
+variable "aws_account_id_nonprod" {}
+variable "aws_account_id_prod" {}
+
+variable "aws_role_admin" {}
+variable "aws_role_readonly" {}
+variable "aws_role_developer" {}
+variable "aws_role_support" {}
+variable "aws_role_pipeline" {}
+
+variable "texas_tld_name" {}
+
 # ==============================================================================
 # Project variables set by the Make DevOps automation scripts
 

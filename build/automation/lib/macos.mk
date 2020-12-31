@@ -447,11 +447,14 @@ _macos-config-command-line-aws:
 		(
 			echo
 			echo "# export: AWS platform variables"
-			echo "export AWS_ACCOUNT_ID_LIVE_PARENT=000000000000"
-			echo "export AWS_ACCOUNT_ID_MGMT=000000000000"
+			echo "export AWS_ACCOUNT_ID_MGMT=000000000000 # For Texas v2 use AWS_ACCOUNT_ID_TOOLS instead"
 			echo "export AWS_ACCOUNT_ID_NONPROD=000000000000"
 			echo "export AWS_ACCOUNT_ID_PROD=000000000000"
+			echo "export AWS_ACCOUNT_ID_LIVE_PARENT=000000000000"
 			echo "export AWS_ACCOUNT_ID_IDENTITIES=000000000000"
+			echo
+			echo "# export: Texas platform variables"
+			echo "export TEXAS_TLD_NAME=example.uk"
 			echo
 		) > $(DEV_OHMYZSH_DIR)/plugins/$(DEVOPS_PROJECT_NAME)/aws-platform.zsh
 	fi

@@ -1,8 +1,13 @@
-# networking
+# Terraform Stack: `rds`
 
 ## Description
 
 This stack provisions RDS PostgreSQL.
+
+## Dependencies
+
+- `terraform-state` stack
+- `networking` stack
 
 ## Usage
 
@@ -12,4 +17,5 @@ This stack provisions RDS PostgreSQL.
 
 ### Provision the stack
 
+    make terraform-plan STACK=database PROFILE=dev
     make terraform-apply-auto-approve STACK=database PROFILE=dev

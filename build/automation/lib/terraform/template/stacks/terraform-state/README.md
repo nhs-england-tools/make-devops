@@ -1,4 +1,4 @@
-# terraform-state
+# Terraform Stack: `terraform-state`
 
 ## Description
 
