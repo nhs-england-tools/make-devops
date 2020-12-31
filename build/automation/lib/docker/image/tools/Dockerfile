@@ -87,7 +87,7 @@ RUN set -eux && \
     mv ./jq-linux64 /usr/local/bin/jq && \
     \
     # Install yq
-    curl -LO https://github.com/mikefarah/yq/releases/download/4.2.0/yq_linux_amd64 && \
+    curl -LO https://github.com/mikefarah/yq/releases/download/v4.2.0/yq_linux_amd64 && \
     chmod +x ./yq_linux_amd64 && \
     mv ./yq_linux_amd64 /usr/local/bin/yq && \
     \
