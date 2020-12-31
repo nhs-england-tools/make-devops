@@ -8,6 +8,10 @@ This stack provisions S3 bucket and DynamoDB table to store the Terraform state 
 
 ![This VPC Architecture](diagram.png)
 
+## Dependencies
+
+- This stack can be executed with any of the three profiles i.e. `tools`, `tools-nonprod` and `tools-prod` against the linked AWS account in each individual profile.
+
 ## Usage
 
 ### Create an operational stack from the template

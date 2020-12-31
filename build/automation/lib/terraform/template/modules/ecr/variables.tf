@@ -13,6 +13,7 @@ variable "protected_tags" { default = [] }
 variable "max_image_count" { default = 333 }
 variable "principals_readonly_access" { default = [] }
 variable "principals_full_access" { default = [] }
+variable "principals_dont_deny_delete" { default = [] }
 
 # ==============================================================================
 # Context

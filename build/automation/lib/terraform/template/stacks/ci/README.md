@@ -8,6 +8,7 @@ This stack provisions CI/CD components.
 
 - `terraform-state` stack
 - `service-roles` stack
+- This stack should only be executed with the `tools` profile against the linked AWS account.
 
 ## Usage
 

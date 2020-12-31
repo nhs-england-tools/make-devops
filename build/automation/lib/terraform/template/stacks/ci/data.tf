@@ -1,22 +1,6 @@
 # ==============================================================================
 # Data
 
-data "terraform_remote_state" "networking" {
-  backend = "s3"
-  config = {
-    key    = "${var.terraform_state_key_shared}/networking/terraform.state"
-    bucket = var.terraform_state_store
-    region = var.aws_region
-  }
-}
-data "terraform_remote_state" "service-roles" {
-  backend = "s3"
-  config = {
-    key    = "${var.terraform_state_key_shared}/service-roles/terraform.state"
-    bucket = var.terraform_state_store
-    region = var.aws_region
-  }
-}
 data "terraform_remote_state" "terraform-state" {
   backend = "s3"
   config = {

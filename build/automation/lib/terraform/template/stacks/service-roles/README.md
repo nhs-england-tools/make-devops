@@ -7,6 +7,7 @@ This stack provisions a number of AWS IAM roles to support a product.
 ## Dependencies
 
 - `terraform-state` stack
+- This stack can be executed with any of the three profiles i.e. `tools`, `tools-nonprod` and `tools-prod` against the linked AWS account in each individual profile.
 
 ## Usage
 

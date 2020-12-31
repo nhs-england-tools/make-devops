@@ -12,6 +12,7 @@ This stack provisions a Multi-AZ and multi-subnet VPC infrastructure with manage
 
 - `terraform-state` stack
 - This stack can be executed with any of the three profiles i.e. `tools`, `tools-nonprod` and `tools-prod` against the linked AWS account in each individual profile.
+- A VPN network CIDR must be agreed and set prior to provisioning to avoid network addresses conflicts.
 
 ## Usage
 

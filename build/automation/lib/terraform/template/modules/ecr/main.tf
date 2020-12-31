@@ -1,3 +1,7 @@
+locals {
+  include_policies = length(var.principals_full_access) + length(var.principals_readonly_access) + length(var.principals_dont_deny_delete) > 0 ? true : false
+}
+
 resource "aws_ecr_repository" "repository" {
   for_each = toset(var.names)
   name     = each.key
@@ -111,19 +115,37 @@ data "aws_iam_policy_document" "repository-full-access-policy-document" {
   }
 }
 
+data "aws_iam_policy_document" "repository-deny-delete-policy-document" {
+  count = length(var.principals_dont_deny_delete) > 0 ? 1 : 0
+
+  statement {
+    sid    = "DenyDelete"
+    effect = "Deny"
+    not_principals {
+      type        = "AWS"
+      identifiers = var.principals_dont_deny_delete
+    }
+    actions = [
+      "ecr:BatchDeleteImage",
+      "ecr:DeleteRepository",
+    ]
+  }
+}
+
 data "aws_iam_policy_document" "empty" {
-  count = length(var.principals_full_access) + length(var.principals_readonly_access) > 0 ? 1 : 0
+  count = local.include_policies ? 1 : 0
 }
 
 data "aws_iam_policy_document" "repository-policy-document" {
-  count = length(var.principals_full_access) + length(var.principals_readonly_access) > 0 ? 1 : 0
+  count = local.include_policies ? 1 : 0
 
+  # TODO: There must be a simpler way to combine policies, also include `repository-deny-delete-policy-document`
   source_json   = length(var.principals_readonly_access) > 0 ? join("", [data.aws_iam_policy_document.repository-readonly-access-policy-document[0].json]) : join("", [data.aws_iam_policy_document.empty[0].json])
   override_json = length(var.principals_full_access) > 0 ? join("", [data.aws_iam_policy_document.repository-full-access-policy-document[0].json]) : join("", [data.aws_iam_policy_document.empty[0].json])
 }
 
 resource "aws_ecr_repository_policy" "repository-policy" {
-  for_each   = toset(length(var.principals_full_access) + length(var.principals_readonly_access) > 0 ? var.names : [])
+  for_each   = toset(local.include_policies ? var.names : [])
   repository = aws_ecr_repository.repository[each.value].name
   policy     = join("", data.aws_iam_policy_document.repository-policy-document.*.json)
 }
