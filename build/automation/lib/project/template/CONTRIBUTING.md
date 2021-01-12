@@ -46,10 +46,10 @@ This gives a head start and enables anyone complying with that configuration to 
 
 ### Git configuration
 
-Global Git configuration
+The commands below will configure your Git command-line client globally. Please, update your username (<span style="color:red">Your Name</span>) and email address (<span style="color:red">your.name@nhs.net</span>) below.
 
-    git config --global user.name "Your Name"
-    git config --global user.email "your.name@nhs.net"
+    git config --global user.name "Your Name" # Use your full name here
+    git config --global user.email "your.name@nhs.net" # Use your email address here
     git config --global branch.autosetupmerge false
     git config --global branch.autosetuprebase always
     git config --global commit.gpgsign true
@@ -67,7 +67,7 @@ Global Git configuration
 
 Signing Git commits is a good practice and ensures the correct web of trust has been established for the distributed version control management.
 
-Generate a new pair of GPG keys. Please, change the passphrase and save it in your password manager.
+Generate a new pair of GPG keys. Please, change the passphrase (<span style="color:red">pleaseChooseYourKeyPassphrase</span>) below and save it in your password manager.
 
     USER_NAME="Your Name"
     USER_EMAIL="your.name@nhs.net"
@@ -82,7 +82,7 @@ Generate a new pair of GPG keys. Please, change the passphrase and save it in yo
         Name-Real: $USER_NAME
         Name-Email: $USER_EMAIL
         Expire-Date: 0
-        Passphrase: [...]
+        Passphrase: pleaseChooseYourKeyPassphrase
         %commit
         %echo done
     EOF
@@ -92,7 +92,17 @@ Generate a new pair of GPG keys. Please, change the passphrase and save it in yo
 Make note of the ID and save the keys.
 
     gpg --list-secret-keys --keyid-format LONG $USER_EMAIL
-    ID=[...]
+
+You should see a similar output to this:
+
+    sec   rsa4096/AAAAAAAAAAAAAAA 2000-01-01 [SC]
+          XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+    uid                 [ unknown] Your Name <your.name@nhs.net>
+    ssb   rsa4096/BBBBBBBBBBBBBBBB 2000-01-01 [E]
+
+Export your keys.
+
+    ID=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
     gpg --armor --export $ID > $file.gpg-key.pub
     gpg --armor --export-secret-keys $ID > $file.gpg-key
 
@@ -112,7 +122,7 @@ Configure Git to use the new key.
 
 Upload the public key to your GitHub and GitLab accounts using the links below.
 
-- [GitHub](https://github.com/settings/keys)
+- [GitHub](https://github.com/settings/keys) - Make sure your email address is verified
 - [GitLab](https://gitlab.mgmt.texasplatform.uk/profile/gpg_keys)
 
 ### Git usage

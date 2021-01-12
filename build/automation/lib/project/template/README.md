@@ -56,11 +56,21 @@ A few sentences what business problem this project solves...
 
 ### Local Environment Configuration
 
+Clone the repository
+
     git clone [project-url]
     cd ./[project-dir]
 
+This is an equivalent to the `curl -L bit.ly/make-devops-macos | bash` command
+
     make macos-setup
+
+Please, ask one of your colleagues for the AWS account numbers used by the project. The next command will prompt you to provide them. This information can be sourced from a properly set up project by running `make show-configuration | grep ^AWS_ACCOUNT_ID_`
+
     make devops-setup-aws-accounts
+
+Generate and trust a self-signed certificate that will be used locally to enable encryption in transit
+
     make trust-certificate
 
 ### Local Project Setup
@@ -77,8 +87,9 @@ A few sentences what business problem this project solves...
   - Switch each individual component to the dev mode
 - Branching strategy
   - [Trunk-based development](https://trunkbaseddevelopment.com/)
-  - Naming convention `^(master|main|develop)$|^(task|story|epic|spike|fix|test|release|migration)/[A-Za-z]{2,5}-[0-9]{1,5}_[A-Za-z0-9_]{4,32}$`
+  - Naming convention `^(master|main|develop)$|^(task|story|epic|spike|fix|test|release|migration)/[A-Za-z]{2,5}-[0-9]{1,5}_[A-Za-z0-9_]{4,64}$`
 - Git hooks located in `build/automation/etc/githooks/scripts`
+  - `python-code-pre-commit.sh.off`
   - `branch-name-pre-commit.sh`
   - `editorconfig-pre-commit.sh`
   - `git-secret-pre-commit.sh`

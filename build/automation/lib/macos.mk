@@ -95,6 +95,8 @@ macos-install-essential:: ### Install essential development dependencies - optio
 	brew $$install --cask visual-studio-code && which code > /dev/null 2>&1 || brew reinstall --cask --force visual-studio-code ||:
 	# maven depends on java
 	brew $$install maven ||:
+	# Serverless
+	curl -o- -L https://slss.io/install | bash
 
 macos-install-additional:: ### Install additional development dependencies - optional: REINSTALL=true
 	export HOMEBREW_NO_AUTO_UPDATE=1
@@ -299,6 +301,11 @@ _macos-config-oh-my-zsh:
 	rm -rf $(DEV_OHMYZSH_DIR)
 	ZSH=$(DEV_OHMYZSH_DIR) sh -c "$$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)" "" --unattended ||:
 	git clone https://github.com/romkatv/powerlevel10k.git $(DEV_OHMYZSH_DIR)/custom/themes/powerlevel10k ||:
+	rm -rf \
+		$(DEV_OHMYZSH_DIR)/plugins/zsh-autosuggestions \
+		$(DEV_OHMYZSH_DIR)/plugins/zsh-syntax-highlighting
+	git clone https://github.com/zsh-users/zsh-autosuggestions.git $(DEV_OHMYZSH_DIR)/plugins/zsh-autosuggestions
+	git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $(DEV_OHMYZSH_DIR)/plugins/zsh-syntax-highlighting
 	cp ~/.zshrc ~/.zshrc.bak.$$(date -u +"%Y%m%d%H%M%S") ||:
 	find ~/ -maxdepth 1 -type f -mtime +3 -name '.zshrc.bak.*' -execdir rm -- '{}' \;
 	cat ~/.zshrc | grep -Ev '^plugins=(.*)' > ~/.zshrc.tmp && mv ~/.zshrc.tmp ~/.zshrc
@@ -327,6 +334,8 @@ _macos-config-oh-my-zsh:
 	echo "    common-aliases" >> ~/.zshrc
 	echo "    colorize" >> ~/.zshrc
 	echo "    copybuffer" >> ~/.zshrc
+	echo "    zsh-autosuggestions" >> ~/.zshrc
+	echo "    zsh-syntax-highlighting" >> ~/.zshrc
 	echo "    $(DEVOPS_PROJECT_NAME)" >> ~/.zshrc
 	echo ")" >> ~/.zshrc
 	echo 'function tx-status { [ -n "$$TEXAS_SESSION_EXPIRY_TIME" ] && [ "$$(echo $$TEXAS_SESSION_EXPIRY_TIME | sed s/\[-_:\]//g)" -gt $$(date -u +"%Y%m%d%H%M%S") ] && ( [ -n "$$TEXAS_PROFILE" ] && echo $$TEXAS_PROFILE || echo $$TEXAS_ACCOUNT ) ||: }' >> ~/.zshrc
@@ -345,46 +354,11 @@ _macos-config-oh-my-zsh:
 	echo "# END: Custom configuration" >> ~/.zshrc
 	# Restore oh-my-zsh plugin files
 	mkdir -p $(DEV_OHMYZSH_DIR)/plugins/$(DEVOPS_PROJECT_NAME) && cp -f ~/tmp/make-devops-plugins/aws-platform*.zsh $(DEV_OHMYZSH_DIR)/plugins/$(DEVOPS_PROJECT_NAME) 2> /dev/null ||: && rm -rf ~/tmp/make-devops-plugins
-
-_macos-config-command-line:
-	sudo chown -R $$(id -u) $$(brew --prefix)/*
-	# configure Python
-	brew unlink python@$(PYTHON_VERSION_MAJOR).$(PYTHON_VERSION_MINOR) ||: && brew link --overwrite --force python@$(PYTHON_VERSION_MAJOR).$(PYTHON_VERSION_MINOR)
-	rm -f $$(brew --prefix)/bin/python
-	ln $$(brew --prefix)/bin/python3 $$(brew --prefix)/bin/python
-	curl -s https://bootstrap.pypa.io/get-pip.py | $$(brew --prefix)/bin/python3
-	$$(brew --prefix)/bin/pip3 install $(PYTHON_BASE_PACKAGES)
-	(
-		export LDFLAGS="-L/usr/local/opt/zlib/lib"
-		export CPPFLAGS="-I/usr/local/opt/zlib/include"
-		export PKG_CONFIG_PATH="/usr/local/opt/zlib/lib/pkgconfig"
-		pyenv install --skip-existing $(PYTHON_VERSION)
-	)
-	pyenv global system
-	# configure Go
-	curl -sSL https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer | bash ||:
-	# configure Java
-	eval "$$(jenv init -)"
-	jenv enable-plugin export
-	jenv add /Library/Java/JavaVirtualMachines/adoptopenjdk-$(JAVA_VERSION).jdk/Contents/Home
-	jenv versions # ls -1 /Library/Java/JavaVirtualMachines
-	jenv global $(JAVA_VERSION)
-	# configure Terraform
-	tfswitch $(TERRAFORM_VERSION)
-	# configure shell
-	mkdir -p ~/{.aws,.kube/configs,.ssh,bin,etc,tmp,usr,projects}
-	[ ! -f ~/.aws/config ] && echo -e "[default]\noutput = json\nregion = eu-west-2\n\n# TODO: Add AWS accounts\n" > ~/.aws/config
-	[ ! -f ~/.aws/credentials ] && echo -e "[default]\naws_access_key_id = xxx\naws_secret_access_key = xxx\n\n# TODO: Add AWS credentials" > ~/.aws/credentials
-	cp $(BIN_DIR)/* ~/bin
-	cp $(USR_DIR)/* ~/usr
-	make _devops-project-clean DIR=
-	chmod 700 ~/.ssh
-	rm -f ~/.zcompdump*
 	make \
-		_macos-config-command-line-make-devops \
-		_macos-config-command-line-aws
+		_macos-config-oh-my-zsh-make-devops \
+		_macos-config-oh-my-zsh-aws
 
-_macos-config-command-line-make-devops:
+_macos-config-oh-my-zsh-make-devops:
 	mkdir -p $(DEV_OHMYZSH_DIR)/plugins/$(DEVOPS_PROJECT_NAME)
 	(
 		echo
@@ -436,13 +410,15 @@ _macos-config-command-line-make-devops:
 		echo "}"
 		echo "add-zsh-hook chpwd load-nvmrc"
 		echo "load-nvmrc"
+		echo "# env: Serverless"
+		echo "export PATH=\"$$HOME/.serverless/bin:$$PATH\""
 		echo
 		echo "# AWS platform"
 		echo ". $(DEV_OHMYZSH_DIR)/plugins/$(DEVOPS_PROJECT_NAME)/aws-platform.zsh"
 		echo
 	) > $(DEV_OHMYZSH_DIR)/plugins/$(DEVOPS_PROJECT_NAME)/$(DEVOPS_PROJECT_NAME).plugin.zsh
 
-_macos-config-command-line-aws:
+_macos-config-oh-my-zsh-aws:
 	if [ ! -f $(DEV_OHMYZSH_DIR)/plugins/$(DEVOPS_PROJECT_NAME)/aws-platform.zsh ]; then
 		(
 			echo
@@ -458,6 +434,41 @@ _macos-config-command-line-aws:
 			echo
 		) > $(DEV_OHMYZSH_DIR)/plugins/$(DEVOPS_PROJECT_NAME)/aws-platform.zsh
 	fi
+
+_macos-config-command-line:
+	sudo chown -R $$(id -u) $$(brew --prefix)/*
+	# configure Python
+	brew unlink python@$(PYTHON_VERSION_MAJOR).$(PYTHON_VERSION_MINOR) ||: && brew link --overwrite --force python@$(PYTHON_VERSION_MAJOR).$(PYTHON_VERSION_MINOR)
+	rm -f $$(brew --prefix)/bin/python
+	ln $$(brew --prefix)/bin/python3 $$(brew --prefix)/bin/python
+	curl -s https://bootstrap.pypa.io/get-pip.py | $$(brew --prefix)/bin/python3
+	$$(brew --prefix)/bin/pip3 install $(PYTHON_BASE_PACKAGES)
+	(
+		export LDFLAGS="-L/usr/local/opt/zlib/lib"
+		export CPPFLAGS="-I/usr/local/opt/zlib/include"
+		export PKG_CONFIG_PATH="/usr/local/opt/zlib/lib/pkgconfig"
+		pyenv install --skip-existing $(PYTHON_VERSION)
+	)
+	pyenv global system
+	# configure Go
+	curl -sSL https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer | bash ||:
+	# configure Java
+	eval "$$(jenv init -)"
+	jenv enable-plugin export
+	jenv add /Library/Java/JavaVirtualMachines/adoptopenjdk-$(JAVA_VERSION).jdk/Contents/Home
+	jenv versions # ls -1 /Library/Java/JavaVirtualMachines
+	jenv global $(JAVA_VERSION)
+	# configure Terraform
+	tfswitch $(TERRAFORM_VERSION)
+	# configure shell
+	mkdir -p ~/{.aws,.kube/configs,.ssh,bin,etc,tmp,usr,projects}
+	[ ! -f ~/.aws/config ] && echo -e "[default]\noutput = json\nregion = eu-west-2\n\n# TODO: Add AWS accounts\n" > ~/.aws/config
+	[ ! -f ~/.aws/credentials ] && echo -e "[default]\naws_access_key_id = xxx\naws_secret_access_key = xxx\n\n# TODO: Add AWS credentials" > ~/.aws/credentials
+	cp $(BIN_DIR)/* ~/bin
+	cp $(USR_DIR)/* ~/usr
+	make _devops-project-clean DIR=
+	chmod 700 ~/.ssh
+	rm -f ~/.zcompdump*
 
 _macos-config-git:
 	git config --global branch.autosetupmerge false
@@ -499,6 +510,7 @@ _macos-config-visual-studio-code:
 	code --force --install-extension esbenp.prettier-vscode
 	code --force --install-extension felixfbecker.php-debug
 	code --force --install-extension felixfbecker.php-intellisense
+	code --force --install-extension ffaraone.pyfilesgen
 	code --force --install-extension formulahendry.code-runner
 	code --force --install-extension fosshaas.fontsize-shortcuts
 	code --force --install-extension gabrielbb.vscode-lombok

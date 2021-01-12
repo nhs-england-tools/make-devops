@@ -1,0 +1,4 @@
+#!/bin/bash
+
+make -s python-code-format python-code-check \
+  FILES=application

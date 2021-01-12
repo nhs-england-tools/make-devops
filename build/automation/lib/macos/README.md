@@ -5,7 +5,7 @@
 - Restart your macOS
 - Fully enable the `Avast Security` antivirus software
 - Open the `Docker Desktop` application and make sure it always starts when you log in and has sufficient resources allocated. e.g. at least 4GB memory and 4 CPUs, about 100GB of storage space
-- Use the `Spectacle`, `KeepingYouAwake` and `CheatSheet` applications to improve the ergonomics
+- Use the `Spectacle` and `KeepingYouAwake` applications to improve the ergonomics
 - Go to System Preferences > Security & Privacy > Privacy > Accessibility > [ Add iTerm to the list ]
 - Go to System Preferences > Security & Privacy > Privacy > Full Disk Access > [ Add iTerm to the list ]
 - If you can no longer open Java-based applications (e.g. DBeaver) due to the JDK execution error, follow the steps below
