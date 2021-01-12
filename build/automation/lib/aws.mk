@@ -408,7 +408,7 @@ aws-elasticsearch-get-endpoint: ### Get Elasticsearch endpoint - mandatory: DOMA
 			--region $(AWS_REGION) \
 			--query 'DomainStatus.Endpoints.vpc' \
 			--output text \
-	"
+	" | tr -d '\r' | tr -d '\n'
 
 _aws-elasticsearch-register-snapshot-repository: ### Register Elasticsearch snapshot repository - mandatory: ENDPOINT,BUCKET,IAM_ROLE
 	json='{"type":"s3","settings":{"bucket":"$(BUCKET)","region":"$(AWS_REGION)","role_arn":"arn:aws:iam::$(AWS_ACCOUNT_ID):role/$(IAM_ROLE)"}}'
