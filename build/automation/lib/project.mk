@@ -94,11 +94,11 @@ project-branch-deploy: ### Check if development branch can be deployed automatic
 	[ $$(make project-branch-test) == true ] && echo true && exit 0
 	echo false
 
-project-branch-test: ### Check if development branch can be tested automatically - return: true|false
+project-branch-test: ### Check if development branch can be tested automatically - optional KEYWORDS=[keywords,comma,separated] - return: true|false
+	keywords=$(or $(KEYWORDS) || test,func-test,perf-test,sec-test)
 	[[ $(BUILD_BRANCH) =~ $(GIT_BRANCH_PATTERN_MAIN) ]] && echo true && exit 0
 	[[ $(BUILD_BRANCH) =~ $(GIT_BRANCH_PATTERN_PREFIX)/$(GIT_BRANCH_PATTERN_SUFFIX) ]] && \
-		[ $$(make project-message-contains KEYWORD=test,func-test,perf-test,sec-test) == true ] && \
-			echo true && exit 0
+	[ $$(make project-message-contains KEYWORD=$$keywords) == true ] && echo true && exit 0
 	echo false
 
 project-branch-func-test: ### Check if development branch can be tested (functional) automatically - return: true|false
