@@ -125,7 +125,7 @@ project-branch-sec-test: ### Check if development branch can be tested (security
 project-message-contains: ### Check if git commit message contains any give keyword - mandatory KEYWORD=[comma-separated keywords]
 	msg=$$(make git-msg)
 	for str in $$(echo $(KEYWORD) | sed "s/,/ /g"); do
-		echo "$$msg" | grep -E '[ci .*]' | grep -Eoq "\[ci .*$${str}[^-].*" && echo true && exit 0
+		echo "$$msg" | grep -E '[ci .*]' | grep -Eoq "\[ci.*[^-]$${str}[^-].*" && echo true && exit 0
 	done
 	echo false
 
