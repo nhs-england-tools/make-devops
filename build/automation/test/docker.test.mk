@@ -529,7 +529,7 @@ test-docker-repo-list-tags:
 	# act
 	output=$$(make docker-repo-list-tags REPO=python | wc -l)
 	# assert
-	mk_test "100 -eq $$output"
+	mk_test "100 -lt $$output"
 
 # ==============================================================================
 

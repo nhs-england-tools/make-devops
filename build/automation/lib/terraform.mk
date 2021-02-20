@@ -116,14 +116,14 @@ terraform-export-variables-from-shell: ### Convert environment variables as TF_V
 		for str in $$(env | grep -Ei "$(PATTERN)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '^[A-Za-z0-9_]+=$$' | sort | grep -Ev "$$exclude"); do
 			key=$$(cut -d "=" -f1 <<<"$$str" | tr '[:upper:]' '[:lower:]')
 			value=$$(cut -d "=" -f2- <<<"$$str")
-			echo "export TF_VAR_$${key}=$$(echo $${value} | sed -e 's/[[:space:]]/_/g')"
+			echo "export TF_VAR_$${key}='$$(echo $${value} | sed -e 's/[[:space:]]/_/g')'"
 		done
 	fi
 	if [ -n "$(VARS)" ]; then
 		for str in $$(echo "$(VARS)" | sed 's/,/\n/g' | sort); do
 			key=$$(echo "$$str" | tr '[:upper:]' '[:lower:]')
 			value=$$(cut -d "=" -f2- <<<"$$str")
-			echo "export TF_VAR_$${key}=$$(echo $${value} | sed -e 's/[[:space:]]/_/g')"
+			echo "export TF_VAR_$${key}='$$(echo $${value} | sed -e 's/[[:space:]]/_/g')'"
 		done
 	fi
 	IFS=$$OLDIFS
@@ -133,7 +133,7 @@ terraform-export-variables-from-json: ### Convert JSON to Terraform input export
 	for str in $$(echo '$(JSON)' | make -s docker-run-tools CMD="jq -rf $(JQ_DIR_REL)/json-to-env-vars.jq" | sort); do
 		key=$$(cut -d "=" -f1 <<<"$$str" | tr '[:upper:]' '[:lower:]')
 		value=$$(cut -d "=" -f2- <<<"$$str")
-		echo "export TF_VAR_$${key}=$$(echo $${value} | sed -e 's/[[:space:]]/_/g')"
+		echo "export TF_VAR_$${key}='$$(echo $${value} | sed -e 's/[[:space:]]/_/g')'"
 	done
 	IFS=$$OLDIFS
 

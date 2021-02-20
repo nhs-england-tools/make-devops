@@ -25,7 +25,7 @@ python-virtualenv: ### Setup Python virtual environment - optional: PYTHON_VERSI
 	pyenv install --skip-existing $(PYTHON_VERSION)
 	if [ -z "$(PYTHON_VENV_NAME)" ]; then
 		pyenv local $(PYTHON_VERSION)
-		pip install --upgrade pip || pyenv install $(PYTHON_VERSION) && pip install --upgrade pip
+		pip install --upgrade pip || pyenv install --skip-existing $(PYTHON_VERSION) && pip install --upgrade pip
 		pip install $(PYTHON_BASE_PACKAGES)
 		sed -i 's;    "python.linting.flake8Path":.*;    "python.linting.flake8Path": "~/.pyenv/versions/$(PYTHON_VERSION)/bin/flake8",;g' project.code-workspace
 		sed -i 's;    "python.linting.mypyPath":.*;    "python.linting.mypyPath": "~/.pyenv/versions/$(PYTHON_VERSION)/bin/mypy",;g' project.code-workspace

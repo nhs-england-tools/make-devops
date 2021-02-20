@@ -61,7 +61,7 @@ _secret-export-variables-from-json: ### Convert JSON to environment variables - 
 	for str in $$(echo '$(JSON)' | make -s docker-run-tools CMD="jq -rf $(JQ_DIR_REL)/json-to-env-vars.jq" | sort); do
 		key=$$(cut -d "=" -f1 <<<"$$str")
 		value=$$(cut -d "=" -f2- <<<"$$str")
-		echo "export $${key}=$$(echo $${value} | sed -e 's/[[:space:]]/_/g')"
+		echo "export $${key}='$$(echo $${value} | sed -e 's/[[:space:]]/_/g')'"
 	done
 	IFS=$$OLDIFS
 	make terraform-export-variables-from-json JSON="$$(echo '$(JSON)')"

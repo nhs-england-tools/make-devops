@@ -47,7 +47,7 @@ test-terraform-export-variables:
 	# act
 	export=$$(make terraform-export-variables)
 	# assert
-	count=$$(echo "$$export" | grep -E "TF_VAR_aws_[a-z_]*=value" | wc -l)
+	count=$$(echo "$$export" | grep -E "TF_VAR_aws_[a-z_]*='value'" | wc -l)
 	mk_test "3 = $$count"
 
 test-terraform-export-variables-from-secret:
@@ -59,8 +59,7 @@ test-terraform-export-variables-from-secret:
 	# act
 	export=$$(make terraform-export-variables-from-json JSON="$$secret")
 	# assert
-	hash=$$(echo -e "export TF_VAR__test_db_username=admin\nexport TF_VAR__test_db_password=secret" | md5sum | awk '{ print $$1 }')
-	mk_test "$$hash = $$(echo "$$export" | md5sum | awk '{ print $$1 }')"
+	mk_test "true = $$(echo "$$export" | grep -q "export TF_VAR__test_db_username='admin'" && echo $$export | grep -q "export TF_VAR__test_db_password='secret'" && echo true)"
 
 test-terraform-export-variables-from-shell-vars:
 	# arrange
@@ -103,8 +102,7 @@ test-terraform-export-variables-from-json:
 	# act
 	export=$$(make terraform-export-variables-from-json JSON="$$json")
 	# assert
-	hash=$$(echo -e "export TF_VAR_db_username=admin\nexport TF_VAR_db_password=secret" | md5sum | awk '{ print $$1 }')
-	mk_test "$$hash = $$(echo "$$export" | md5sum | awk '{ print $$1 }')"
+	mk_test "true = $$(echo "$$export" | grep -q "TF_VAR_db_username='admin'" && echo "$$export" | grep -q "export TF_VAR_db_password='secret'" && echo true)"
 
 test-terraform-fmt:
 	# arrange

@@ -100,7 +100,7 @@ test-secret-update-existing-value:
 	make secret-update-existing-value NAME=$(@) KEY=DB_NAME VALUE=other
 	# assert
 	secret=$$(make secret-fetch-and-export-variables NAME=$(@))
-	([[ $$secret == *DB_HOST=localhost* ]] && [[ $$secret == *DB_NAME=other* ]] && [[ $$secret == *DB_PASSWORD=secret* ]]) && mk_test true || mk_test false
+	([[ $$secret == *DB_HOST=*localhost* ]] && [[ $$secret == *DB_NAME=*other* ]] && [[ $$secret == *DB_PASSWORD=*secret* ]]) && mk_test true || mk_test false
 
 test-secret-copy-value-from:
 	# arrange
