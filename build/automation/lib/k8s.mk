@@ -78,6 +78,82 @@ k8s-undeploy-job: ### Remove Kubernetes resources from the job namespace - manda
 		kubectl delete namespace $(K8S_JOB_NAMESPACE)
 	fi
 
+k8s-deploy-tester: ### Deploy tester job to the Kubernetes cluster - mandatory: STACK=[name],PROFILE=[name],TESTER_NAME=[tester name]
+	# set up
+	eval "$$(make aws-assume-role-export-variables)"
+	make k8s-kubeconfig-get
+	eval "$$(make k8s-kubeconfig-export-variables)"
+	# deploy
+	make k8s-replace-variables STACK=$(STACK) PROFILE=$(PROFILE)
+	make k8s-job-delete-tester PROFILE=$(PROFILE)
+	kubectl apply -k $$(make -s _k8s-get-deployment-directory)
+	make k8s-clean # TODO: Create a flag to switch it off
+	kubectl get pod -n $(K8S_APP_NAMESPACE)
+	make k8s-job-tester-wait-to-complete
+
+k8s-job-delete-tester: ### Remove tester resources from application namespace - mandatory: PROFILE=[name]
+	if [ ! -z $$(kubectl get job -n $(K8S_APP_NAMESPACE) | awk '/^.*-tester/{print $$1}') ]; then
+		kubectl get job -n $(K8S_APP_NAMESPACE) | awk '/^.*-tester/{print $$1}' | xargs kubectl delete job -n=$(K8S_APP_NAMESPACE)
+	fi
+
+k8s-job-tester-wait-to-complete: ### Wait for the job to complete mandatory: TESTER_NAME=[tester_name] - optional SECONDS=[number of seconds, defaults to 60]
+	seconds=$(or $(SECONDS), 60)
+	echo "Waiting for the job to complete in $$seconds seconds"
+	count=0
+	get_log=false
+	while [ $$count -lt $$seconds ]; do
+		if [ true == "$$(make k8s-job-tester-is-running)" ]; then
+			if [ false == $$get_log ]; then
+					echo "The job is running"
+					kubectl logs --follow --namespace=$(K8S_APP_NAMESPACE) $$(make k8s-job-tester-get-pod-name) &
+					get_log=true
+			fi
+		fi
+		if [ true == "$$(make k8s-job-tester-has-failed)" ]; then
+			echo "ERROR: The job has failed"
+			exit 1
+		fi
+		if [ true == "$$(make k8s-job-tester-has-completed)" ]; then
+			echo "The job has completed"
+			if [ false == $$get_log ]; then
+				kubectl logs --follow --namespace=$(K8S_APP_NAMESPACE) $$(make k8s-job-tester-get-pod-name) &
+				get_log=true
+			fi
+			exit 0
+		fi
+		sleep 1
+		((count++)) ||:
+	done
+	echo "ERROR: The job did not complete in the given time of $$seconds seconds"
+	exit 1
+
+k8s-job-tester-has-failed: ### Show whether the job failed - mandatory: TESTER_NAME=[tester_name] return: [true|""]
+	eval "$$(make k8s-kubeconfig-export-variables)"
+	kubectl get jobs $(TESTER_NAME) \
+		--namespace=$(K8S_APP_NAMESPACE) \
+		--output jsonpath='{.status.conditions[?(@.type=="Failed")].status}' \
+	| tr '[:upper:]' '[:lower:]' | tr -d '\n'
+
+k8s-job-tester-is-running: ### Show whether the job failed - man:q:qqdatory: TESTER_NAME=[tester_name] return: [true|""]
+	eval "$$(make k8s-kubeconfig-export-variables)"
+	kubectl get pod $$(make k8s-job-tester-get-pod-name) \
+		--namespace=$(K8S_APP_NAMESPACE) \
+		--output jsonpath='{.status.containerStatuses[0].started}' | sed 's/1/true/g'
+
+k8s-job-tester-has-completed: ### Show whether the job completed mandatory: TESTER_NAME=[tester_name] - return: [true|""]
+	eval "$$(make k8s-kubeconfig-export-variables)"
+	kubectl get jobs $(TESTER_NAME) \
+		--namespace=$(K8S_APP_NAMESPACE) \
+		--output jsonpath='{.status.conditions[?(@.type=="Complete")].status}' \
+	| tr '[:upper:]' '[:lower:]' | tr -d '\n'
+
+k8s-job-tester-get-pod-name: ### Get the name of the job pod mandatory: TESTER_NAME=[tester_name] - return: [pod name]
+	eval "$$(make k8s-kubeconfig-export-variables)"
+	kubectl get pods \
+		--namespace=$(K8S_APP_NAMESPACE) \
+		--selector "name=$(TESTER_NAME)" \
+		--output jsonpath='{.items..metadata.name}'
+
 k8s-alb-get-ingress-endpoint: ### Get ALB ingress enpoint - mandatory: PROFILE=[name]
 	# set up
 	eval "$$(make aws-assume-role-export-variables)"
@@ -310,6 +386,11 @@ k8s-job: ### Show status of jobs - mandatory: PROFILE=[name]
 	k8s-job-has-failed \
 	k8s-job-log \
 	k8s-job-wait-to-complete \
+	k8s-job-tester-get-pod-name \
+	k8s-job-tester-has-failed \
+	k8s-job-tester-has-completed \
+	k8s-job-tester-is-running \
+	k8s-job-tester-wait-to-complete \
 	k8s-kubeconfig-export \
 	k8s-kubeconfig-export-variables \
 	k8s-log \
