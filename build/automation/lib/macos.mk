@@ -1,8 +1,8 @@
 DEV_OHMYZSH_DIR := ~/.dotfiles/oh-my-zsh
 
-macos-setup devops-setup: ### Provision your MacBook (and become a DevOps ninja) - optional: REINSTALL=true
+macos-setup devops-setup: ### Provision and configure your macOS - optional: REINSTALL=true
 	rm -f $(SETUP_COMPLETE_FLAG_FILE)
-	make macos-disable-gatekeeper
+	make _macos-disable-gatekeeper
 	make \
 		macos-prepare \
 		macos-update \
@@ -11,14 +11,14 @@ macos-setup devops-setup: ### Provision your MacBook (and become a DevOps ninja)
 		macos-install-corporate \
 		macos-config \
 		macos-fix
-	make macos-enable-gatekeeper
+	make _macos-enable-gatekeeper
 	touch $(SETUP_COMPLETE_FLAG_FILE)
 
 macos-prepare:: ### Prepare for installation and configuration of the development dependencies
 	networksetup -setdnsservers Wi-Fi 8.8.8.8 ||:
 	sudo chown -R $$(id -u) $$(brew --prefix)/*
 
-macos-update:: ### Update/upgrade all currently installed development dependencies
+macos-update:: ### Update all currently installed development dependencies
 	xcode-select --install 2> /dev/null ||:
 	which mas > /dev/null 2>&1 || brew install mas
 	mas upgrade $(mas list | grep -i xcode | awk '{ print $1 }')
@@ -73,7 +73,6 @@ macos-install-essential:: ### Install essential development dependencies - optio
 	brew $$install mas ||:
 	brew $$install minikube ||:
 	brew $$install nvm ||:
-	brew $$install pulumi ||:
 	brew $$install pyenv ||:
 	brew $$install pyenv-virtualenv ||:
 	brew $$install pyenv-which-ext ||:
@@ -106,31 +105,18 @@ macos-install-additional:: ### Install additional development dependencies - opt
 	fi
 	brew tap weaveworks/tap ||:
 	brew $$install github/gh/gh ||:
-	brew $$install --cask appcleaner ||:
 	brew $$install --cask atom ||:
 	brew $$install --cask dbeaver-community ||:
-	brew $$install --cask dcommander ||:
 	brew $$install --cask drawio ||:
-	brew $$install --cask dropbox ||:
-	brew $$install --cask enpass ||:
 	brew $$install --cask firefox-developer-edition ||:
 	brew $$install --cask gimp ||:
 	brew $$install --cask gitkraken ||:
-	brew $$install --cask google-backup-and-sync ||:
 	brew $$install --cask google-chrome ||:
-	brew $$install --cask hammerspoon ||:
-	brew $$install --cask istat-menus ||:
-	brew $$install --cask karabiner-elements ||:
 	brew $$install --cask keepingyouawake ||:
-	#brew $$install --cask microsoft-remote-desktop-beta ||:
 	brew $$install --cask postman ||:
-	brew $$install --cask sourcetree ||:
 	brew $$install --cask spectacle ||:
-	brew $$install --cask tripmode ||:
 	brew $$install --cask tunnelblick ||:
-	brew $$install --cask vanilla ||:
-	brew $$install --cask vlc ||:
-	brew $$install --cask wifi-explorer ||:
+	#brew $$install --cask microsoft-remote-desktop-beta ||:
 	# # Pinned package: vagrant
 	# brew reinstall --cask --force \
 	# 	https://raw.githubusercontent.com/Homebrew/homebrew-cask/ae2a540ffee555491ccbb2cefa4296c76355ef9f/Casks/vagrant.rb ||:
@@ -155,12 +141,33 @@ macos-install-corporate:: ### Install corporate dependencies - optional: REINSTA
 	if [[ "$$REINSTALL" =~ ^(true|yes|y|on|1|TRUE|YES|Y|ON)$$ ]]; then
 		install="reinstall --force"
 	fi
-	brew update
 	brew $$install --cask microsoft-office ||:
 	brew $$install --cask microsoft-teams ||:
 	brew $$install --cask slack ||:
 	brew $$install --cask vmware-horizon-client ||:
 	brew $$install --cask avast-security ||: # https://support.avast.com/en-gb/article/Install-Mac-Security/
+
+macos-install-recommended:: ### Install recommended dependencies - optional: REINSTALL=true
+	export HOMEBREW_NO_AUTO_UPDATE=1
+	install="install"
+	if [[ "$$REINSTALL" =~ ^(true|yes|y|on|1|TRUE|YES|Y|ON)$$ ]]; then
+		install="reinstall --force"
+	fi
+	brew $$install --cask appcleaner ||:
+	brew $$install --cask dcommander ||:
+	brew $$install --cask dropbox ||:
+	brew $$install --cask enpass ||:
+	brew $$install --cask google-backup-and-sync ||:
+	brew $$install --cask hammerspoon ||:
+	brew $$install --cask istat-menus ||:
+	brew $$install --cask karabiner-elements ||:
+	brew $$install --cask mindnode-pro ||:
+	brew $$install --cask raindropio ||:
+	brew $$install --cask sourcetree ||:
+	brew $$install --cask tripmode ||:
+	brew $$install --cask vanilla ||:
+	brew $$install --cask vlc ||:
+	brew $$install --cask wifi-explorer ||:
 
 macos-check:: ### Check if the development dependencies are installed
 	# Essential dependencies
@@ -199,7 +206,6 @@ macos-check:: ### Check if the development dependencies are installed
 	brew list mas ||:
 	brew list maven ||:
 	brew list nvm ||:
-	brew list pulumi ||:
 	brew list pyenv ||:
 	brew list pyenv-virtualenv ||:
 	brew list pyenv-which-ext ||:
@@ -219,33 +225,6 @@ macos-check:: ### Check if the development dependencies are installed
 	brew list --cask font-hack-nerd-font ||:
 	brew list --cask iterm2 ||:
 	brew list --cask visual-studio-code ||:
-	# Additional dependencies
-	brew list github/gh/gh ||:
-	brew list --cask appcleaner ||:
-	brew list --cask atom ||:
-	brew list --cask dbeaver-community ||:
-	brew list --cask dcommander ||:
-	brew list --cask drawio
-	brew list --cask firefox-developer-edition ||:
-	brew list --cask gimp ||:
-	brew list --cask gitkraken ||:
-	brew list --cask google-chrome ||:
-	brew list --cask hammerspoon ||:
-	brew list --cask istat-menus ||:
-	brew list --cask karabiner-elements ||:
-	brew list --cask keepingyouawake ||:
-	#brew list --cask microsoft-remote-desktop-beta ||:
-	brew list --cask postman ||:
-	brew list --cask sourcetree ||:
-	brew list --cask spectacle ||:
-	brew list --cask tripmode ||:
-	brew list --cask tunnelblick ||:
-	brew list --cask vanilla ||:
-	brew list --cask vlc ||:
-	brew list --cask wifi-explorer ||:
-	brew list --cask vagrant ||:
-	brew list --cask virtualbox ||:
-	brew list --cask virtualbox-extension-pack ||:
 
 macos-config:: ### Configure development dependencies
 	make \
@@ -268,12 +247,6 @@ macos-info:: ### Show "Setting up your macOS using Make DevOps" manual
 	perl $(BIN_DIR)/markdown --html4tags $$info > $$html
 	cp -f $$html ~/Desktop/Setting\ up\ your\ macOS\ using\ Make\ DevOps.html
 	open -a "Safari" ~/Desktop/Setting\ up\ your\ macOS\ using\ Make\ DevOps.html
-
-macos-disable-gatekeeper:: ### Disable Gatekeeper
-	sudo spctl --master-disable
-
-macos-enable-gatekeeper:: ### Enable Gatekeeper
-	sudo spctl --master-enable
 
 # ==============================================================================
 
@@ -605,6 +578,12 @@ _macos-fix-vagrant-virtualbox:
 	# 	sudo sed -i 's;"4.0" => Version_4_0,;"6.1" => Version_6_1,;g' $$meta
 	# 	sudo cp $(LIB_DIR)/macos/version_6_1.rb /opt/vagrant/embedded/gems/2.2.6/gems/vagrant-2.2.6/plugins/providers/virtualbox/driver
 	# fi
+
+_macos-disable-gatekeeper:
+	sudo spctl --master-disable
+
+_macos-enable-gatekeeper:
+	sudo spctl --master-enable
 
 # ==============================================================================
 

@@ -3,6 +3,7 @@
 - Refactoring
   - Make sure the `infrastructure` directory is custom and move away test files from it
   - Run `kubectl` from container
+  - Consider using https://github.com/pre-commit/pre-commit for githooks
 - Infrastructure
   - [Limit container resources](https://docs.docker.com/config/containers/resource_constraints/)
   - [Decouple data](https://www.terraform.io/docs/modules/composition.html)

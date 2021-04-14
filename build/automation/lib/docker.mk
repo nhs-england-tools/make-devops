@@ -22,7 +22,6 @@ DOCKER_NODE_VERSION = $(NODE_VERSION)-alpine
 DOCKER_OPENJDK_VERSION = $(JAVA_VERSION)-alpine
 DOCKER_POSTGRES_VERSION = $(POSTGRES_VERSION)-alpine
 DOCKER_POSTMAN_NEWMAN_VERSION = $(POSTMAN_NEWMAN_VERSION)-alpine
-DOCKER_PULUMI_VERSION = v2.15.0
 DOCKER_PYTHON_VERSION = $(PYTHON_VERSION)-alpine
 DOCKER_TERRAFORM_VERSION = $(TERRAFORM_VERSION)
 DOCKER_WIREMOCK_VERSION = $(WIREMOCK_VERSION)-alpine
@@ -506,27 +505,6 @@ docker-run-postman: ### Run postman (newman) container - mandatory: DIR,CMD
 		ARGS="--volume $(DIR):/etc/newman" \
 		DIR="$(DIR)" \
 		CMD="$(CMD)"
-
-docker-run-pulumi: ### Run pulumi container - mandatory: CMD; optional: DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file],IMAGE=[image name],CONTAINER=[container name]
-	make docker-config > /dev/null 2>&1
-	image=$$([ -n "$(IMAGE)" ] && echo $(IMAGE) || echo pulumi/pulumi:$(DOCKER_PULUMI_VERSION))
-	container=$$([ -n "$(CONTAINER)" ] && echo $(CONTAINER) || echo pulumi-$(BUILD_COMMIT_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7))
-	docker run --interactive $(_TTY) --rm \
-		--name $$container \
-		--user $$(id -u):$$(id -g) \
-		--env-file <(make _list-variables PATTERN="^(AWS|TX|TEXAS|NHSD|TERRAFORM)") \
-		--env-file <(make _list-variables PATTERN="^(DB|DATABASE|SMTP|APP|APPLICATION|UI|API|SERVER|HOST|URL)") \
-		--env-file <(make _list-variables PATTERN="^(PROFILE|ENVIRONMENT|BUILD|PROGRAMME|ORG|SERVICE|PROJECT)") \
-		--env-file <(env | grep -Ei "^TF_VAR_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
-		--env-file <(env | grep -Ei "^PULUMI_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
-		--env-file <(make _docker-get-variables-from-file VARS_FILE=$(VARS_FILE)) \
-		--volume $(PROJECT_DIR):/project \
-		--network $(DOCKER_NETWORK) \
-		--workdir /project/$(shell echo $(abspath $(DIR)) | sed "s;$(PROJECT_DIR);;g") \
-		--entrypoint /bin/bash \
-		$(ARGS) \
-		$$image \
-			-c "$(CMD)"
 
 docker-run-python: ### Run python container - mandatory: CMD; optional: SH=true,DIR,ARGS=[Docker args],LIB_VOLUME_MOUNT=true,VARS_FILE=[Makefile vars file],IMAGE=[image name],CONTAINER=[container name]
 	make docker-config > /dev/null 2>&1

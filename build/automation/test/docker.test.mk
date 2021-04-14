@@ -33,7 +33,6 @@ test-docker:
 		test-docker-run-mvn \
 		test-docker-run-node \
 		test-docker-run-postman \
-		test-docker-run-pulumi \
 		test-docker-run-python-single-cmd \
 		test-docker-run-python-multiple-cmd \
 		test-docker-run-python-multiple-cmd-pip-install \
@@ -299,17 +298,6 @@ test-docker-run-postman:
 		make -s docker-run-postman \
 			CMD="--version" \
 		| grep -Eo "[0-9]+\.[0-9]+\.[0-9]+" | wc -l)
-	# assert
-	mk_test "0 -lt $$output"
-
-test-docker-run-pulumi:
-	# arrange
-	make docker-config
-	# act
-	output=$$(
-		make -s docker-run-pulumi \
-			CMD="pulumi version" \
-		| grep -Eo "v[0-9]+\.[0-9]+\.[0-9]+" | wc -l)
 	# assert
 	mk_test "0 -lt $$output"
 
