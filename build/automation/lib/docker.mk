@@ -741,8 +741,8 @@ docker-image-find-and-version-as: ### Find image based on git commit hash and ta
 	hash=$$(make git-commit-get-hash COMMIT=$$commit)
 	digest=$$(make docker-image-get-digest NAME=$(NAME) TAG=$$hash)
 	make docker-pull NAME=$(NAME) DIGEST=$$digest
-	make docker-tag NAME=$(NAME) DIGEST=$$digest TAG=$(or $(VERSION), $(TAG)
-	make docker-push NAME=$(NAME) TAG=$(or $(VERSION), $(TAG)
+	make docker-tag NAME=$(NAME) DIGEST=$$digest TAG=$(or $(VERSION), $(TAG))
+	make docker-push NAME=$(NAME) TAG=$(or $(VERSION), $(TAG))
 
 docker-repo-list-tags: ### List repository tags - mandatory: REPO=[repository name]
 	(
