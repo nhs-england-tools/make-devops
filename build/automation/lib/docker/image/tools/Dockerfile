@@ -32,7 +32,7 @@ RUN set -eux && \
     # Get Python packages
     mkdir /packages && cd /packages && \
     pip install --upgrade pip && \
-    pip install --prefix=/packages --no-warn-script-location --verbose \
+    pip install --prefix=/packages --no-warn-script-location \
         $PYTHON_BASE_PACKAGES
 
 # ==============================================================================
