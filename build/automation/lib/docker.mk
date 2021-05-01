@@ -9,15 +9,14 @@ DOCKER_NETWORK = $(PROJECT_GROUP_SHORT)/$(PROJECT_NAME_SHORT)/$(BUILD_ID)
 DOCKER_REGISTRY = $(AWS_ECR)/$(PROJECT_GROUP_SHORT)/$(PROJECT_NAME_SHORT)
 DOCKER_LIBRARY_REGISTRY = nhsd
 
-DOCKER_ALPINE_VERSION = 3.12.1
-DOCKER_COMPOSER_VERSION = 2.0.6
-DOCKER_DIND_VERSION = 20.10.1-dind
-DOCKER_DOTNET_VERSION = 3.1.404
-DOCKER_ELASTICSEARCH_VERSION = 7.10.0
-DOCKER_GRADLE_VERSION = 6.7.1-jdk$(JAVA_VERSION)
+DOCKER_ALPINE_VERSION = 3.13.5
+DOCKER_COMPOSER_VERSION = 2.0.13
+DOCKER_DIND_VERSION = 20.10.6-dind
+DOCKER_ELASTICSEARCH_VERSION = 7.12.1
+DOCKER_GRADLE_VERSION = 7.0.0-jdk$(JAVA_VERSION)
 DOCKER_LOCALSTACK_VERSION = $(LOCALSTACK_VERSION)
-DOCKER_MAVEN_VERSION = 3.6.3-openjdk-$(JAVA_VERSION)-slim
-DOCKER_NGINX_VERSION = 1.19.4-alpine
+DOCKER_MAVEN_VERSION = 3.8.1-openjdk-$(JAVA_VERSION)-slim
+DOCKER_NGINX_VERSION = 1.20.0-alpine
 DOCKER_NODE_VERSION = $(NODE_VERSION)-alpine
 DOCKER_OPENJDK_VERSION = $(JAVA_VERSION)-alpine
 DOCKER_POSTGRES_VERSION = $(POSTGRES_VERSION)-alpine
@@ -222,7 +221,6 @@ docker-create-dockerfile: ### Create effective Dockerfile - mandatory: NAME; op
 		s#FROM docker:latest#FROM docker:$(DOCKER_DIND_VERSION)#g; \
 		s#FROM gradle:latest#FROM gradle:$(DOCKER_GRADLE_VERSION)#g; \
 		s#FROM maven:latest#FROM maven:$(DOCKER_MAVEN_VERSION)#g; \
-		s#FROM mcr.microsoft.com/dotnet/core/sdk:latest#FROM mcr.microsoft.com/dotnet/core/sdk:$(DOCKER_DOTNET_VERSION)#g; \
 		s#FROM nginx:latest#FROM nginx:$(DOCKER_NGINX_VERSION)#g; \
 		s#FROM node:latest#FROM node:$(DOCKER_NODE_VERSION)#g; \
 		s#FROM openjdk:latest#FROM openjdk:$(DOCKER_OPENJDK_VERSION)#g; \
@@ -398,24 +396,6 @@ docker-run-composer: ### Run composer container - mandatory: CMD; optional: DIR,
 		$(ARGS) \
 		$$image \
 			$(CMD)
-
-docker-run-dotnet: ### Run dotnet container - mandatory: CMD; optional: DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file],IMAGE=[image name],CONTAINER=[container name]
-	make docker-config > /dev/null 2>&1
-	image=$$([ -n "$(IMAGE)" ] && echo $(IMAGE) || echo mcr.microsoft.com/dotnet/core/sdk:$(DOCKER_DOTNET_VERSION))
-	container=$$([ -n "$(CONTAINER)" ] && echo $(CONTAINER) || echo dotnet-$(BUILD_COMMIT_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7))
-	docker run --interactive $(_TTY) --rm \
-		--name $$container \
-		--user $$(id -u):$$(id -g) \
-		--env-file <(make _list-variables PATTERN="^(AWS|TX|TEXAS|NHSD|TERRAFORM)") \
-		--env-file <(make _list-variables PATTERN="^(DB|DATABASE|SMTP|APP|APPLICATION|UI|API|SERVER|HOST|URL)") \
-		--env-file <(make _list-variables PATTERN="^(PROFILE|ENVIRONMENT|BUILD|PROGRAMME|ORG|SERVICE|PROJECT)") \
-		--env-file <(make _docker-get-variables-from-file VARS_FILE=$(VARS_FILE)) \
-		--volume $(PROJECT_DIR):/project \
-		--network $(DOCKER_NETWORK) \
-		--workdir /project/$(shell echo $(abspath $(DIR)) | sed "s;$(PROJECT_DIR);;g") \
-		$(ARGS) \
-		$$image \
-			dotnet $(CMD)
 
 docker-run-gradle: ### Run gradle container - mandatory: CMD; optional: DIR,ARGS=[Docker args],LIB_VOLUME_MOUNT=true,VARS_FILE=[Makefile vars file],IMAGE=[image name],CONTAINER=[container name]
 	make docker-config > /dev/null 2>&1

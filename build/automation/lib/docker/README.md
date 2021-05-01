@@ -22,7 +22,6 @@ Some of the benefits of using the library images
 - `prepare_configuration_files`, `replace_variables` and `set_file_permissions` functions
 - Process debugging and tracing functionality
 - Support to run process as a non-root system user
-- [Instana](https://www.instana.com/) support
 
 ## Template images
 
@@ -36,8 +35,8 @@ Some of the benefits of using the library images
 
 ## Status
 
-| Category                     | Badges                                                                                                                                                                                                                                                              |
-| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Category                     | Badges                                                                                                                                                                                                                                                      |
+| ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Docker `elasticsearch` image | [![version](https://img.shields.io/docker/v/nhsd/elasticsearch?sort=semver)](https://hub.docker.com/r/nhsd/elasticsearch/tags)&nbsp;[![docker pulls](https://img.shields.io/docker/pulls/nhsd/elasticsearch)](https://hub.docker.com/r/nhsd/elasticsearch/) |
 | Docker `nginx` image         | [![version](https://img.shields.io/docker/v/nhsd/nginx?sort=semver)](https://hub.docker.com/r/nhsd/nginx/tags)&nbsp;[![docker pulls](https://img.shields.io/docker/pulls/nhsd/nginx)](https://hub.docker.com/r/nhsd/nginx/)                                 |
 | Docker `node` image          | [![version](https://img.shields.io/docker/v/nhsd/node?sort=semver)](https://hub.docker.com/r/nhsd/node/tags)&nbsp;[![docker pulls](https://img.shields.io/docker/pulls/nhsd/node)](https://hub.docker.com/r/nhsd/node/)                                     |

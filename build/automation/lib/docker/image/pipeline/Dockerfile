@@ -2,7 +2,7 @@ FROM docker:latest
 ENV \
     LANG="C.UTF-8" \
     LC_ALL="C.UTF-8" \
-    TZ="Europe/London"
+    TZ="UTC"
 
 COPY assets/certificate/certificate.* /certificate/
 RUN set -eux && \

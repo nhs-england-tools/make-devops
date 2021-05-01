@@ -9,7 +9,7 @@ RUN set -eux && \
     mkdir /packages && cd /packages && \
     pip install --upgrade pip && \
     pip install --prefix=/packages --no-warn-script-location --verbose \
-        gunicorn==20.0.4
+        gunicorn==20.1.0
 
 # ==============================================================================
 

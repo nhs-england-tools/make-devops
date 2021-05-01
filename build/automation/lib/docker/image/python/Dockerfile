@@ -16,13 +16,6 @@ RUN set -eux && \
         wget \
     && \
     \
-    # Get Python packages
-    mkdir /packages && cd /packages && \
-    pip install --upgrade pip && \
-    pip install --prefix=/packages --no-warn-script-location --verbose \
-        instana \
-    && \
-    \
     # Get gosu
     dpkgArch="$(dpkg --print-architecture | awk -F- '{ print $NF }')" && \
     wget -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/$GOSU_VERSION/gosu-$dpkgArch" && \
@@ -45,10 +38,8 @@ ENV \
     SYSTEM_USER_GID="999" \
     SYSTEM_USER_UID="999" \
     SYSTEM_USER="python" \
-    TZ="Europe/London" \
-    AUTOWRAPT_BOOTSTRAP="instana"
+    TZ="UTC"
 
-COPY --from=builder /packages /usr/local
 COPY --from=builder /usr/local/bin/gosu /usr/local/bin/gosu
 COPY assets/ /
 RUN set -eux && \

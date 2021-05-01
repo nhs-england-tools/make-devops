@@ -1,16 +1,16 @@
 PYTHON_VERSION_MAJOR = 3
 PYTHON_VERSION_MINOR = 9
-PYTHON_VERSION_PATCH = 0
+PYTHON_VERSION_PATCH = 4
 PYTHON_VERSION = $(PYTHON_VERSION_MAJOR).$(PYTHON_VERSION_MINOR).$(PYTHON_VERSION_PATCH)
 PYTHON_BASE_PACKAGES = \
-	awscli-local==0.13 \
-	awscli==1.18.207 \
-	black==20.8b1 \
-	boto3==1.16.47 \
+	awscli-local==0.14 \
+	awscli==1.19.62 \
+	black==21.4b2 \
+	boto3==1.17.62 \
 	bpython \
 	configparser \
 	coverage \
-	diagrams==0.18.0 \
+	diagrams==0.19.1 \
 	flake8 \
 	mypy \
 	prettytable \

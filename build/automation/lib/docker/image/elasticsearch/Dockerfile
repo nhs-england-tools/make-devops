@@ -7,7 +7,7 @@ ENV \
     SYSTEM_USER_GID="999" \
     SYSTEM_USER_UID="999" \
     SYSTEM_USER="elasticsearch" \
-    TZ="Europe/London"
+    TZ="UTC"
 
 USER root
 RUN set -eux && \
