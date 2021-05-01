@@ -35,10 +35,6 @@ package:
     installed: true
 
 command:
-  pip:
-    exit-status: 0
-  pip list:
-    exit-status: 0
   pip list | grep -iE 'awscli-local.*0.14':
     exit-status: 0
   pip list | grep -iE 'awscli.*1.19':
