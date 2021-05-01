@@ -35,6 +35,10 @@ package:
     installed: true
 
 command:
+  date | grep UTC:
+    exit-status: 0
+  gosu --version:
+    exit-status: 0
   pip list | grep -iE 'awscli-local.*0.14':
     exit-status: 0
     timeout: 60000
@@ -62,6 +66,4 @@ command:
   yq --version:
     exit-status: 0
   kubectl version | grep Client:
-    exit-status: 0
-  gosu --version:
     exit-status: 0

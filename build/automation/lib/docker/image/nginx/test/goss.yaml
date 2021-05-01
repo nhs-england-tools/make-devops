@@ -29,6 +29,8 @@ file:
     group: nginx
 
 command:
+  date | grep UTC:
+    exit-status: 0
   gosu --version:
     exit-status: 0
 

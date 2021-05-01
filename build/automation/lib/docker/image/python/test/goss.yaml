@@ -13,6 +13,8 @@ package:
     installed: true
 
 command:
+  date | grep UTC:
+    exit-status: 0
   gosu --version:
     exit-status: 0
   python --version:
