@@ -729,6 +729,8 @@ docker-repo-list-tags: ### List repository tags - mandatory: REPO=[repository na
 		curl "https://registry.hub.docker.com/api/content/v1/repositories/public/library/$(REPO)/tags?page=1&page_size=100" 2>/dev/null | jq -r '.results[].name';
 		curl "https://registry.hub.docker.com/api/content/v1/repositories/public/library/$(REPO)/tags?page=2&page_size=100" 2>/dev/null | jq -r '.results[].name'
 		curl "https://registry.hub.docker.com/api/content/v1/repositories/public/library/$(REPO)/tags?page=3&page_size=100" 2>/dev/null | jq -r '.results[].name'
+		curl "https://registry.hub.docker.com/api/content/v1/repositories/public/library/$(REPO)/tags?page=4&page_size=100" 2>/dev/null | jq -r '.results[].name'
+		curl "https://registry.hub.docker.com/api/content/v1/repositories/public/library/$(REPO)/tags?page=5&page_size=100" 2>/dev/null | jq -r '.results[].name'
 	) | sort
 
 # ==============================================================================

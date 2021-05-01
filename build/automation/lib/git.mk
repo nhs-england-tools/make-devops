@@ -34,8 +34,8 @@ git-secrets-scan-history: ### Scan git histroy for any secrets
 
 # ==============================================================================
 
-git-commit-has-changed-directory: ### Determin if any file changed in directory - mandatory: DIR=[directory]; optional: ALL=true,PRECOMMIT=true; return: true|false
-	compare_to=$(shell [ "$(ALL)" == true ] && [ "$(BUILD_BRANCH)" != master ] && echo master || echo HEAD)
+git-commit-has-changed-directory: ### Determin if any file changed in directory - mandatory: DIR=[directory]; optional: BRANCH_COMMITS=all|last,PRECOMMIT=true; return: true|false
+	compare_to=$(shell [ "$(BRANCH_COMMITS)" == all ] && [ "$(BUILD_BRANCH)" != master ] && echo master || echo HEAD)
 	if [ "$(PRECOMMIT)" == true ]; then
 		git diff --name-only --cached $$compare_to --diff-filter=ACDMRT | grep --quiet '^$(DIR)' && echo true || echo false
 	else
