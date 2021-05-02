@@ -1,4 +1,6 @@
 command:
+  date | grep UTC:
+    exit-status: 0
   docker --version:
     exit-status: 0
 

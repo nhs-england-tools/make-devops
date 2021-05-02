@@ -9,7 +9,7 @@ build: project-config
 
 test:
 	make docker-test NAME=elasticsearch \
-		GOSS_OPTS="GOSS_SLEEP=20" \
+		GOSS_OPTS="GOSS_SLEEP=$(shell [ -n "$(CIRCLE_BUILD_NUM)" ] && echo 120 || echo 30)" \
 		CMD="elasticsearch"
 
 push:

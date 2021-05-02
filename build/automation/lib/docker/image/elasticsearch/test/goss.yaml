@@ -16,10 +16,11 @@ package:
   wget:
     installed: true
 
-file:
-  /usr/local/bin/gosu:
-    exists: true
-    mode: "0755"
+command:
+  date | grep UTC:
+    exit-status: 0
+  gosu --version:
+    exit-status: 0
 
 process:
   java:

@@ -28,7 +28,6 @@ test-docker:
 		test-docker-get-variables-from-file \
 		test-docker-run \
 		test-docker-run-composer \
-		test-docker-run-dotnet \
 		test-docker-run-gradle \
 		test-docker-run-mvn \
 		test-docker-run-node \
@@ -243,17 +242,6 @@ test-docker-run-composer:
 		make -s docker-run-composer \
 			CMD="--version" \
 		| grep -Eo "[0-9]+\.[0-9]+\.[0-9]+" | wc -l)
-	# assert
-	mk_test "0 -lt $$output"
-
-test-docker-run-dotnet:
-	# arrange
-	make docker-config
-	# act
-	output=$$(
-		make -s docker-run-dotnet \
-			CMD="--info" \
-		| grep -Eo ".NET Core SDK" | wc -l)
 	# assert
 	mk_test "0 -lt $$output"
 

@@ -5,7 +5,6 @@ server {
 
   location / {
     root /application;
-    opentracing_propagate_context;
   }
 }
 
@@ -18,7 +17,6 @@ server {
 
   location / {
     root /application;
-    opentracing_propagate_context;
   }
 
   location /nginx_status {

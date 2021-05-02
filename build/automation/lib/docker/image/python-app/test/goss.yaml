@@ -7,5 +7,6 @@ file:
     group: python
 
 command:
-  pip list | grep -iE 'gunicorn.*20.0':
+  pip list | grep -iE 'gunicorn.*20.1':
     exit-status: 0
+    timeout: 60000

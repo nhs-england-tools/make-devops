@@ -29,9 +29,9 @@ file:
     group: nginx
 
 command:
-  gosu --version:
+  date | grep UTC:
     exit-status: 0
-  nginx -t 2>&1 | grep Instana:
+  gosu --version:
     exit-status: 0
 
 process:

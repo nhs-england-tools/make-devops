@@ -13,6 +13,8 @@ package:
     installed: true
 
 command:
+  date | grep UTC:
+    exit-status: 0
   gosu --version:
     exit-status: 0
   'psql postgres://test:test@localhost:5432/test -c "select version();"':

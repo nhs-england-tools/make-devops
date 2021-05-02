@@ -36,7 +36,7 @@ ENV \
     SYSTEM_USER_GID="999" \
     SYSTEM_USER_UID="999" \
     SYSTEM_USER="node" \
-    TZ="Europe/London"
+    TZ="UTC"
 
 COPY --from=builder /usr/local/bin/gosu /usr/local/bin/gosu
 COPY assets/ /

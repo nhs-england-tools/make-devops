@@ -111,6 +111,8 @@ test-aws-secret-create-object:
 	mk_test "{\"DB_USERNAME\":\"admin\",\"DB_PASSWORD\":\"secret\"} = $$secret"
 
 test-aws-secret-put-get-value:
+	# arrange
+	make aws-secret-create NAME=$(@)
 	# act
 	make aws-secret-put NAME=$(@) VALUE=value
 	secret="$$(make aws-secret-get NAME=$(@))"
@@ -120,6 +122,7 @@ test-aws-secret-put-get-value:
 test-aws-secret-put-get-object:
 	# arrange
 	make TEST_AWS_SECRET_MANAGER_JSON
+	make aws-secret-create NAME=$(@)
 	# act
 	make aws-secret-put NAME=$(@) VALUE=file://$(TEST_AWS_SECRET_MANAGER_JSON)
 	secret=$$(make aws-secret-get NAME=$(@))
@@ -129,6 +132,7 @@ test-aws-secret-put-get-object:
 test-aws-secret-put-get-and-format:
 	# arrange
 	make TEST_AWS_SECRET_MANAGER_JSON
+	make aws-secret-create NAME=$(@)
 	# act
 	make aws-secret-put NAME=$(@) VALUE=file://$(TEST_AWS_SECRET_MANAGER_JSON)
 	secret="$$(make aws-secret-get-and-format NAME=$(@))"
