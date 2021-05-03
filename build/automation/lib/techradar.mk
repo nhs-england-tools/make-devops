@@ -4,7 +4,7 @@ techradar-inspect: ### Inspect Docker image - mandatory: IMAGE=[image name]
 	size="$$(make techradar-image-get-size)"
 	trace=$$(make techradar-image-get-trace | base64 -w 0)
 	tech="$$(make techradar-image-detect-tech)"
-	echo "{$$tech,\"image\":{\"name\":\"$(IMAGE)\",\"hash\":\"$$hash\",\"date\":\"$$date\",\"size\":$$size,\"trace\":\"$$trace\"},\"build\":{\"id\":\"$(BUILD_ID)\",\"date\":\"$(BUILD_DATE)\",\"hash\":\"$(BUILD_COMMIT_HASH)\",\"repo\":\"$(BUILD_REPO)\"}}"
+	echo "{$$tech,\"image\":{\"name\":\"$(IMAGE)\",\"hash\":\"$$hash\",\"date\":\"$$date\",\"size\":$$size,\"trace\":\"$$trace\"},\"build\":{\"buildId\":\"$(BUILD_ID)\",\"buildDate\":\"$(BUILD_DATE)\",\"buildRepo\":\"$(BUILD_REPO)\",\"buildBranch\":\"$(BUILD_BRANCH)\",\"buildCommitHash\":\"$(BUILD_COMMIT_HASH)\",\"buildCommitData\":\"$(BUILD_COMMIT_DATE)\"},\"project\":{\"orgName\":\"$(ORG_NAME)\",\"programme\":\"$(PROGRAMME)\",\"projectGroup\":\"$(PROJECT_GROUP)\",\"projectGroupShort\":\"$(PROJECT_GROUP_SHORT)\",\"projectName\":\"$(PROJECT_NAME)\",\"projectNameShort\":\"$(PROJECT_NAME_SHORT)\",\"projectDisplayName\":\"$(PROJECT_DISPLAY_NAME)\",\"projectId\":\"$(PROJECT_ID)\",\"projectTag\":\"$(PROJECT_TAG)\",\"serviceTag\":\"$(SERVICE_TAG)\"}}"
 
 # ==============================================================================
 
