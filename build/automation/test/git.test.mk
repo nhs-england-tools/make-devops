@@ -61,7 +61,7 @@ test-git-secrets-add-allowed:
 
 test-git-secrets-scan-repo-history:
 	# act
-	make git-secrets-scan-repo-history
+	make git-secrets-scan-repo-history ||:
 	# assert
 	mk_test "0 -eq $$?"
 

@@ -54,6 +54,10 @@ git-secrets-add-allowed: ### Add allowed secret pattern - mandatory: PATTERN=[al
 	done
 	[ $$exists == false ] && git config --add secrets.allowed '$(PATTERN)' ||:
 
+git-secrets-clear: ### Clear git secret scanning settings
+	git config --unset-all secrets.patterns ||:
+	git config --unset-all secrets.allowed ||:
+
 git-secrets-scan-repo-history: ### Scan repository histroy for any secrets
 	git secrets --scan-history
 
