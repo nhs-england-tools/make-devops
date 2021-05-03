@@ -2,8 +2,10 @@ test-git:
 	make test-git-setup
 	tests=( \
 		test-git-config \
+		test-git-secrets-add-banned \
 		test-git-secrets-add-allowed \
-		test-git-secrets-scan-history \
+		test-git-secrets-scan-repo-history \
+		test-git-secrets-scan-repo-files \
 		test-git-commit-has-changed-directory \
 		test-git-commit-get-hash \
 		test-git-commit-get-timestamp \
@@ -49,15 +51,23 @@ test-git-config:
 	mk_test ".git/hooks/pre-commit" "-x $(PROJECT_DIR)/.git/hooks/pre-commit"
 	mk_test ".git/hooks/prepare-commit-msg" "-x $(PROJECT_DIR)/.git/hooks/prepare-commit-msg"
 	mk_test "secrets.providers git secrets --aws-provider" "0 -lt $$(git-secrets --list | grep 'secrets.providers git secrets --aws-provider' | wc -l)"
-	mk_test "secrets.allowed 000000000000" "0 -lt $$(git-secrets --list | grep 'secrets.allowed 000000000000' | wc -l)"
 	mk_test_complete
+
+test-git-secrets-add-banned:
+	mk_test_skip
 
 test-git-secrets-add-allowed:
 	mk_test_skip
 
-test-git-secrets-scan-history:
+test-git-secrets-scan-repo-history:
 	# act
-	make git-secrets-scan-history
+	make git-secrets-scan-repo-history ||:
+	# assert
+	mk_test "0 -eq $$?"
+
+test-git-secrets-scan-repo-files:
+	# act
+	make git-secrets-scan-repo-files
 	# assert
 	mk_test "0 -eq $$?"
 

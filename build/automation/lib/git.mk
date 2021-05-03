@@ -20,27 +20,61 @@ git-config: ### Configure local git repository
 		echo "build/automation/etc/githooks/prepare-commit-msg" > $(PROJECT_DIR)/.git/hooks/prepare-commit-msg
 		chmod +x $(PROJECT_DIR)/.git/hooks/prepare-commit-msg
 		git secrets --register-aws
-		make git-secrets-add-allowed PATTERN=000000000000
+		make git-secrets-add-allowed PATTERN='(000000000000|123456789012)' # AWS mock account numbers
+		make git-secrets-add-banned PATTERN='[0-9a-fA-F]{1,4}:[0-9a-fA-F]{1,4}:[0-9a-fA-F]{1,4}:[0-9a-fA-F]{1,4}:[0-9a-fA-F]{1,4}:[0-9a-fA-F]{1,4}:[0-9a-fA-F]{1,4}:[0-9a-fA-F]{1,4}' # IPv6
+		make git-secrets-add-banned PATTERN='[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' # IPv4
+		make git-secrets-add-allowed PATTERN='(127\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}|10\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}|172\.(1[6-9|2[0-9]|3[0-1])\.[0-9]{1,3}\.[0-9]{1,3}|192\.168\.[0-9]{1,3}\.[0-9]{1,3}|0\.0\.0\.0|8\.8\.8\.8|8\.8\.4\.4|208\.67\.222\.222|208\.67\.220\.220)' # IPv4 exceptions
+		make git-secrets-add-banned PATTERN='[a-z]{2}-[a-z-]*-[1,2,3]\.rds\.amazonaws\.com' # AWS RDS (Aurora) endpoint
+		make git-secrets-add-banned PATTERN='rds\.[a-z]{2}-[a-z-]*-[1,2,3]\.amazonaws\.com' # AWS RDS endpoint
+		make git-secrets-add-banned PATTERN='dynamodb\.[a-z]{2}-[a-z-]*-[1,2,3]\.amazonaws\.com' # AWS DynamoDB endpoint
+		make git-secrets-add-banned PATTERN='[a-z]{2}-[a-z-]*-[1,2,3]\.es\.amazonaws\.com' # AWS Elasticsearch endpoint
+		make git-secrets-add-banned PATTERN='[a-z]*[1-3]\.cache\.amazonaws\.com' # AWS ElastiCache endpoint
+		make git-secrets-add-banned PATTERN='hooks\.slack\.com/services/T[a-zA-Z0-9]*/B[a-zA-Z0-9]*/[a-zA-Z0-9]*' # Slack webhook URL
+		make git-secrets-add-banned PATTERN='-----BEGIN[[:blank:]]CERTIFICATE-----' # SSL PEM certificate
+		make git-secrets-add-banned PATTERN='-----BEGIN[[:blank:]]PRIVATE[[:blank:]]KEY-----' # SSL PEM key
 	fi
 
 # ==============================================================================
+
+git-secrets-add-banned: ### Add banned secret pattern - mandatory: PATTERN=[banned pattern]
+	exists=false;
+	hash_pattern=$$(echo '$(PATTERN)' | md5sum | cut -f1 -d' ')
+	for line in $$(git-secrets --list | grep 'secrets.patterns' | sed 's/secrets.patterns //'); do
+		hash_line=$$(echo ''$$line'' | md5sum | cut -f1 -d' ')
+		[ $$hash_line == $$hash_pattern ] && exists=true ||:
+	done
+	[ $$exists == false ] && git config --add secrets.patterns '$(PATTERN)' ||:
 
 git-secrets-add-allowed: ### Add allowed secret pattern - mandatory: PATTERN=[allowed pattern]
-	git-secrets --list | grep -q "secrets.allowed $(PATTERN)" \
-		|| git config --add secrets.allowed '$(PATTERN)'
+	exists=false
+	hash_pattern=$$(echo '$(PATTERN)' | md5sum | cut -f1 -d' ')
+	for line in $$(git-secrets --list | grep 'secrets.allowed' | sed 's/secrets.allowed //'); do
+		hash_line=$$(echo ''$$line'' | md5sum | cut -f1 -d' ')
+		[ $$hash_line == $$hash_pattern ] && exists=true ||:
+	done
+	[ $$exists == false ] && git config --add secrets.allowed '$(PATTERN)' ||:
 
-git-secrets-scan-history: ### Scan git histroy for any secrets
+git-secrets-clear: ### Clear git secret scanning settings
+	git config --unset-all secrets.patterns ||:
+	git config --unset-all secrets.allowed ||:
+
+git-secrets-scan-repo-history: ### Scan repository histroy for any secrets
 	git secrets --scan-history
+
+git-secrets-scan-repo-files: ### Scan repository files for any secrets
+	git secrets --scan
 
 # ==============================================================================
 
-git-commit-has-changed-directory: ### Determin if any file changed in directory - mandatory: DIR=[directory]; optional: BRANCH_COMMITS=all|last,PRECOMMIT=true; return: true|false
-	compare_to=$(shell [ "$(BRANCH_COMMITS)" == all ] && [ "$(BUILD_BRANCH)" != master ] && echo master || echo HEAD)
+git-commit-has-changed-directory: ### Determin if any file changed in directory - mandatory: DIR=[directory]; optional: PRECOMMIT=true; return: true|false
 	if [ "$(PRECOMMIT)" == true ]; then
-		git diff --name-only --cached $$compare_to --diff-filter=ACDMRT | grep --quiet '^$(DIR)' && echo true || echo false
+		compare_to=HEAD
+	elif [ "$(BUILD_BRANCH)" != master ]; then
+		compare_to=master
 	else
-		git diff --name-only --cached $$compare_to^ --diff-filter=ACDMRT | grep --quiet '^$(DIR)' && echo true || echo false
+		compare_to=HEAD^
 	fi
+	git diff --name-only --cached $$compare_to --diff-filter=ACDMRT | grep --quiet '^$(DIR)' && echo true || echo false
 
 git-commit-get-hash git-hash: ### Get short commit hash - optional: COMMIT=[commit, defaults to HEAD]
 	git rev-parse --short $(or $(COMMIT), HEAD) 2> /dev/null || echo unknown
