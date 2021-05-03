@@ -236,12 +236,15 @@ _devops-project-clean: ### Clean up the project structure - mandatory: DIR=[proj
 		$(DIR)/build/automation/etc/githooks/scripts/*.default \
 		$(DIR)/build/automation/etc/platform-texas* \
 		$(DIR)/build/automation/lib/dev.mk \
+		$(DIR)/build/automation/lib/docker/image/nginx/assets/etc/instana-config.json \
+		$(DIR)/build/automation/lib/docker/image/nginx/assets/usr \
 		$(DIR)/build/automation/lib/docker/nginx \
 		$(DIR)/build/automation/lib/docker/postgres \
 		$(DIR)/build/automation/lib/docker/tools \
 		$(DIR)/build/automation/lib/fix \
 		$(DIR)/build/automation/lib/k8s/template/deployment/stacks/stack/base/template/network-policy \
 		$(DIR)/build/automation/lib/k8s/template/deployment/stacks/stack/base/template/STACK_TEMPLATE_TO_REPLACE/network-policy.yaml \
+		$(DIR)/build/automation/lib/localstack/server.test.* \
 		$(DIR)/build/automation/lib/slack/jenkins-pipeline.json \
 		$(DIR)/build/automation/usr/mfa-aliases \
 		$(DIR)/build/automation/var/*.mk.default \
