@@ -62,13 +62,15 @@ git-secrets-scan-repo-files: ### Scan repository files for any secrets
 
 # ==============================================================================
 
-git-commit-has-changed-directory: ### Determin if any file changed in directory - mandatory: DIR=[directory]; optional: BRANCH_COMMITS=all|last,PRECOMMIT=true; return: true|false
-	compare_to=$(shell [ "$(BRANCH_COMMITS)" == all ] && [ "$(BUILD_BRANCH)" != master ] && echo master || echo HEAD)
+git-commit-has-changed-directory: ### Determin if any file changed in directory - mandatory: DIR=[directory]; optional: PRECOMMIT=true; return: true|false
 	if [ "$(PRECOMMIT)" == true ]; then
-		git diff --name-only --cached $$compare_to --diff-filter=ACDMRT | grep --quiet '^$(DIR)' && echo true || echo false
+		compare_to=HEAD
+	elif [ "$(BUILD_BRANCH)" != master ]; then
+		compare_to=master
 	else
-		git diff --name-only --cached $$compare_to^ --diff-filter=ACDMRT | grep --quiet '^$(DIR)' && echo true || echo false
+		compare_to=HEAD^
 	fi
+	git diff --name-only --cached $$compare_to --diff-filter=ACDMRT | grep --quiet '^$(DIR)' && echo true || echo false
 
 git-commit-get-hash git-hash: ### Get short commit hash - optional: COMMIT=[commit, defaults to HEAD]
 	git rev-parse --short $(or $(COMMIT), HEAD) 2> /dev/null || echo unknown
