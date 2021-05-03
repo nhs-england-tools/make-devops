@@ -12,6 +12,7 @@ DOCKER_LIBRARY_REGISTRY = nhsd
 DOCKER_ALPINE_VERSION = 3.13.5
 DOCKER_COMPOSER_VERSION = 2.0.13
 DOCKER_DIND_VERSION = 20.10.6-dind
+DOCKER_EDITORCONFIG_CHECKER_VERSION = 2.3.5
 DOCKER_ELASTICSEARCH_VERSION = 7.12.1
 DOCKER_GRADLE_VERSION = 7.0.0-jdk$(JAVA_VERSION)
 DOCKER_LOCALSTACK_VERSION = $(LOCALSTACK_VERSION)
@@ -22,9 +23,9 @@ DOCKER_OPENJDK_VERSION = $(JAVA_VERSION)-alpine
 DOCKER_POSTGRES_VERSION = $(POSTGRES_VERSION)-alpine
 DOCKER_POSTMAN_NEWMAN_VERSION = $(POSTMAN_NEWMAN_VERSION)-alpine
 DOCKER_PYTHON_VERSION = $(PYTHON_VERSION)-alpine
+DOCKER_SONAR_SCANNER_CLI_VERSION = $(SONAR_SCANNER_CLI_VERSION)
 DOCKER_TERRAFORM_VERSION = $(TERRAFORM_VERSION)
 DOCKER_WIREMOCK_VERSION = $(WIREMOCK_VERSION)-alpine
-DOCKER_EDITORCONFIG_CHECKER = 2.3.5
 
 DOCKER_LIBRARY_ELASTICSEARCH_VERSION = $(shell cat $(DOCKER_LIB_IMAGE_DIR)/elasticsearch/VERSION 2> /dev/null)
 DOCKER_LIBRARY_NGINX_VERSION = $(shell cat $(DOCKER_LIB_IMAGE_DIR)/nginx/VERSION 2> /dev/null)
@@ -398,6 +399,25 @@ docker-run-composer: ### Run composer container - mandatory: CMD; optional: DIR,
 		$$image \
 			$(CMD)
 
+docker-run-editorconfig: ### Run editorconfig container - optional: DIR=[working directory],EXCLUDE=[file pattern e.g. '\.txt$$'],ARGS=[Docker args],VARS_FILE=[Makefile vars file],IMAGE=[image name],CONTAINER=[container name]
+	if [ $(PROJECT_NAME) = $(DEVOPS_PROJECT_NAME) ]; then
+		exclude='$(shell [ -n "$(EXCLUDE)" ] && echo '$(EXCLUDE)|')markdown|linux-amd64$$|\.drawio|\.p12|\.so$$'
+	else
+		exclude='$(shell [ -n "$(EXCLUDE)" ] && echo '$(EXCLUDE)|')build/automation|markdown|linux-amd64$$|\.drawio|\.p12|\.so$$'
+	fi
+	make docker-config > /dev/null 2>&1
+	image=$$([ -n "$(IMAGE)" ] && echo $(IMAGE) || echo mstruebing/editorconfig-checker:$(DOCKER_EDITORCONFIG_CHECKER_VERSION))
+	container=$$([ -n "$(CONTAINER)" ] && echo $(CONTAINER) || echo editorconfig-$(BUILD_COMMIT_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7))
+	docker run --interactive $(_TTY) --rm \
+		--name $$container \
+		--user $$(id -u):$$(id -g) \
+		--volume $$([ -n "$(DIR)" ] && echo $(abspath $(DIR)) || echo $(PWD)):/check \
+		--network $(DOCKER_NETWORK) \
+		--workdir /check \
+		$(ARGS) \
+		$$image \
+			ec --exclude $$exclude
+
 docker-run-gradle: ### Run gradle container - mandatory: CMD; optional: DIR,ARGS=[Docker args],LIB_VOLUME_MOUNT=true,VARS_FILE=[Makefile vars file],IMAGE=[image name],CONTAINER=[container name]
 	make docker-config > /dev/null 2>&1
 	mkdir -p $(TMP_DIR)/.gradle
@@ -533,6 +553,26 @@ docker-run-python: ### Run python container - mandatory: CMD; optional: SH=true,
 				"
 	fi
 
+docker-run-sonar-scanner-cli: ### Run sonar-scanner-cli container - mandatory: CMD; optional: SH=true,DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file],IMAGE=[image name],CONTAINER=[container name]
+	make docker-config > /dev/null 2>&1
+	mkdir -p $(TMP_DIR)/.sonar/cache
+	image=$$([ -n "$(IMAGE)" ] && echo $(IMAGE) || echo sonarsource/sonar-scanner-cli:$(DOCKER_SONAR_SCANNER_CLI_VERSION))
+	container=$$([ -n "$(CONTAINER)" ] && echo $(CONTAINER) || echo node-$(BUILD_COMMIT_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7))
+	docker run --interactive $(_TTY) --rm \
+		--name $$container \
+		--user $$(id -u):$$(id -g) \
+		--env-file <(make _list-variables PATTERN="^(AWS|TX|TEXAS|NHSD|TERRAFORM)") \
+		--env-file <(make _list-variables PATTERN="^(DB|DATABASE|SMTP|APP|APPLICATION|UI|API|SERVER|HOST|URL)") \
+		--env-file <(make _list-variables PATTERN="^(PROFILE|ENVIRONMENT|BUILD|PROGRAMME|ORG|SERVICE|PROJECT)") \
+		--env-file <(make _docker-get-variables-from-file VARS_FILE=$(VARS_FILE)) \
+		--volume $(PROJECT_DIR):/usr/src \
+		--volume $(TMP_DIR)/.sonar/cache:/opt/sonar-scanner/.sonar/cache \
+		--network $(DOCKER_NETWORK) \
+		--workdir /usr/src/$(shell echo $(abspath $(DIR)) | sed "s;$(PROJECT_DIR);;g") \
+		$(ARGS) \
+		$$image \
+			$(CMD)
+
 docker-run-terraform: ### Run terraform container - mandatory: CMD; optional: DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file],IMAGE=[image name],CONTAINER=[container name]
 	make docker-config > /dev/null 2>&1
 	image=$$([ -n "$(IMAGE)" ] && echo $(IMAGE) || echo hashicorp/terraform:$(DOCKER_TERRAFORM_VERSION))
@@ -551,25 +591,6 @@ docker-run-terraform: ### Run terraform container - mandatory: CMD; optional: DI
 		$(ARGS) \
 		$$image \
 			$(CMD)
-
-docker-run-editorconfig: ### Run editorconfig container - optional: DIR=[working directory],EXCLUDE=[file pattern e.g. '\.txt$$'],ARGS=[Docker args],VARS_FILE=[Makefile vars file],IMAGE=[image name],CONTAINER=[container name]
-	if [ $(PROJECT_NAME) = $(DEVOPS_PROJECT_NAME) ]; then
-		exclude='$(shell [ -n "$(EXCLUDE)" ] && echo '$(EXCLUDE)|')markdown|linux-amd64$$|\.drawio|\.p12|\.so$$'
-	else
-		exclude='$(shell [ -n "$(EXCLUDE)" ] && echo '$(EXCLUDE)|')build/automation|markdown|linux-amd64$$|\.drawio|\.p12|\.so$$'
-	fi
-	make docker-config > /dev/null 2>&1
-	image=$$([ -n "$(IMAGE)" ] && echo $(IMAGE) || echo mstruebing/editorconfig-checker:$(DOCKER_EDITORCONFIG_CHECKER))
-	container=$$([ -n "$(CONTAINER)" ] && echo $(CONTAINER) || echo editorconfig-$(BUILD_COMMIT_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7))
-	docker run --interactive $(_TTY) --rm \
-		--name $$container \
-		--user $$(id -u):$$(id -g) \
-		--volume $$([ -n "$(DIR)" ] && echo $(abspath $(DIR)) || echo $(PWD)):/check \
-		--network $(DOCKER_NETWORK) \
-		--workdir /check \
-		$(ARGS) \
-		$$image \
-			ec --exclude $$exclude
 
 # ==============================================================================
 

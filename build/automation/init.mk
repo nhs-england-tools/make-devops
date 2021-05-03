@@ -246,6 +246,7 @@ _devops-project-clean: ### Clean up the project structure - mandatory: DIR=[proj
 		$(DIR)/build/automation/lib/k8s/template/deployment/stacks/stack/base/template/STACK_TEMPLATE_TO_REPLACE/network-policy.yaml \
 		$(DIR)/build/automation/lib/localstack/server.test.* \
 		$(DIR)/build/automation/lib/slack/jenkins-pipeline.json \
+		$(DIR)/build/automation/lib/sonarqube.mk \
 		$(DIR)/build/automation/usr/mfa-aliases \
 		$(DIR)/build/automation/var/*.mk.default \
 		$(DIR)/build/automation/var/helpers.mk.default \

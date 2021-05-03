@@ -1,4 +1,7 @@
 .DS_Store
 .idea
 .java-version
+.mypy_cache
+.nvmrc
 .python-version
+.scannerwork
