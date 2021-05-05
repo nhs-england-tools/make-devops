@@ -33,6 +33,10 @@ package:
     installed: true
   wget:
     installed: true
+  zip:
+    installed: true
+  unzip:
+    installed: true
 
 command:
   date | grep UTC:

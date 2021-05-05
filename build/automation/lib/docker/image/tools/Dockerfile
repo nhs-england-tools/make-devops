@@ -68,6 +68,8 @@ RUN set -eux && \
         net-tools \
         netcat-openbsd \
         wget \
+        zip \
+        unzip \
     && \
     update-ms-fonts && \
     \

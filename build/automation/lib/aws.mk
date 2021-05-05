@@ -4,7 +4,7 @@ aws-session-fail-if-invalid: ### Fail if the session variables are not set
 
 aws-assume-role-export-variables: ### Get assume role export for the pipline user - optional: AWS_ACCOUNT_ID|PROFILE=[profile name to load relevant platform configuration file]
 	if [ "$(AWS_ROLE)" == $(AWS_ROLE_PIPELINE) ]; then
-		if [ $(AWS_ACCOUNT_ID) == "$$(make aws-account-get-id)" ]; then
+		if [[ $(AWS_ACCOUNT_ID) == "$$(make aws-account-get-id)" ]] && [[ $(AWS_ACCOUNT_ID) != $(AWS_ACCOUNT_ID_MGMT) ]]; then
 			echo "Already assumed arn:aws:iam::$(AWS_ACCOUNT_ID):role/$(AWS_ROLE)" >&2
 			exit
 		fi
