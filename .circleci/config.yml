@@ -25,7 +25,7 @@ jobs:
             make docker-login DOCKER_USERNAME=$DOCKER_USERNAME DOCKER_PASSWORD=$DOCKER_PASSWORD
             cd build/automation/lib/docker/image/tools
             make \
-              build FORCE=true \
+              build \
               test \
               push \
               clean
