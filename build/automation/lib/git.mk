@@ -34,6 +34,13 @@ git-config: ### Configure local git repository
 		make git-secrets-add-banned PATTERN='-----BEGIN[[:blank:]]PRIVATE[[:blank:]]KEY-----' # SSL PEM key
 	fi
 
+git-branch-is-name-correct: ### Check if the branch name meets the accepted branch naming convention
+	if [[ $(BUILD_BRANCH) =~ $(GIT_BRANCH_PATTERN) ]]; then
+		echo true
+	else
+		echo false
+	fi
+
 # ==============================================================================
 
 git-secrets-add-banned: ### Add banned secret pattern - mandatory: PATTERN=[banned pattern]
@@ -129,6 +136,7 @@ git-tag-clear: ### Remove tags from the specified commit - optional: COMMIT=[co
 # ==============================================================================
 
 .SILENT: \
+	git-branch-is-name-correct \
 	git-commit-get-hash git-hash \
 	git-commit-get-message git-msg \
 	git-commit-get-timestamp git-ts \

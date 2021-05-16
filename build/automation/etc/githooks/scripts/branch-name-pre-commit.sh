@@ -1,7 +1,8 @@
 #!/bin/bash
 
-branch=$(git symbolic-ref --short HEAD 2> /dev/null ||:)
-if [ -n "$branch" ] && ! [[ $branch =~ ^(master|main|develop)$|^(task|spike|bugfix|hotfix|fix|test|release|migration)/[A-Za-z]{2,5}-[0-9]{1,5}_[A-Za-z0-9_]{4,64}$|^task/Update_automation_scripts$|^task/Update_versions$|^task/Refactor$ ]]; then
-  echo "$0: Branch name '$branch' does not meet the accepted branch naming convention"
+if [ false == $(make git-branch-is-name-correct) ]; then
+  tput setaf 202
+  printf "\n  $(echo $0 | sed "s;$PWD/;;"): Branch name '$(git symbolic-ref --short HEAD 2> /dev/null ||:)' does not meet the accepted branch naming convention\n"
+  tput sgr0
   exit 1
 fi

@@ -32,9 +32,9 @@ If you hear your teams or individuals saying _"It will take days to onboard a ne
   - Technology radar
   - [macOS](build/automation/lib/macos.mk)
 - Documentation templates
-  - [ONBOARDING.md](build/automation/lib/project/template/ONBOARDING.md)
+  - [ONBOARDING.md](build/automation/lib/project/template/documentation/ONBOARDING.md)
   - [README.md](build/automation/lib/project/template/README.md)
-  - [CONTRIBUTING.md](build/automation/lib/project/template/CONTRIBUTING.md)
+  - [CONTRIBUTING.md](build/automation/lib/project/template/documentation/CONTRIBUTING.md)
   - [TODO.md](build/automation/lib/project/template/TODO.md)
   - [Architectural Decision Record](build/automation/lib/project/template/documentation/adr/README.md)
 - Unit and integration [tests](build/automation/test)

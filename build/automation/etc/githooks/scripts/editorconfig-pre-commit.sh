@@ -1,3 +1,4 @@
 #!/bin/bash
 
-make -s docker-run-editorconfig DIR="$PWD"
+make -s docker-run-editorconfig \
+  DIR="$PWD"

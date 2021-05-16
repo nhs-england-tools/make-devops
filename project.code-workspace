@@ -57,6 +57,8 @@
     "java.configuration.updateBuildConfiguration": "automatic",
     "java.format.enabled": false,
     "java.home": "/Library/Java/JavaVirtualMachines/adoptopenjdk-16.jdk/Contents/Home",
+    "php.suggest.basic": false,
+    "php.validate.executablePath": "/usr/bin/php",
     "python.formatting.blackArgs": ["--line-length", "120"],
     "python.formatting.provider": "black",
     "python.languageServer": "Pylance",

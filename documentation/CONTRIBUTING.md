@@ -50,18 +50,18 @@ The commands below will configure your Git command-line client globally. Please,
 
     git config --global user.name "Your Name" # Use your full name here
     git config --global user.email "your.name@nhs.net" # Use your email address here
-    git config --global branch.autosetupmerge false
-    git config --global branch.autosetuprebase always
-    git config --global commit.gpgsign true
-    git config --global core.autocrlf input
-    git config --global core.filemode true
-    git config --global core.hidedotfiles false
-    git config --global core.ignorecase false
-    git config --global pull.rebase true
-    git config --global push.default current
-    git config --global push.followTags true
-    git config --global rebase.autoStash true
-    git config --global remote.origin.prune true
+    git config branch.autosetupmerge false
+    git config branch.autosetuprebase always
+    git config commit.gpgsign true
+    git config core.autocrlf input
+    git config core.filemode true
+    git config core.hidedotfiles false
+    git config core.ignorecase false
+    git config pull.rebase true
+    git config push.default current
+    git config push.followTags true
+    git config rebase.autoStash true
+    git config remote.origin.prune true
 
 ### Signing your Git commits
 

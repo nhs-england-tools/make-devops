@@ -113,6 +113,7 @@ macos-install-additional:: ### Install additional development dependencies - opt
 	brew $$install --cask gitkraken ||:
 	brew $$install --cask google-chrome ||:
 	brew $$install --cask keepingyouawake ||:
+	brew $$install --cask nosql-workbench ||:
 	brew $$install --cask postman ||:
 	brew $$install --cask spectacle ||:
 	brew $$install --cask tunnelblick ||:
@@ -469,6 +470,7 @@ _macos-config-visual-studio-code:
 	code --force --install-extension alexkrechik.cucumberautocomplete
 	code --force --install-extension amazonwebservices.aws-toolkit-vscode
 	code --force --install-extension ban.spellright
+	code --force --install-extension bmewburn.vscode-intelephense-client # PHP support
 	code --force --install-extension christian-kohler.npm-intellisense
 	code --force --install-extension christian-kohler.path-intellisense
 	code --force --install-extension coenraads.bracket-pair-colorizer
@@ -481,8 +483,8 @@ _macos-config-visual-studio-code:
 	code --force --install-extension eg2.vscode-npm-script
 	code --force --install-extension emeraldwalk.runonsave
 	code --force --install-extension esbenp.prettier-vscode
-	code --force --install-extension felixfbecker.php-debug
-	code --force --install-extension felixfbecker.php-intellisense
+	code --force --install-extension felixfbecker.php-debug # PHP support
+	code --force --install-extension felixfbecker.php-intellisense # PHP support
 	code --force --install-extension ffaraone.pyfilesgen
 	code --force --install-extension formulahendry.code-runner
 	code --force --install-extension fosshaas.fontsize-shortcuts

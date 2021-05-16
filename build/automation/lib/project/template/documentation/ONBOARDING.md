@@ -1,6 +1,7 @@
 # Onboarding
 
 ## Table of Contents
+
 - [Onboarding](#onboarding)
   - [Table of Contents](#table-of-contents)
   - [List of things to do](#list-of-things-to-do)

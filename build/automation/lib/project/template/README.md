@@ -52,7 +52,7 @@ A few sentences what business problem this project solves...
 
 - macOS operating system provisioned with the `curl -L bit.ly/make-devops-macos | bash` command
 - `iTerm2` command-line terminal and `Visual Studio Code` source code editor, which will be installed automatically for you in the next steps
-- Before starting any work, please read [CONTRIBUTING.md](build/automation/lib/project/template/CONTRIBUTING.md)
+- Before starting any work, please read [CONTRIBUTING.md](build/automation/lib/project/template/documentation/CONTRIBUTING.md)
 
 ### Local Environment Configuration
 
@@ -87,7 +87,7 @@ Generate and trust a self-signed certificate that will be used locally to enable
   - Switch each individual component to the dev mode
 - Branching strategy
   - [Trunk-based development](https://trunkbaseddevelopment.com/)
-  - Naming convention `^(master|main|develop)$|^(task|story|epic|spike|fix|test|release|migration)/[A-Za-z]{2,5}-[0-9]{1,5}_[A-Za-z0-9_]{4,64}$`
+  - Naming convention `^master$|^(task|bugfix)/[A-Za-z]{2,5}-[0-9]{1,5}_[A-Za-z0-9_]{4,64}$`
 - Git hooks located in `build/automation/etc/githooks/scripts`
   - `python-code-pre-commit.sh.off`
   - `branch-name-pre-commit.sh`
@@ -96,8 +96,8 @@ Generate and trust a self-signed certificate that will be used locally to enable
   - `terraform-format-pre-commit.sh`
 - Code formatting
 - Code quality
-- Reference the [TODO.md](build/automation/lib/project/template/TODO.md) file
-- Reference the [CONTRIBUTING.md](build/automation/lib/project/template/CONTRIBUTING.md) file
+- Reference the [TODO.md](build/automation/lib/project/template/documentation/TODO.md) file
+- Reference the [CONTRIBUTING.md](build/automation/lib/project/template/documentation/CONTRIBUTING.md) file
 - Provide guidance on how to use feature toggles and branching by abstraction
 
 ## Testing
