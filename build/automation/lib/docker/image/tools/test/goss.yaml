@@ -31,11 +31,11 @@ package:
     installed: true
   netcat-openbsd:
     installed: true
+  unzip:
+    installed: true
   wget:
     installed: true
   zip:
-    installed: true
-  unzip:
     installed: true
 
 command:

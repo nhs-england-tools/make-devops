@@ -67,9 +67,9 @@ RUN set -eux && \
         msttcorefonts-installer \
         net-tools \
         netcat-openbsd \
+        unzip \
         wget \
         zip \
-        unzip \
     && \
     update-ms-fonts && \
     \
