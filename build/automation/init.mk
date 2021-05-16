@@ -107,12 +107,13 @@ devops-copy: ### Copy the DevOps automation toolchain scripts to given destinati
 		cp -fv build/automation/lib/project/template/.gitignore $(DIR)
 		cp -fv build/automation/lib/project/template/project.code-workspace $(DIR)
 		# Project documentation
-		[ ! -f $(DIR)/README.md ] && cp -fv build/automation/lib/project/template/README.md $(DIR)
-		[ -f $(DIR)/TODO.md ] && mv -fv $(DIR)/TODO.md $(DIR)/documentation; [ ! -f $(DIR)/documentation/TODO.md ] && cp -fv build/automation/lib/project/template/TODO.md $(DIR)/documentation
-		cp -fv build/automation/lib/project/template/CONTRIBUTING.md $(DIR)/documentation
-		cp -fv build/automation/lib/project/template/ONBOARDING.md $(DIR)/documentation
+		[ -f $(DIR)/TODO.md ] && mv -fv $(DIR)/TODO.md $(DIR)/documentation;
 		cp -fv build/automation/lib/project/template/documentation/adr/README.md $(DIR)/documentation/adr
 		cp -fv build/automation/lib/project/template/documentation/diagrams/DevOps-Pipelines.png $(DIR)/documentation/diagrams
+		[ ! -f $(DIR)/documentation/CONTRIBUTING.md ] && cp -fv build/automation/lib/project/template/CONTRIBUTING.md $(DIR)/documentation
+		[ ! -f $(DIR)/documentation/ONBOARDING.md ] && cp -fv build/automation/lib/project/template/ONBOARDING.md $(DIR)/documentation
+		[ ! -f $(DIR)/documentation/TODO.md ] && cp -fv build/automation/lib/project/template/TODO.md $(DIR)/documentation
+		[ ! -f $(DIR)/README.md ] && cp -fv build/automation/lib/project/template/README.md $(DIR)
 		# ---
 		make _devops-project-clean DIR=$(DIR)
 		# ---
@@ -172,8 +173,6 @@ devops-update devops-synchronise: ### Update/upgrade the DevOps automation toolc
 		# Project documentation
 		[ ! -f $(PARENT_PROJECT_DIR)/README.md ] && cp -fv build/automation/lib/project/template/README.md $(PARENT_PROJECT_DIR)
 		[ -f $(PARENT_PROJECT_DIR)/TODO.md ] && mv -fv $(PARENT_PROJECT_DIR)/TODO.md $(PARENT_PROJECT_DIR)/documentation; [ ! -f $(PARENT_PROJECT_DIR)/documentation/TODO.md ] && cp -fv build/automation/lib/project/template/TODO.md $(PARENT_PROJECT_DIR)/documentation
-		cp -fv build/automation/lib/project/template/CONTRIBUTING.md $(PARENT_PROJECT_DIR)/documentation
-		cp -fv build/automation/lib/project/template/ONBOARDING.md $(PARENT_PROJECT_DIR)/documentation
 		cp -fv build/automation/lib/project/template/documentation/adr/README.md $(PARENT_PROJECT_DIR)/documentation/adr
 		cp -fv build/automation/lib/project/template/documentation/diagrams/DevOps-Pipelines.png $(PARENT_PROJECT_DIR)/documentation/diagrams
 		# ---
@@ -260,7 +259,9 @@ _devops-project-clean: ### Clean up the project structure - mandatory: DIR=[proj
 		$(DIR)/build/docker/Dockerfile.metadata \
 		$(DIR)/documentation/DevOps-Pipelines.png \
 		$(DIR)/documentation/DevOps.drawio \
-		$(DIR)/CONTRIBUTING.md
+		$(DIR)/CONTRIBUTING.md \
+		$(DIR)/ONBOARDING.md \
+		$(DIR)/TODO.md
 	exit 0
 
 _devops-synchronise-select-tag-to-install: ### TODO: This is WIP
@@ -498,10 +499,11 @@ INFRASTRUCTURE_DIR := $(abspath $(or $(INFRASTRUCTURE_DIR), $(PROJECT_DIR)/infra
 INFRASTRUCTURE_DIR_REL = $(shell echo $(INFRASTRUCTURE_DIR) | sed "s;$(PROJECT_DIR);;g")
 JQ_DIR_REL := $(shell echo $(abspath $(LIB_DIR)/jq) | sed "s;$(PROJECT_DIR);;g")
 
-GIT_BRANCH_PATTERN_MAIN := ^(master|main|develop)$$
-GIT_BRANCH_PATTERN_PREFIX := ^(task|story|epic|spike|fix|test|release|migration)
+GIT_BRANCH_PATTERN_MAIN := ^(master|develop)$$
+GIT_BRANCH_PATTERN_PREFIX := ^(task|spike|bugfix|hotfix|fix|test|release|migration)
 GIT_BRANCH_PATTERN_SUFFIX := [A-Za-z]{2,5}-[0-9]{1,5}_[A-Za-z0-9_]{4,64}$$
-GIT_BRANCH_PATTERN := $(GIT_BRANCH_PATTERN_MAIN)|$(GIT_BRANCH_PATTERN_PREFIX)/$(GIT_BRANCH_PATTERN_SUFFIX)
+GIT_BRANCH_PATTERN_ADDITIONAL := ^task/Update_automation_scripts$$|^task/Update_versions$$|^task/Refactor$$
+GIT_BRANCH_PATTERN := $(GIT_BRANCH_PATTERN_MAIN)|$(GIT_BRANCH_PATTERN_PREFIX)/$(GIT_BRANCH_PATTERN_SUFFIX)|$(GIT_BRANCH_PATTERN_ADDITIONAL)
 GIT_TAG_PATTERN := [0-9]{12,14}-[a-z]{3,10}
 
 BUILD_ID := $(or $(or $(or $(BUILD_ID), $(CIRCLE_BUILD_NUM)), $(CODEBUILD_BUILD_NUMBER)), 0)

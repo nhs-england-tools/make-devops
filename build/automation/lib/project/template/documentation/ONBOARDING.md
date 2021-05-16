@@ -1,6 +1,7 @@
 # Onboarding
 
 ## Table of Contents
+
 - [Onboarding](#onboarding)
   - [Table of Contents](#table-of-contents)
   - [List of things to do](#list-of-things-to-do)
@@ -23,25 +24,21 @@ This is a generic onboarding template that can be used by any team to help to br
 ### Corporate Accounts
 
 - Access to the NHSmail account, which is the prerequisite to all the others
-- VDI
-- Teams
+- VDI to access Cherwell
+- Microsoft Teams
 - Slack
-- Trello
-- JIRA
-- Confluence
-- Cherwell
-- Pluralsight
-- Safari Books Online
+- [JIRA](https://nhsd-jira.digital.nhs.uk/)
+- [Confluence](https://nhsd-confluence.digital.nhs.uk/)
 
 ### Technical Setup
 
-- MacBook configuration
+- macOS [configuration](https://github.com/nhsd-exeter/make-devops/blob/master/build/automation/lib/macos/README.md)
 - CPaaS Texas VPN access
-- GitLab
-- GitHub
-- Jenkins
-- Splunk
-- Instana
+- [GitLab](https://gitlab.mgmt.texasplatform.uk/)
+- [Jenkins](https://jenkins.mgmt.texasplatform.uk/)
+- [Instana](https://instana-server.mgmt.texasplatform.uk/)
+- [GitHub](https://github.com/nhsd-exeter)
+- [Splunk](https://nhsdigital.splunkcloud.com/)
 - AWS
 - Git projects
 - Documentation

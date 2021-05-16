@@ -2,6 +2,7 @@ test-git:
 	make test-git-setup
 	tests=( \
 		test-git-config \
+		test-git-branch-is-name-correct \
 		test-git-secrets-add-banned \
 		test-git-secrets-add-allowed \
 		test-git-secrets-scan-repo-history \
@@ -52,6 +53,9 @@ test-git-config:
 	mk_test ".git/hooks/prepare-commit-msg" "-x $(PROJECT_DIR)/.git/hooks/prepare-commit-msg"
 	mk_test "secrets.providers git secrets --aws-provider" "0 -lt $$(git-secrets --list | grep 'secrets.providers git secrets --aws-provider' | wc -l)"
 	mk_test_complete
+
+test-git-branch-is-name-correct:
+	mk_test_skip
 
 test-git-secrets-add-banned:
 	mk_test_skip

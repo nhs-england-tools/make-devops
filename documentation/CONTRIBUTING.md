@@ -11,8 +11,10 @@
     - [Git configuration](#git-configuration)
     - [Signing your Git commits](#signing-your-git-commits)
     - [Git usage](#git-usage)
-  - [Merge request](#merge-request)
-    - [GitLab web interface](#gitlab-web-interface)
+    - [Git commit message](#git-commit-message)
+    - [Git hooks](#git-hooks)
+    - [Git tags](#git-tags)
+  - [Pull Request / Merge Request](#pull-request--merge-request)
   - [Code review](#code-review)
   - [Unit tests](#unit-tests)
 
@@ -26,7 +28,7 @@ The following software packages must be installed on your MacBook before proceed
 - [Brew](https://brew.sh/)
 - [GNU make](https://formulae.brew.sh/formula/make)
 
-Before proceeding, please make sure that your macOS operating system provisioned with the `curl -L bit.ly/make-devops-macos | bash` command.
+Before proceeding, please make sure that your macOS operating system provisioned with the `curl -L bit.ly/make-devops-macos-setup | bash` command.
 
 ### Configuration
 
@@ -50,18 +52,18 @@ The commands below will configure your Git command-line client globally. Please,
 
     git config --global user.name "Your Name" # Use your full name here
     git config --global user.email "your.name@nhs.net" # Use your email address here
-    git config --global branch.autosetupmerge false
-    git config --global branch.autosetuprebase always
-    git config --global commit.gpgsign true
-    git config --global core.autocrlf input
-    git config --global core.filemode true
-    git config --global core.hidedotfiles false
-    git config --global core.ignorecase false
-    git config --global pull.rebase true
-    git config --global push.default current
-    git config --global push.followTags true
-    git config --global rebase.autoStash true
-    git config --global remote.origin.prune true
+    git config branch.autosetupmerge false
+    git config branch.autosetuprebase always
+    git config commit.gpgsign true
+    git config core.autocrlf input
+    git config core.filemode true
+    git config core.hidedotfiles false
+    git config core.ignorecase false
+    git config pull.rebase true
+    git config push.default current
+    git config push.followTags true
+    git config rebase.autoStash true
+    git config remote.origin.prune true
 
 ### Signing your Git commits
 
@@ -127,6 +129,16 @@ Upload the public key to your GitHub and GitLab accounts using the links below.
 
 ### Git usage
 
+- If not stated otherwise the only long-lived branch is master
+- Any new branch should be created from master
+- The preferred short-lived branch name format is `task/JIRA-XXX_Descriptive_name`
+- The preferred hotfix branch name format is `bugfix/JIRA-XXX_Descriptive_name`
+- All commits must be cryptographically signed
+- Commits should be made often and pushed to the remote
+- Use rebase to get the latest commits from the master while working with a short-lived or a bugfix branch
+- Squash commits when appropriate
+- Merges are not allowed
+
 Working on a new task
 
     git checkout -b task/JIRA-XXX_Descriptive_name
@@ -134,6 +146,8 @@ Working on a new task
     git add .
     git commit -S -m "Description of the change"
     git push --set-upstream origin task/JIRA-XXX_Descriptive_name
+
+Branch naming convention should follow the pattern of `^(task|bugfix)/[A-Za-z]{2,5}-[0-9]{1,5}_[A-Za-z0-9_]{4,64}$`.
 
 Contributing to an already existing branch
 
@@ -146,6 +160,12 @@ Contributing to an already existing branch
 
 Rebasing a branch onto master
 
+    git checkout task/JIRA-XXX_Descriptive_name
+    git rebase -i HEAD~X                                # Squash X number of commits, all into one
+    # When prompted change commit type to `squash` for all the commits except the top one
+    # On the following screen replace pre-inserted comments by a single summary
+    git push --force-with-lease
+
     git checkout master
     git pull
     git checkout task/JIRA-XXX_Descriptive_name
@@ -153,7 +173,7 @@ Rebasing a branch onto master
     # Resolve conflicts
     git add .
     git rebase --continue
-    git push --force
+    git push --force-with-lease
 
 Merging a branch to master - this should be done only in an exceptional circumstance as the proper process is to raise an MR
 
@@ -162,7 +182,7 @@ Merging a branch to master - this should be done only in an exceptional circumst
     git checkout task/JIRA-XXX_Descriptive_name
     git pull                                            # Make sure the task branch is up-to-date
 
-    git rebase -i HEAD~3                                # Squash 3 commits
+    git rebase -i HEAD~X                                # Squash X number of commits, all into one
     # When prompted change commit type to `squash` for all the commits except the top one
     # On the following screen replace pre-inserted comments by a single summary
 
@@ -176,17 +196,54 @@ Merging a branch to master - this should be done only in an exceptional circumst
 
 If JIRA is currently not in use to track project changes, please drop any reference to it and omit `JIRA-XXX` in your commands.
 
-## Merge request
+### Git commit message
 
-### GitLab web interface
+- Separate subject from body with a blank line
+- Do not end the subject line with a period
+- Capitalise the subject line and each paragraph
+- Use the imperative mood in the subject line
+- Wrap lines at 72 characters
+- Use the body to explain what and why you have done something
 
-- Set the title to `JIRA-XXX Descriptive name of the task`, where `JIRA-XXX` is the ticket reference number
-- Check `Remove source branch when merge request is accepted`
-- Check `Squash commits when merge request is accepted`
-- Merge only if
-  - Peer review has been done
-  - At least one thumbs up have been given
-  - All discussions are resolved
+Example:
+
+    Short (72 chars or less) summary
+
+    More detailed explanatory text. Wrap it to 72 characters. The blank
+    line separating the summary from the body is critical (unless you omit
+    the body entirely).
+
+    Write your commit message in the imperative: "Fix bug" and not "Fixed
+    bug" or "Fixes bug." This convention matches up with commit messages
+    generated by commands like git merge and git revert.
+
+    Further paragraphs come after blank lines.
+
+    - Bullet points are okay, too.
+    - Typically a hyphen or asterisk is used for the bullet, followed by a
+      single space. Use a hanging indent.
+
+### Git hooks
+
+Git hooks are located in `build/automation/etc/githooks/scripts` and executed automatically on each commit. They are as follows:
+
+- `python-code-pre-commit.sh.off`
+- `branch-name-pre-commit.sh`
+- `editorconfig-pre-commit.sh`
+- `git-secret-pre-commit.sh`
+- `terraform-format-pre-commit.sh`
+
+### Git tags
+
+Aim at driving more complex deployment workflows by tags with an exception of the master branch where the continuous deployment to a development environment should be enabled by default.
+
+## Pull Request / Merge Request
+
+- Set the title to `JIRA-XXX Descriptive name`, where `JIRA-XXX` is the ticket reference number
+- Ensure all commits will be squashed and the source branch will be removed once the request is accepted
+- Notify the team on Slack to give your colleagues opportunity to review changes and share the knowledge
+- If the change has not been pair or mob programmed it must follow the code review process and be approved by at least one peer, all discussions must be resolved
+- A merge to master must be squashed and rebased on top, preserving the list of all commit messages
 
 ## Code review
 
