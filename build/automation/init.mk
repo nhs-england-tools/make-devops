@@ -107,10 +107,13 @@ devops-copy: ### Copy the DevOps automation toolchain scripts to given destinati
 		cp -fv build/automation/lib/project/template/.gitignore $(DIR)
 		cp -fv build/automation/lib/project/template/project.code-workspace $(DIR)
 		# Project documentation
-		[ ! -f $(DIR)/README.md ] && cp -fv build/automation/lib/project/template/README.md $(DIR)
-		[ -f $(DIR)/TODO.md ] && mv -fv $(DIR)/TODO.md $(DIR)/documentation; [ ! -f $(DIR)/documentation/TODO.md ] && cp -fv build/automation/lib/project/template/TODO.md $(DIR)/documentation
+		[ -f $(DIR)/TODO.md ] && mv -fv $(DIR)/TODO.md $(DIR)/documentation;
 		cp -fv build/automation/lib/project/template/documentation/adr/README.md $(DIR)/documentation/adr
 		cp -fv build/automation/lib/project/template/documentation/diagrams/DevOps-Pipelines.png $(DIR)/documentation/diagrams
+		[ ! -f $(DIR)/documentation/CONTRIBUTING.md ] && cp -fv build/automation/lib/project/template/CONTRIBUTING.md $(DIR)/documentation
+		[ ! -f $(DIR)/documentation/ONBOARDING.md ] && cp -fv build/automation/lib/project/template/ONBOARDING.md $(DIR)/documentation
+		[ ! -f $(DIR)/documentation/TODO.md ] && cp -fv build/automation/lib/project/template/TODO.md $(DIR)/documentation
+		[ ! -f $(DIR)/README.md ] && cp -fv build/automation/lib/project/template/README.md $(DIR)
 		# ---
 		make _devops-project-clean DIR=$(DIR)
 		# ---

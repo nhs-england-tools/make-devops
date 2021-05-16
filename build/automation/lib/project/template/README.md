@@ -4,10 +4,12 @@
 
 - [PROJECT_NAME_TO_REPLACE](#project_name_to_replace)
   - [Table of Contents](#table-of-contents)
+  - [Overview](#overview)
   - [Quick Start](#quick-start)
     - [Development Requirements](#development-requirements)
     - [Local Environment Configuration](#local-environment-configuration)
     - [Local Project Setup](#local-project-setup)
+  - [Contributing](#contributing)
   - [Development](#development)
   - [Testing](#testing)
   - [Deployment](#deployment)
@@ -44,15 +46,16 @@
     - [Communications](#communications)
     - [Documentation](#documentation)
 
+## Overview
+
 A few sentences what business problem this project solves...
 
 ## Quick Start
 
 ### Development Requirements
 
-- macOS operating system provisioned with the `curl -L bit.ly/make-devops-macos | bash` command
+- macOS operating system provisioned with the `curl -L bit.ly/make-devops-macos-setup | bash` command
 - `iTerm2` command-line terminal and `Visual Studio Code` source code editor, which will be installed automatically for you in the next steps
-- Before starting any work, please read [CONTRIBUTING.md](build/automation/lib/project/template/documentation/CONTRIBUTING.md)
 
 ### Local Environment Configuration
 
@@ -61,7 +64,7 @@ Clone the repository
     git clone [project-url]
     cd ./[project-dir]
 
-This is an equivalent to the `curl -L bit.ly/make-devops-macos | bash` command
+The following is equivalent to the `curl -L bit.ly/make-devops-macos-setup | bash` command
 
     make macos-setup
 
@@ -79,25 +82,27 @@ Generate and trust a self-signed certificate that will be used locally to enable
     make start log
     open https://ui.project.local:8443
 
+## Contributing
+
+Here is the list of the development practices that have to be followed by the team and the individual members:
+
+- Only use single canonical branch **master**. Any intermediate branch significantly increases the maintenance overhead of the repository.
+- Apply the git rebase workflow and never merge from master to a task branch. Follow the **squash-rebase-merge** pattern to keep the history linear and clean.
+- Cryptographically sign your commits using **gpg** to ensure its content have not been tampered with.
+- Format the summary message of your Pull/Merge Request using the following pattern **"JIRA-XXX Descriptive name"** to enable tooling to produce release notes automatically.
+- Announce your PR/MR on the development Slack channel to allow any team member to review it and to share the knowledge. A change can be merged only if all comments have been addressed and it has been **approved by at least one peer**.
+
+Before starting any work, please read [CONTRIBUTING.md](documentation/CONTRIBUTING.md) for more detailed instructions.
+
 ## Development
 
 - Describe how to
   - Connect to a local database
   - Interact with mock components
   - Switch each individual component to the dev mode
-- Branching strategy
-  - [Trunk-based development](https://trunkbaseddevelopment.com/)
-  - Naming convention `^master$|^(task|bugfix)/[A-Za-z]{2,5}-[0-9]{1,5}_[A-Za-z0-9_]{4,64}$`
-- Git hooks located in `build/automation/etc/githooks/scripts`
-  - `python-code-pre-commit.sh.off`
-  - `branch-name-pre-commit.sh`
-  - `editorconfig-pre-commit.sh`
-  - `git-secret-pre-commit.sh`
-  - `terraform-format-pre-commit.sh`
 - Code formatting
 - Code quality
-- Reference the [TODO.md](build/automation/lib/project/template/documentation/TODO.md) file
-- Reference the [CONTRIBUTING.md](build/automation/lib/project/template/documentation/CONTRIBUTING.md) file
+- Reference the [TODO.md](documentation/TODO.md) file
 - Provide guidance on how to use feature toggles and branching by abstraction
 
 ## Testing
@@ -286,10 +291,12 @@ List all the operational runbooks
 ### Communications
 
 - Slack channels
-  - Development, e.g. `[team-name]-dev`
-  - Service status, e.g. `[team-name]-status`
-- Email addresses in use
-  - Application mailbox, e.g. `[product.name]@nhs.net`
+  - Development, e.g. `[service-name]-development`
+  - CI/CD and data pipelines, processes, e.g. `[service-name]-automation`
+  - Service status, e.g. `[service-name]-status`
+- Email addresses in use, e.g. `[service.name]@nhs.net`
+
+All of the above can be service, product, application or even team specific.
 
 ### Documentation
 
