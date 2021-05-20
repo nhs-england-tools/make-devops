@@ -502,7 +502,7 @@ JQ_DIR_REL := $(shell echo $(abspath $(LIB_DIR)/jq) | sed "s;$(PROJECT_DIR);;g")
 
 GIT_BRANCH_PATTERN_MAIN := ^(master|develop)$$
 GIT_BRANCH_PATTERN_PREFIX := ^(task|spike|bugfix|hotfix|fix|test|release|migration)
-GIT_BRANCH_PATTERN_SUFFIX := [A-Za-z]{2,5}-[0-9]{1,5}_[A-Za-z0-9_]{4,64}$$
+GIT_BRANCH_PATTERN_SUFFIX := [A-Za-z]{2,5}-([0-9]{1,5}|X{1,5})_[A-Za-z0-9_]{4,64}$$
 GIT_BRANCH_PATTERN_ADDITIONAL := ^task/Update_automation_scripts$$|^task/Update_versions$$|^task/Refactor$$
 GIT_BRANCH_PATTERN := $(GIT_BRANCH_PATTERN_MAIN)|$(GIT_BRANCH_PATTERN_PREFIX)/$(GIT_BRANCH_PATTERN_SUFFIX)|$(GIT_BRANCH_PATTERN_ADDITIONAL)
 GIT_TAG_PATTERN := [0-9]{12,14}-[a-z]{3,10}
