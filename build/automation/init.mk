@@ -185,8 +185,9 @@ devops-update devops-synchronise: ### Update/upgrade the DevOps automation toolc
 		make get-variable NAME=DEVOPS_PROJECT_VERSION > $(PARENT_PROJECT_DIR)/build/automation/VERSION
 	}
 	function cleanup() {
+		cd $(PROJECT_DIR)
 		rm -rf \
-			$(PROJECT_DIR) \
+			$(TMP_DIR)/$(DEVOPS_PROJECT_NAME) \
 			.git/modules/build \
 			.gitmodules
 		git reset -- .gitmodules
