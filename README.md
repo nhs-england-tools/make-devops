@@ -35,11 +35,16 @@ If you hear your teams or individuals saying _"It will take days to onboard a ne
   - [ONBOARDING.md](build/automation/lib/project/template/documentation/ONBOARDING.md)
   - [README.md](build/automation/lib/project/template/README.md)
   - [CONTRIBUTING.md](build/automation/lib/project/template/documentation/CONTRIBUTING.md)
-  - [TODO.md](build/automation/lib/project/template/TODO.md)
+  - [TODO.md](build/automation/lib/project/template/documentation/TODO.md)
   - [Architectural Decision Record](build/automation/lib/project/template/documentation/adr/README.md)
 - Unit and integration [tests](build/automation/test)
 - Example of the repository structure that can consist of a single or multiple projects
 - Deployment [profiles](build/automation/var/profile/README.md)
+  - A password, key, tokens etc. should be represented by a corresponding system variable in the profile files
+  - No sensitive information should be stored in the profile files
+    - An exception is the `local` profile where it is acceptable to set all the configuration options, e.g. `ADMIN_PASSWORD = secret`
+    - The same variable in any other profile i.e. `live` should be defined as `#ADMIN_PASSWORD =` by a convention
+    - All the sensitive variables should be sourced from the AWS Secrets Manager using `eval $$(make secret-fetch-and-export-variables NAME=secret-name)`
 - Data Docker image to [run SQL scripts](build/automation/lib/docker/image/postgres/assets/sbin/run.sh) against a database instance
 - Tools Docker image with [various command-line utilities](build/automation/lib/docker/image/tools/Dockerfile) pre-installed
 - [Git hooks](build/automation/etc/githooks)

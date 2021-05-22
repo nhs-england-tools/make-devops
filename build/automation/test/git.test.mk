@@ -3,6 +3,7 @@ test-git:
 	tests=( \
 		test-git-config \
 		test-git-branch-is-name-correct \
+		test-git-secrets-load \
 		test-git-secrets-add-banned \
 		test-git-secrets-add-allowed \
 		test-git-secrets-scan-repo-history \
@@ -55,6 +56,9 @@ test-git-config:
 	mk_test_complete
 
 test-git-branch-is-name-correct:
+	mk_test_skip
+
+test-git-secrets-load:
 	mk_test_skip
 
 test-git-secrets-add-banned:
