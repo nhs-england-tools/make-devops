@@ -12,6 +12,7 @@ test-terraform:
 		test-terraform-export-variables-from-shell-pattern-and-vars \
 		test-terraform-export-variables-from-json \
 		test-terraform-fmt \
+		test-terraform-validate \
 		test-terraform-plan-before-apply \
 		test-terraform-apply \
 		test-terraform-plan-after-apply \
@@ -112,6 +113,9 @@ test-terraform-fmt:
 	# assert
 	make TEST_TERRAFORM_FORMATTING_OUTPUT
 	mk_test "$$(md5sum $(TEST_TERRAFORM_FORMATTING_OUTPUT) | awk '{ print $$1 }')" = "$$(md5sum $(TEST_TERRAFORM_FORMATTING_INPUT) | awk '{ print $$1 }')"
+
+test-terraform-validate:
+	mk_test_skip
 
 test-terraform-plan-before-apply:
 	# act

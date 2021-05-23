@@ -36,6 +36,10 @@ test-docker:
 		test-docker-run-python-multiple-cmd \
 		test-docker-run-python-multiple-cmd-pip-install \
 		test-docker-run-terraform \
+		test-docker-run-terraform-tfsec \
+		test-docker-run-terraform-checkov \
+		test-docker-run-terraform-compliance \
+		test-docker-run-config-lint \
 		test-docker-run-tools-single-cmd \
 		test-docker-run-tools-multiple-cmd \
 		test-docker-run-pass-variables \
@@ -332,6 +336,50 @@ test-docker-run-terraform:
 		| grep -Eo "Terraform" | wc -l)
 	# assert
 	mk_test "0 -lt $$output"
+
+test-docker-run-terraform-tfsec:
+	# arrange
+	make docker-config
+	# act
+	output=$$(
+		make -s docker-run-terraform-tfsec \
+			DIR="build/automation/lib/terraform/template/modules/s3" \
+		| grep -Eo "No problems detected" | wc -l)
+	# assert
+	mk_test "1 -eq $$output"
+
+test-docker-run-terraform-checkov:
+	# arrange
+	make docker-config
+	# act
+	output=$$(
+		make -s docker-run-terraform-checkov \
+			DIR="build/automation/lib/terraform/template/modules/s3" \
+		| grep -Eo "By bridgecrew" | wc -l)
+	# assert
+	mk_test "1 -eq $$output"
+
+test-docker-run-terraform-compliance:
+	# arrange
+	make docker-config
+	# act
+	output=$$(
+		make -s docker-run-terraform-compliance \
+			CMD="--version" \
+		| grep -Eo "terraform-compliance" | wc -l)
+	# assert
+	mk_test "1 -eq $$output"
+
+test-docker-run-config-lint:
+	# arrange
+	make docker-config
+	# act
+	output=$$(
+		make -s docker-run-config-lint \
+			CMD="--version" \
+		| grep -Eo "[0-9]+\.[0-9]+\.[0-9]+" | wc -l)
+	# assert
+	mk_test "1 -eq $$output"
 
 test-docker-run-tools-single-cmd:
 	# arrange

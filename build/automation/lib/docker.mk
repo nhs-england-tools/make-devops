@@ -11,6 +11,7 @@ DOCKER_LIBRARY_REGISTRY = nhsd
 
 DOCKER_ALPINE_VERSION = 3.13.5
 DOCKER_COMPOSER_VERSION = 2.0.13
+DOCKER_CONFIG_LINT_VERSION = v1.6.0
 DOCKER_DIND_VERSION = 20.10.6-dind
 DOCKER_EDITORCONFIG_CHECKER_VERSION = 2.3.5
 DOCKER_ELASTICSEARCH_VERSION = 7.12.1
@@ -24,6 +25,9 @@ DOCKER_POSTGRES_VERSION = $(POSTGRES_VERSION)-alpine
 DOCKER_POSTMAN_NEWMAN_VERSION = $(POSTMAN_NEWMAN_VERSION)-alpine
 DOCKER_PYTHON_VERSION = $(PYTHON_VERSION)-alpine
 DOCKER_SONAR_SCANNER_CLI_VERSION = $(SONAR_SCANNER_CLI_VERSION)
+DOCKER_TERRAFORM_CHECKOV_VERSION = 2.0.148
+DOCKER_TERRAFORM_COMPLIANCE_VERSION = 1.3.14
+DOCKER_TERRAFORM_TFSEC_VERSION = v0.39
 DOCKER_TERRAFORM_VERSION = $(TERRAFORM_VERSION)
 DOCKER_WIREMOCK_VERSION = $(WIREMOCK_VERSION)-alpine
 
@@ -583,8 +587,79 @@ docker-run-terraform: ### Run terraform container - mandatory: CMD; optional: DI
 		--env-file <(make _list-variables PATTERN="^(AWS|TX|TEXAS|NHSD|TERRAFORM)") \
 		--env-file <(make _list-variables PATTERN="^(DB|DATABASE|SMTP|APP|APPLICATION|UI|API|SERVER|HOST|URL)") \
 		--env-file <(make _list-variables PATTERN="^(PROFILE|ENVIRONMENT|BUILD|PROGRAMME|ORG|SERVICE|PROJECT)") \
-		--env-file <(env | grep -Ei "^TF_VAR_" | sed -e 's/[[:space:]]*$$//' | grep -Ev '[A-Za-z0-9_]+=$$') \
+		--env-file <(make _list-variables PATTERN="^TF_VAR_") \
 		--env-file <(make _docker-get-variables-from-file VARS_FILE=$(VARS_FILE)) \
+		--volume $(PROJECT_DIR):/project \
+		--network $(DOCKER_NETWORK) \
+		--workdir /project/$(shell echo $(abspath $(DIR)) | sed "s;$(PROJECT_DIR);;g") \
+		$(ARGS) \
+		$$image \
+			$(CMD)
+
+docker-run-terraform-tfsec: ### Run terraform tfsec container - optional: DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file],IMAGE=[image name],CONTAINER=[container name]; SEE: https://github.com/tfsec/tfsec
+	make docker-config > /dev/null 2>&1
+	image=$$([ -n "$(IMAGE)" ] && echo $(IMAGE) || echo tfsec/tfsec:$(DOCKER_TERRAFORM_TFSEC_VERSION))
+	container=$$([ -n "$(CONTAINER)" ] && echo $(CONTAINER) || echo tfsec-$(BUILD_COMMIT_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7))
+	docker run --interactive $(_TTY) --rm \
+		--name $$container \
+		--user $$(id -u):$$(id -g) \
+		--env-file <(make _list-variables PATTERN="^(AWS|TX|TEXAS|NHSD|TERRAFORM)") \
+		--env-file <(make _list-variables PATTERN="^(DB|DATABASE|SMTP|APP|APPLICATION|UI|API|SERVER|HOST|URL)") \
+		--env-file <(make _list-variables PATTERN="^(PROFILE|ENVIRONMENT|BUILD|PROGRAMME|ORG|SERVICE|PROJECT)") \
+		--env-file <(make _list-variables PATTERN="^TF_VAR_") \
+		--env-file <(make _docker-get-variables-from-file VARS_FILE=$(VARS_FILE)) \
+		--volume $(PROJECT_DIR):/project \
+		--network $(DOCKER_NETWORK) \
+		--workdir /project/$(shell echo $(abspath $(DIR)) | sed "s;$(PROJECT_DIR);;g") \
+		$(ARGS) \
+		$$image \
+			.
+
+docker-run-terraform-checkov: ### Run terraform checkov container - optional: DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file],IMAGE=[image name],CONTAINER=[container name]; SEE: https://github.com/bridgecrewio/checkov
+	make docker-config > /dev/null 2>&1
+	image=$$([ -n "$(IMAGE)" ] && echo $(IMAGE) || echo bridgecrew/checkov:$(DOCKER_TERRAFORM_CHECKOV_VERSION))
+	container=$$([ -n "$(CONTAINER)" ] && echo $(CONTAINER) || echo tfsec-$(BUILD_COMMIT_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7))
+	docker run --interactive $(_TTY) --rm \
+		--name $$container \
+		--user $$(id -u):$$(id -g) \
+		--env-file <(make _list-variables PATTERN="^(AWS|TX|TEXAS|NHSD|TERRAFORM)") \
+		--env-file <(make _list-variables PATTERN="^(DB|DATABASE|SMTP|APP|APPLICATION|UI|API|SERVER|HOST|URL)") \
+		--env-file <(make _list-variables PATTERN="^(PROFILE|ENVIRONMENT|BUILD|PROGRAMME|ORG|SERVICE|PROJECT)") \
+		--env-file <(make _list-variables PATTERN="^TF_VAR_") \
+		--env-file <(make _docker-get-variables-from-file VARS_FILE=$(VARS_FILE)) \
+		--volume $(PROJECT_DIR):/project \
+		--network $(DOCKER_NETWORK) \
+		--workdir /project/$(shell echo $(abspath $(DIR)) | sed "s;$(PROJECT_DIR);;g") \
+		$(ARGS) \
+		$$image \
+			--directory /project/$(shell echo $(abspath $(DIR)) | sed "s;$(PROJECT_DIR);;g")
+
+docker-run-terraform-compliance: ### Run terraform compliance container - mandatory: CMD=[-p file -f repo]; optional: DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file],IMAGE=[image name],CONTAINER=[container name]; SEE: https://github.com/terraform-compliance/cli
+	make docker-config > /dev/null 2>&1
+	image=$$([ -n "$(IMAGE)" ] && echo $(IMAGE) || echo eerkunt/terraform-compliance:$(DOCKER_TERRAFORM_COMPLIANCE_VERSION))
+	container=$$([ -n "$(CONTAINER)" ] && echo $(CONTAINER) || echo tfsec-$(BUILD_COMMIT_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7))
+	docker run --interactive $(_TTY) --rm \
+		--name $$container \
+		--user $$(id -u):$$(id -g) \
+		--env-file <(make _list-variables PATTERN="^(AWS|TX|TEXAS|NHSD|TERRAFORM)") \
+		--env-file <(make _list-variables PATTERN="^(DB|DATABASE|SMTP|APP|APPLICATION|UI|API|SERVER|HOST|URL)") \
+		--env-file <(make _list-variables PATTERN="^(PROFILE|ENVIRONMENT|BUILD|PROGRAMME|ORG|SERVICE|PROJECT)") \
+		--env-file <(make _list-variables PATTERN="^TF_VAR_") \
+		--env-file <(make _docker-get-variables-from-file VARS_FILE=$(VARS_FILE)) \
+		--volume $(PROJECT_DIR):/project \
+		--network $(DOCKER_NETWORK) \
+		--workdir /project/$(shell echo $(abspath $(DIR)) | sed "s;$(PROJECT_DIR);;g") \
+		$(ARGS) \
+		$$image \
+			$(CMD)
+
+docker-run-config-lint: ### Run config lint container - mandatory: CMD; optional: DIR,ARGS=[Docker args],IMAGE=[image name],CONTAINER=[container name]; SEE: https://github.com/stelligent/config-lint
+	make docker-config > /dev/null 2>&1
+	image=$$([ -n "$(IMAGE)" ] && echo $(IMAGE) || echo stelligent/config-lint:$(DOCKER_CONFIG_LINT_VERSION))
+	container=$$([ -n "$(CONTAINER)" ] && echo $(CONTAINER) || echo tfsec-$(BUILD_COMMIT_HASH)-$(BUILD_ID)-$$(echo '$(CMD)$(DIR)' | md5sum | cut -c1-7))
+	docker run --interactive $(_TTY) --rm \
+		--name $$container \
+		--user $$(id -u):$$(id -g) \
 		--volume $(PROJECT_DIR):/project \
 		--network $(DOCKER_NETWORK) \
 		--workdir /project/$(shell echo $(abspath $(DIR)) | sed "s;$(PROJECT_DIR);;g") \

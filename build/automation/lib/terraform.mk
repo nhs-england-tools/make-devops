@@ -57,7 +57,7 @@ terraform-destroy: ### Tear down infrastructure - mandatory: STACK|STACKS|INFRAS
 		STACKS="$(or $(STACK), $(or $(STACKS), $(INFRASTRUCTURE_STACKS)))" \
 		CMD="destroy $(OPTS)"
 
-terraform-plan: ### Show plan - mandatory: STACK|STACKS|INFRASTRUCTURE_STACKS=[comma-separated names]; optional: PROFILE=[name],OPTS=[Terraform options]
+terraform-plan: ### Show plan - mandatory: STACK|STACKS|INFRASTRUCTURE_STACKS=[comma-separated names]; optional: PROFILE=[name],OPTS=[Terraform options, e.g. -out=plan.out]
 	make _terraform-stacks \
 		STACKS="$(or $(STACK), $(or $(STACKS), $(INFRASTRUCTURE_STACKS)))" \
 		CMD="plan $(OPTS)"
@@ -67,7 +67,7 @@ terraform-output: ### Extract output variables - mandatory: STACK|STACKS|INFRAST
 		STACKS="$(or $(STACK), $(or $(STACKS), $(INFRASTRUCTURE_STACKS)))" \
 		CMD="output $(OPTS)"
 
-terraform-show: ### Show state - mandatory: STACK|STACKS|INFRASTRUCTURE_STACKS=[comma-separated names]; optional: PROFILE=[name],OPTS=[Terraform options]
+terraform-show: ### Show state - mandatory: STACK|STACKS|INFRASTRUCTURE_STACKS=[comma-separated names]; optional: PROFILE=[name],OPTS=[Terraform options, e.g. -json plan.out > build/automation/tmp/plan.out.json]
 	make -s _terraform-stacks \
 		STACKS="$(or $(STACK), $(or $(STACKS), $(INFRASTRUCTURE_STACKS)))" \
 		CMD="show $(OPTS)"
@@ -80,6 +80,10 @@ terraform-unlock: ### Remove state lock - mandatory: STACK|STACKS|INFRASTRUCTURE
 terraform-fmt: docker-config ### Format Terraform code - optional: DIR,OPTS=[Terraform options]
 	make docker-run-terraform \
 		CMD="fmt -recursive $(OPTS)"
+
+terraform-validate: docker-config ### Validate Terraform code - optional: DIR
+	make docker-run-terraform \
+		CMD="validate"
 
 terraform-clean: ### Clean Terraform files
 	find $(TERRAFORM_DIR) -type d -name '.terraform' -print0 | xargs -0 rm -rfv
