@@ -86,6 +86,9 @@ project-create-pipeline: ### Create pipeline
 
 # ==============================================================================
 
+project-check-if-tech-is-included-in-stack: ### Check if technology is included in the project's tech stack - optional NAME=[tech name, e.g. python] - return: true|false
+	echo "$(PROJECT_TECH_STACK_LIST)" | grep -q $(NAME) && echo true || echo false
+
 project-branch-deploy: ### Check if development branch can be deployed automatically - return: true|false
 	[[ $(BUILD_BRANCH) =~ $(GIT_BRANCH_PATTERN_MAIN) ]] && echo true && exit 0
 	[[ $(BUILD_BRANCH) =~ $(GIT_BRANCH_PATTERN_PREFIX)/$(GIT_BRANCH_PATTERN_SUFFIX) ]] && \
@@ -163,5 +166,6 @@ project-tag-as-environment-deployment: ### Tag environment deployment - mandator
 	project-create-pipeline \
 	project-create-profile \
 	project-get-tag \
+	project-check-if-tech-is-included-in-stack \
 	project-list-profiles \
 	project-message-contains

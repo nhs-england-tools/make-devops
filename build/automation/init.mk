@@ -614,6 +614,10 @@ ifndef ROLE_PREFIX
 $(error ROLE_PREFIX is not set in build/automation/var/project.mk)
 endif
 
+ifndef PROJECT_TECH_STACK_LIST
+$(error PROJECT_TECH_STACK_LIST is not set in build/automation/var/project.mk)
+endif
+
 ifeq (true, $(shell [ -z "$(AWS_ACCOUNT_ID_LIVE_PARENT)" ] && [ -z "$(AWS_ACCOUNT_ID_TOOLS)" ] && echo true))
 $(info AWS_ACCOUNT_ID_LIVE_PARENT is not set in ~/.dotfiles/oh-my-zsh/plugins/make-devops/aws-platform.zsh or in your CI config, run `make devops-setup-aws-accounts`)
 endif

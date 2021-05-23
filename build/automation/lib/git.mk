@@ -23,7 +23,7 @@ git-config: ### Configure local git repository
 		make git-secrets-load
 	fi
 
-git-branch-is-name-correct: ### Check if the branch name meets the accepted branch naming convention
+git-check-if-branch-name-is-correct: ### Check if the branch name meets the accepted branch naming convention
 	if [[ $(BUILD_BRANCH) =~ $(GIT_BRANCH_PATTERN) ]]; then
 		echo true
 	else
@@ -75,7 +75,7 @@ git-secrets-scan-repo-files: ### Scan repository files for any secrets
 
 # ==============================================================================
 
-git-commit-has-changed-directory: ### Determin if any file changed in directory - mandatory: DIR=[directory]; optional: PRECOMMIT=true; return: true|false
+git-check-if-commit-changed-directory: ### Check if any file changed in the given directory - mandatory: DIR=[directory]; optional: PRECOMMIT=true; return: true|false
 	if [ "$(PRECOMMIT)" == true ]; then
 		compare_to=HEAD
 	elif [ "$(BUILD_BRANCH)" != master ]; then
@@ -138,11 +138,11 @@ git-tag-clear: ### Remove tags from the specified commit - optional: COMMIT=[co
 # ==============================================================================
 
 .SILENT: \
-	git-branch-is-name-correct \
+	git-check-if-branch-name-is-correct \
 	git-commit-get-hash git-hash \
 	git-commit-get-message git-msg \
 	git-commit-get-timestamp git-ts \
-	git-commit-has-changed-directory \
+	git-check-if-commit-changed-directory \
 	git-tag-get-environment-deployment \
 	git-tag-get-latest \
 	git-tag-is-environment-deployment \
