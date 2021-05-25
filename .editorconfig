@@ -16,3 +16,11 @@ indent_style = tab
 
 [*.py]
 indent_size = 4
+
+[.gitmodules]
+charset = unset
+end_of_line = unset
+indent_size = unset
+indent_style = unset
+insert_final_newline = unset
+trim_trailing_whitespace = unset
