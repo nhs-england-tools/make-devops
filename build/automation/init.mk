@@ -128,7 +128,7 @@ devops-copy: ### Copy the DevOps automation toolchain scripts to given destinati
 	mkdir -p $(DIR)/build
 	sync && version
 
-devops-update devops-synchronise: ### Update/upgrade the DevOps automation toolchain scripts used by this project - optional: LATEST=true
+devops-update devops-synchronise: ### Update/upgrade the DevOps automation toolchain scripts used by this project - optional: LATEST=true, NO_COMMIT=true
 	function download() {
 		cd $(PROJECT_DIR)
 		rm -rf \
@@ -200,7 +200,7 @@ devops-update devops-synchronise: ### Update/upgrade the DevOps automation toolc
 		cd $(PARENT_PROJECT_DIR)
 		if [ 0 -lt $$(git status -s | wc -l) ]; then
 			git add .
-			git commit -S -m "Update the DevOps automation toolchain scripts to $$version"
+			[ "$(NO_COMMIT)" != true ] && git commit -S -m "Update the DevOps automation toolchain scripts to $$version" || echo "Please, check and commit the changes with the following message: \"Update the DevOps automation toolchain scripts to $$version\""
 		fi
 	}
 	if [ -z "$(__DEVOPS_SYNCHRONISE)" ]; then
