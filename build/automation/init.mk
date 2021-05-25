@@ -192,6 +192,7 @@ devops-update devops-synchronise: ### Update/upgrade the DevOps automation toolc
 			.gitmodules
 		git reset -- .gitmodules
 		git reset -- build/automation/tmp/$(DEVOPS_PROJECT_NAME)
+		rm -f .gitmodules
 	}
 	function commit() {
 		cd $(PROJECT_DIR)
