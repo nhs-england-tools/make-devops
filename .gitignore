@@ -5,3 +5,5 @@
 .nvmrc
 .python-version
 .scannerwork
+./*.code-workspace
+!./project.code-workspace

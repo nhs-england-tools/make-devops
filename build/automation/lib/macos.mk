@@ -387,6 +387,8 @@ _macos-config-oh-my-zsh-make-devops:
 		echo "# env: Serverless"
 		echo "export PATH=\"$$HOME/.serverless/bin:$$PATH\""
 		echo
+		echo "export EDITOR=\"code --wait\""
+		echo
 		echo "# AWS platform"
 		echo ". $(DEV_OHMYZSH_DIR)/plugins/$(DEVOPS_PROJECT_NAME)/aws-platform.zsh"
 		echo
