@@ -25,7 +25,7 @@ jobs:
             make docker-login DOCKER_USERNAME=$DOCKER_USERNAME DOCKER_PASSWORD=$DOCKER_PASSWORD
             cd build/automation/lib/docker/image/tools
             make build test
-            [ << pipeline.git.branch >> == master ] && make push clean
+            [ << pipeline.git.branch >> == master ] && make push clean ||:
 
       - run:
           name: Push 'elasticsearch' image
@@ -34,7 +34,7 @@ jobs:
             make docker-login DOCKER_USERNAME=$DOCKER_USERNAME DOCKER_PASSWORD=$DOCKER_PASSWORD
             cd build/automation/lib/docker/image/elasticsearch
             make build test
-            [ << pipeline.git.branch >> == master ] && make push clean
+            [ << pipeline.git.branch >> == master ] && make push clean ||:
       - run:
           name: Push 'nginx' image
           command: |
@@ -42,7 +42,7 @@ jobs:
             make docker-login DOCKER_USERNAME=$DOCKER_USERNAME DOCKER_PASSWORD=$DOCKER_PASSWORD
             cd build/automation/lib/docker/image/nginx
             make build test
-            [ << pipeline.git.branch >> == master ] && make push clean
+            [ << pipeline.git.branch >> == master ] && make push clean ||:
       - run:
           name: Push 'node' image
           command: |
@@ -50,7 +50,7 @@ jobs:
             make docker-login DOCKER_USERNAME=$DOCKER_USERNAME DOCKER_PASSWORD=$DOCKER_PASSWORD
             cd build/automation/lib/docker/image/node
             make build test
-            [ << pipeline.git.branch >> == master ] && make push clean
+            [ << pipeline.git.branch >> == master ] && make push clean ||:
       - run:
           name: Push 'pipeline' image
           command: |
@@ -58,7 +58,7 @@ jobs:
             make docker-login DOCKER_USERNAME=$DOCKER_USERNAME DOCKER_PASSWORD=$DOCKER_PASSWORD
             cd build/automation/lib/docker/image/pipeline
             make build test
-            [ << pipeline.git.branch >> == master ] && make push clean
+            [ << pipeline.git.branch >> == master ] && make push clean ||:
       - run:
           name: Push 'postgres' image
           command: |
@@ -66,7 +66,7 @@ jobs:
             make docker-login DOCKER_USERNAME=$DOCKER_USERNAME DOCKER_PASSWORD=$DOCKER_PASSWORD
             cd build/automation/lib/docker/image/postgres
             make build test
-            [ << pipeline.git.branch >> == master ] && make push clean
+            [ << pipeline.git.branch >> == master ] && make push clean ||:
       - run:
           name: Push 'python' image
           command: |
@@ -74,7 +74,7 @@ jobs:
             make docker-login DOCKER_USERNAME=$DOCKER_USERNAME DOCKER_PASSWORD=$DOCKER_PASSWORD
             cd build/automation/lib/docker/image/python
             make build test
-            [ << pipeline.git.branch >> == master ] && make push clean
+            [ << pipeline.git.branch >> == master ] && make push clean ||:
       - run:
           name: Push 'python-app' image
           command: |
@@ -82,7 +82,7 @@ jobs:
             make docker-login DOCKER_USERNAME=$DOCKER_USERNAME DOCKER_PASSWORD=$DOCKER_PASSWORD
             cd build/automation/lib/docker/image/python-app
             make build test
-            [ << pipeline.git.branch >> == master ] && make push clean
+            [ << pipeline.git.branch >> == master ] && make push clean ||:
       - run:
           name: Run Test Suite
           command: |
