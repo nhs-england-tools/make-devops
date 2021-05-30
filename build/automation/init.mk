@@ -572,7 +572,7 @@ endif
 # ==============================================================================
 # Check if all the required variables are set
 
-ifeq (true, $(shell [ "local" == "$(PROFILE)" ] && echo true))
+ifeq (true, $(shell [ "local" = "$(PROFILE)" ] && echo true))
 AWS_ACCOUNT_ID_LIVE_PARENT := $(or $(AWS_ACCOUNT_ID_LIVE_PARENT), 000000000000)
 AWS_ACCOUNT_ID_MGMT := $(or $(AWS_ACCOUNT_ID_MGMT), 000000000000)
 AWS_ACCOUNT_ID_TOOLS := $(or $(AWS_ACCOUNT_ID_TOOLS), 000000000000)
@@ -643,7 +643,7 @@ endif
 # Check if all the prerequisites are met
 
 ifeq (true, $(shell [ ! -f $(SETUP_COMPLETE_FLAG_FILE) ] && echo true))
-ifeq (true, $(shell [ "Darwin" == "$$(uname)" ] && echo true))
+ifeq (true, $(shell [ "Darwin" = "$$(uname)" ] && echo true))
 # macOS: Xcode Command Line Tools
 ifneq (0, $(shell xcode-select -p > /dev/null 2>&1; echo $$?))
 $(info )
