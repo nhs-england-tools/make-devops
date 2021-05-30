@@ -34,12 +34,12 @@ git-check-if-branch-name-is-correct: ### Check if the branch name meets the acce
 
 git-secrets-load:
 	make git-secrets-clear
-	for file in $$(ls -1 $(ETC_DIR_REL)/git-secrets/*-banned.regexp); do
+	for file in $$(ls -1 $(ETC_DIR)/git-secrets/*-banned.regexp); do
 		for line in $$(cat $$file); do
 			make git-secrets-add-banned PATTERN=$$line
 		done
 	done
-	for file in $$(ls -1 $(ETC_DIR_REL)/git-secrets/*-allowed.regexp); do
+	for file in $$(ls -1 $(ETC_DIR)/git-secrets/*-allowed.regexp); do
 		for line in $$(cat $$file); do
 			make git-secrets-add-allowed PATTERN=$$line
 		done

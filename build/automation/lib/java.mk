@@ -1,4 +1,4 @@
-JAVA_VERSION = 16
+JAVA_VERSION = 17
 
 # TODO: Print Java version in prompt always when `.java-version` file is present, not only if diffrent to global
 
