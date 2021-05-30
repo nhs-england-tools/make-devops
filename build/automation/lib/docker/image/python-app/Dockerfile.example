@@ -15,7 +15,9 @@ RUN set -eux && \
 # ==============================================================================
 
 FROM base
-ENV APP="hello_world"
+ENV \
+    APP="hello_world" \
+    SECRET_KEY="secret"
 
 COPY --from=builder /packages /usr/local
 COPY example /application

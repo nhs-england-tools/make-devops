@@ -49,13 +49,13 @@ command:
   pip list | grep -iE 'awscli.*1.19':
     exit-status: 0
     timeout: 60000
-  pip list | grep -iE 'black.*21.4':
+  pip list | grep -iE 'black.*21.5':
     exit-status: 0
     timeout: 60000
   pip list | grep -iE 'boto3.*1.17':
     exit-status: 0
     timeout: 60000
-  pip list | grep -iE 'diagrams.*0.19':
+  pip list | grep -iE 'diagrams.*0.20':
     exit-status: 0
     timeout: 60000
   pip list | grep -iE 'requests.*2.25':

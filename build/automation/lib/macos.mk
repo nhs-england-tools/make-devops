@@ -351,8 +351,10 @@ _macos-config-oh-my-zsh-make-devops:
 		echo "export KUBECONFIG=~/.kube/configs/lk8s-nonprod-kubeconfig 2> /dev/null"
 		echo
 		echo "# env: Python"
-		echo "export PATH=\$$HOME/.pyenv/bin:\$$PATH"
+		echo "export PYENV_ROOT=$$HOME/.pyenv"
+		echo "export PATH=\$$PYENV_ROOT/bin:\$$PATH"
 		echo "export MYPY_CACHE_DIR=\$$HOME/.mypy_cache"
+		echo "eval \"\$$(pyenv init --path)\""
 		echo "eval \"\$$(pyenv init -)\""
 		echo "eval \"\$$(pyenv virtualenv-init -)\""
 		echo "# env: Go"
