@@ -132,8 +132,8 @@ project-message-contains: ### Check if git commit message contains any give keyw
 	done
 	echo false
 
-project-get-tag: ### Return the default tag
-	echo $(BUILD_TIMESTAMP)-$(BUILD_COMMIT_HASH)
+project-get-build-tag: ### Return the default build tag
+	echo $(BUILD_TAG)
 
 project-list-profiles: ### List all the profiles
 	for profile in $$(cd $(VAR_DIR)/profile; ls *.mk 2> /dev/null | sed 's/.mk//'); do
@@ -165,7 +165,7 @@ project-tag-as-environment-deployment: ### Tag environment deployment - mandator
 	project-create-infrastructure \
 	project-create-pipeline \
 	project-create-profile \
-	project-get-tag \
+	project-get-build-tag \
 	project-check-if-tech-is-included-in-stack \
 	project-list-profiles \
 	project-message-contains

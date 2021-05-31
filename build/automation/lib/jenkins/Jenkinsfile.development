@@ -42,7 +42,7 @@ pipeline {
         expression { sh(returnStdout: true, script: "make project-branch-deploy").trim() == "true" }
       }
       environment {
-        ARTEFACT_TAG = sh(returnStdout: true, script: "make project-get-tag").trim()
+        ARTEFACT_TAG = sh(returnStdout: true, script: "make project-get-build-tag").trim()
       }
       parallel {
         stage("Deploy: App") {
