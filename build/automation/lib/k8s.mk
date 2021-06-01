@@ -227,6 +227,19 @@ k8s-job-has-failed: ### Show whether the job failed - return: [true|""]
 		--output jsonpath='{.status.conditions[?(@.type=="Failed")].status}' \
 	| tr '[:upper:]' '[:lower:]' | tr -d '\n'
 
+k8s-run-cronjob-as-job: ### run a cronjob as a job (now) - mandatory: K8S_CRONJOB_NAME=[name], PROFILE=[name]; optional K8S_JOB_NAME=[job name];
+	# set up
+	eval "$$(make aws-assume-role-export-variables)"
+	make k8s-kubeconfig-get
+	eval "$$(make k8s-kubeconfig-export-variables)"
+	# create
+	kubectl delete job -n=$(K8S_APP_NAMESPACE) $(K8S_CRONJOB_NAME) ||:
+	kubectl create job -n $(K8S_APP_NAMESPACE) --from=cronjob/$(K8S_CRONJOB_NAME) $(K8S_CRONJOB_NAME)
+	make k8s-job K8S_JOB_NAMESPACE=$(K8S_APP_NAMESPACE) K8S_JOB_NAME=$(K8S_CRONJOB_NAME)
+
+k8s-get-token: ### Gets token for k8s dashboard
+	aws eks get-token --cluster-name=live-leks-cluster | jq '.status.token' | sed 's/^\"//' | sed 's/\"$$//'
+
 # ==============================================================================
 
 k8s-replace-variables: ### Replace variables in base and overlay of a stack - mandatory: STACK=[name],PROFILE=[name]
