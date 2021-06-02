@@ -25,8 +25,8 @@ This is a generic onboarding template that can be used by any team to help to br
 
 - Access to the NHSmail account, which is the prerequisite to all the others
 - VDI to access Cherwell
-- Microsoft Teams
-- Slack
+- Microsoft Teams - DoS, SF, PU, Tech Strategy
+- Slack - A2SI and Texas workspaces
 - [JIRA](https://nhsd-jira.digital.nhs.uk/)
 - [Confluence](https://nhsd-confluence.digital.nhs.uk/)
 

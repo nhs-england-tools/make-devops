@@ -12,6 +12,8 @@
   - [Contributing](#contributing)
   - [Development](#development)
   - [Testing](#testing)
+    - [Test data and mock services](#test-data-and-mock-services)
+    - [Manual check](#manual-check)
   - [Deployment](#deployment)
     - [Artefact Versioning](#artefact-versioning)
     - [CI/CD Pipelines](#cicd-pipelines)
@@ -117,7 +119,18 @@ List all the type of test suites included and provide instructions how to execut
 - Security
 - Smoke
 
-How the test data set is produced
+How to run test suite in the pipeline
+
+### Test data and mock services
+
+- How the test data set is produced
+- Are there any mock services in place
+
+### Manual check
+
+Here are the steps to perform meaningful local system check:
+
+- Log in to the system using a well known username role
 
 ## Deployment
 
@@ -142,7 +155,7 @@ Reference the [jenkins/README.md](build/automation/lib/jenkins/README.md) file
 
 ### Secrets
 
-Where are the secrets located, i.e. AWS Secrets Manager, under the `$(PROJECT_ID)-$(PROFILE)/deployment` secret name
+Where are the secrets located, i.e. AWS Secrets Manager, under the `$(PROJECT_ID)-$(PROFILE)/deployment` secret name and variable `$(DEPLOYMENT_SECRETS)` should be set accordingly.
 
 ### AWS Access
 
@@ -275,10 +288,14 @@ Are there any auditing requirements in accordance with the data retention polici
 
 List all the environments and their relation to profiles
 
-- dev
-- test
-- demo
-- live
+- Development
+  - Profile: `dev`
+  - URL address: [https://?.k8s-dev.texasplatform.uk/](https://?.k8s-dev.texasplatform.uk/)
+  - Username: ?@nhs.net
+  - Password: _stored in the AWS Secrets Manager `?`_
+- Test
+- Demo
+- Live
 
 Describe how to provision and deploy to a task branch environment
 
