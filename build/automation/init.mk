@@ -659,7 +659,7 @@ $(info )
 $(error $(shell tput setaf 202; echo "WARNING: Please, before proceeding install the brew package manager. Copy and paste in your terminal the above command and execute it. If it fails to install try setting your DNS server to 8.8.8.8. Then, run the \`curl\` installation command"; tput sgr0))
 endif
 # macOS: GNU Make
-ifeq (true, $(shell [ ! -f /usr/local/opt/make/libexec/gnubin/make ] && echo true))
+ifeq (true, $(shell [ ! -f /usr/local/opt/make/libexec/gnubin/make ] && [ ! -f /opt/homebrew/opt/make/libexec/gnubin/make ] && echo true))
 $(info )
 $(info Run $(shell tput setaf 4; echo "brew install make"; tput sgr0))
 $(info )
