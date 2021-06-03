@@ -95,7 +95,7 @@ macos-install-essential:: ### Install essential development dependencies - optio
 	# maven depends on java
 	brew $$install maven ||:
 	# Serverless
-	curl -o- -L https://slss.io/install | bash
+	curl -o- -L https://slss.io/install | bash ||:
 
 macos-install-additional:: ### Install additional development dependencies - optional: REINSTALL=true
 	export HOMEBREW_NO_AUTO_UPDATE=1
