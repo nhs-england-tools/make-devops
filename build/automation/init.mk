@@ -196,7 +196,17 @@ devops-update devops-synchronise: ### Update/upgrade the DevOps automation toolc
 		cp -fv build/automation/lib/project/template/.editorconfig $(PARENT_PROJECT_DIR)
 		cp -fv build/automation/lib/project/template/.gitattributes $(PARENT_PROJECT_DIR)
 		cp -fv build/automation/lib/project/template/.gitignore $(PARENT_PROJECT_DIR)
-		cp -fv build/automation/lib/project/template/project.code-workspace $(PARENT_PROJECT_DIR)
+		(
+			cp -fv $(PARENT_PROJECT_DIR)/project.code-workspace /tmp/project.code-workspace
+			cp -fv build/automation/lib/project/template/project.code-workspace $(PARENT_PROJECT_DIR)
+			jq --argjson data "$(cat /tmp/project.code-workspace | jq '.folders')" '.folders = $$data' $(PARENT_PROJECT_DIR)/project.code-workspace > $(PARENT_PROJECT_DIR)/project.code-workspace.new
+			mv -fv $(PARENT_PROJECT_DIR)/project.code-workspace.new $(PARENT_PROJECT_DIR)/project.code-workspace
+			jq --argjson data "$(cat /tmp/project.code-workspace | jq '.settings."workbench.colorCustomizations"')" '.settings."workbench.colorCustomizations" = $$data' $(PARENT_PROJECT_DIR)/project.code-workspace > $(PARENT_PROJECT_DIR)/project.code-workspace.new
+			mv -fv $(PARENT_PROJECT_DIR)/project.code-workspace.new $(PARENT_PROJECT_DIR)/project.code-workspace
+			jq --argjson data "$(cat /tmp/project.code-workspace | jq '.settings."peacock.color"')" '.settings."peacock.color" = $$data' $(PARENT_PROJECT_DIR)/project.code-workspace > $(PARENT_PROJECT_DIR)/project.code-workspace.new
+			mv -fv $(PARENT_PROJECT_DIR)/project.code-workspace.new $(PARENT_PROJECT_DIR)/project.code-workspace
+			rm -fv /tmp/project.code-workspace
+		)
 		# Project documentation
 		[ ! -f $(PARENT_PROJECT_DIR)/README.md ] && cp -fv build/automation/lib/project/template/README.md $(PARENT_PROJECT_DIR)
 		[ -f $(PARENT_PROJECT_DIR)/TODO.md ] && mv -fv $(PARENT_PROJECT_DIR)/TODO.md $(PARENT_PROJECT_DIR)/documentation; [ ! -f $(PARENT_PROJECT_DIR)/documentation/TODO.md ] && cp -fv build/automation/lib/project/template/TODO.md $(PARENT_PROJECT_DIR)/documentation
