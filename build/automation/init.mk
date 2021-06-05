@@ -215,19 +215,19 @@ devops-update devops-synchronise: ### Update/upgrade the DevOps automation toolc
 	function cleanup() {
 		_print " >>> Run: $$FUNCNAME" 21
 		cd $(PARENT_PROJECT_DIR)
+		cp -fv $(PROJECT_DIR)/build/automation/tmp/.gitignore /tmp/.gitignore
 		rm -rfv \
 			build/automation/tmp/* \
 			.git/modules/build \
 			.gitmodules
 		git reset -- .gitmodules
 		git reset -- build/automation/tmp/$(DEVOPS_PROJECT_NAME)
-		cp -fv $(PROJECT_DIR)/build/automation/tmp/.gitignore $(PARENT_PROJECT_DIR)/build/automation/tmp/.gitignore
+		mv -fv /tmp/.gitignore build/automation/tmp/.gitignore
 	}
 	function commit() {
 		_print " >>> Run: $$FUNCNAME" 21
-		cd $(PROJECT_DIR)
-		version=$$(make get-variable NAME=DEVOPS_PROJECT_VERSION)
 		cd $(PARENT_PROJECT_DIR)
+		version=$$(make get-variable NAME=DEVOPS_PROJECT_VERSION)
 		if [ 0 -lt $$(git status -s | wc -l) ]; then
 			git add .
 			[ "$(NO_COMMIT)" != true ] && git commit -S -m "Update the DevOps automation toolchain scripts to $$version" || echo "Please, check and commit the changes with the following message: \"Update the DevOps automation toolchain scripts to $$version\""
