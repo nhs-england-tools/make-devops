@@ -98,7 +98,6 @@ devops-copy: ### Copy the DevOps automation toolchain scripts to given destinati
 		cp -fv .github/CODEOWNERS $(DIR)/.github/CODEOWNERS && sed -i "s;@nhsd-exeter/admins;@nhsd-exeter/maintainers;" $(DIR)/.github/CODEOWNERS
 		cp -fv build/automation/tmp/.gitignore $(DIR)/build/automation/tmp/.gitignore
 		cp -fv LICENSE.md $(DIR)/build/automation/LICENSE.md
-		[ -f $(DIR)/build/automation/etc/certificate/*.pem ] && rm -fv $(DIR)/build/automation/etc/certificate/.gitignore
 		# Project key files
 		[ ! -f $(DIR)/build/automation/var/project.mk ] && cp -fv build/automation/lib/project/template/build/automation/var/project.mk $(DIR)/build/automation/var/project.mk
 		[ ! -f $(DIR)/Makefile ] && cp -fv build/automation/lib/project/template/Makefile $(DIR)
@@ -129,7 +128,27 @@ devops-copy: ### Copy the DevOps automation toolchain scripts to given destinati
 	sync && version
 
 devops-update devops-synchronise: ### Update/upgrade the DevOps automation toolchain scripts used by this project - optional: LATEST=true, NO_COMMIT=true
+	function _print() {
+		(
+			set +x
+			if test -t 1 && [ -n "$$TERM" ] && [ "$$TERM" != "dumb" ]; then
+				[ -n "$$2" ] && tput setaf $$2
+			fi
+			printf "$$1\n"
+			if test -t 1 && [ -n "$$TERM" ] && [ "$$TERM" != "dumb" ]; then
+				tput sgr 0
+			fi
+		)
+	}
+	function branch() {
+		_print " >>> Run: $$FUNCNAME" 21
+		branch=$$(git rev-parse --abbrev-ref HEAD)
+		if [ $$branch != "task/Update_automation_scripts" ]; then
+			git checkout -b task/Update_automation_scripts
+		fi
+	}
 	function download() {
+		_print " >>> Run: $$FUNCNAME" 21
 		cd $(PROJECT_DIR)
 		rm -rf \
 			$(TMP_DIR)/$(DEVOPS_PROJECT_NAME) \
@@ -144,7 +163,17 @@ devops-update devops-synchronise: ### Update/upgrade the DevOps automation toolc
 			git checkout $$tag
 		fi
 	}
+	function execute() {
+		_print " >>> Run: $$FUNCNAME" 21
+		cd $(TMP_DIR)/$(DEVOPS_PROJECT_NAME)
+		make devops-synchronise \
+			PARENT_PROJECT_DIR=$(PROJECT_DIR) \
+			PARENT_PROJECT_NAME=$(PROJECT_NAME) \
+			__DEVOPS_SYNCHRONISE=true
+
+	}
 	function sync() {
+		_print " >>> Run: $$FUNCNAME" 21
 		cd $(PROJECT_DIR)
 		mkdir -p \
 			$(PARENT_PROJECT_DIR)/.github \
@@ -159,9 +188,7 @@ devops-update devops-synchronise: ### Update/upgrade the DevOps automation toolc
 			build/* \
 			$(PARENT_PROJECT_DIR)/build
 		cp -fv .github/CODEOWNERS $(PARENT_PROJECT_DIR)/.github/CODEOWNERS && sed -i "s;@nhsd-exeter/admins;@nhsd-exeter/maintainers;" $(PARENT_PROJECT_DIR)/.github/CODEOWNERS
-		cp -fv build/automation/tmp/.gitignore $(PARENT_PROJECT_DIR)/build/automation/tmp/.gitignore
 		cp -fv LICENSE.md $(PARENT_PROJECT_DIR)/build/automation/LICENSE.md
-		[ -f $(PARENT_PROJECT_DIR)/build/automation/etc/certificate/*.pem ] && rm -fv $(PARENT_PROJECT_DIR)/build/automation/etc/certificate/.gitignore
 		[ -f $(PARENT_PROJECT_DIR)/docker/docker-compose.yml ] && rm -fv $(PARENT_PROJECT_DIR)/docker/.gitkeep
 		# Project key files
 		[ ! -f $(PARENT_PROJECT_DIR)/build/automation/var/project.mk ] && cp -fv build/automation/lib/project/template/build/automation/var/project.mk $(PARENT_PROJECT_DIR)/build/automation/var/project.mk
@@ -181,20 +208,23 @@ devops-update devops-synchronise: ### Update/upgrade the DevOps automation toolc
 		return 0
 	}
 	function version() {
+		_print " >>> Run: $$FUNCNAME" 21
 		cd $(PROJECT_DIR)
 		make get-variable NAME=DEVOPS_PROJECT_VERSION > $(PARENT_PROJECT_DIR)/build/automation/VERSION
 	}
 	function cleanup() {
-		cd $(PROJECT_DIR)
-		rm -rf \
-			$(TMP_DIR)/$(DEVOPS_PROJECT_NAME) \
+		_print " >>> Run: $$FUNCNAME" 21
+		cd $(PARENT_PROJECT_DIR)
+		rm -rfv \
+			build/automation/tmp/* \
 			.git/modules/build \
 			.gitmodules
 		git reset -- .gitmodules
 		git reset -- build/automation/tmp/$(DEVOPS_PROJECT_NAME)
-		rm -f .gitmodules
+		cp -fv $(PROJECT_DIR)/build/automation/tmp/.gitignore $(PARENT_PROJECT_DIR)/build/automation/tmp/.gitignore
 	}
 	function commit() {
+		_print " >>> Run: $$FUNCNAME" 21
 		cd $(PROJECT_DIR)
 		version=$$(make get-variable NAME=DEVOPS_PROJECT_VERSION)
 		cd $(PARENT_PROJECT_DIR)
@@ -204,17 +234,10 @@ devops-update devops-synchronise: ### Update/upgrade the DevOps automation toolc
 		fi
 	}
 	if [ -z "$(__DEVOPS_SYNCHRONISE)" ]; then
-		branch=$$(git rev-parse --abbrev-ref HEAD)
-		[ $$branch != "task/Update_automation_scripts" ] && git checkout -b task/Update_automation_scripts
-		download
-		cd $(TMP_DIR)/$(DEVOPS_PROJECT_NAME)
-		make devops-synchronise \
-			PARENT_PROJECT_DIR=$(PROJECT_DIR) \
-			PARENT_PROJECT_NAME=$(PROJECT_NAME) \
-			__DEVOPS_SYNCHRONISE=true
+		branch && download && execute
 	else
 		if [ 0 -lt $$(git status -s | wc -l) ]; then
-			echo "ERROR: Please, commit your changes first"
+			_print "ERROR: Please, commit your changes first" 196
 			exit 1
 		fi
 		sync && version && cleanup && commit
