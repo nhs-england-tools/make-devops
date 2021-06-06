@@ -8,11 +8,6 @@ jobs:
     steps:
       - uses: deepakputhraya/action-pr-title@master
         with:
-          pattern: '^[A-Za-z]{2,5}-([0-9]{1,5}|X{1,5}) [A-Z]|^Update automation scripts|^Update versions|^Refactor'
-
-steps:
-- uses: deepakputhraya/action-pr-title@master
-  with:
-    regex: '^[A-Za-z]{2,5}-([0-9]{1,5}|X{1,5}) [A-Z]|^Update automation scripts|^Update versions|^Refactor'
-    min_length: 8
-    max_length: 70
+          regex: '^[A-Za-z]{2,5}-([0-9]{1,5}|X{1,5}) [A-Z]|^Update automation scripts|^Update versions|^Refactor'
+          min_length: 8
+          max_length: 70
