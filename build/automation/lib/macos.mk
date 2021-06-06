@@ -495,6 +495,7 @@ _macos-config-visual-studio-code:
 	code --force --install-extension gabrielbb.vscode-lombok
 	code --force --install-extension gruntfuggly.todo-tree
 	code --force --install-extension hashicorp.terraform
+	code --force --install-extension hediet.vscode-drawio
 	code --force --install-extension humao.rest-client
 	code --force --install-extension jebbs.plantuml
 	code --force --install-extension johnpapa.vscode-peacock
@@ -507,6 +508,7 @@ _macos-config-visual-studio-code:
 	code --force --install-extension ms-vsliveshare.vsliveshare-pack
 	code --force --install-extension msjsdiag.debugger-for-chrome
 	code --force --install-extension msjsdiag.vscode-react-native
+	code --force --install-extension mushan.vscode-paste-image
 	code --force --install-extension nicolasvuillamy.vscode-groovy-lint
 	code --force --install-extension oderwat.indent-rainbow
 	code --force --install-extension pivotal.vscode-spring-boot
@@ -527,6 +529,7 @@ _macos-config-visual-studio-code:
 	code --force --install-extension vsls-contrib.gistfs
 	code --force --install-extension wayou.vscode-todo-highlight
 	code --force --install-extension xabikos.javascriptsnippets
+	code --force --install-extension yzhang.dictionary-completion
 	code --force --install-extension yzhang.markdown-all-in-one
 	# Install themes
 	code --force --install-extension ahmadawais.shades-of-purple
