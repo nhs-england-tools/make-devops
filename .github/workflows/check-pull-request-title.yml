@@ -7,6 +7,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: dylanvann/check-pull-request-title@master
+      - uses: dylanvann/check-pull-request-title@v0.1.14
         with:
           pattern: '^[A-Za-z]{2,5}-([0-9]{1,5}|X{1,5}) [A-Z]|^Update automation scripts|^Update versions|^Refactor'
