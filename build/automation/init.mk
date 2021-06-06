@@ -79,11 +79,13 @@ devops-test-cleanup: ### Clean up adter the tests
 	docker network rm $(DOCKER_NETWORK) 2> /dev/null ||:
 	# TODO: Remove older networks that remained after unsuccessful builds
 
-devops-copy: ### Copy the DevOps automation toolchain scripts to given destination - optional: DIR
+devops-copy: ### Copy the DevOps automation toolchain scripts from this codebase to given destination - mandatory: DIR
 	function sync() {
+		cd $(DIR)
+		is_github=$$(git remote -v | grep -q github.com && echo true || echo false)
 		cd $(PROJECT_DIR)
 		mkdir -p \
-			$(DIR)/.github \
+			$(DIR)/build \
 			$(DIR)/documentation/adr \
 			$(DIR)/documentation/diagrams
 		# Library files
@@ -95,24 +97,38 @@ devops-copy: ### Copy the DevOps automation toolchain scripts to given destinati
 			--exclude=jenkins/Jenkinsfile* \
 			build/* \
 			$(DIR)/build
-		cp -fv .github/CODEOWNERS $(DIR)/.github/CODEOWNERS && sed -i "s;@nhsd-exeter/admins;@nhsd-exeter/maintainers;" $(DIR)/.github/CODEOWNERS
+		[ $$is_github == true ] && (
+			mkdir -p $(DIR)/.github/workflows
+			cp -fv build/automation/lib/project/template/.github/workflows/check-pull-request-title.yml $(DIR)/.github/workflows
+			cp -fv build/automation/lib/project/template/.github/CODEOWNERS $(DIR)/.github
+			cp -fv build/automation/lib/project/template/.gitattributes $(DIR)
+		)
 		cp -fv build/automation/tmp/.gitignore $(DIR)/build/automation/tmp/.gitignore
 		cp -fv LICENSE.md $(DIR)/build/automation/LICENSE.md
+		[ -f $(DIR)/docker/docker-compose.yml ] && rm -fv $(DIR)/docker/.gitkeep
 		# Project key files
 		[ ! -f $(DIR)/build/automation/var/project.mk ] && cp -fv build/automation/lib/project/template/build/automation/var/project.mk $(DIR)/build/automation/var/project.mk
 		[ ! -f $(DIR)/Makefile ] && cp -fv build/automation/lib/project/template/Makefile $(DIR)
 		cp -fv build/automation/lib/project/template/.editorconfig $(DIR)
-		cp -fv build/automation/lib/project/template/.gitattributes $(DIR)
 		cp -fv build/automation/lib/project/template/.gitignore $(DIR)
-		cp -fv build/automation/lib/project/template/project.code-workspace $(DIR)
+		(
+			cp -fv $(DIR)/project.code-workspace /tmp/project.code-workspace || cp -fv build/automation/lib/project/template/project.code-workspace /tmp/project.code-workspace
+			cp -fv build/automation/lib/project/template/project.code-workspace $(DIR)
+			jq --argjson data "$$(cat /tmp/project.code-workspace | jq '.folders')" '.folders = $$data' $(DIR)/project.code-workspace > $(DIR)/project.code-workspace.new
+			mv -fv $(DIR)/project.code-workspace.new $(DIR)/project.code-workspace
+			jq --argjson data "$$(cat /tmp/project.code-workspace | jq '.settings."workbench.colorCustomizations"')" '.settings."workbench.colorCustomizations" = $$data' $(DIR)/project.code-workspace > $(DIR)/project.code-workspace.new
+			mv -fv $(DIR)/project.code-workspace.new $(DIR)/project.code-workspace
+			jq --argjson data "$$(cat /tmp/project.code-workspace | jq '.settings."peacock.color"')" '.settings."peacock.color" = $$data' $(DIR)/project.code-workspace > $(DIR)/project.code-workspace.new
+			mv -fv $(DIR)/project.code-workspace.new $(DIR)/project.code-workspace
+			rm -fv /tmp/project.code-workspace
+		)
 		# Project documentation
-		[ -f $(DIR)/TODO.md ] && mv -fv $(DIR)/TODO.md $(DIR)/documentation;
+		[ ! -f $(DIR)/README.md ] && cp -fv build/automation/lib/project/template/README.md $(DIR)
+		[ -f $(DIR)/TODO.md ] && mv -fv $(DIR)/TODO.md $(DIR)/documentation; [ ! -f $(DIR)/documentation/TODO.md ] && cp -fv build/automation/lib/project/template/TODO.md $(DIR)/documentation
 		cp -fv build/automation/lib/project/template/documentation/adr/README.md $(DIR)/documentation/adr
 		cp -fv build/automation/lib/project/template/documentation/diagrams/DevOps-Pipelines.png $(DIR)/documentation/diagrams
 		[ ! -f $(DIR)/documentation/CONTRIBUTING.md ] && cp -fv build/automation/lib/project/template/CONTRIBUTING.md $(DIR)/documentation
 		[ ! -f $(DIR)/documentation/ONBOARDING.md ] && cp -fv build/automation/lib/project/template/ONBOARDING.md $(DIR)/documentation
-		[ ! -f $(DIR)/documentation/TODO.md ] && cp -fv build/automation/lib/project/template/TODO.md $(DIR)/documentation
-		[ ! -f $(DIR)/README.md ] && cp -fv build/automation/lib/project/template/README.md $(DIR)
 		# ---
 		make _devops-project-clean DIR=$(DIR)
 		# ---
@@ -124,7 +140,6 @@ devops-copy: ### Copy the DevOps automation toolchain scripts to given destinati
 		hash=$$(git rev-parse --short HEAD)
 		echo "$${tag:1}-$${hash}" > $(DIR)/build/automation/VERSION
 	}
-	mkdir -p $(DIR)/build
 	sync && version
 
 devops-update devops-synchronise: ### Update/upgrade the DevOps automation toolchain scripts used by this project - optional: LATEST=true, NO_COMMIT=true
@@ -174,30 +189,38 @@ devops-update devops-synchronise: ### Update/upgrade the DevOps automation toolc
 	}
 	function sync() {
 		_print " >>> Run: $$FUNCNAME" 21
+		cd $(PARENT_PROJECT_DIR)
+		is_github=$$(git remote -v | grep -q github.com && echo true || echo false)
 		cd $(PROJECT_DIR)
 		mkdir -p \
-			$(PARENT_PROJECT_DIR)/.github \
+			$(PARENT_PROJECT_DIR)/build \
 			$(PARENT_PROJECT_DIR)/documentation/adr \
 			$(PARENT_PROJECT_DIR)/documentation/diagrams
 		# Library files
 		rsync -rav \
 			--include=build/ \
 			--exclude=automation/etc/certificate/certificate.* \
+			--exclude=automation/tmp/* \
 			--exclude=automation/var/project.mk \
 			--exclude=jenkins/Jenkinsfile* \
 			build/* \
 			$(PARENT_PROJECT_DIR)/build
-		cp -fv .github/CODEOWNERS $(PARENT_PROJECT_DIR)/.github/CODEOWNERS && sed -i "s;@nhsd-exeter/admins;@nhsd-exeter/maintainers;" $(PARENT_PROJECT_DIR)/.github/CODEOWNERS
+		[ $$is_github == true ] && (
+			mkdir -p $(PARENT_PROJECT_DIR)/.github/workflows
+			cp -fv build/automation/lib/project/template/.github/workflows/check-pull-request-title.yml $(PARENT_PROJECT_DIR)/.github/workflows
+			cp -fv build/automation/lib/project/template/.github/CODEOWNERS $(PARENT_PROJECT_DIR)/.github
+			cp -fv build/automation/lib/project/template/.gitattributes $(PARENT_PROJECT_DIR)
+		)
+		cp -fv build/automation/tmp/.gitignore $(PARENT_PROJECT_DIR)/build/automation/tmp/.gitignore
 		cp -fv LICENSE.md $(PARENT_PROJECT_DIR)/build/automation/LICENSE.md
 		[ -f $(PARENT_PROJECT_DIR)/docker/docker-compose.yml ] && rm -fv $(PARENT_PROJECT_DIR)/docker/.gitkeep
 		# Project key files
 		[ ! -f $(PARENT_PROJECT_DIR)/build/automation/var/project.mk ] && cp -fv build/automation/lib/project/template/build/automation/var/project.mk $(PARENT_PROJECT_DIR)/build/automation/var/project.mk
 		[ ! -f $(PARENT_PROJECT_DIR)/Makefile ] && cp -fv build/automation/lib/project/template/Makefile $(PARENT_PROJECT_DIR)
 		cp -fv build/automation/lib/project/template/.editorconfig $(PARENT_PROJECT_DIR)
-		cp -fv build/automation/lib/project/template/.gitattributes $(PARENT_PROJECT_DIR)
 		cp -fv build/automation/lib/project/template/.gitignore $(PARENT_PROJECT_DIR)
 		(
-			cp -fv $(PARENT_PROJECT_DIR)/project.code-workspace /tmp/project.code-workspace
+			cp -fv $(PARENT_PROJECT_DIR)/project.code-workspace /tmp/project.code-workspace || cp -fv build/automation/lib/project/template/project.code-workspace /tmp/project.code-workspace
 			cp -fv build/automation/lib/project/template/project.code-workspace $(PARENT_PROJECT_DIR)
 			jq --argjson data "$$(cat /tmp/project.code-workspace | jq '.folders')" '.folders = $$data' $(PARENT_PROJECT_DIR)/project.code-workspace > $(PARENT_PROJECT_DIR)/project.code-workspace.new
 			mv -fv $(PARENT_PROJECT_DIR)/project.code-workspace.new $(PARENT_PROJECT_DIR)/project.code-workspace
@@ -212,6 +235,8 @@ devops-update devops-synchronise: ### Update/upgrade the DevOps automation toolc
 		[ -f $(PARENT_PROJECT_DIR)/TODO.md ] && mv -fv $(PARENT_PROJECT_DIR)/TODO.md $(PARENT_PROJECT_DIR)/documentation; [ ! -f $(PARENT_PROJECT_DIR)/documentation/TODO.md ] && cp -fv build/automation/lib/project/template/TODO.md $(PARENT_PROJECT_DIR)/documentation
 		cp -fv build/automation/lib/project/template/documentation/adr/README.md $(PARENT_PROJECT_DIR)/documentation/adr
 		cp -fv build/automation/lib/project/template/documentation/diagrams/DevOps-Pipelines.png $(PARENT_PROJECT_DIR)/documentation/diagrams
+		[ ! -f $(PARENT_PROJECT_DIR)/documentation/CONTRIBUTING.md ] && cp -fv build/automation/lib/project/template/CONTRIBUTING.md $(PARENT_PROJECT_DIR)/documentation
+		[ ! -f $(PARENT_PROJECT_DIR)/documentation/ONBOARDING.md ] && cp -fv build/automation/lib/project/template/ONBOARDING.md $(PARENT_PROJECT_DIR)/documentation
 		# ---
 		make _devops-project-clean DIR=$(PARENT_PROJECT_DIR)
 		# ---
