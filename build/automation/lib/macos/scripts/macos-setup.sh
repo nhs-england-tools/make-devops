@@ -21,7 +21,7 @@ function download() {
 
 function finish() {
   tput setaf 2
-  printf "\Done: Provision and configure your macOS\n\n"
+  printf "\nDone: Provision and configure your macOS\n\n"
   tput sgr0
 }
 

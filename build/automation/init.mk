@@ -271,7 +271,7 @@ devops-update devops-synchronise: ### Update/upgrade the DevOps automation toolc
 		version=$$(make get-variable NAME=DEVOPS_PROJECT_VERSION)
 		if [ 0 -lt $$(git status -s | wc -l) ]; then
 			git add .
-			[ "$(NO_COMMIT)" != true ] && git commit -S -m "Update the DevOps automation toolchain scripts to $$version" || echo "Please, check and commit the changes with the following message: \"Update the DevOps automation toolchain scripts to $$version\""
+			[ "$(NO_COMMIT)" != true ] && git commit -S -m "Update automation scripts to $$version" || echo "Please, check and commit the changes with the following message: \"Update automation scripts to $$version\""
 		fi
 	}
 	if [ -z "$(__DEVOPS_SYNCHRONISE)" ]; then

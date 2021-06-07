@@ -21,7 +21,7 @@ function download() {
 
 function finish() {
   tput setaf 2
-  printf "\Done: Check if the development dependencies are installed\n\n"
+  printf "\nDone: Check if the development dependencies are installed\n\n"
   tput sgr0
 }
 

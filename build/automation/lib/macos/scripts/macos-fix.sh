@@ -21,7 +21,7 @@ function download() {
 
 function finish() {
   tput setaf 2
-  printf "\Done: Fix development dependencies\n\n"
+  printf "\nDone: Fix development dependencies\n\n"
   tput sgr0
 }
 
