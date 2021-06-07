@@ -1,32 +1,32 @@
-PROJECT_CONFIG_TIMESTAMP_FILE = $(TMP_DIR)/project-config-timestamp
-#PROJECT_CONFIG_TARGET
-#PROJECT_CONFIG_TIMESTAMP
-#PROJECT_CONFIG_FORCE
+_PROJECT_CONFIG_DEV_ENV_TIMESTAMP_FILE = $(TMP_DIR)/.project-config-dev-env.timestamp
+#_PROJECT_CONFIG_DEV_ENV_TARGET =
+#_PROJECT_CONFIG_DEV_ENV_TIMESTAMP =
+#_PROJECT_CONFIG_DEV_ENV_FORCE =
 
 # ==============================================================================
 
 project-config: ### Configure project environment
-	make -s \
-		git-config \
-		docker-config
 	if [ ! -f $(PROJECT_DIR)/project.code-workspace ]; then
 		cp -fv $(LIB_DIR)/project/template/project.code-workspace $(PROJECT_DIR)
 	fi
+	make \
+		git-config \
+		docker-config
 	# Make sure project's SSL certificate is created
 	if [ ! -f $(SSL_CERTIFICATE_DIR)/certificate.pem ]; then
 		make ssl-generate-certificate-project
 		[ $(PROJECT_NAME) != "make-devops" ] && rm -f $(SSL_CERTIFICATE_DIR)/.gitignore
 	fi
 	# Re-configure developer's environment on demand
-	if [ -n "$(PROJECT_CONFIG_TIMESTAMP)" ] && ([ ! -f $(PROJECT_CONFIG_TIMESTAMP_FILE) ] || [ $(PROJECT_CONFIG_TIMESTAMP) -gt $$(cat $(PROJECT_CONFIG_TIMESTAMP_FILE)) ]) && [ $(BUILD_ID) -eq 0 ]; then
-		if [[ ! "$(PROJECT_CONFIG_FORCE)" =~ ^(true|yes|y|on|1|TRUE|YES|Y|ON)$$ ]]; then
+	if [ -n "$(_PROJECT_CONFIG_DEV_ENV_TIMESTAMP)" ] && ([ ! -f $(_PROJECT_CONFIG_DEV_ENV_TIMESTAMP_FILE) ] || [ $(_PROJECT_CONFIG_DEV_ENV_TIMESTAMP) -gt $$(cat $(_PROJECT_CONFIG_DEV_ENV_TIMESTAMP_FILE)) ]) && [ $(BUILD_ID) -eq 0 ]; then
+		if [[ ! "$(_PROJECT_CONFIG_DEV_ENV_FORCE)" =~ ^(true|yes|y|on|1|TRUE|YES|Y|ON)$$ ]]; then
 			read -p "Your development environment needs to be re-configured, would you like to proceed? (yes or no) " answer
 			if [[ ! "$$answer" =~ ^(yes|y|YES|Y)$$ ]]; then
 				exit 1
 			fi
 		fi
-		make $(PROJECT_CONFIG_TARGET)
-		echo $(BUILD_TIMESTAMP) > $(PROJECT_CONFIG_TIMESTAMP_FILE)
+		make $(_PROJECT_CONFIG_DEV_ENV_TARGET)
+		echo $(BUILD_TIMESTAMP) > $(_PROJECT_CONFIG_DEV_ENV_TIMESTAMP_FILE)
 	fi
 
 project-start: ### Start Docker Compose
@@ -55,6 +55,9 @@ project-document-infrastructure: ### Generate infrastructure diagram - optional:
 		$(or $(FIN), $(INFRASTRUCTURE_DIR_REL)/diagram.py) \
 		$(or $(FOUT), $(DOCUMENTATION_DIR_REL)/Infrastructure_Diagram) \
 	"
+
+project-clear-tmp: ### Remove all temporary files and directories from the ./build/automation/tmp directory
+	find $(TMP_DIR) -mindepth 1 -maxdepth 1 -name '*' -a ! -path '$(TMP_DIR)/.gitignore' | xargs rm -rf
 
 # ==============================================================================
 

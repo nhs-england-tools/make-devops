@@ -113,8 +113,11 @@ devops-copy: ### Copy the DevOps automation toolchain scripts from this codebase
 		cp -fv build/automation/lib/project/template/.gitignore $(DIR)
 		(
 			cp -fv $(DIR)/project.code-workspace /tmp/project.code-workspace || cp -fv build/automation/lib/project/template/project.code-workspace /tmp/project.code-workspace
+			which npx && cat /tmp/project.code-workspace | npx strip-json-comments-cli > /tmp/project.code-workspace.tmp && mv -fv /tmp/project.code-workspace.tmp /tmp/project.code-workspace ||:
 			cp -fv build/automation/lib/project/template/project.code-workspace $(DIR)
 			jq --argjson data "$$(cat /tmp/project.code-workspace | jq '.folders')" '.folders = $$data' $(DIR)/project.code-workspace > $(DIR)/project.code-workspace.new
+			mv -fv $(DIR)/project.code-workspace.new $(DIR)/project.code-workspace
+			jq --argjson data "$$(cat /tmp/project.code-workspace | jq '.settings."workbench.colorTheme"')" '.settings."workbench.colorTheme" = $$data' $(DIR)/project.code-workspace > $(DIR)/project.code-workspace.new
 			mv -fv $(DIR)/project.code-workspace.new $(DIR)/project.code-workspace
 			jq --argjson data "$$(cat /tmp/project.code-workspace | jq '.settings."workbench.colorCustomizations"')" '.settings."workbench.colorCustomizations" = $$data' $(DIR)/project.code-workspace > $(DIR)/project.code-workspace.new
 			mv -fv $(DIR)/project.code-workspace.new $(DIR)/project.code-workspace
