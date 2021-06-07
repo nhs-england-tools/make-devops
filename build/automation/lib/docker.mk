@@ -822,7 +822,7 @@ _docker-is-lib-image:
 	([ -n "$(NAME)" ] && [ -d $(DOCKER_LIB_IMAGE_DIR)/$(NAME) ]) && echo true || echo false
 
 _list-variables: ### List environment variables that match the pattern - mandatory: PATTERN="^AWS_"; return: [variables list]
-	env | grep -Ei "$(PATTERN)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '^[A-Za-z0-9_]+=$$' | sort | grep -v '[[:space:]]'
+	env | grep -Ei "$(PATTERN)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '^[A-Za-z0-9_]+=$$' | sort | grep -v '[[:space:]]' ||:
 
 # ==============================================================================
 
