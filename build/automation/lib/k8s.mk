@@ -245,7 +245,7 @@ k8s-run-cronjob-as-job: ### run a cronjob as a job (now) - mandatory: K8S_CRONJO
 	make k8s-job K8S_JOB_NAMESPACE=$(K8S_APP_NAMESPACE) K8S_JOB_NAME=$(K8S_CRONJOB_NAME)
 
 k8s-get-token: ### Gets token for k8s dashboard
-	aws eks get-token --cluster-name=live-leks-cluster | jq '.status.token' | sed 's/^\"//' | sed 's/\"$$//'
+	make -s aws-eks-get-token
 
 # ==============================================================================
 
@@ -411,6 +411,7 @@ k8s-job: ### Show status of jobs - mandatory: PROFILE=[name]
 	k8s-job-tester-has-completed \
 	k8s-job-tester-is-running \
 	k8s-job-tester-wait-to-complete \
+	k8s-get-token \
 	k8s-kubeconfig-export \
 	k8s-kubeconfig-export-variables \
 	k8s-log \

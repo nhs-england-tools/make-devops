@@ -324,6 +324,11 @@ aws-ecr-get-image-digest: ### Get ECR image digest by matching tag pattern - man
 			--repository-name $(shell echo $(REPO) | sed "s;$(AWS_ECR)/;;g") \
 	" | make -s docker-run-tools CMD="jq -rf $$file" | head -n 1
 
+aws-eks-get-token: ### Gets token for k8s dashboard
+	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" \
+	CMD="$(AWSCLI) eks get-token --cluster-name=$(CLUSTER_NAME) \
+	| jq '.status.token'" | sed 's/^\"//' | sed 's/\"$$//'
+
 aws-ses-verify-email-identity: ### Verify SES email address - mandatory: NAME
 	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
 		$(AWSCLI) ses verify-email-identity \
