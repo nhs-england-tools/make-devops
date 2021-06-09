@@ -345,62 +345,8 @@ _devops-synchronise-select-tag-to-install: ### TODO: This is WIP
 	# 	echo "$$choice"
 	# done
 
-devops-setup-aws-accounts aws-accounts-setup: ### Ask user to input valid AWS account IDs to be used by the DevOps automation toolchain scripts
-	file=$(DEV_OHMYZSH_DIR)/plugins/$(DEVOPS_PROJECT_NAME)/aws-platform.zsh
-	if [ -f $$file ]; then
-		parent_id=$$(cat $$file | grep "export AWS_ACCOUNT_ID_LIVE_PARENT=" | sed "s/export AWS_ACCOUNT_ID_LIVE_PARENT=//")
-		mgmt_id=$$(cat $$file | grep "export AWS_ACCOUNT_ID_MGMT=" | sed "s/export AWS_ACCOUNT_ID_MGMT=//")
-		nonprod_id=$$(cat $$file | grep "export AWS_ACCOUNT_ID_NONPROD=" | sed "s/export AWS_ACCOUNT_ID_NONPROD=//")
-		prod_id=$$(cat $$file | grep "export AWS_ACCOUNT_ID_PROD=" | sed "s/export AWS_ACCOUNT_ID_PROD=//")
-		identities_id=$$(cat $$file | grep "export AWS_ACCOUNT_ID_IDENTITIES=" | sed "s/export AWS_ACCOUNT_ID_IDENTITIES=//")
-		printf "\nPlease, provide valid AWS account IDs or press ENTER to leave it unchanged.\n\n"
-		read -p "AWS_ACCOUNT_ID_LIVE_PARENT ($$parent_id) : " new_parent_id
-		read -p "AWS_ACCOUNT_ID_MGMT        ($$mgmt_id) : " new_mgmt_id
-		read -p "AWS_ACCOUNT_ID_NONPROD     ($$nonprod_id) : " new_nonprod_id
-		read -p "AWS_ACCOUNT_ID_PROD        ($$prod_id) : " new_prod_id
-		read -p "AWS_ACCOUNT_ID_IDENTITIES  ($$identities_id) : " new_identities_id
-		printf "\n"
-		if [ -n "$$new_parent_id" ]; then
-			make -s file-replace-content \
-				FILE=$$file \
-				OLD="export AWS_ACCOUNT_ID_LIVE_PARENT=$$parent_id" \
-				NEW="export AWS_ACCOUNT_ID_LIVE_PARENT=$$new_parent_id" \
-			> /dev/null 2>&1
-		fi
-		if [ -n "$$new_mgmt_id" ]; then
-			make -s file-replace-content \
-				FILE=$$file \
-				OLD="export AWS_ACCOUNT_ID_MGMT=$$mgmt_id" \
-				NEW="export AWS_ACCOUNT_ID_MGMT=$$new_mgmt_id" \
-			> /dev/null 2>&1
-		fi
-		if [ -n "$$new_nonprod_id" ]; then
-			make -s file-replace-content \
-				FILE=$$file \
-				OLD="export AWS_ACCOUNT_ID_NONPROD=$$nonprod_id" \
-				NEW="export AWS_ACCOUNT_ID_NONPROD=$$new_nonprod_id" \
-			> /dev/null 2>&1
-		fi
-		if [ -n "$$new_prod_id" ]; then
-			make -s file-replace-content \
-				FILE=$$file \
-				OLD="export AWS_ACCOUNT_ID_PROD=$$prod_id" \
-				NEW="export AWS_ACCOUNT_ID_PROD=$$new_prod_id" \
-			> /dev/null 2>&1
-		fi
-		if [ -n "$$new_identities_id" ]; then
-			make -s file-replace-content \
-				FILE=$$file \
-				OLD="export AWS_ACCOUNT_ID_IDENTITIES=$$identities_id" \
-				NEW="export AWS_ACCOUNT_ID_IDENTITIES=$$new_identities_id" \
-			> /dev/null 2>&1
-		fi
-		printf "FILE: $$file\n"
-		cat $$file
-		printf "Please, run \`reload\` to make sure that this change takes effect\n\n"
-	else
-		printf "\nERROR: Please, before proceeding run \`make macos-setup\`\n\n"
-	fi
+devops-setup-aws-accounts: ### Ask user to input valid AWS account IDs to be used by the DevOps automation toolchain scripts
+	make aws-accounts-setup
 
 devops-setup-aws-accounts-for-service aws-accounts-setup-for-service: ### Ask user to input valid AWS account IDs to be used by the DevOps automation toolchain scripts for service accounts
 	file=$(DEV_OHMYZSH_DIR)/plugins/$(DEVOPS_PROJECT_NAME)/aws-platform-default.zsh
@@ -765,7 +711,6 @@ endif
 .SILENT: \
 	_devops-synchronise-select-tag-to-install \
 	_devops-test \
-	aws-accounts-setup \
 	aws-accounts-setup-for-service \
 	aws-accounts-switch \
 	devops-check-versions \

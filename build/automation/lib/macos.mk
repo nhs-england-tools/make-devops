@@ -288,28 +288,14 @@ _macos-config-oh-my-zsh:
 	echo -e "\n# BEGIN: Custom configuration" >> ~/.zshrc
 	echo "plugins=(" >> ~/.zshrc
 	echo "    git" >> ~/.zshrc
-	echo "    git-extras" >> ~/.zshrc
-	echo "    git-auto-fetch" >> ~/.zshrc
 	echo "    docker" >> ~/.zshrc
-	echo "    docker-compose" >> ~/.zshrc
-	echo "    pyenv" >> ~/.zshrc
-	echo "    jenv" >> ~/.zshrc
-	echo "    terraform" >> ~/.zshrc
-	echo "    kubectl" >> ~/.zshrc
-	echo "    aws" >> ~/.zshrc
-	echo "    httpie" >> ~/.zshrc
-	echo "    vscode" >> ~/.zshrc
-	echo "    iterm2" >> ~/.zshrc
-	echo "    nvm" >> ~/.zshrc
-	echo "    osx" >> ~/.zshrc
-	echo "    emoji" >> ~/.zshrc
-	echo "    ssh-agent" >> ~/.zshrc
+	# echo "    pyenv" >> ~/.zshrc
+	# echo "    jenv" >> ~/.zshrc
+	# echo "    nvm" >> ~/.zshrc
 	echo "    gpg-agent" >> ~/.zshrc
 	echo "    common-aliases" >> ~/.zshrc
-	echo "    colorize" >> ~/.zshrc
-	echo "    copybuffer" >> ~/.zshrc
-	echo "    zsh-autosuggestions" >> ~/.zshrc
-	echo "    zsh-syntax-highlighting" >> ~/.zshrc
+	# echo "    zsh-autosuggestions" >> ~/.zshrc
+	# echo "    zsh-syntax-highlighting" >> ~/.zshrc
 	echo "    $(DEVOPS_PROJECT_NAME)" >> ~/.zshrc
 	echo ")" >> ~/.zshrc
 	echo 'function tx-status { [ -n "$$TEXAS_SESSION_EXPIRY_TIME" ] && [ "$$(echo $$TEXAS_SESSION_EXPIRY_TIME | sed s/\[-_:\]//g)" -gt $$(date -u +"%Y%m%d%H%M%S") ] && ( [ -n "$$TEXAS_PROFILE" ] && echo $$TEXAS_PROFILE || echo $$TEXAS_ACCOUNT ) ||: }' >> ~/.zshrc
@@ -320,7 +306,8 @@ _macos-config-oh-my-zsh:
 	echo "POWERLEVEL9K_MODE=nerdfont-complete" >> ~/.zshrc
 	echo "POWERLEVEL9K_LEFT_PROMPT_ELEMENTS=(dir vcs)" >> ~/.zshrc
 	echo "POWERLEVEL9K_SHORTEN_DIR_LENGTH=3" >> ~/.zshrc
-	echo "POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status nvm pyenv jenv custom_texas root_indicator background_jobs time)" >> ~/.zshrc
+	# echo "POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status nvm pyenv jenv custom_texas background_jobs time)" >> ~/.zshrc
+	echo "POWERLEVEL9K_RIGHT_PROMPT_ELEMENTS=(status custom_texas background_jobs time)" >> ~/.zshrc
 	echo "POWERLEVEL9K_PROMPT_ON_NEWLINE=true" >> ~/.zshrc
 	echo "POWERLEVEL9K_DISABLE_CONFIGURATION_WIZARD=true" >> ~/.zshrc
 	echo "ZSH_THEME=powerlevel10k/powerlevel10k" >> ~/.zshrc
@@ -365,27 +352,27 @@ _macos-config-oh-my-zsh-make-devops:
 		echo "# env: Node"
 		echo "export NVM_DIR=\$$HOME/.nvm"
 		echo ". /usr/local/opt/nvm/nvm.sh"
-		echo ". /usr/local/opt/nvm/etc/bash_completion.d/nvm"
-		echo "autoload -U add-zsh-hook"
-		echo "load-nvmrc() {"
-		echo "  ("
-		echo "  local node_version=\"\$$(nvm version)\""
-		echo "  local nvmrc_path=\"\$$(nvm_find_nvmrc)\""
-		echo "  if [ -n \"\$$nvmrc_path\" ]; then"
-		echo "    local nvmrc_node_version=\$$(nvm version \"\$$(cat \"\$${nvmrc_path}\")\")"
-		echo "    if [ \"\$$nvmrc_node_version\" = \"N/A\" ]; then"
-		echo "      nvm install"
-		echo "    elif [ \"\$$nvmrc_node_version\" != \"\$$node_version\" ]; then"
-		echo "      nvm use"
-		echo "    fi"
-		echo "  elif [ \"\$$node_version\" != \"\$$(nvm version default)\" ]; then"
-		echo "    echo \"Reverting to nvm default version\""
-		echo "    nvm use default"
-		echo "  fi"
-		echo "  ) > /dev/null 2>&1"
-		echo "}"
-		echo "add-zsh-hook chpwd load-nvmrc"
-		echo "load-nvmrc"
+		# echo ". /usr/local/opt/nvm/etc/bash_completion.d/nvm"
+		# echo "autoload -U add-zsh-hook"
+		# echo "load-nvmrc() {"
+		# echo "  ("
+		# echo "  local node_version=\"\$$(nvm version)\""
+		# echo "  local nvmrc_path=\"\$$(nvm_find_nvmrc)\""
+		# echo "  if [ -n \"\$$nvmrc_path\" ]; then"
+		# echo "    local nvmrc_node_version=\$$(nvm version \"\$$(cat \"\$${nvmrc_path}\")\")"
+		# echo "    if [ \"\$$nvmrc_node_version\" = \"N/A\" ]; then"
+		# echo "      nvm install"
+		# echo "    elif [ \"\$$nvmrc_node_version\" != \"\$$node_version\" ]; then"
+		# echo "      nvm use"
+		# echo "    fi"
+		# echo "  elif [ \"\$$node_version\" != \"\$$(nvm version default)\" ]; then"
+		# echo "    echo \"Reverting to nvm default version\""
+		# echo "    nvm use default"
+		# echo "  fi"
+		# echo "  ) > /dev/null 2>&1"
+		# echo "}"
+		# echo "add-zsh-hook chpwd load-nvmrc"
+		# echo "load-nvmrc"
 		echo "# env: Serverless"
 		echo "export PATH=\"$$HOME/.serverless/bin:$$PATH\""
 		echo
@@ -398,19 +385,7 @@ _macos-config-oh-my-zsh-make-devops:
 
 _macos-config-oh-my-zsh-aws:
 	if [ ! -f $(DEV_OHMYZSH_DIR)/plugins/$(DEVOPS_PROJECT_NAME)/aws-platform.zsh ]; then
-		(
-			echo
-			echo "# export: AWS platform variables"
-			echo "export AWS_ACCOUNT_ID_MGMT=000000000000 # For Texas v2 use AWS_ACCOUNT_ID_TOOLS instead"
-			echo "export AWS_ACCOUNT_ID_NONPROD=000000000000"
-			echo "export AWS_ACCOUNT_ID_PROD=000000000000"
-			echo "export AWS_ACCOUNT_ID_LIVE_PARENT=000000000000"
-			echo "export AWS_ACCOUNT_ID_IDENTITIES=000000000000"
-			echo
-			echo "# export: Texas platform variables"
-			echo "export TEXAS_TLD_NAME=example.uk"
-			echo
-		) > $(DEV_OHMYZSH_DIR)/plugins/$(DEVOPS_PROJECT_NAME)/aws-platform.zsh
+		make aws-accounts-create-template-config-file-v1
 	fi
 
 _macos-config-command-line:

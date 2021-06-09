@@ -1,8 +1,8 @@
 _GIT_CONFIG_TIMESTAMP_FILE = $(TMP_DIR)/.git-config-secrets.timestamp
-#_GIT_CONFIG_FORCE =
+_GIT_CONFIG_TIMESTAMP := $(or $(_GIT_CONFIG_TIMESTAMP), 20210608221050)
 
 git-config: ### Configure local git repository
-	if ([ -d .git ] || git rev-parse --git-dir > /dev/null 2>&1) && ([ ! -f $(_GIT_CONFIG_TIMESTAMP_FILE) ] || [[ "$(_GIT_CONFIG_FORCE)" =~ ^(true|yes|y|on|1|TRUE|YES|Y|ON)$$ ]]) && [ $(BUILD_ID) -eq 0 ]; then
+	if ([ -d .git ] || git rev-parse --git-dir > /dev/null 2>&1) && ([ ! -f $(_GIT_CONFIG_TIMESTAMP_FILE) ] || [ $(_GIT_CONFIG_TIMESTAMP) -gt $$(cat $(_GIT_CONFIG_TIMESTAMP_FILE)) ]) && [ $(BUILD_ID) -eq 0 ]; then
 		git config branch.autosetupmerge false
 		git config branch.autosetuprebase always
 		git config commit.gpgsign true
@@ -24,7 +24,7 @@ git-config: ### Configure local git repository
 		chmod +x $(PROJECT_DIR)/.git/hooks/prepare-commit-msg
 		git secrets --register-aws
 		make git-secrets-load
-		echo $(BUILD_TIMESTAMP) > $(_GIT_CONFIG_TIMESTAMP_FILE)
+		echo $(_GIT_CONFIG_TIMESTAMP) > $(_GIT_CONFIG_TIMESTAMP_FILE)
 	fi
 
 git-check-if-branch-name-is-correct: ### Check if the branch name meets the accepted branch naming convention
