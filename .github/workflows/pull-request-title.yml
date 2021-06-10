@@ -1,0 +1,11 @@
+name: "Validate GitHub Pull Request Title"
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+jobs:
+  check-pull-request-title:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: |
+          [ $(make git-check-if-commit-msg-is-correct BUILD_COMMIT_MESSAGE="${{ github.event.pull_request.title }}") = true ]

@@ -23,6 +23,7 @@ TEXAS_TERRAFORM_STATE_STORE = nhsd-texasplatform-terraform-service-state-store-l
 TF_VAR_aws_profile = nhsd-ddc-exeter-texas-live-lk8s-$(AWS_ACCOUNT_NAME)
 TF_VAR_platform_zone = $(TEXAS_HOSTED_ZONE)
 
+TF_VAR_eks_terraform_state_key = eks/terraform.tfstate
 TF_VAR_route53_terraform_state_key = route53/terraform.tfstate
 TF_VAR_security_groups_k8s_terraform_state_key = security-groups-k8s/terraform.tfstate
 TF_VAR_security_groups_terraform_state_key = security-groups/terraform.tfstate
