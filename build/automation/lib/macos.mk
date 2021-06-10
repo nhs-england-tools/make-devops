@@ -21,7 +21,7 @@ macos-prepare:: ### Prepare for installation and configuration of the developmen
 macos-update:: ### Update all currently installed development dependencies
 	xcode-select --install 2> /dev/null ||:
 	which mas > /dev/null 2>&1 || brew install mas
-	mas upgrade $(mas list | grep -i xcode | awk '{ print $1 }')
+	mas upgrade $$(mas list | grep -i xcode | awk '{ print $$1 }')
 	brew update
 	brew upgrade ||:
 	brew tap buo/cask-upgrade
@@ -117,6 +117,15 @@ macos-install-additional:: ### Install additional development dependencies - opt
 	brew $$install --cask postman ||:
 	brew $$install --cask spectacle ||:
 	brew $$install --cask tunnelblick ||:
+	# Protoman
+	protoman_ver=$$(curl -s https://github.com/spluxx/Protoman/releases | grep "releases/tag" | grep -o "[0-9]*\.[0-9]*\(\.[0-9]*\)\?" | sort -V -r | head -n 1)
+	curl -fsSL https://github.com/spluxx/Protoman/releases/download/v$${protoman_ver}/Protoman-$${protoman_ver}.dmg -o /tmp/Protoman-$${protoman_ver}.dmg
+	sudo hdiutil attach /tmp/Protoman-$${protoman_ver}.dmg
+	cd "/Volumes/Protoman $${protoman_ver}"
+	sudo cp -rf Protoman.app /Applications
+	cd -
+	sudo hdiutil detach "/Volumes/Protoman $${protoman_ver}"
+	rm -rf /tmp/Protoman-$${protoman_ver}.dmg
 	#brew $$install --cask microsoft-remote-desktop-beta ||:
 	# # Pinned package: vagrant
 	# brew reinstall --cask --force \

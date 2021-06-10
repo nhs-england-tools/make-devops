@@ -1,0 +1,23 @@
+name: "Measure Code Quality by SonarCloud"
+on:
+  push:
+    branches: [master]
+  pull_request:
+    types: [opened, synchronize, reopened]
+jobs:
+  check-code-quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: sonarsource/sonarcloud-github-action@master
+        # SEE: https://github.com/SonarSource/sonarcloud-github-action
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          projectBaseDir: ./application
+          args: >
+            -Dsonar.organization=ORG_NAME_TO_REPLACE
+            -Dsonar.projectKey=PROJECT_ID_TO_REPLACE

@@ -1,8 +1,11 @@
+TEST_GIT_COMMIT_MESSAGE_FILE = $(TMP_DIR_REL)/test-git-commit-message-file.txt
+
 test-git:
 	make test-git-setup
 	tests=( \
 		test-git-config \
 		test-git-check-if-branch-name-is-correct \
+		test-git-check-if-commit-msg-is-correct \
 		test-git-secrets-load \
 		test-git-secrets-add-banned \
 		test-git-secrets-add-allowed \
@@ -57,6 +60,33 @@ test-git-config:
 
 test-git-check-if-branch-name-is-correct:
 	mk_test_skip
+
+test-git-check-if-commit-msg-is-correct:
+	# arrange
+	echo -e "MDO-123 This is a test\n\nHere is more information" > $(TEST_GIT_COMMIT_MESSAGE_FILE)
+	# assert
+	mk_test "01" "$$(make git-check-if-commit-msg-is-correct BUILD_BRANCH=master BUILD_COMMIT_MESSAGE="MDO-123 This is a test") = true"
+	mk_test "02" "$$(make git-check-if-commit-msg-is-correct BUILD_BRANCH=master BUILD_COMMIT_MESSAGE="Update automation scripts") = true"
+	mk_test "03" "$$(make git-check-if-commit-msg-is-correct BUILD_BRANCH=master BUILD_COMMIT_MESSAGE="Update automation scripts to 20210609082320-b083a16") = true"
+	mk_test "04" "$$(make git-check-if-commit-msg-is-correct BUILD_BRANCH=master BUILD_COMMIT_MESSAGE="Update dependencies") = true"
+	mk_test "05" "$$(make git-check-if-commit-msg-is-correct BUILD_BRANCH=master BUILD_COMMIT_MESSAGE="Update versions") = true"
+	mk_test "06" "$$(make git-check-if-commit-msg-is-correct BUILD_BRANCH=master BUILD_COMMIT_MESSAGE="Update documentation") = true"
+	mk_test "07" "$$(make git-check-if-commit-msg-is-correct BUILD_BRANCH=master BUILD_COMMIT_MESSAGE="Refactor code ...") = true"
+	mk_test "08" "$$(make git-check-if-commit-msg-is-correct BUILD_BRANCH=master BUILD_COMMIT_MESSAGE="Fix code ...") = true"
+	mk_test "09" "$$(make git-check-if-commit-msg-is-correct BUILD_BRANCH=master BUILD_COMMIT_MESSAGE="Test code ...") = true"
+	mk_test "10" "$$(make git-check-if-commit-msg-is-correct BUILD_BRANCH=master BUILD_COMMIT_MESSAGE="Release to live") = true"
+	mk_test "11" "$$(make git-check-if-commit-msg-is-correct BUILD_BRANCH=master BUILD_COMMIT_MESSAGE="Include gibberish in this commit message") = false"
+	mk_test "12" "$$(make git-check-if-commit-msg-is-correct BUILD_BRANCH=master BUILD_COMMIT_MESSAGE="start with a lowercase letter") = false"
+	mk_test "13" "$$(make git-check-if-commit-msg-is-correct BUILD_BRANCH=task/MDO-123_This_is_a_test BUILD_COMMIT_MESSAGE="MDO-123 Failing commit") = false"
+	mk_test "14" "$$(make git-check-if-commit-msg-is-correct BUILD_BRANCH=task/MDO-123_This_is_a_test BUILD_COMMIT_MESSAGE="MDO-123 This commit message is ok") = true"
+	mk_test "15" "$$(make git-check-if-commit-msg-is-correct BUILD_BRANCH=task/MDO-123_This_is_a_test BUILD_COMMIT_MESSAGE="Another commit message that is ok") = true"
+	mk_test "16" "$$(make git-check-if-commit-msg-is-correct BUILD_BRANCH=task/MDO-123_This_is_a_test BUILD_COMMIT_MESSAGE="Trigger CI stages [ci:build-app,deploy-app,run-smoke-test]") = true"
+	mk_test "17" "$$(make git-check-if-commit-msg-is-correct BUILD_BRANCH=task/MDO-123_This_is_a_test BUILD_COMMIT_MESSAGE="$$(cat $(TEST_GIT_COMMIT_MESSAGE_FILE))") = true"
+	mk_test "18" "$$(make git-check-if-commit-msg-is-correct BUILD_BRANCH=task/Refactor BUILD_COMMIT_MESSAGE="Suitable length message, indeed") = true"
+	mk_test "19" "$$(make git-check-if-commit-msg-is-correct BUILD_BRANCH=task/Refactor BUILD_COMMIT_MESSAGE="Too long message, too long message, too long message, too long message, too long message") = false"
+	mk_test_complete
+	# clean up
+	rm -f $(TEST_GIT_COMMIT_MESSAGE_FILE)
 
 test-git-secrets-load:
 	mk_test_skip

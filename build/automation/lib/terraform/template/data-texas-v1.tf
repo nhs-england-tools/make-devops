@@ -1,6 +1,15 @@
 # ==============================================================================
 # Data
 
+data "terraform_remote_state" "eks" {
+  backend = "s3"
+  config = {
+    key    = var.eks_terraform_state_key
+    bucket = var.terraform_platform_state_store
+    region = var.aws_region
+  }
+}
+
 data "terraform_remote_state" "route53" {
   backend = "s3"
   config = {
@@ -42,6 +51,7 @@ data "terraform_remote_state" "vpc" {
 
 variable "terraform_platform_state_store" {}
 
+variable "eks_terraform_state_key" {}
 variable "route53_terraform_state_key" {}
 variable "security_groups_k8s_terraform_state_key" {}
 variable "security_groups_terraform_state_key" {}

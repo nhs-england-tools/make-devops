@@ -99,7 +99,8 @@ devops-copy: ### Copy the DevOps automation toolchain scripts from this codebase
 			$(DIR)/build
 		[ $$is_github == true ] && (
 			mkdir -p $(DIR)/.github/workflows
-			cp -fv build/automation/lib/project/template/.github/workflows/check-pull-request-title.yml $(DIR)/.github/workflows
+			cp -fv build/automation/lib/project/template/.github/workflows/*.yml $(DIR)/.github/workflows
+			make file-replace-variables-in-dir DIR=$(DIR)/.github/workflows
 			cp -fv build/automation/lib/project/template/.github/CODEOWNERS $(DIR)/.github
 			cp -fv build/automation/lib/project/template/.gitattributes $(DIR)
 		)
@@ -210,7 +211,8 @@ devops-update devops-synchronise: ### Update/upgrade the DevOps automation toolc
 			$(PARENT_PROJECT_DIR)/build
 		[ $$is_github == true ] && (
 			mkdir -p $(PARENT_PROJECT_DIR)/.github/workflows
-			cp -fv build/automation/lib/project/template/.github/workflows/check-pull-request-title.yml $(PARENT_PROJECT_DIR)/.github/workflows
+			cp -fv build/automation/lib/project/template/.github/workflows/*.yml $(PARENT_PROJECT_DIR)/.github/workflows
+			make file-replace-variables-in-dir DIR=$(PARENT_PROJECT_DIR)/.github/workflows
 			cp -fv build/automation/lib/project/template/.github/CODEOWNERS $(PARENT_PROJECT_DIR)/.github
 			cp -fv build/automation/lib/project/template/.gitattributes $(PARENT_PROJECT_DIR)
 		)
@@ -297,6 +299,7 @@ _devops-project-clean: ### Clean up the project structure - mandatory: DIR=[proj
 		~/bin/toggle-natural-scrolling.sh \
 		~/usr/mfa-aliases
 	[ -n "$(DIR)" ] && rm -rf \
+		$(DIR)/.github/workflows/check-pull-request-title.yml \
 		$(DIR)/build/automation/bin/markdown.pl \
 		$(DIR)/build/automation/etc/githooks/scripts/*.default \
 		$(DIR)/build/automation/etc/platform-texas* \
@@ -514,9 +517,12 @@ JQ_DIR_REL := $(shell echo $(abspath $(LIB_DIR)/jq) | sed "s;$(PROJECT_DIR);;g")
 GIT_BRANCH_PATTERN_MAIN := ^(master|develop)$$
 GIT_BRANCH_PATTERN_PREFIX := ^(task|spike|bugfix|hotfix|fix|test|release|migration)
 GIT_BRANCH_PATTERN_SUFFIX := [A-Za-z]{2,5}-([0-9]{1,5}|X{1,5})_[A-Za-z0-9_]{4,64}$$
-GIT_BRANCH_PATTERN_ADDITIONAL := ^task/Update_automation_scripts$$|^task/Update_versions$$|^task/Refactor$$
+GIT_BRANCH_PATTERN_ADDITIONAL := ^(task/Update_(automation_scripts|dependencies|documentation|tests|versions)|task/Refactor)$$
 GIT_BRANCH_PATTERN := $(GIT_BRANCH_PATTERN_MAIN)|$(GIT_BRANCH_PATTERN_PREFIX)/$(GIT_BRANCH_PATTERN_SUFFIX)|$(GIT_BRANCH_PATTERN_ADDITIONAL)
 GIT_TAG_PATTERN := [0-9]{12,14}-[a-z]{3,10}
+GIT_COMMIT_MESSAGE_PATTERN_MAIN := ^(([A-Za-z]{2,5}-([0-9]{1,5}|X{1,5}) [A-Z][a-z]+ [[:print:]]+ [[:print:]]+|Update (automation scripts|dependencies|documentation|tests|versions))[[:print:]]*)$$|^((Refactor|Fix|Test|Release) [[:print:]]+)$$
+GIT_COMMIT_MESSAGE_PATTERN_ADDITIONAL := ^([A-Za-z]{2,5}-([0-9]{1,5}|X{1,5}) [A-Z][a-z]+ [[:print:]]+ [[:print:]]+|[A-Z][a-z]+ [[:print:]]+ [[:print:]]+)$$|([A-Z][[:print:]]+ \[ci:[[:blank:]]?[,a-z0-9-]+\])
+GIT_COMMIT_MESSAGE_MAX_LENGTH := 70
 
 BUILD_DATE := $(or $(BUILD_DATE), $(shell date -u +"%Y-%m-%dT%H:%M:%S%z"))
 BUILD_TIMESTAMP := $(shell date --date=$(BUILD_DATE) -u +"%Y%m%d%H%M%S" 2> /dev/null)
@@ -529,6 +535,7 @@ BUILD_COMMIT_AUTHOR_NAME := $(shell git show -s --format='%an' HEAD 2> /dev/null
 BUILD_COMMIT_AUTHOR_EMAIL := $(shell git show -s --format='%ae' HEAD 2> /dev/null ||:)
 BUILD_COMMIT_MESSAGE := $(shell git log -1 --pretty=%B HEAD 2> /dev/null ||:)
 BUILD_TAG := $(shell echo "$(BUILD_TAG)" | grep -Eq ^jenkins- && echo $(BUILD_TIMESTAMP)-$(BUILD_COMMIT_HASH) || echo $(or $(BUILD_TAG), $(BUILD_TIMESTAMP)-$(BUILD_COMMIT_HASH)))
+
 USER_ID := $(shell id -u)
 GROUP_ID := $(shell id -g)
 TTY_ENABLE := $(or $(TTY_ENABLE), $(shell [ $(BUILD_ID) -eq 0 ] && echo true || echo false))

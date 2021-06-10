@@ -1,8 +1,8 @@
 _GIT_CONFIG_TIMESTAMP_FILE = $(TMP_DIR)/.git-config-secrets.timestamp
-_GIT_CONFIG_TIMESTAMP := $(or $(_GIT_CONFIG_TIMESTAMP), 20210608221050)
+_GIT_CONFIG_TIMESTAMP := $(or $(_GIT_CONFIG_TIMESTAMP), 20210609154706)
 
 git-config: ### Configure local git repository
-	if ([ -d .git ] || git rev-parse --git-dir > /dev/null 2>&1) && ([ ! -f $(_GIT_CONFIG_TIMESTAMP_FILE) ] || [ $(_GIT_CONFIG_TIMESTAMP) -gt $$(cat $(_GIT_CONFIG_TIMESTAMP_FILE)) ]) && [ $(BUILD_ID) -eq 0 ]; then
+	if ([ -d .git ] || git rev-parse --git-dir > /dev/null 2>&1) && ([ ! -f $(_GIT_CONFIG_TIMESTAMP_FILE) ] || [ $(_GIT_CONFIG_TIMESTAMP) -gt $$(cat $(_GIT_CONFIG_TIMESTAMP_FILE)) ]); then
 		git config branch.autosetupmerge false
 		git config branch.autosetuprebase always
 		git config commit.gpgsign true
@@ -27,8 +27,21 @@ git-config: ### Configure local git repository
 		echo $(_GIT_CONFIG_TIMESTAMP) > $(_GIT_CONFIG_TIMESTAMP_FILE)
 	fi
 
-git-check-if-branch-name-is-correct: ### Check if the branch name meets the accepted branch naming convention
+git-check-if-branch-name-is-correct: ### Check if the branch name meets the accepted convention - optional: BUILD_BRANCH
 	if [[ $(BUILD_BRANCH) =~ $(GIT_BRANCH_PATTERN) ]]; then
+		echo true
+	else
+		echo false
+	fi
+
+git-check-if-commit-msg-is-correct: ### Check if the commit message meets the accepted convention - optional: BUILD_BRANCH,BUILD_COMMIT_MESSAGE
+	if [[ $(BUILD_BRANCH) =~ $(GIT_BRANCH_PATTERN_MAIN) ]] && \
+			[[ "$$(echo '$(BUILD_COMMIT_MESSAGE)' | head -1)" =~ $(GIT_COMMIT_MESSAGE_PATTERN_MAIN) ]] && \
+			[ "$$(echo '$(BUILD_COMMIT_MESSAGE)' | head -1 | wc -m)" -le $(GIT_COMMIT_MESSAGE_MAX_LENGTH) ]; then
+		echo true
+	elif ! [[ $(BUILD_BRANCH) =~ $(GIT_BRANCH_PATTERN_MAIN) ]] && \
+			[[ "$$(echo '$(BUILD_COMMIT_MESSAGE)' | head -1)" =~ $(GIT_COMMIT_MESSAGE_PATTERN_ADDITIONAL) ]] && \
+			[ "$$(echo '$(BUILD_COMMIT_MESSAGE)' | head -1 | wc -m)" -le $(GIT_COMMIT_MESSAGE_MAX_LENGTH) ]; then
 		echo true
 	else
 		echo false
@@ -143,6 +156,7 @@ git-tag-clear: ### Remove tags from the specified commit - optional: COMMIT=[co
 
 .SILENT: \
 	git-check-if-branch-name-is-correct \
+	git-check-if-commit-msg-is-correct \
 	git-commit-get-hash git-hash \
 	git-commit-get-message git-msg \
 	git-commit-get-timestamp git-ts \
