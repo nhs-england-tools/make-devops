@@ -12,4 +12,4 @@ jobs:
           [ $(make git-check-if-commit-msg-is-correct BUILD_COMMIT_MESSAGE="${{ github.event.pull_request.title }}") = true ]
       - name: Check commit message
         run: |
-          [ $(make git-check-if-commit-msg-is-correct = true ]
+          [ $(make git-check-if-commit-msg-is-correct) = true ]
