@@ -515,14 +515,15 @@ INFRASTRUCTURE_DIR_REL = $(shell echo $(INFRASTRUCTURE_DIR) | sed "s;$(PROJECT_D
 JQ_DIR_REL := $(shell echo $(abspath $(LIB_DIR)/jq) | sed "s;$(PROJECT_DIR);;g")
 
 GIT_BRANCH_PATTERN_MAIN := ^(master|develop)$$
-GIT_BRANCH_PATTERN_PREFIX := ^(task|spike|bugfix|hotfix|fix|test|release|migration)
-GIT_BRANCH_PATTERN_SUFFIX := [A-Za-z]{2,5}-([0-9]{1,5}|X{1,5})_[A-Za-z0-9_]{4,64}$$
-GIT_BRANCH_PATTERN_ADDITIONAL := ^(task/Update_(automation_scripts|dependencies|documentation|tests|versions)|task/Refactor)$$
+GIT_BRANCH_PATTERN_PREFIX := ^(task|spike|automation|test|bugfix|hotfix|fix|release|migration)
+GIT_BRANCH_PATTERN_SUFFIX := ([A-Z]{2,5}-([0-9]{1,5}|X{1,5})_[A-Z][a-z]+_[A-Za-z0-9]+_[A-Za-z0-9_]+)$$
+GIT_BRANCH_PATTERN_ADDITIONAL := ^(task/Update_(automation_scripts|dependencies|documentation|tests|versions)|task/Refactor|devops/[A-Z][a-z]+_[A-Za-z0-9_]+_[A-Za-z0-9_]+)$$
 GIT_BRANCH_PATTERN := $(GIT_BRANCH_PATTERN_MAIN)|$(GIT_BRANCH_PATTERN_PREFIX)/$(GIT_BRANCH_PATTERN_SUFFIX)|$(GIT_BRANCH_PATTERN_ADDITIONAL)
+GIT_BRANCH_MAX_LENGTH := 72
 GIT_TAG_PATTERN := [0-9]{12,14}-[a-z]{3,10}
-GIT_COMMIT_MESSAGE_PATTERN_MAIN := ^(([A-Za-z]{2,5}-([0-9]{1,5}|X{1,5}) [A-Z][a-z]+ [[:print:]]+ [[:print:]]+|Update (automation scripts|dependencies|documentation|tests|versions))[[:print:]]*)$$|^((Refactor|Fix|Test|Release) [[:print:]]+)$$
-GIT_COMMIT_MESSAGE_PATTERN_ADDITIONAL := ^([A-Za-z]{2,5}-([0-9]{1,5}|X{1,5}) [A-Z][a-z]+ [[:print:]]+ [[:print:]]+|[A-Z][a-z]+ [[:print:]]+ [[:print:]]+)$$|([A-Z][[:print:]]+ \[ci:[[:blank:]]?[,a-z0-9-]+\])
-GIT_COMMIT_MESSAGE_MAX_LENGTH := 70
+GIT_COMMIT_MESSAGE_PATTERN_MAIN := ^(([A-Z]{2,5}-([0-9]{1,5}|X{1,5}) [A-Z][a-z]+ [[:print:]]+ [[:print:]]+[^!?,.:;=-]|Update (automation scripts|dependencies|documentation|tests|versions))([[:print:]][^!?,.:;=-])*)$$|^((Update|Refactor|Automate|Test|Fix|Release|Migrate) [[:print:]]+ [[:print:]]+[^!?,.:;=-])$$
+GIT_COMMIT_MESSAGE_PATTERN_ADDITIONAL := ^([A-Z]{2,5}-([0-9]{1,5}|X{1,5}) [A-Z][a-z]+ [[:print:]]+ [[:print:]]+[^!?,.:;=-]|[A-Z][a-z]+ [[:print:]]+ [[:print:]]+[^!?,.:;=-])$$|([A-Z][[:print:]]+ \[ci:[[:blank:]]?[,a-z0-9-]+\])
+GIT_COMMIT_MESSAGE_MAX_LENGTH := 72
 
 BUILD_DATE := $(or $(BUILD_DATE), $(shell date -u +"%Y-%m-%dT%H:%M:%S%z"))
 BUILD_TIMESTAMP := $(shell date --date=$(BUILD_DATE) -u +"%Y%m%d%H%M%S" 2> /dev/null)

@@ -36,7 +36,7 @@ From within the root directory of your project, please run the following command
 
     make macos-setup
 
-The above make target ensures that your MacBook is configured correctly for development and the setup is consistent across the whole team. In a nutshell it will
+The above make target is equivalent to the `curl` command given earlier and it ensures that your MacBook is configured correctly for development and the setup is consistent across the whole team. In a nutshell it will
 
 - Update all the installed software packages
 - Install any missing essential, additional and corporate software packages
@@ -129,11 +129,13 @@ Upload the public key to your GitHub and GitLab accounts using the links below.
 
 ### Git usage
 
+Principles to follow
+
 - A direct merge to the canonical branch is not allowed and can only be done by creating a pull request (merge request)
 - If not stated otherwise the only long-lived branch is master, i.e. canonical branch
 - Any new branch should be created from master
-- The preferred short-lived branch name format is `task/JIRA-XXX_Descriptive_name`
-- The preferred hotfix branch name format is `bugfix/JIRA-XXX_Descriptive_name`
+- The preferred short-lived branch name format is `task/JIRA-XXX_Descriptive_branch_name`
+- The preferred hotfix branch name format is `bugfix/JIRA-XXX_Descriptive_branch_name`
 - All commits must be cryptographically signed
 - Commits should be made often and pushed to the remote
 - Use rebase to get the latest commits from the master while working with a short-lived or a bugfix branch
@@ -142,26 +144,39 @@ Upload the public key to your GitHub and GitLab accounts using the links below.
 
 Working on a new task
 
-    git checkout -b task/JIRA-XXX_Descriptive_name
+    git checkout -b task/JIRA-XXX_Descriptive_branch_name
     # Make your changes here...
     git add .
-    git commit -S -m "Description of the change"
-    git push --set-upstream origin task/JIRA-XXX_Descriptive_name
+    git commit -S -m "Meaningful description of change"
+    git push --set-upstream origin task/JIRA-XXX_Descriptive_branch_name
 
-Branch naming convention should follow the pattern of `^(task|bugfix)/[A-Za-z]{2,5}-[0-9]{1,5}_[A-Za-z0-9_]{4,64}$`.
+Branch naming convention should follow the pattern of `^(task|bugfix)/[A-Z]{2,5}-([0-9]{1,5}|X{1,5})_[A-Z][a-z]+_[A-Za-z0-9]+_[A-Za-z0-9_]+$`.
+
+There are other branch naming patterns allowed with a specific purpose in mind. For a comprehensive list, please see the [init.mk](../build/automation/init.mk) or [git.test.mk](../build/automation/lib/git.mk) files.
+
+- `task/Update_automation_scripts` - used to update the Make DevOps scripts and created automatically when running `make devops-update`
+- `task/Update_dependencies` - update versions or/and content of external dependencies
+- `task/Update_documentation` - update documentation, e.g. diagrams, ADR entries, API documentation
+- `task/Update_tests` - update tests usually done as an automated task, e.g. API contracts
+- `task/Update_versions` - update versions of packages, synonym of the `task/Update_dependencies` branch
+- `task/Refactor` - any type of short-lived refactoring that may not have a corresponding entry in the backlog
+- `spike/JIRA-XXX_Descriptive_branch_name` - exploratory development work
+- `automation/JIRA-XXX_Descriptive_branch_name` - improvements to the automation scripts and processes within the project
+- `test/JIRA-XXX_Descriptive_branch_name` - tests must be part of the development work, an exception might be a higher-level test implementation, e.g. smoke test
+- `release/`, `migration/` and `devops/` branch prefixes should not be used in the normal circumstances
 
 Contributing to an already existing branch
 
-    git checkout task/JIRA-XXX_Descriptive_name
+    git checkout task/JIRA-XXX_Descriptive_branch_name
     git pull
     # Make your changes here...
     git add .
-    git commit -S -m "Description of the change"
+    git commit -S -m "Meaningful description of change"
     git push
 
 Rebasing a branch onto master
 
-    git checkout task/JIRA-XXX_Descriptive_name
+    git checkout task/JIRA-XXX_Descriptive_branch_name
     git rebase -i HEAD~X                                # Squash X number of commits, all into one
     # When prompted change commit type to `squash` for all the commits except the top one
     # On the following screen replace pre-inserted comments by a single summary
@@ -169,7 +184,7 @@ Rebasing a branch onto master
 
     git checkout master
     git pull
-    git checkout task/JIRA-XXX_Descriptive_name
+    git checkout task/JIRA-XXX_Descriptive_branch_name
     git rebase master
     # Resolve conflicts
     git add .
@@ -180,7 +195,7 @@ Merging a branch to master - this should be done only in an exceptional circumst
 
     git checkout master
     git pull --prune                                    # Make sure master is up-to-date
-    git checkout task/JIRA-XXX_Descriptive_name
+    git checkout task/JIRA-XXX_Descriptive_branch_name
     git pull                                            # Make sure the task branch is up-to-date
 
     git rebase -i HEAD~X                                # Squash X number of commits, all into one
@@ -189,22 +204,22 @@ Merging a branch to master - this should be done only in an exceptional circumst
 
     git rebase master                                   # Rebase the task branch on top of master
     git checkout master                                 # Switch to master branch
-    git merge -ff task/JIRA-XXX_Descriptive_name        # Fast-forward merge
+    git merge -ff task/JIRA-XXX_Descriptive_branch_name # Fast-forward merge
     git push                                            # Push master to remote
 
-    git push -d origin task/JIRA-XXX_Descriptive_name   # Remove remote branch
-    git branch -d task/JIRA-XXX_Descriptive_name        # Remove local branch
+    git push -d origin task/JIRA-XXX_Descriptive_branch_name   # Remove remote branch
+    git branch -d task/JIRA-XXX_Descriptive_branch_name        # Remove local branch
 
 If JIRA is currently not in use to track project changes, please drop any reference to it and omit `JIRA-XXX` in your commands.
 
 ### Git commit message
 
 - Separate subject from body with a blank line
-- Do not end the subject line with a period
+- Do not end the subject line with a punctuation mark
 - Capitalise the subject line and each paragraph
 - Use the imperative mood in the subject line
 - Wrap lines at 72 characters
-- Use the body to explain what and why you have done something
+- Use the body to explain what and why you have done something, which should be done as part of a PR/MR description
 
 Example:
 
@@ -228,11 +243,12 @@ Example:
 
 Git hooks are located in `build/automation/etc/githooks/scripts` and executed automatically on each commit. They are as follows:
 
-- `python-code-pre-commit.sh.off`
-- `branch-name-pre-commit.sh`
-- `editorconfig-pre-commit.sh`
-- `git-secret-pre-commit.sh`
-- `terraform-format-pre-commit.sh`
+- [branch-name-pre-commit.sh](../build/automation/etc/githooks/scripts/branch-name-pre-commit.sh)
+- [editorconfig-pre-commit.sh](../build/automation/etc/githooks/scripts/editorconfig-pre-commit.sh)
+- [git-message-commit-msg.sh](../build/automation/etc/githooks/scripts/git-message-commit-msg.sh)
+- [git-secret-pre-commit.sh](../build/automation/etc/githooks/scripts/git-secret-pre-commit.sh)
+- [python-code-pre-commit.sh](../build/automation/etc/githooks/scripts/python-code-pre-commit.sh)
+- [terraform-format-pre-commit.sh](../build/automation/etc/githooks/scripts/terraform-format-pre-commit.sh)
 
 ### Git tags
 
@@ -240,7 +256,7 @@ Aim at driving more complex deployment workflows by tags with an exception of th
 
 ## Pull request (merge request)
 
-- Set the title to `JIRA-XXX Descriptive name`, where `JIRA-XXX` is the ticket reference number
+- Set the title to `JIRA-XXX Descriptive branch name`, where `JIRA-XXX` is the ticket reference number
 - Ensure all commits will be squashed and the source branch will be removed once the request is accepted
 - Notify the team on Slack to give your colleagues opportunity to review changes and share the knowledge
 - If the change has not been pair or mob programmed it must follow the code review process and be approved by at least one peer, all discussions must be resolved

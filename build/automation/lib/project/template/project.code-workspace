@@ -19,7 +19,6 @@
     "explorer.autoReveal": true,
     "explorer.sortOrder": "type",
     "extensions.ignoreRecommendations": true,
-    "extensions.showRecommendationsOnlyOnDemand": true,
     "files.associations": {
       "Jenkinsfile*": "jenkinsfile"
     },
@@ -95,17 +94,14 @@
       "editor.insertSpaces": true
     },
     "[javascript]": {
-      "editor.defaultFormatter": "esbenp.prettier-vscode",
       "editor.insertSpaces": true,
       "editor.tabSize": 2
     },
     "[javascriptreact]": {
-      "editor.defaultFormatter": "esbenp.prettier-vscode",
       "editor.insertSpaces": true,
       "editor.tabSize": 2
     },
     "[json]": {
-      "editor.defaultFormatter": "esbenp.prettier-vscode",
       "editor.insertSpaces": true,
       "editor.tabSize": 2
     },
@@ -118,12 +114,10 @@
       "editor.tabSize": 2
     },
     "[typescript]": {
-      "editor.defaultFormatter": "esbenp.prettier-vscode",
       "editor.insertSpaces": true,
       "editor.tabSize": 2
     },
     "[typescriptreact]": {
-      "editor.defaultFormatter": "esbenp.prettier-vscode",
       "editor.insertSpaces": true,
       "editor.tabSize": 2
     },
