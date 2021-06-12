@@ -7,6 +7,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: Check last commit message
         run: |
           [ $(make git-check-if-commit-msg-is-correct DEBUG=1 BUILD_BRANCH="${{ github.head_ref }}" BUILD_COMMIT_MESSAGE="$(git log --format=%B -n 1 ${{ github.event.after }})") = true ]
