@@ -170,27 +170,33 @@ MFA to the right AWS account using the following command
 
 #### System Context Diagram
 
-Include a link to the [C4 model](https://c4model.com/) System Context diagram
+Include an image of the [C4 model](https://c4model.com/) System Context diagram exported as a `.png` file from the draw.io application.
+
+<img src="./documentation/diagrams/C4%20model%20-%20System%20Context.png" width="1024" /><br /><br />
 
 #### Container Diagram
 
-Include a link to the [C4 model](https://c4model.com/) Container diagram
+Include an image of the [C4 model](https://c4model.com/) Container diagram exported as a `.png` file from the draw.io application.
+
+<img src="./documentation/diagrams/C4%20model%20-%20Container.png" width="1024" /><br /><br />
 
 #### Component Diagram
 
-Include a link to the [C4 model](https://c4model.com/) Component diagram
+Include an image of the [C4 model](https://c4model.com/) Component diagram exported as a `.png` file from the draw.io application.
+
+<img src="./documentation/diagrams/C4%20model%20-%20Component.png" width="1024" /><br /><br />
 
 #### Processes and Data Flow
 
-Include a link to the Processes and Data Flow diagram
+Include an image of the Processes and Data Flow diagram
 
 #### Infrastructure
 
-Include a link to the Infrastructure diagram. Please, be aware that any sensitive information that can be potentially misused either directly or indirectly must not be stored and accessible publicly. This could be IP addresses, domain names or detailed infrastructure information.
+Include an image of the Infrastructure diagram. Please, be aware that any sensitive information that can be potentially misused either directly or indirectly must not be stored and accessible publicly. This could be IP addresses, domain names or detailed infrastructure information.
 
 #### Networking
 
-Include a link to the Networking diagram. Please, be aware that any sensitive information must not be stored and accessible publicly. This could be IP addresses, domain names or detailed networking information.
+Include an image of the Networking diagram. Please, be aware that any sensitive information must not be stored and accessible publicly. This could be IP addresses, domain names or detailed networking information.
 
 ### Integration
 
