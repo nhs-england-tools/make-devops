@@ -97,6 +97,9 @@ devops-copy: ### Copy the DevOps automation toolchain scripts from this codebase
 			--exclude=jenkins/Jenkinsfile* \
 			build/* \
 			$(DIR)/build
+		# ---
+		make _devops-project-update-variables DIR=$(DIR)
+		# ---
 		[ $$is_github == true ] && (
 			mkdir -p $(DIR)/.github/workflows
 			cp -fv build/automation/lib/project/template/.github/workflows/*.yml $(DIR)/.github/workflows
@@ -209,6 +212,9 @@ devops-update devops-synchronise: ### Update/upgrade the DevOps automation toolc
 			--exclude=jenkins/Jenkinsfile* \
 			build/* \
 			$(PARENT_PROJECT_DIR)/build
+		# ---
+		make _devops-project-update-variables DIR=$(PARENT_PROJECT_DIR)
+		# ---
 		[ $$is_github == true ] && (
 			mkdir -p $(PARENT_PROJECT_DIR)/.github/workflows
 			cp -fv build/automation/lib/project/template/.github/workflows/*.yml $(PARENT_PROJECT_DIR)/.github/workflows
@@ -285,6 +291,66 @@ devops-update devops-synchronise: ### Update/upgrade the DevOps automation toolc
 		fi
 		sync && version && cleanup && commit
 	fi
+
+_devops-project-update-variables: ### Set up project variables - mandatory: DIR=[project directory]; optional: ALWAYS_ASK=true
+	file=$(DIR)/build/automation/var/project.mk
+	pg=$$(cat $$file | grep "PROJECT_GROUP = " | sed "s/PROJECT_GROUP = //")
+	pgs=$$(cat $$file | grep "PROJECT_GROUP_SHORT = " | sed "s/PROJECT_GROUP_SHORT = //")
+	pn=$$(cat $$file | grep "PROJECT_NAME = " | sed "s/PROJECT_NAME = //")
+	pns=$$(cat $$file | grep "PROJECT_NAME_SHORT = " | sed "s/PROJECT_NAME_SHORT = //")
+	pdn=$$(cat $$file | grep "PROJECT_DISPLAY_NAME = " | sed "s/PROJECT_DISPLAY_NAME = //")
+	if [[ ! "$(ALWAYS_ASK)" =~ ^(true|yes|y|on|1|TRUE|YES|Y|ON)$$ ]]; then
+		if [ "$$pg" != 'uec/tools' ] && [ "$$pgs" != 'uec-tools' ] && [ "$$pn" != 'make-devops' ] && [ "$$pns" != 'mdo' ] && [ "$$pdn" != 'Make DevOps' ]; then
+			exit 0
+		fi
+	fi
+	printf "\nPlease, set each project variable to a valid value or press ENTER to leave it unchanged.\n\n"
+	read -p "PROJECT_GROUP        ($$pg) : " new_pg
+	read -p "PROJECT_GROUP_SHORT  ($$pgs) : " new_pgs
+	read -p "PROJECT_NAME         ($$pn) : " new_pn
+	read -p "PROJECT_NAME_SHORT   ($$pns) : " new_pns
+	read -p "PROJECT_DISPLAY_NAME ($$pdn) : " new_pdn
+	if [ -n "$$new_pg" ]; then
+		make -s file-replace-content \
+			FILE=$$file \
+			OLD="PROJECT_GROUP = $$pg" \
+			NEW="PROJECT_GROUP = $$new_pg" \
+		> /dev/null 2>&1
+	fi
+	if [ -n "$$new_pgs" ]; then
+		make -s file-replace-content \
+			FILE=$$file \
+			OLD="PROJECT_GROUP_SHORT = $$pgs" \
+			NEW="PROJECT_GROUP_SHORT = $$new_pgs" \
+		> /dev/null 2>&1
+	fi
+	if [ -n "$$new_pn" ]; then
+		make -s file-replace-content \
+			FILE=$$file \
+			OLD="PROJECT_NAME = $$pn" \
+			NEW="PROJECT_NAME = $$new_pn" \
+		> /dev/null 2>&1
+	fi
+	if [ -n "$$new_pns" ]; then
+		make -s file-replace-content \
+			FILE=$$file \
+			OLD="PROJECT_NAME_SHORT = $$pns" \
+			NEW="PROJECT_NAME_SHORT = $$new_pns" \
+		> /dev/null 2>&1
+	fi
+	if [ -n "$$new_pdn" ]; then
+		make -s file-replace-content \
+			FILE=$$file \
+			OLD="PROJECT_DISPLAY_NAME = $$pdn" \
+			NEW="PROJECT_DISPLAY_NAME = $$new_pdn" \
+		> /dev/null 2>&1
+	fi
+	printf "\nFILE: $$file\n\n"
+	tput setaf 4
+	cat $$file
+	tput setaf 2
+	printf "\nThe project variables have been set sucessfully!\n\n"
+	tput sgr0
 
 _devops-project-clean: ### Clean up the project structure - mandatory: DIR=[project directory]
 	# Remove not needed project files

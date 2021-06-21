@@ -9,9 +9,21 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
+      - name: Get commit message
+        if: github.event_name == 'push'
+        run: |
+          echo "BUILD_COMMIT_MESSAGE<<EOF" >> $GITHUB_ENV
+          echo "$(git log --format=%B -n 1 HEAD)" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+      - name: Get commit message
+        if: github.event_name == 'pull_request'
+        run: |
+          echo "BUILD_COMMIT_MESSAGE<<EOF" >> $GITHUB_ENV
+          echo "$(git log --format=%B -n 1 HEAD^2)" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
       - name: Check last commit message
         run: |
-          [ $(make git-check-if-commit-msg-is-correct BUILD_BRANCH="${{ github.head_ref }}" BUILD_COMMIT_MESSAGE="$(git log --format=%B -n 1 ${{ github.event.after }})") = true ] && \
+          [ $(make git-check-if-commit-msg-is-correct BUILD_BRANCH="${{ github.head_ref }}" BUILD_COMMIT_MESSAGE="${{ env.BUILD_COMMIT_MESSAGE }}") = true ] && \
             exit 0 || make show-configuration | grep GIT_COMMIT_MESSAGE_ && exit 1
       - name: Check pull request title
         run: |
