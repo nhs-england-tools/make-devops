@@ -177,7 +177,7 @@ k8s-pod-get-status-phase: ### Get the pod status phase - return: [phase name]
 k8s-job-wait-to-complete: ### Wait for the job to complete - optional SECONDS=[number of seconds, defaults to 60]
 	seconds=$(or $(SECONDS), 60)
 	echo "Waiting for the job to complete in $$seconds seconds"
-	sleep 10 && kubectl logs --follow --namespace=$(K8S_NAMESPACE) $$(make k8s-job-get-pod-name) &
+	sleep 10 && kubectl logs --follow --namespace=$(K8S_JOB_NAMESPACE) $$(make k8s-job-get-pod-name) &
 	count=0
 	while [ $$count -lt $$seconds ]; do
 		if [ true == "$$(make k8s-job-has-failed)" ]; then
@@ -197,33 +197,33 @@ k8s-job-wait-to-complete: ### Wait for the job to complete - optional SECONDS=[n
 k8s-job-log: ### Show the job pod logs
 	eval "$$(make k8s-kubeconfig-export-variables)"
 	kubectl logs $$(make k8s-job-get-pod-name) \
-		--namespace=$(K8S_NAMESPACE)
+		--namespace=$(K8S_JOB_NAMESPACE)
 
 k8s-job-get-name: ### Get the name of the job - mandatory: PROFILE=[name]; return: [job name]
 	eval "$$(make k8s-kubeconfig-export-variables)"
 	kubectl get jobs \
-		--namespace=$(K8S_NAMESPACE) \
+		--namespace=$(K8S_JOB_NAMESPACE) \
 		--selector "env=$(ENVIRONMENT)" \
 		--output jsonpath='{.items..metadata.name}'
 
 k8s-job-get-pod-name: ### Get the name of the job pod - mandatory: PROFILE=[name]; return: [pod name]
 	eval "$$(make k8s-kubeconfig-export-variables)"
 	kubectl get pods \
-		--namespace=$(K8S_NAMESPACE) \
+		--namespace=$(K8S_JOB_NAMESPACE) \
 		--selector "env=$(ENVIRONMENT)" \
 		--output jsonpath='{.items..metadata.name}'
 
 k8s-job-has-completed: ### Show whether the job completed - return: [true|""]
 	eval "$$(make k8s-kubeconfig-export-variables)"
 	kubectl get jobs $$(make k8s-job-get-name) \
-		--namespace=$(K8S_NAMESPACE) \
+		--namespace=$(K8S_JOB_NAMESPACE) \
 		--output jsonpath='{.status.conditions[?(@.type=="Complete")].status}' \
 	| tr '[:upper:]' '[:lower:]' | tr -d '\n'
 
 k8s-job-has-failed: ### Show whether the job failed - return: [true|""]
 	eval "$$(make k8s-kubeconfig-export-variables)"
 	kubectl get jobs $$(make k8s-job-get-name) \
-		--namespace=$(K8S_NAMESPACE) \
+		--namespace=$(K8S_JOB_NAMESPACE) \
 		--output jsonpath='{.status.conditions[?(@.type=="Failed")].status}' \
 	| tr '[:upper:]' '[:lower:]' | tr -d '\n'
 
