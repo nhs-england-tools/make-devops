@@ -133,10 +133,7 @@ devops-copy: ### Copy the DevOps automation toolchain scripts from this codebase
 		[ ! -f $(DIR)/README.md ] && cp -fv build/automation/lib/project/template/README.md $(DIR)
 		[ -f $(DIR)/TODO.md ] && mv -fv $(DIR)/TODO.md $(DIR)/documentation; [ ! -f $(DIR)/documentation/TODO.md ] && cp -fv build/automation/lib/project/template/documentation/TODO.md $(DIR)/documentation
 		cp -fv build/automation/lib/project/template/documentation/adr/README.md $(DIR)/documentation/adr
-		[ ! -f "$(DIR)/documentation/diagrams/C4 model.drawio" ] && (
-			cp -fv "build/automation/lib/project/template/documentation/diagrams/C4 model.drawio" $(DIR)/documentation/diagrams
-			cp -fv "build/automation/lib/project/template/documentation/diagrams/C4 model - *.png" $(DIR)/documentation/diagrams
-		)
+		[ ! -f "$(DIR)/documentation/diagrams/C4 model.drawio" ] && cp -fv "build/automation/lib/project/template/documentation/diagrams/C4 model*.*" $(DIR)/documentation/diagrams
 		[ ! -f $(DIR)/documentation/diagrams/Infrastructure.drawio ] && cp -fv build/automation/lib/project/template/documentation/diagrams/Infrastructure.drawio $(DIR)/documentation/diagrams
 		cp -fv build/automation/lib/project/template/documentation/diagrams/DevOps-Pipelines.png $(DIR)/documentation/diagrams
 		[ ! -f $(DIR)/documentation/CONTRIBUTING.md ] && cp -fv build/automation/lib/project/template/documentation/CONTRIBUTING.md $(DIR)/documentation
@@ -253,10 +250,7 @@ devops-update devops-synchronise: ### Update/upgrade the DevOps automation toolc
 		[ ! -f $(PARENT_PROJECT_DIR)/README.md ] && cp -fv build/automation/lib/project/template/README.md $(PARENT_PROJECT_DIR)
 		[ -f $(PARENT_PROJECT_DIR)/TODO.md ] && mv -fv $(PARENT_PROJECT_DIR)/TODO.md $(PARENT_PROJECT_DIR)/documentation; [ ! -f $(PARENT_PROJECT_DIR)/documentation/TODO.md ] && cp -fv build/automation/lib/project/template/documentation/TODO.md $(PARENT_PROJECT_DIR)/documentation
 		cp -fv build/automation/lib/project/template/documentation/adr/README.md $(PARENT_PROJECT_DIR)/documentation/adr
-		[ ! -f "$(PARENT_PROJECT_DIR)/documentation/diagrams/C4 model.drawio" ] && (
-			cp -fv "build/automation/lib/project/template/documentation/diagrams/C4 model.drawio" $(PARENT_PROJECT_DIR)/documentation/diagrams
-			cp -fv "build/automation/lib/project/template/documentation/diagrams/C4 model - *.png" $(PARENT_PROJECT_DIR)/documentation/diagrams
-		)
+		[ ! -f "$(PARENT_PROJECT_DIR)/documentation/diagrams/C4 model.drawio" ] && cp -fv "build/automation/lib/project/template/documentation/diagrams/C4 model*.*" $(PARENT_PROJECT_DIR)/documentation/diagrams
 		[ ! -f $(PARENT_PROJECT_DIR)/documentation/diagrams/Infrastructure.drawio ] && cp -fv build/automation/lib/project/template/documentation/diagrams/Infrastructure.drawio $(PARENT_PROJECT_DIR)/documentation/diagrams
 		cp -fv build/automation/lib/project/template/documentation/diagrams/DevOps-Pipelines.png $(PARENT_PROJECT_DIR)/documentation/diagrams
 		[ ! -f $(PARENT_PROJECT_DIR)/documentation/CONTRIBUTING.md ] && cp -fv build/automation/lib/project/template/documentation/CONTRIBUTING.md $(PARENT_PROJECT_DIR)/documentation

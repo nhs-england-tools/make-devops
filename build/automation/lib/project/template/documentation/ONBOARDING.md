@@ -39,7 +39,7 @@ This is a generic onboarding template that can be used by any team to help to br
 - [Instana](https://instana-server.mgmt.texasplatform.uk/)
 - [GitHub](https://github.com/nhsd-exeter)
 - [Splunk](https://nhsdigital.splunkcloud.com/)
-- AWS
+- AWS - ensure MFA is enabled
 - Git projects
 - Documentation
   - [Make DevOps](https://github.com/nhsd-exeter/make-devops)
@@ -55,7 +55,7 @@ This is a generic onboarding template that can be used by any team to help to br
 
 ### Before joining
 
-- Get a MacBook, minimum Intel Core i5 4 cores processor and 16GM memory
+- Get a MacBook, minimum Intel Core i5 4-core processor and 16GM memory
 - Install the latest version of the macOS operating system and all the updates unless there are known compatibility issues, usually it is a good practice to wait a couple of weeks after a new major version release
 - Encrypt the disk storage
 - Request the NHSmail account, usually this will be done by a Delivery Manager
