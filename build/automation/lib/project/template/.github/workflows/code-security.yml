@@ -1,7 +1,7 @@
 name: "Check code for secrets"
 on: push
 jobs:
-  check-code-quality:
+  check-code-security:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
