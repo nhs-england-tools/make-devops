@@ -472,7 +472,6 @@ _macos-config-visual-studio-code:
 	code --force --install-extension emeraldwalk.runonsave
 	code --force --install-extension esbenp.prettier-vscode
 	code --force --install-extension felixfbecker.php-debug # PHP support
-	code --force --install-extension felixfbecker.php-intellisense # PHP support
 	code --force --install-extension ffaraone.pyfilesgen
 	code --force --install-extension formulahendry.code-runner
 	code --force --install-extension fosshaas.fontsize-shortcuts
