@@ -29,7 +29,7 @@ git-config: ### Configure local git repository
 
 git-check-if-branch-name-is-correct: ### Check if the branch name meets the accepted convention - optional: BUILD_BRANCH
 	if [[ $(BUILD_BRANCH) =~ $(GIT_BRANCH_PATTERN) ]] && \
-			[ "$$(echo '$(BUILD_BRANCH)' | wc -m)" -le $(GIT_COMMIT_MESSAGE_MAX_LENGTH) ]; then
+			[ "$$(echo '$(BUILD_BRANCH)' | wc -m)" -le $(GIT_BRANCH_MAX_LENGTH) ]; then
 		echo true
 	else
 		echo false
