@@ -740,7 +740,7 @@ $(info )
 $(error $(shell tput setaf 202; echo "WARNING: Please, before proceeding install the Xcode Command Line Tools. Then, run the \`curl\` installation command"; tput sgr0))
 endif
 # macOS: Homebrew
-ifneq (0, $(shell which brew > /dev/null 2>&1 || test -x /usr/local/bin/brew ; echo $$?))
+ifneq (0, $(shell which brew > /dev/null 2>&1 || test -x /opt/homebrew/bin/brew; echo $$?))
 $(info )
 $(info Run $(shell tput setaf 4; echo '/bin/bash -c "$$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'; tput sgr0))
 $(info )
