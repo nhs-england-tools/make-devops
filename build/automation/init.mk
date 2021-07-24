@@ -750,6 +750,9 @@ $(error $(shell tput setaf 202; echo "WARNING: Please, before proceeding install
 endif
 # macOS: GNU Make
 ifeq (true, $(shell [ ! -f /usr/local/opt/make/libexec/gnubin/make ] && [ ! -f /opt/homebrew/opt/make/libexec/gnubin/make ] && echo true))
+$(shell brew install make)
+endif
+ifeq (true, $(shell [ ! -f /usr/local/opt/make/libexec/gnubin/make ] && [ ! -f /opt/homebrew/opt/make/libexec/gnubin/make ] && echo true))
 $(info )
 $(info Run $(shell tput setaf 4; echo "brew install make"; tput sgr0))
 $(info )
