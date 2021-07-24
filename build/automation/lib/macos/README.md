@@ -51,12 +51,16 @@
 
 ## Starting from scratch
 
-- Turn off and then on your MacBook and immediately press and hold Command-R to enter the macOS recovery mode
-- Erase the disk and set it to APFS (Case-sensitive, Encrypted), disk name "System"
+- Turn off and then on your MacBook and immediately press and hold
+  - Command-R to enter the macOS Recovery mode for a MacBook with an Intel-based processor
+  - The power button until you see "Loading startup options" then via Options enter the macOS Recovery mode for a MacBook with an M1 processor
+- Within the Disk Utility application erase the Internal disk and set it to "APFS (Case-sensitive, Encrypted)", with the disk name "System"
 - Reinstall the operating system
+- If you are presented with the following message "You may not install to this volume because it has a disk password" go back to the Disk Utility application and use "APFS (Case-sensitive)" configuration instead. The disk encryption will be set up later
 - Create the administrator account
 - Create a developer account with the administrative privileges
 - Log in as the developer and register your Apple ID
+- If disk encryption hasn't been set up yet, now is the time - go to the System Preferences > Security & Privacy > FileVault > [ Turn On FileVault ]
 - Perform all system updates
 - Go to System Preferences > Software Update > [ Tick all the checkboxes ]
 - Go to System Preferences > Sharing > Computer Name > [ Set name to macos-xxxxxx ]
@@ -64,9 +68,9 @@
   - Xcode Command Line Tools
   - Homebrew
   - GNU Make
+- If the network connectivity fails in random places, especially while installing or updating the Homebrew package manager, try to set your DNS server to 8.8.8.8 which may solve the issue. This may be the case for the UK-based Virgin Media broadband provider.
+- Please, follow the instructions provided by the script and execute them from the command-line to satisfy the dependencies
 - Go to System Preferences > Security & Privacy > General > [ Enable software ] - you may need to re-run installation of the failed software
-
-Please, follow the instructions provided by the script and execute them from the command-line to satisfy the dependencies. If the network connectivity fails in random places, especially while installing or updating the Homebrew package manager, try to set your DNS server to 8.8.8.8 which may solve the issue.
 
 ---
 
