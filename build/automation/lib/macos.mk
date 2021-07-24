@@ -563,10 +563,10 @@ _macos-config-firefox:
 	# 	redux_devtools.xpi ||:
 
 _macos-disable-gatekeeper:
-	sudo spctl --master-disable
+	sudo spctl --master-disable 2> /dev/null # Works only on an Intel-based silicon
 
 _macos-enable-gatekeeper:
-	sudo spctl --master-enable
+	sudo spctl --master-enable 2> /dev/null # Works only on an Intel-based silicon
 
 # ==============================================================================
 
