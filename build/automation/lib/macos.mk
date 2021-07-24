@@ -21,7 +21,7 @@ macos-prepare:: ### Prepare for installation and configuration of the developmen
 macos-update:: ### Update all currently installed development dependencies
 	xcode-select --install 2> /dev/null ||:
 	which mas > /dev/null 2>&1 || brew install mas
-	mas upgrade $$(mas list | grep -i xcode | awk '{ print $$1 }')
+	mas list | grep Xcode || mas install $$(mas search Xcode | head -n 1 | awk '{ print $$1 }') && mas upgrade $$(mas list | grep Xcode | awk '{ print $$1 }')
 	brew update
 	brew upgrade ||:
 	brew tap buo/cask-upgrade
@@ -452,13 +452,18 @@ _macos-config-iterm2:
 	rm /tmp/com.googlecode.iterm2.plist
 
 _macos-config-visual-studio-code:
-	# Install extensions
+	#
+	# *** Install extensions ***
+	#
+	# PHP
+	code --force --install-extension bmewburn.vscode-intelephense-client # PHP support
+	code --force --install-extension felixfbecker.php-debug # PHP support
+	#
 	code --force --install-extension alefragnani.bookmarks
 	code --force --install-extension alefragnani.project-manager
 	code --force --install-extension alexkrechik.cucumberautocomplete
 	code --force --install-extension amazonwebservices.aws-toolkit-vscode
 	code --force --install-extension ban.spellright
-	code --force --install-extension bmewburn.vscode-intelephense-client # PHP support
 	code --force --install-extension christian-kohler.npm-intellisense
 	code --force --install-extension christian-kohler.path-intellisense
 	code --force --install-extension coenraads.bracket-pair-colorizer
@@ -471,7 +476,6 @@ _macos-config-visual-studio-code:
 	code --force --install-extension eg2.vscode-npm-script
 	code --force --install-extension emeraldwalk.runonsave
 	code --force --install-extension esbenp.prettier-vscode
-	code --force --install-extension felixfbecker.php-debug # PHP support
 	code --force --install-extension ffaraone.pyfilesgen
 	code --force --install-extension formulahendry.code-runner
 	code --force --install-extension fosshaas.fontsize-shortcuts
@@ -514,7 +518,9 @@ _macos-config-visual-studio-code:
 	code --force --install-extension xabikos.javascriptsnippets
 	code --force --install-extension yzhang.dictionary-completion
 	code --force --install-extension yzhang.markdown-all-in-one
-	# Install themes
+	#
+	# *** Install themes ***
+	#
 	code --force --install-extension ahmadawais.shades-of-purple
 	code --force --install-extension akamud.vscode-theme-onedark
 	code --force --install-extension arcticicestudio.nord-visual-studio-code
