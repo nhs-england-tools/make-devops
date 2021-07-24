@@ -400,15 +400,15 @@ _macos-config-oh-my-zsh-aws:
 _macos-config-command-line:
 	sudo chown -R $$(id -u) $$(brew --prefix)/*
 	# configure Python
-	brew unlink python@$(PYTHON_VERSION_MAJOR).$(PYTHON_VERSION_MINOR) ||: && brew link --overwrite --force python@$(PYTHON_VERSION_MAJOR).$(PYTHON_VERSION_MINOR)
+	brew unlink python@$(PYTHON_VERSION_MAJOR).$(PYTHON_VERSION_MINOR); brew link --overwrite --force python@$(PYTHON_VERSION_MAJOR).$(PYTHON_VERSION_MINOR)
 	rm -f $$(brew --prefix)/bin/python
 	ln $$(brew --prefix)/bin/python3 $$(brew --prefix)/bin/python
 	curl -s https://bootstrap.pypa.io/get-pip.py | $$(brew --prefix)/bin/python3
 	$$(brew --prefix)/bin/pip3 install $(PYTHON_BASE_PACKAGES)
 	(
-		export LDFLAGS="-L/usr/local/opt/zlib/lib"
-		export CPPFLAGS="-I/usr/local/opt/zlib/include"
-		export PKG_CONFIG_PATH="/usr/local/opt/zlib/lib/pkgconfig"
+		export LDFLAGS="-L/usr/local/opt/zlib/lib -L/opt/homebrew/opt/zlib/lib"
+		export CPPFLAGS="-I/usr/local/opt/zlib/include -I/opt/homebrew/opt/zlib/include"
+		export PKG_CONFIG_PATH="/usr/local/opt/zlib/lib/pkgconfig:/opt/homebrew/opt/zlib/lib/pkgconfig"
 		pyenv install --skip-existing $(PYTHON_VERSION)
 	)
 	pyenv global system
