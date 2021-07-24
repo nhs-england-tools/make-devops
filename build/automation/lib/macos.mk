@@ -342,13 +342,13 @@ _macos-config-oh-my-zsh-make-devops:
 		echo "for file in \$$HOME/usr/*-aliases; do source \$$file; done"
 		echo
 		echo "# Variables"
-		echo "export PATH=\$$HOME/bin:/usr/local/opt/coreutils/libexec/gnubin:/usr/local/opt/findutils/libexec/gnubin:/usr/local/opt/gnu-sed/libexec/gnubin:/usr/local/opt/gnu-tar/libexec/gnubin:/usr/local/opt/grep/libexec/gnubin:/usr/local/opt/make/libexec/gnubin:/usr/local/Cellar/python/$$(python3 --version | grep -Eo '[0-9.]*')/Frameworks/Python.framework/Versions/Current/bin:\$$PATH"
+		echo "export PATH=\$$HOME/bin:$(PATH_HOMEBREW):$(PATH_SYSTEM)"
 		echo "export GPG_TTY=\$$(tty)"
 		echo "export KUBECONFIG=~/.kube/configs/lk8s-nonprod-kubeconfig 2> /dev/null"
 		echo
 		echo "# env: Python"
 		echo "export PYENV_ROOT=$$HOME/.pyenv"
-		echo "export PATH=\$$PYENV_ROOT/bin:\$$PATH"
+		echo "export PATH=\$$PYENV_ROOT/bin:/usr/local/Cellar/python@\$$(python3 --version | grep -Eo '[0-9]\.[0-9]')/\$$(python3 --version | grep -Eo '[0-9.]*')/Frameworks/Python.framework/Versions/Current/bin:\$$PATH"
 		echo "export MYPY_CACHE_DIR=\$$HOME/.mypy_cache"
 		echo "eval \"\$$(pyenv init --path)\""
 		echo "eval \"\$$(pyenv init -)\""
@@ -383,7 +383,7 @@ _macos-config-oh-my-zsh-make-devops:
 		# echo "add-zsh-hook chpwd load-nvmrc"
 		# echo "load-nvmrc"
 		echo "# env: Serverless"
-		echo "export PATH=\"$$HOME/.serverless/bin:$$PATH\""
+		echo "export PATH=\"$$HOME/.serverless/bin:\$$PATH\""
 		echo
 		echo "export EDITOR=\"code --wait\""
 		echo
