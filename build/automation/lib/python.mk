@@ -47,7 +47,7 @@ python-virtualenv-clean: ### Clean up Python virtual environment - optional: PYT
 	rm -rf .python-version
 	pyenv global system
 
-python-code-format: ### Format Python code with 'balck' - optional: FILES=[directory, file or pattern]
+python-code-format: ### Format Python code with 'black' - optional: FILES=[directory, file or pattern]
 	make docker-run-tools CMD=" \
 		black \
 			--line-length 120 \

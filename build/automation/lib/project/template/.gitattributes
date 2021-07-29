@@ -1,2 +1,2 @@
-build/automation/* linguist-detectable=false
-data/* linguist-detectable=false
+build/automation/* linguist-vendored
+data/* linguist-vendored

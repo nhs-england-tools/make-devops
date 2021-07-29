@@ -149,6 +149,8 @@ List all the pipelines and their purpose
 
 Reference the [jenkins/README.md](build/automation/lib/jenkins/README.md) file
 
+<img src="./documentation/diagrams/DevOps-Pipelines.png" width="1024" /><br /><br />
+
 ### Deployment From the Command-line
 
     make deploy PROFILE=dev
@@ -172,19 +174,19 @@ MFA to the right AWS account using the following command
 
 Include an image of the [C4 model](https://c4model.com/) System Context diagram exported as a `.png` file from the draw.io application.
 
-<img src="./documentation/diagrams/C4%20model%20-%20System%20Context.png" width="1024" /><br /><br />
+<img src="./documentation/diagrams/C4model-SystemContext.png" width="1024" /><br /><br />
 
 #### Container Diagram
 
 Include an image of the [C4 model](https://c4model.com/) Container diagram exported as a `.png` file from the draw.io application.
 
-<img src="./documentation/diagrams/C4%20model%20-%20Container.png" width="1024" /><br /><br />
+<img src="./documentation/diagrams/C4model-Container.png" width="1024" /><br /><br />
 
 #### Component Diagram
 
 Include an image of the [C4 model](https://c4model.com/) Component diagram exported as a `.png` file from the draw.io application.
 
-<img src="./documentation/diagrams/C4%20model%20-%20Component.png" width="1024" /><br /><br />
+<img src="./documentation/diagrams/C4model-Component.png" width="1024" /><br /><br />
 
 #### Processes and Data Flow
 
@@ -193,6 +195,8 @@ Include an image of the Processes and Data Flow diagram
 #### Infrastructure
 
 Include an image of the Infrastructure diagram. Please, be aware that any sensitive information that can be potentially misused either directly or indirectly must not be stored and accessible publicly. This could be IP addresses, domain names or detailed infrastructure information.
+
+<img src="./documentation/diagrams/Infrastructure-Component.png" width="1024" /><br /><br />
 
 #### Networking
 

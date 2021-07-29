@@ -98,9 +98,10 @@ devops-copy: ### Copy the DevOps automation toolchain scripts from this codebase
 			build/* \
 			$(DIR)/build
 		# ---
+		[ ! -f $(DIR)/build/automation/var/project.mk ] && cp -fv build/automation/lib/project/template/build/automation/var/project.mk $(DIR)/build/automation/var/project.mk
 		make _devops-project-update-variables DIR=$(DIR)
 		# ---
-		[ $$is_github == true ] && (
+		[ $$is_github == true ] || [ ! -d $(DIR)/.git ] && (
 			mkdir -p $(DIR)/.github/workflows
 			cp -fv build/automation/lib/project/template/.github/workflows/*.yml $(DIR)/.github/workflows
 			make file-replace-variables-in-dir DIR=$(DIR)/.github/workflows
@@ -111,12 +112,11 @@ devops-copy: ### Copy the DevOps automation toolchain scripts from this codebase
 		cp -fv LICENSE.md $(DIR)/build/automation/LICENSE.md
 		[ -f $(DIR)/docker/docker-compose.yml ] && rm -fv $(DIR)/docker/.gitkeep
 		# Project key files
-		[ ! -f $(DIR)/build/automation/var/project.mk ] && cp -fv build/automation/lib/project/template/build/automation/var/project.mk $(DIR)/build/automation/var/project.mk
 		[ ! -f $(DIR)/Makefile ] && cp -fv build/automation/lib/project/template/Makefile $(DIR)
 		cp -fv build/automation/lib/project/template/.editorconfig $(DIR)
 		cp -fv build/automation/lib/project/template/.gitignore $(DIR)
 		(
-			cp -fv $(DIR)/project.code-workspace /tmp/project.code-workspace || cp -fv build/automation/lib/project/template/project.code-workspace /tmp/project.code-workspace
+			cp -fv $(DIR)/project.code-workspace /tmp/project.code-workspace 2> /dev/null || cp -fv build/automation/lib/project/template/project.code-workspace /tmp/project.code-workspace
 			which npx && cat /tmp/project.code-workspace | npx strip-json-comments-cli > /tmp/project.code-workspace.tmp && mv -fv /tmp/project.code-workspace.tmp /tmp/project.code-workspace ||:
 			cp -fv build/automation/lib/project/template/project.code-workspace $(DIR)
 			jq --argjson data "$$(cat /tmp/project.code-workspace | jq '.folders')" '.folders = $$data' $(DIR)/project.code-workspace > $(DIR)/project.code-workspace.new
@@ -133,9 +133,9 @@ devops-copy: ### Copy the DevOps automation toolchain scripts from this codebase
 		[ ! -f $(DIR)/README.md ] && cp -fv build/automation/lib/project/template/README.md $(DIR)
 		[ -f $(DIR)/TODO.md ] && mv -fv $(DIR)/TODO.md $(DIR)/documentation; [ ! -f $(DIR)/documentation/TODO.md ] && cp -fv build/automation/lib/project/template/documentation/TODO.md $(DIR)/documentation
 		cp -fv build/automation/lib/project/template/documentation/adr/README.md $(DIR)/documentation/adr
-		[ ! -f "$(DIR)/documentation/diagrams/C4 model.drawio" ] && cp -fv "build/automation/lib/project/template/documentation/diagrams/C4 model*.*" $(DIR)/documentation/diagrams
-		[ ! -f $(DIR)/documentation/diagrams/Infrastructure.drawio ] && cp -fv build/automation/lib/project/template/documentation/diagrams/Infrastructure.drawio $(DIR)/documentation/diagrams
-		cp -fv build/automation/lib/project/template/documentation/diagrams/DevOps-Pipelines.png $(DIR)/documentation/diagrams
+		[ ! -f $(DIR)/documentation/diagrams/C4model.drawio ] && cp -fv build/automation/lib/project/template/documentation/diagrams/C4model* $(DIR)/documentation/diagrams
+		[ ! -f $(DIR)/documentation/diagrams/Infrastructure.drawio ] && cp -fv build/automation/lib/project/template/documentation/diagrams/Infrastructure* $(DIR)/documentation/diagrams
+		[ ! -f $(DIR)/documentation/diagrams/DevOps.drawio ] && cp -fv build/automation/lib/project/template/documentation/diagrams/DevOps* $(DIR)/documentation/diagrams
 		[ ! -f $(DIR)/documentation/CONTRIBUTING.md ] && cp -fv build/automation/lib/project/template/documentation/CONTRIBUTING.md $(DIR)/documentation
 		[ ! -f $(DIR)/documentation/ONBOARDING.md ] && cp -fv build/automation/lib/project/template/documentation/ONBOARDING.md $(DIR)/documentation
 		# ---
@@ -215,9 +215,10 @@ devops-update devops-synchronise: ### Update/upgrade the DevOps automation toolc
 			build/* \
 			$(PARENT_PROJECT_DIR)/build
 		# ---
+		[ ! -f $(PARENT_PROJECT_DIR)/build/automation/var/project.mk ] && cp -fv build/automation/lib/project/template/build/automation/var/project.mk $(PARENT_PROJECT_DIR)/build/automation/var/project.mk
 		make _devops-project-update-variables DIR=$(PARENT_PROJECT_DIR)
 		# ---
-		[ $$is_github == true ] && (
+		[ $$is_github == true ] || [ ! -d $(DIR)/.git ] && (
 			mkdir -p $(PARENT_PROJECT_DIR)/.github/workflows
 			cp -fv build/automation/lib/project/template/.github/workflows/*.yml $(PARENT_PROJECT_DIR)/.github/workflows
 			make file-replace-variables-in-dir DIR=$(PARENT_PROJECT_DIR)/.github/workflows
@@ -228,12 +229,11 @@ devops-update devops-synchronise: ### Update/upgrade the DevOps automation toolc
 		cp -fv LICENSE.md $(PARENT_PROJECT_DIR)/build/automation/LICENSE.md
 		[ -f $(PARENT_PROJECT_DIR)/docker/docker-compose.yml ] && rm -fv $(PARENT_PROJECT_DIR)/docker/.gitkeep
 		# Project key files
-		[ ! -f $(PARENT_PROJECT_DIR)/build/automation/var/project.mk ] && cp -fv build/automation/lib/project/template/build/automation/var/project.mk $(PARENT_PROJECT_DIR)/build/automation/var/project.mk
 		[ ! -f $(PARENT_PROJECT_DIR)/Makefile ] && cp -fv build/automation/lib/project/template/Makefile $(PARENT_PROJECT_DIR)
 		cp -fv build/automation/lib/project/template/.editorconfig $(PARENT_PROJECT_DIR)
 		cp -fv build/automation/lib/project/template/.gitignore $(PARENT_PROJECT_DIR)
 		(
-			cp -fv $(PARENT_PROJECT_DIR)/project.code-workspace /tmp/project.code-workspace || cp -fv build/automation/lib/project/template/project.code-workspace /tmp/project.code-workspace
+			cp -fv $(PARENT_PROJECT_DIR)/project.code-workspace /tmp/project.code-workspace 2> /dev/null || cp -fv build/automation/lib/project/template/project.code-workspace /tmp/project.code-workspace
 			which npx && cat /tmp/project.code-workspace | npx strip-json-comments-cli > /tmp/project.code-workspace.tmp && mv -fv /tmp/project.code-workspace.tmp /tmp/project.code-workspace ||:
 			cp -fv build/automation/lib/project/template/project.code-workspace $(PARENT_PROJECT_DIR)
 			jq --argjson data "$$(cat /tmp/project.code-workspace | jq '.folders')" '.folders = $$data' $(PARENT_PROJECT_DIR)/project.code-workspace > $(PARENT_PROJECT_DIR)/project.code-workspace.new
@@ -250,9 +250,9 @@ devops-update devops-synchronise: ### Update/upgrade the DevOps automation toolc
 		[ ! -f $(PARENT_PROJECT_DIR)/README.md ] && cp -fv build/automation/lib/project/template/README.md $(PARENT_PROJECT_DIR)
 		[ -f $(PARENT_PROJECT_DIR)/TODO.md ] && mv -fv $(PARENT_PROJECT_DIR)/TODO.md $(PARENT_PROJECT_DIR)/documentation; [ ! -f $(PARENT_PROJECT_DIR)/documentation/TODO.md ] && cp -fv build/automation/lib/project/template/documentation/TODO.md $(PARENT_PROJECT_DIR)/documentation
 		cp -fv build/automation/lib/project/template/documentation/adr/README.md $(PARENT_PROJECT_DIR)/documentation/adr
-		[ ! -f "$(PARENT_PROJECT_DIR)/documentation/diagrams/C4 model.drawio" ] && cp -fv "build/automation/lib/project/template/documentation/diagrams/C4 model*.*" $(PARENT_PROJECT_DIR)/documentation/diagrams
-		[ ! -f $(PARENT_PROJECT_DIR)/documentation/diagrams/Infrastructure.drawio ] && cp -fv build/automation/lib/project/template/documentation/diagrams/Infrastructure.drawio $(PARENT_PROJECT_DIR)/documentation/diagrams
-		cp -fv build/automation/lib/project/template/documentation/diagrams/DevOps-Pipelines.png $(PARENT_PROJECT_DIR)/documentation/diagrams
+		[ ! -f $(PARENT_PROJECT_DIR)/documentation/diagrams/C4model.drawio ] && cp -fv build/automation/lib/project/template/documentation/diagrams/C4model* $(PARENT_PROJECT_DIR)/documentation/diagrams
+		[ ! -f $(PARENT_PROJECT_DIR)/documentation/diagrams/Infrastructure.drawio ] && cp -fv build/automation/lib/project/template/documentation/diagrams/Infrastructure* $(PARENT_PROJECT_DIR)/documentation/diagrams
+		[ ! -f $(PARENT_PROJECT_DIR)/documentation/diagrams/DevOps.drawio ] && cp -fv build/automation/lib/project/template/documentation/diagrams/DevOps* $(PARENT_PROJECT_DIR)/documentation/diagrams
 		[ ! -f $(PARENT_PROJECT_DIR)/documentation/CONTRIBUTING.md ] && cp -fv build/automation/lib/project/template/documentation/CONTRIBUTING.md $(PARENT_PROJECT_DIR)/documentation
 		[ ! -f $(PARENT_PROJECT_DIR)/documentation/ONBOARDING.md ] && cp -fv build/automation/lib/project/template/documentation/ONBOARDING.md $(PARENT_PROJECT_DIR)/documentation
 		# ---
@@ -733,6 +733,11 @@ endif
 
 # ==============================================================================
 # Check if all the prerequisites are met
+
+# ifeq (true, $(shell echo true))
+# $(shell tput setaf 4; echo "Installation of the Xcode Command Line Tools has just been triggered automatically..."; tput sgr0)
+# $(info Dupa!)
+# endif
 
 ifeq (true, $(shell [ ! -f $(SETUP_COMPLETE_FLAG_FILE) ] && echo true))
 ifeq (true, $(shell [ "Darwin" = "$$(uname)" ] && echo true))
