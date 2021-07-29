@@ -1,2 +1,2 @@
-build/automation/* linguist-vendored
-data/* linguist-vendored
+build/automation/** linguist-vendored
+data/** linguist-vendored
