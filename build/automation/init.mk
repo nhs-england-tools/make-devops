@@ -734,11 +734,6 @@ endif
 # ==============================================================================
 # Check if all the prerequisites are met
 
-# ifeq (true, $(shell echo true))
-# $(shell tput setaf 4; echo "Installation of the Xcode Command Line Tools has just been triggered automatically..."; tput sgr0)
-# $(info Dupa!)
-# endif
-
 ifeq (true, $(shell [ ! -f $(SETUP_COMPLETE_FLAG_FILE) ] && echo true))
 ifeq (true, $(shell [ "Darwin" = "$$(uname)" ] && echo true))
 # macOS: Xcode Command Line Tools
