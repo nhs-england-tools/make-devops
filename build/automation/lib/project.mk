@@ -15,7 +15,6 @@ project-config: ### Configure project environment
 	# Make sure project's SSL certificate is created
 	if [ ! -f $(SSL_CERTIFICATE_DIR)/certificate.pem ]; then
 		make ssl-generate-certificate-project
-		[ $(PROJECT_NAME) != "make-devops" ] && rm -f $(SSL_CERTIFICATE_DIR)/.gitignore
 	fi
 	# Re-configure developer's environment on demand
 	if [ -n "$(_PROJECT_CONFIG_DEV_ENV_TIMESTAMP)" ] && ([ ! -f $(_PROJECT_CONFIG_DEV_ENV_TIMESTAMP_FILE) ] || [ $(_PROJECT_CONFIG_DEV_ENV_TIMESTAMP) -gt $$(cat $(_PROJECT_CONFIG_DEV_ENV_TIMESTAMP_FILE)) ]) && [ $(BUILD_ID) -eq 0 ]; then
