@@ -3,7 +3,7 @@ set -e
 
 function main() {
   download
-  cd /tmp/make-devops
+  cd "$HOME/.make-devops"
   make macos-prepare
   finish
 }
@@ -15,8 +15,9 @@ function download() {
   tar -zxf /tmp/make-devops.tar.gz -C /tmp
   rm -rf \
     /tmp/make-devops.tar.gz \
-    /tmp/make-devops*
-  mv /tmp/nhsd-exeter-make-devops-* /tmp/make-devops
+    /tmp/make-devops* \
+    "$HOME/.make-devops"
+  mv /tmp/nhsd-exeter-make-devops-* "$HOME/.make-devops"
 }
 
 function finish() {
