@@ -25,7 +25,7 @@ python-install: ### Install and configure Python - optional: PYTHON_VERSION
 		export PATH="$$HOME/.pyenv/bin:$(PATH_SYSTEM):$$(brew --prefix)/bin"
 		pyenv install --skip-existing $(PYTHON_VERSION)
 		export PATH="$$HOME/.pyenv/bin:$(PATH)"
-		python -m pip install --upgrade pip
+		python3 -m pip install --upgrade pip
 		pip install $(PYTHON_BASE_PACKAGES)
 		pyenv global $(PYTHON_VERSION)
 	)
