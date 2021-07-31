@@ -734,8 +734,12 @@ endif
 # ==============================================================================
 # Check if all the prerequisites are met
 
+ifeq (true, $(shell $(PROJECT_DIR)/build/automation/lib/system.sh > $(PROJECT_DIR)/build/automation/tmp/.system.env && echo true))
+include $(abspath $(PROJECT_DIR)/build/automation/tmp/.system.env)
+endif
+
 ifeq (true, $(shell [ ! -f $(SETUP_COMPLETE_FLAG_FILE) ] && echo true))
-ifeq (true, $(shell [ "Darwin" = "$$(uname)" ] && echo true))
+ifeq (true, $(shell [ $(SYSTEM_DIST) = "macos" ] && echo true))
 # macOS: Xcode Command Line Tools
 ifneq (0, $(shell xcode-select -p > /dev/null 2>&1; echo $$?))
 $(info )
