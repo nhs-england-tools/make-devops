@@ -9,8 +9,8 @@ function main() {
 }
 
 function download() {
-  curl -L \
-    "https://github.com/nhsd-exeter/make-devops/tarball/master?$(date +%s)" \
+  echo curl -L \
+    "https://github.com/nhsd-exeter/make-devops/tarball/${BRANCH_NAME:-master}?$(date +%s)" \
     -o /tmp/make-devops.tar.gz
   tar -zxf /tmp/make-devops.tar.gz -C /tmp
   rm -rf \
@@ -21,7 +21,7 @@ function download() {
 
 function finish() {
   tput setaf 2
-  printf "\nDone! Please, see the project documentation for further instructions.\n\n"
+  printf "\nDone: Please, see the project documentation for further instructions.\n\n"
   tput sgr0
 }
 
