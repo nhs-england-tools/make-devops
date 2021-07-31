@@ -19,13 +19,22 @@ PYTHON_BASE_PACKAGES = \
 	pyyaml \
 	requests==2.25.1
 
+python-install: ### Install and configure Python - optional: PYTHON_VERSION
+	[ -d $$HOME/.pyenv/.git ] && ( cd $$HOME/.pyenv; git pull ) || ( rm -rf $$HOME/.pyenv; git clone https://github.com/pyenv/pyenv.git $$HOME/.pyenv )
+	(
+		export PATH="$$HOME/.pyenv/bin:$(PATH_SYSTEM):$$(brew --prefix)/bin"
+		pyenv install --skip-existing $(PYTHON_VERSION)
+		export PATH="$$HOME/.pyenv/bin:$(PATH)"
+		python -m pip install --upgrade pip
+		pip install $(PYTHON_BASE_PACKAGES)
+		pyenv global $(PYTHON_VERSION)
+	)
+
 python-virtualenv: ### Setup Python virtual environment - optional: PYTHON_VERSION,PYTHON_VENV_NAME
-	brew update
-	brew upgrade pyenv
 	pyenv install --skip-existing $(PYTHON_VERSION)
 	if [ -z "$(PYTHON_VENV_NAME)" ]; then
 		pyenv local $(PYTHON_VERSION)
-		pip install --upgrade pip || pyenv install --skip-existing $(PYTHON_VERSION) && pip install --upgrade pip
+		pip install --upgrade pip
 		pip install $(PYTHON_BASE_PACKAGES)
 		sed -i 's;    "python.linting.flake8Path":.*;    "python.linting.flake8Path": "~/.pyenv/versions/$(PYTHON_VERSION)/bin/flake8",;g' project.code-workspace
 		sed -i 's;    "python.linting.mypyPath":.*;    "python.linting.mypyPath": "~/.pyenv/versions/$(PYTHON_VERSION)/bin/mypy",;g' project.code-workspace
@@ -45,7 +54,6 @@ python-virtualenv: ### Setup Python virtual environment - optional: PYTHON_VERSI
 python-virtualenv-clean: ### Clean up Python virtual environment - optional: PYTHON_VERSION=[version or venv name]
 	pyenv uninstall --force $(PYTHON_VERSION)
 	rm -rf .python-version
-	pyenv global system
 
 python-code-format: ### Format Python code with 'black' - optional: FILES=[directory, file or pattern]
 	make docker-run-tools CMD=" \

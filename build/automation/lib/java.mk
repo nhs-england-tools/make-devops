@@ -2,6 +2,13 @@ JAVA_VERSION = 16
 
 # TODO: Print Java version in prompt always when `.java-version` file is present, not only if diffrent to global
 
+java-install: ### Install and configure Java - optional: JAVA_VERSION
+	eval "$$(jenv init -)"
+	jenv enable-plugin export
+	jenv add /Library/Java/JavaVirtualMachines/adoptopenjdk-$(JAVA_VERSION).jdk/Contents/Home
+	jenv versions # ls -1 /Library/Java/JavaVirtualMachines
+	jenv global $(JAVA_VERSION)
+
 java-virtualenv: ### Setup Java virtual environment - optional: JAVA_VERSION
 	brew update
 	brew install --cask adoptopenjdk$(JAVA_VERSION)

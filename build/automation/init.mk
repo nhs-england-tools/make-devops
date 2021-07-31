@@ -617,7 +617,7 @@ SETUP_COMPLETE_FLAG_FILE := $(TMP_DIR)/.make-devops-setup-complete
 PROFILE := $(or $(PROFILE), local)
 ENVIRONMENT := $(or $(ENVIRONMENT), $(or $(shell ([ $(PROFILE) = local ] && echo local) || (echo $(BUILD_BRANCH) | grep -Eoq '$(GIT_BRANCH_PATTERN_SUFFIX)' && (echo $(BUILD_BRANCH) | grep -Eo '[A-Za-z]{2,5}-[0-9]{1,5}' | tr '[:upper:]' '[:lower:]') || (echo $(BUILD_BRANCH) | grep -Eoq '^tags/$(GIT_TAG_PATTERN)' && echo $(PROFILE)) || ([ $(BUILD_BRANCH) = master ] && echo $(PROFILE)))), unknown))
 
-PATH_HOMEBREW := /usr/local/opt/coreutils/libexec/gnubin:/usr/local/opt/findutils/libexec/gnubin:/usr/local/opt/gnu-sed/libexec/gnubin:/usr/local/opt/gnu-tar/libexec/gnubin:/usr/local/opt/grep/libexec/gnubin:/usr/local/opt/make/libexec/gnubin:/opt/homebrew/opt/coreutils/libexec/gnubin:/opt/homebrew/opt/findutils/libexec/gnubin:/opt/homebrew/opt/gnu-sed/libexec/gnubin:/opt/homebrew/opt/gnu-tar/libexec/gnubin:/opt/homebrew/opt/grep/libexec/gnubin:/opt/homebrew/opt/make/libexec/gnubin:/opt/homebrew/bin
+PATH_HOMEBREW := /opt/homebrew/opt/coreutils/libexec/gnubin:/opt/homebrew/opt/findutils/libexec/gnubin:/opt/homebrew/opt/grep/libexec/gnubin:/opt/homebrew/opt/gnu-sed/libexec/gnubin:/opt/homebrew/opt/gnu-tar/libexec/gnubin:/opt/homebrew/opt/make/libexec/gnubin:/opt/homebrew/bin:/usr/local/opt/coreutils/libexec/gnubin:/usr/local/opt/findutils/libexec/gnubin:/usr/local/opt/grep/libexec/gnubin:/usr/local/opt/gnu-sed/libexec/gnubin:/usr/local/opt/gnu-tar/libexec/gnubin:/usr/local/opt/make/libexec/gnubin
 PATH_DEVOPS := $(BIN_DIR)
 PATH_SYSTEM := /usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
 
@@ -734,8 +734,12 @@ endif
 # ==============================================================================
 # Check if all the prerequisites are met
 
+ifeq (true, $(shell $(PROJECT_DIR)/build/automation/lib/system.sh > $(PROJECT_DIR)/build/automation/tmp/.system.env && echo true))
+include $(abspath $(PROJECT_DIR)/build/automation/tmp/.system.env)
+endif
+
 ifeq (true, $(shell [ ! -f $(SETUP_COMPLETE_FLAG_FILE) ] && echo true))
-ifeq (true, $(shell [ "Darwin" = "$$(uname)" ] && echo true))
+ifeq (true, $(shell [ $(SYSTEM_DIST) = "macos" ] && echo true))
 # macOS: Xcode Command Line Tools
 ifneq (0, $(shell xcode-select -p > /dev/null 2>&1; echo $$?))
 $(info )
@@ -748,14 +752,9 @@ ifneq (0, $(shell which brew > /dev/null 2>&1 || test -x /opt/homebrew/bin/brew;
 $(info )
 $(info Run $(shell tput setaf 4; echo '/bin/bash -c "$$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'; tput sgr0))
 $(info )
-$(info or alternatively $(shell tput setaf 4; echo '/usr/bin/ruby -e "$$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"'; tput sgr0))
-$(info )
 $(error $(shell tput setaf 202; echo "WARNING: Please, before proceeding install the brew package manager. Copy and paste in your terminal the above command and execute it. If it fails to install try setting your DNS server to 8.8.8.8. Then, run the \`curl\` installation command"; tput sgr0))
 endif
 # macOS: GNU Make
-ifeq (true, $(shell [ ! -f /usr/local/opt/make/libexec/gnubin/make ] && [ ! -f /opt/homebrew/opt/make/libexec/gnubin/make ] && echo true))
-$(shell brew install make || /opt/homebrew/bin/brew install make)
-endif
 ifeq (true, $(shell [ ! -f /usr/local/opt/make/libexec/gnubin/make ] && [ ! -f /opt/homebrew/opt/make/libexec/gnubin/make ] && echo true))
 $(info )
 $(info Run $(shell tput setaf 4; echo "brew install make"; tput sgr0))
