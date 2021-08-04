@@ -20,6 +20,9 @@ PYTHON_BASE_PACKAGES = \
 	requests==2.25.1
 
 python-install: ### Install and configure Python - optional: PYTHON_VERSION
+	brew unlink python@$(PYTHON_VERSION_MAJOR).$(PYTHON_VERSION_MINOR); brew link --overwrite --force python@$(PYTHON_VERSION_MAJOR).$(PYTHON_VERSION_MINOR)
+	rm -f $$(brew --prefix)/bin/python
+	ln $$(brew --prefix)/bin/python3 $$(brew --prefix)/bin/python
 	[ -d $$HOME/.pyenv/.git ] && ( cd $$HOME/.pyenv; git pull ) || ( rm -rf $$HOME/.pyenv; git clone https://github.com/pyenv/pyenv.git $$HOME/.pyenv )
 	(
 		export PATH="$$HOME/.pyenv/bin:$(PATH_SYSTEM):$$(brew --prefix)/bin"
