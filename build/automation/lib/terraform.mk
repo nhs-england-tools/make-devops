@@ -120,14 +120,14 @@ terraform-export-variables-from-shell: ### Convert environment variables as TF_V
 		for str in $$(env | grep -Ei "$(PATTERN)" | sed -e 's/[[:space:]]*$$//' | grep -Ev '^[A-Za-z0-9_]+=$$' | sort | grep -Ev "$$exclude"); do
 			key=$$(cut -d "=" -f1 <<<"$$str" | tr '[:upper:]' '[:lower:]')
 			value=$$(cut -d "=" -f2- <<<"$$str")
-			echo "export TF_VAR_$${key}='$$(echo $${value} | sed -e 's/[[:space:]]/_/g')'"
+			echo "export TF_VAR_$${key}='$$(echo $${value} | sed -e 's/[[:space:]]/_/g' | sed 's/"//g' | sed "s/'//g")'"
 		done
 	fi
 	if [ -n "$(VARS)" ]; then
 		for str in $$(echo "$(VARS)" | sed 's/,/\n/g' | sort); do
 			key=$$(echo "$$str" | tr '[:upper:]' '[:lower:]')
 			value=$$(cut -d "=" -f2- <<<"$$str")
-			echo "export TF_VAR_$${key}='$$(echo $${value} | sed -e 's/[[:space:]]/_/g')'"
+			echo "export TF_VAR_$${key}='$$(echo $${value} | sed -e 's/[[:space:]]/_/g' | sed 's/"//g' | sed "s/'//g")'"
 		done
 	fi
 	IFS=$$OLDIFS
