@@ -21,7 +21,7 @@ macos-prepare:: ### Prepare for installation and configuration of the developmen
 macos-update:: ### Update all currently installed development dependencies
 	xcode-select --install 2> /dev/null ||:
 	which mas > /dev/null 2>&1 || brew install mas
-	sudo xcodebuild -license accept; mas list | grep Xcode || mas install $$(mas search Xcode | head -n 1 | awk '{ print $$1 }') && mas upgrade $$(mas list | grep Xcode | awk '{ print $$1 }')
+	sudo xcodebuild -license accept ||:; mas list | grep Xcode || ( mas install $$(mas search Xcode | head -n 1 | awk '{ print $$1 }') && mas upgrade $$(mas list | grep Xcode | awk '{ print $$1 }') ) ||:
 	[ $(SYSTEM_ARCH_NAME) == arm64 ] && sudo softwareupdate --install-rosetta --agree-to-license ||:
 	brew update
 	brew upgrade ||:
