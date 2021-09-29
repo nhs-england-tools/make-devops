@@ -776,6 +776,11 @@ docker-compose-log: ### Log Docker Compose output - optional: DO_NOT_FOLLOW=true
 	docker-compose --file $$yml \
 		logs $$(echo $(DO_NOT_FOLLOW) | grep -E 'true|yes|y|on|1|TRUE|YES|Y|ON' > /dev/null 2>&1 && : || echo "--follow")
 
+docker-compose-exec: ### Run Docker Compose exec command - mandatory: CMD; optional: YML=[docker-compose.yml, defaults to $(DOCKER_COMPOSE_YML)]
+	yml=$$(make _docker-get-docker-compose-yml YML=$(YML))
+	docker-compose --file $$yml \
+		exec $(CMD)
+
 # ==============================================================================
 
 _docker-get-dir:
