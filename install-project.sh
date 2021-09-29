@@ -3,12 +3,12 @@ set -e
 
 function main() {
   dir=$(pwd)
-  download
+  clone || download; cd "$HOME/.make-devops"
   make devops-copy DIR=$dir
   finish
 }
 
-function download() {
+function clone() {
   if ! [ -d "$HOME/.make-devops/.git" ]; then
     cd "$HOME"
     rm -rf make-devops .make-devops
@@ -18,6 +18,18 @@ function download() {
   cd "$HOME/.make-devops"
   git pull --all
   git checkout ${BRANCH_NAME:-master}
+}
+
+function download() {
+  curl -L \
+    "https://github.com/nhsd-exeter/make-devops/tarball/${BRANCH_NAME:-master}?$(date +%s)" \
+    -o /tmp/make-devops.tar.gz
+  tar -zxf /tmp/make-devops.tar.gz -C /tmp
+  rm -rf \
+    /tmp/make-devops.tar.gz \
+    /tmp/make-devops* \
+    "$HOME/.make-devops"
+  mv /tmp/nhsd-exeter-make-devops-* "$HOME/.make-devops"
 }
 
 function finish() {
