@@ -59,6 +59,7 @@ RUN set -eux && \
         bind-tools \
         ca-certificates \
         curl \
+        g++ \
         git \
         gnupg \
         graphviz \

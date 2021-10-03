@@ -77,7 +77,7 @@ python-code-coverage: ### Test Python code with 'coverage' - mandatory: CMD=[tes
 		python -m coverage run \
 			--source=$(or $(FILES), $(APPLICATION_DIR)) \
 			--omit=*/tests/*,$(EXCLUDE) \
-			$(CMD) &&
+			$(or $(CMD), -m pytest) &&
 		coverage report -m && \
 		coverage erase \
 	"
