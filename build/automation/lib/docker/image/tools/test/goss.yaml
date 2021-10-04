@@ -15,8 +15,6 @@ package:
     installed: true
   curl:
     installed: true
-  g++:
-    installed: true
   git:
     installed: true
   gnupg:

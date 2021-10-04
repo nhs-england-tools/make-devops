@@ -16,6 +16,7 @@
     "editor.fontSize": 14,
     "editor.formatOnSave": true,
     "editor.renderWhitespace": "all",
+    "editor.rulers": [120],
     "editor.suggestSelection": "recentlyUsedByPrefix",
     "explorer.autoReveal": true,
     "explorer.sortOrder": "type",
