@@ -22,6 +22,8 @@ This document must be discussed regularly with the Tech Lead and considered in t
 
 ### General
 
+- Automation
+  - Develop a mechanism to autoupdate Make DevOps scripts in repos along with creating a PR for it
 - Refactoring
   - Make sure the `infrastructure` directory is custom and move away test files from it
   - Run `kubectl` from container
