@@ -548,7 +548,11 @@ DEVOPS_PROJECT_ORG := nhsd-exeter
 DEVOPS_PROJECT_NAME := make-devops
 DEVOPS_PROJECT_DIR := $(abspath $(lastword $(MAKEFILE_LIST))/..)
 ifeq (true, $(shell [ ! -f $(PROJECT_DIR)/build/automation/VERSION ] && echo true))
-DEVOPS_PROJECT_VERSION := $(or $(shell git tag --points-at HEAD 2> /dev/null | sed "s/v//g" ||:), $(shell echo $$(git show -s --format=%cd --date=format:%Y%m%d%H%M%S 2> /dev/null ||:)-$$(git rev-parse --short HEAD 2> /dev/null ||:)))
+ifeq (true, $(shell [ -n "$$(git tag --points-at HEAD 2> /dev/null)" ] && echo true))
+DEVOPS_PROJECT_VERSION := $(shell echo $$(git show -s --format=%cd --date=format:%Y%m%d%H%M%S 2> /dev/null ||:)-$$(git rev-parse --short HEAD 2> /dev/null ||:)-$(shell git tag --points-at HEAD 2> /dev/null | sed "s/v//g" ||:))
+else
+DEVOPS_PROJECT_VERSION := $(shell echo $$(git show -s --format=%cd --date=format:%Y%m%d%H%M%S 2> /dev/null ||:)-$$(git rev-parse --short HEAD 2> /dev/null ||:)-snapshot)
+endif
 else
 DEVOPS_PROJECT_VERSION := $(shell cat $(PROJECT_DIR)/build/automation/VERSION)
 endif
