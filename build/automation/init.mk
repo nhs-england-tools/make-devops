@@ -284,7 +284,9 @@ devops-update devops-synchronise: ### Update/upgrade the DevOps automation toolc
 		if [ 0 -lt $$(git status -s | wc -l) ]; then
 			git add .
 			if [[ "$(PERFORM_COMMIT)" =~ ^(true|yes|y|on|1|TRUE|YES|Y|ON)$$ ]]; then
-				git commit -S -m "Update automation scripts to $$version" || echo "Please, check and commit the changes with the following message: \"Update automation scripts to $$version\""
+				git commit -S -m "Update automation scripts to $$version"
+			else
+				echo "Please, check and commit the changes with the following message: \"Update automation scripts to $$version\""
 			fi
 		fi
 	}
