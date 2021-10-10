@@ -7,6 +7,7 @@
   - [Regular tasks](#regular-tasks)
   - [One off tasks](#one-off-tasks)
     - [Automation](#automation)
+    - [Engineering](#engineering)
     - [Architecture](#architecture)
     - [Infrastructure](#infrastructure)
     - [Security](#security)
@@ -25,6 +26,10 @@ This document must be discussed regularly with the Tech Lead and considered in t
 ## One off tasks
 
 ### Automation
+
+- TODO
+
+### Engineering
 
 - TODO
 

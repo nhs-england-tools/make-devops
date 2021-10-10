@@ -32,10 +32,10 @@ If you hear your teams or individuals saying _"It will take days to onboard a ne
   - Technology radar
   - [macOS](build/automation/lib/macos.mk)
 - Documentation templates
-  - [ONBOARDING.md](build/automation/lib/project/template/documentation/ONBOARDING.md)
   - [README.md](build/automation/lib/project/template/README.md)
-  - [CONTRIBUTING.md](build/automation/lib/project/template/documentation/CONTRIBUTING.md)
   - [TODO.md](build/automation/lib/project/template/documentation/TODO.md)
+  - [Contributing.md](build/automation/lib/project/template/documentation/Contributing.md)
+  - [Onboarding.md](build/automation/lib/project/template/documentation/Onboarding.md)
   - [Architectural Decision Record](build/automation/lib/project/template/documentation/adr/README.md)
 - Unit and integration [tests](build/automation/test)
 - Example of the repository structure that can consist of a single or multiple projects

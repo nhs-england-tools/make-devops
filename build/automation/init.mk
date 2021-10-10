@@ -88,6 +88,10 @@ devops-copy: ### Copy the DevOps automation toolchain scripts from this codebase
 			$(DIR)/build \
 			$(DIR)/documentation/adr \
 			$(DIR)/documentation/diagrams
+		# Clean up
+		rm -rf \
+			$(DIR)/documentation/CONTRIBUTING.md \
+			$(DIR)/documentation/ONBOARDING.md
 		# Library files
 		rsync -rav \
 			--include=build/ \
@@ -207,6 +211,9 @@ devops-update devops-synchronise: ### Update/upgrade the DevOps automation toolc
 			$(PARENT_PROJECT_DIR)/build \
 			$(PARENT_PROJECT_DIR)/documentation/adr \
 			$(PARENT_PROJECT_DIR)/documentation/diagrams
+		rm -rf \
+			$(PARENT_PROJECT_DIR)/documentation/CONTRIBUTING.md \
+			$(PARENT_PROJECT_DIR)/documentation/ONBOARDING.md
 		# Library files
 		rsync -rav \
 			--include=build/ \
