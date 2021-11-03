@@ -181,6 +181,7 @@ macos-install-recommended:: ### Install recommended dependencies - optional: REI
 	brew $$install --cask istat-menus ||:
 	brew $$install --cask karabiner-elements ||:
 	brew $$install --cask mindnode-pro ||:
+	brew $$install --cask nordvpn ||:
 	brew $$install --cask raindropio ||:
 	brew $$install --cask sourcetree ||:
 	brew $$install --cask tripmode ||:
