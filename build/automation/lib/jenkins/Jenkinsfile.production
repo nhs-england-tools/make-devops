@@ -16,7 +16,7 @@ pipeline {
     //GIT_TAG = sh(returnStdout: true, script: "git tag --points-at HEAD").trim()
     //PROFILE = [derive it from the GIT_TAG e.g. for `YYmmddHHMMSS-live` it is `live` ...]
   }
-  triggers { pollSCM(env.BRANCH_NAME == "master" ? "* * * * *" : "") }
+  triggers { pollSCM(env.BRANCH_NAME == "main" ? "* * * * *" : "") }
   stages {
     stage("Configuration") {
       steps {
