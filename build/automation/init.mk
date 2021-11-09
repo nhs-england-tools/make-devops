@@ -108,6 +108,8 @@ devops-copy: ### Copy the DevOps automation toolchain scripts from this codebase
 			cp -fv build/automation/lib/project/template/.github/CODEOWNERS $(DIR)/.github
 			cp -fv build/automation/lib/project/template/.gitattributes $(DIR)
 		)
+		mkdir -p $(DIR)/.vscode
+		cp -fv build/automation/lib/project/template/.vscode/extensions.json $(DIR)/.vscode
 		cp -fv build/automation/tmp/.gitignore $(DIR)/build/automation/tmp/.gitignore
 		cp -fv LICENSE.md $(DIR)/build/automation/LICENSE.md
 		[ -f $(DIR)/docker/docker-compose.yml ] && rm -fv $(DIR)/docker/.gitkeep
@@ -225,6 +227,8 @@ devops-update devops-synchronise: ### Update/upgrade the DevOps automation toolc
 			cp -fv build/automation/lib/project/template/.github/CODEOWNERS $(PARENT_PROJECT_DIR)/.github
 			cp -fv build/automation/lib/project/template/.gitattributes $(PARENT_PROJECT_DIR)
 		)
+		mkdir -p $(PARENT_PROJECT_DIR)/.vscode
+		cp -fv build/automation/lib/project/template/.vscode/extensions.json $(PARENT_PROJECT_DIR)/.vscode
 		cp -fv build/automation/tmp/.gitignore $(PARENT_PROJECT_DIR)/build/automation/tmp/.gitignore
 		cp -fv LICENSE.md $(PARENT_PROJECT_DIR)/build/automation/LICENSE.md
 		[ -f $(PARENT_PROJECT_DIR)/docker/docker-compose.yml ] && rm -fv $(PARENT_PROJECT_DIR)/docker/.gitkeep
