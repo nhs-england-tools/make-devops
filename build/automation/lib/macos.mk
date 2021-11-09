@@ -418,6 +418,7 @@ _macos-config-visual-studio-code:
 	code --force --install-extension formulahendry.code-runner
 	code --force --install-extension fosshaas.fontsize-shortcuts
 	code --force --install-extension gabrielbb.vscode-lombok
+	code --force --install-extension github.vscode-pull-request-github
 	code --force --install-extension gruntfuggly.todo-tree
 	code --force --install-extension hashicorp.terraform
 	code --force --install-extension hediet.vscode-drawio
