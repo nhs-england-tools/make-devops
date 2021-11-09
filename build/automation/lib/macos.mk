@@ -82,6 +82,7 @@ macos-install-essential:: ### Install essential development dependencies - optio
 	brew $$install pyenv-which-ext ||:
 	brew $$install python@$(PYTHON_VERSION_MAJOR).$(PYTHON_VERSION_MINOR) ||:
 	brew $$install readline ||:
+	brew $$install remotemobprogramming/brew/mob ||:
 	brew $$install shellcheck ||:
 	brew $$install sqlite3 ||:
 	brew $$install tmux ||:
