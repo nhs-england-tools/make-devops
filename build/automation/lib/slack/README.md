@@ -10,6 +10,7 @@ This is a list of default Slack channels to support development and service main
 - `[project-name/project-id]-release-notes` for automatically issuing release notes from git history and commit messages
 - `[team-name]-dev` for day to day development discussions, e.g. pull request announcements and related technical conversations
 - `[team-name]-swarming` for mob programming and swarming sessions
+- `[team-name]-general` for a general team discussion
 
 where
 
