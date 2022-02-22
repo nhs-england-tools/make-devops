@@ -27,6 +27,7 @@
     "editor.bracketPairColorization.enabled": true,
     "editor.fontSize": 14,
     "editor.formatOnSave": true,
+    "editor.guides.bracketPairs": "active",
     "editor.renderWhitespace": "all",
     "editor.rulers": [
       120
@@ -59,7 +60,7 @@
     "java.completion.enabled": true,
     "java.configuration.updateBuildConfiguration": "automatic",
     "java.format.enabled": false,
-    "java.home": "/Library/Java/JavaVirtualMachines/adoptopenjdk-16.jdk/Contents/Home",
+    "java.jdt.ls.java.home": "/Library/Java/JavaVirtualMachines/adoptopenjdk-16.jdk/Contents/Home",
     "php.suggest.basic": false,
     "php.validate.executablePath": "/usr/bin/php",
     "python.formatting.blackArgs": [
@@ -88,7 +89,6 @@
       "**/target": true,
       "**/tmp": true
     },
-    "telemetry.enableCrashReporter": false,
     "telemetry.enableTelemetry": false,
     "terminal.integrated.fontFamily": "Hack Nerd Font",
     "window.title": "${activeEditorMedium}${separator}${rootName}${separator}${rootPath}",
@@ -205,10 +205,7 @@
       "statusBar.background": "#b52e31",
       "statusBarItem.hoverBackground": "#d04649",
       "statusBar.foreground": "#e7e7e7",
-      "editorGroup.border": "#d04649",
-      "panel.border": "#d04649",
       "sash.hoverBorder": "#d04649",
-      "sideBar.border": "#d04649",
       "statusBarItem.remoteBackground": "#b52e31",
       "statusBarItem.remoteForeground": "#e7e7e7"
     },

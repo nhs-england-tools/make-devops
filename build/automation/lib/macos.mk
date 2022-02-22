@@ -162,7 +162,7 @@ macos-install-corporate:: ### Install corporate dependencies - optional: REINSTA
 	brew $$install --cask microsoft-teams ||:
 	brew $$install --cask slack ||:
 	brew $$install --cask vmware-horizon-client ||:
-	brew $$install --cask avast-security ||: # https://support.avast.com/en-gb/article/Install-Mac-Security/
+	brew $$install --cask avast-security ||: # https://support.avast.com/en-gb/article/Install-Mac-Security/
 
 macos-install-recommended:: ### Install recommended dependencies - optional: REINSTALL=true
 	export HOMEBREW_NO_AUTO_UPDATE=1
@@ -392,85 +392,84 @@ _macos-config-visual-studio-code:
 	# *** Install extensions ***
 	#
 	# PHP
-	code --force --install-extension bmewburn.vscode-intelephense-client # PHP support
-	code --force --install-extension felixfbecker.php-debug # PHP support
+	code --force --install-extension bmewburn.vscode-intelephense-client ||: # PHP support
+	code --force --install-extension xdebug.php-debug ||: # PHP support
 	#
-	code --force --install-extension alefragnani.bookmarks
-	code --force --install-extension alefragnani.project-manager
-	code --force --install-extension alexkrechik.cucumberautocomplete
-	code --force --install-extension amazonwebservices.aws-toolkit-vscode
-	code --force --install-extension ban.spellright
-	code --force --install-extension christian-kohler.npm-intellisense
-	code --force --install-extension christian-kohler.path-intellisense
-	code --force --install-extension coenraads.bracket-pair-colorizer
-	code --force --install-extension davidanson.vscode-markdownlint
-	code --force --install-extension dbaeumer.vscode-eslint
-	code --force --install-extension donjayamanne.githistory
-	code --force --install-extension dsznajder.es7-react-js-snippets
-	code --force --install-extension eamodio.gitlens
-	code --force --install-extension editorconfig.editorconfig
-	code --force --install-extension eg2.vscode-npm-script
-	code --force --install-extension emeraldwalk.runonsave
-	code --force --install-extension esbenp.prettier-vscode
-	code --force --install-extension ffaraone.pyfilesgen
-	code --force --install-extension formulahendry.code-runner
-	code --force --install-extension fosshaas.fontsize-shortcuts
-	code --force --install-extension gabrielbb.vscode-lombok
-	code --force --install-extension gruntfuggly.todo-tree
-	code --force --install-extension hashicorp.terraform
-	code --force --install-extension hediet.vscode-drawio
-	code --force --install-extension humao.rest-client
-	code --force --install-extension jebbs.plantuml
-	code --force --install-extension johnpapa.vscode-peacock
-	code --force --install-extension mhutchie.git-graph
-	code --force --install-extension mrmlnc.vscode-apache
-	code --force --install-extension ms-azuretools.vscode-docker
-	code --force --install-extension ms-python.python
-	code --force --install-extension ms-python.vscode-pylance
-	code --force --install-extension ms-toolsai.jupyter
-	code --force --install-extension ms-vsliveshare.vsliveshare-pack
-	code --force --install-extension msjsdiag.debugger-for-chrome
-	code --force --install-extension msjsdiag.vscode-react-native
-	code --force --install-extension mushan.vscode-paste-image
-	code --force --install-extension nicolasvuillamy.vscode-groovy-lint
-	code --force --install-extension oderwat.indent-rainbow
-	code --force --install-extension pivotal.vscode-spring-boot
-	code --force --install-extension redhat.java
-	code --force --install-extension redhat.vscode-yaml
-	code --force --install-extension shengchen.vscode-checkstyle
-	code --force --install-extension sonarsource.sonarlint-vscode
-	code --force --install-extension streetsidesoftware.code-spell-checker
-	code --force --install-extension techer.open-in-browser
-	code --force --install-extension timonwong.shellcheck
-	code --force --install-extension tomoki1207.pdf
-	code --force --install-extension visualstudioexptteam.vscodeintellicode
-	code --force --install-extension vscjava.vscode-java-pack
-	code --force --install-extension vscjava.vscode-spring-boot-dashboard
-	code --force --install-extension vscjava.vscode-spring-initializr
-	code --force --install-extension vscode-icons-team.vscode-icons
-	code --force --install-extension vsls-contrib.codetour
-	code --force --install-extension vsls-contrib.gistfs
-	code --force --install-extension wayou.vscode-todo-highlight
-	code --force --install-extension xabikos.javascriptsnippets
-	code --force --install-extension yzhang.dictionary-completion
-	code --force --install-extension yzhang.markdown-all-in-one
+	code --force --install-extension alefragnani.bookmarks ||:
+	code --force --install-extension alefragnani.project-manager ||:
+	code --force --install-extension alexkrechik.cucumberautocomplete ||:
+	code --force --install-extension amazonwebservices.aws-toolkit-vscode ||:
+	code --force --install-extension ban.spellright ||:
+	code --force --install-extension christian-kohler.npm-intellisense ||:
+	code --force --install-extension christian-kohler.path-intellisense ||:
+	code --force --install-extension davidanson.vscode-markdownlint ||:
+	code --force --install-extension dbaeumer.vscode-eslint ||:
+	code --force --install-extension donjayamanne.githistory ||:
+	code --force --install-extension dsznajder.es7-react-js-snippets ||:
+	code --force --install-extension eamodio.gitlens ||:
+	code --force --install-extension editorconfig.editorconfig ||:
+	code --force --install-extension eg2.vscode-npm-script ||:
+	code --force --install-extension emeraldwalk.runonsave ||:
+	code --force --install-extension esbenp.prettier-vscode ||:
+	code --force --install-extension ffaraone.pyfilesgen ||:
+	code --force --install-extension formulahendry.code-runner ||:
+	code --force --install-extension fosshaas.fontsize-shortcuts ||:
+	code --force --install-extension gabrielbb.vscode-lombok ||:
+	code --force --install-extension gruntfuggly.todo-tree ||:
+	code --force --install-extension hashicorp.terraform ||:
+	code --force --install-extension hediet.vscode-drawio ||:
+	code --force --install-extension humao.rest-client ||:
+	code --force --install-extension jebbs.plantuml ||:
+	code --force --install-extension johnpapa.vscode-peacock ||:
+	code --force --install-extension mhutchie.git-graph ||:
+	code --force --install-extension mrmlnc.vscode-apache ||:
+	code --force --install-extension ms-azuretools.vscode-docker ||:
+	code --force --install-extension ms-python.python ||:
+	code --force --install-extension ms-python.vscode-pylance ||:
+	code --force --install-extension ms-toolsai.jupyter ||:
+	code --force --install-extension ms-vsliveshare.vsliveshare-pack ||:
+	code --force --install-extension msjsdiag.debugger-for-chrome ||:
+	code --force --install-extension msjsdiag.vscode-react-native ||:
+	code --force --install-extension mushan.vscode-paste-image ||:
+	code --force --install-extension nicolasvuillamy.vscode-groovy-lint ||:
+	code --force --install-extension oderwat.indent-rainbow ||:
+	code --force --install-extension pivotal.vscode-spring-boot ||:
+	code --force --install-extension redhat.java ||:
+	code --force --install-extension redhat.vscode-yaml ||:
+	code --force --install-extension shengchen.vscode-checkstyle ||:
+	code --force --install-extension sonarsource.sonarlint-vscode ||:
+	code --force --install-extension streetsidesoftware.code-spell-checker ||:
+	code --force --install-extension techer.open-in-browser ||:
+	code --force --install-extension timonwong.shellcheck ||:
+	code --force --install-extension tomoki1207.pdf ||:
+	code --force --install-extension visualstudioexptteam.vscodeintellicode ||:
+	code --force --install-extension vscjava.vscode-java-pack ||:
+	code --force --install-extension vscjava.vscode-spring-boot-dashboard ||:
+	code --force --install-extension vscjava.vscode-spring-initializr ||:
+	code --force --install-extension vscode-icons-team.vscode-icons ||:
+	code --force --install-extension vsls-contrib.codetour ||:
+	code --force --install-extension vsls-contrib.gistfs ||:
+	code --force --install-extension wayou.vscode-todo-highlight ||:
+	code --force --install-extension xabikos.javascriptsnippets ||:
+	code --force --install-extension yzhang.dictionary-completion ||:
+	code --force --install-extension yzhang.markdown-all-in-one ||:
 	#
 	# *** Install themes ***
 	#
-	code --force --install-extension ahmadawais.shades-of-purple
-	code --force --install-extension akamud.vscode-theme-onedark
-	code --force --install-extension arcticicestudio.nord-visual-studio-code
-	code --force --install-extension dracula-theme.theme-dracula
-	code --force --install-extension equinusocio.vsc-material-theme
-	code --force --install-extension ginfuru.ginfuru-better-solarized-dark-theme
-	code --force --install-extension johnpapa.winteriscoming
-	code --force --install-extension liviuschera.noctis
-	code --force --install-extension ryanolsonx.solarized
-	code --force --install-extension sdras.night-owl
-	code --force --install-extension smlombardi.slime
-	code --force --install-extension vangware.dark-plus-material
-	code --force --install-extension wesbos.theme-cobalt2
-	code --force --install-extension zhuangtongfa.material-theme
+	code --force --install-extension ahmadawais.shades-of-purple ||:
+	code --force --install-extension akamud.vscode-theme-onedark ||:
+	code --force --install-extension arcticicestudio.nord-visual-studio-code ||:
+	code --force --install-extension dracula-theme.theme-dracula ||:
+	code --force --install-extension equinusocio.vsc-material-theme ||:
+	code --force --install-extension ginfuru.ginfuru-better-solarized-dark-theme ||:
+	code --force --install-extension johnpapa.winteriscoming ||:
+	code --force --install-extension liviuschera.noctis ||:
+	code --force --install-extension ryanolsonx.solarized ||:
+	code --force --install-extension sdras.night-owl ||:
+	code --force --install-extension smlombardi.slime ||:
+	code --force --install-extension vangware.dark-plus-material ||:
+	code --force --install-extension wesbos.theme-cobalt2 ||:
+	code --force --install-extension zhuangtongfa.material-theme ||:
 	# List them all
 	code --list-extensions --show-versions
 	# Copy user key bindings
