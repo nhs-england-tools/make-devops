@@ -108,6 +108,8 @@ devops-copy: ### Copy the DevOps automation toolchain scripts from this codebase
 			cp -fv build/automation/lib/project/template/.github/CODEOWNERS $(DIR)/.github
 			cp -fv build/automation/lib/project/template/.gitattributes $(DIR)
 		)
+		mkdir -p $(DIR)/.vscode
+		cp -fv build/automation/lib/project/template/.vscode/extensions.json $(DIR)/.vscode
 		cp -fv build/automation/tmp/.gitignore $(DIR)/build/automation/tmp/.gitignore
 		cp -fv LICENSE.md $(DIR)/build/automation/LICENSE.md
 		[ -f $(DIR)/docker/docker-compose.yml ] && rm -fv $(DIR)/docker/.gitkeep
@@ -225,6 +227,8 @@ devops-update devops-synchronise: ### Update/upgrade the DevOps automation toolc
 			cp -fv build/automation/lib/project/template/.github/CODEOWNERS $(PARENT_PROJECT_DIR)/.github
 			cp -fv build/automation/lib/project/template/.gitattributes $(PARENT_PROJECT_DIR)
 		)
+		mkdir -p $(PARENT_PROJECT_DIR)/.vscode
+		cp -fv build/automation/lib/project/template/.vscode/extensions.json $(PARENT_PROJECT_DIR)/.vscode/extensions.json
 		cp -fv build/automation/tmp/.gitignore $(PARENT_PROJECT_DIR)/build/automation/tmp/.gitignore
 		cp -fv LICENSE.md $(PARENT_PROJECT_DIR)/build/automation/LICENSE.md
 		[ -f $(PARENT_PROJECT_DIR)/docker/docker-compose.yml ] && rm -fv $(PARENT_PROJECT_DIR)/docker/.gitkeep
@@ -595,7 +599,7 @@ JQ_DIR_REL := $(shell echo $(abspath $(LIB_DIR)/jq) | sed "s;$(PROJECT_DIR);;g")
 GIT_BRANCH_PATTERN_MAIN := ^(main|master|develop)$$
 GIT_BRANCH_PATTERN_PREFIX := ^(task|spike|automation|test|bugfix|hotfix|fix|release|migration|refactor)
 GIT_BRANCH_PATTERN_SUFFIX := ([A-Z]{2,5}-([0-9]{1,5}|X{1,5})_[A-Z][a-z]+_[A-Za-z0-9]+_[A-Za-z0-9_]+)$$
-GIT_BRANCH_PATTERN_ADDITIONAL := ^(task/Update_(automation_scripts|dependencies|documentation|tests|versions)|task/Refactor|refactor/[A-Z][a-z]+_[A-Za-z0-9_]+_[A-Za-z0-9_]+|devops/[A-Z][a-z]+_[A-Za-z0-9_]+_[A-Za-z0-9_]+|alignment/[A-Z][a-z]+_[A-Za-z0-9_]+_[A-Za-z0-9_]+)$$
+GIT_BRANCH_PATTERN_ADDITIONAL := ^(task/Update_(automation_scripts|dependencies|documentation|tests|versions)|task/Refactor|task/Refactor_[A-Za-z0-9_]+_[A-Za-z0-9_]+|refactor/[A-Z][a-z]+_[A-Za-z0-9_]+_[A-Za-z0-9_]+|devops/[A-Z][a-z]+_[A-Za-z0-9_]+_[A-Za-z0-9_]+|alignment/[A-Z][a-z]+_[A-Za-z0-9_]+_[A-Za-z0-9_]+)$$
 GIT_BRANCH_PATTERN := $(GIT_BRANCH_PATTERN_MAIN)|$(GIT_BRANCH_PATTERN_PREFIX)/$(GIT_BRANCH_PATTERN_SUFFIX)|$(GIT_BRANCH_PATTERN_ADDITIONAL)
 GIT_BRANCH_MAX_LENGTH := 72
 GIT_TAG_PATTERN := [0-9]{12,14}-[a-z]{3,10}

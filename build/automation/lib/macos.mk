@@ -82,6 +82,7 @@ macos-install-essential:: ### Install essential development dependencies - optio
 	brew $$install pyenv-which-ext ||:
 	brew $$install python@$(PYTHON_VERSION_MAJOR).$(PYTHON_VERSION_MINOR) ||:
 	brew $$install readline ||:
+	brew $$install remotemobprogramming/brew/mob ||:
 	brew $$install shellcheck ||:
 	brew $$install sqlite3 ||:
 	brew $$install tmux ||:
@@ -181,6 +182,7 @@ macos-install-recommended:: ### Install recommended dependencies - optional: REI
 	brew $$install --cask istat-menus ||:
 	brew $$install --cask karabiner-elements ||:
 	brew $$install --cask mindnode-pro ||:
+	brew $$install --cask nordvpn ||:
 	brew $$install --cask raindropio ||:
 	brew $$install --cask sourcetree ||:
 	brew $$install --cask tripmode ||:
@@ -415,6 +417,7 @@ _macos-config-visual-studio-code:
 	code --force --install-extension formulahendry.code-runner ||:
 	code --force --install-extension fosshaas.fontsize-shortcuts ||:
 	code --force --install-extension gabrielbb.vscode-lombok ||:
+	code --force --install-extension github.vscode-pull-request-github
 	code --force --install-extension gruntfuggly.todo-tree ||:
 	code --force --install-extension hashicorp.terraform ||:
 	code --force --install-extension hediet.vscode-drawio ||:
