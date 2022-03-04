@@ -634,6 +634,9 @@ PATH_HOMEBREW := /opt/homebrew/opt/coreutils/libexec/gnubin:/opt/homebrew/opt/fi
 PATH_DEVOPS := $(BIN_DIR):$(HOME)/.pyenv/bin:$(HOME)/.pyenv/shims
 PATH_SYSTEM := /usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
 
+BASH_VERSION := $(shell bash --version | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+MAKE_VERSION := $(shell make --version | grep -Eo '[0-9]+\.[0-9]+(\.[0-9]+)?' | head -1)
+
 # ==============================================================================
 # `make` configuration
 
