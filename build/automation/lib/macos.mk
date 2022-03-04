@@ -27,7 +27,7 @@ macos-update:: ### Update all currently installed development dependencies
 	brew update
 	brew upgrade ||:
 	brew tap buo/cask-upgrade
-	brew cu --all --yes
+	brew cu --all --yes ||:
 
 macos-install-essential:: ### Install essential development dependencies - optional: REINSTALL=true
 	export HOMEBREW_NO_AUTO_UPDATE=1
