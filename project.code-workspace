@@ -1,23 +1,27 @@
 {
   "folders": [
     {
-      "name": "Project Template",
-      "path": "./build/automation/lib/project/template"
-    },
-    {
-      "name": "Terraform Modules & Stacks",
-      "path": "./build/automation/lib/terraform/template"
-    },
-    {
-      "name": "Docker Images",
+      "name": "Make DevOps - Docker Images",
       "path": "./build/automation/lib/docker/image"
     },
     {
-      "name": "Configuration",
+      "name": "Make DevOps - Template - Terraform Stacks",
+      "path": "./build/automation/lib/terraform/template/stacks"
+    },
+    {
+      "name": "Make DevOps - Template - Terraform Modules",
+      "path": "./build/automation/lib/terraform/template/modules"
+    },
+    {
+      "name": "Make DevOps - Template - Project Structure",
+      "path": "./build/automation/lib/project/template"
+    },
+    {
+      "name": "Project Configuration",
       "path": "./build/automation/var"
     },
     {
-      "name": "[Repository]",
+      "name": "Project Repository",
       "path": "."
     }
   ],
@@ -27,6 +31,7 @@
     "editor.bracketPairColorization.enabled": true,
     "editor.fontSize": 14,
     "editor.formatOnSave": true,
+    "editor.guides.bracketPairs": "active",
     "editor.renderWhitespace": "all",
     "editor.rulers": [
       120
@@ -34,7 +39,7 @@
     "editor.suggestSelection": "recentlyUsedByPrefix",
     "explorer.autoReveal": true,
     "explorer.sortOrder": "type",
-    "extensions.ignoreRecommendations": true,
+    "extensions.ignoreRecommendations": false,
     "files.associations": {
       "Jenkinsfile*": "jenkinsfile"
     },
@@ -59,7 +64,7 @@
     "java.completion.enabled": true,
     "java.configuration.updateBuildConfiguration": "automatic",
     "java.format.enabled": false,
-    "java.home": "/Library/Java/JavaVirtualMachines/adoptopenjdk-16.jdk/Contents/Home",
+    "java.jdt.ls.java.home": "/Library/Java/JavaVirtualMachines/adoptopenjdk-16.jdk/Contents/Home",
     "php.suggest.basic": false,
     "php.validate.executablePath": "/usr/bin/php",
     "python.formatting.blackArgs": [
@@ -72,14 +77,14 @@
       "--max-line-length=120"
     ],
     "python.linting.flake8Enabled": true,
-    "python.linting.flake8Path": "~/.pyenv/versions/3.9.7/bin/flake8",
+    "python.linting.flake8Path": "~/.pyenv/versions/3.10.2/bin/flake8",
     "python.linting.mypyArgs": [],
     "python.linting.mypyEnabled": true,
-    "python.linting.mypyPath": "~/.pyenv/versions/3.9.7/bin/mypy",
+    "python.linting.mypyPath": "~/.pyenv/versions/3.10.2/bin/mypy",
     "python.linting.pylintArgs": [],
     "python.linting.pylintEnabled": true,
-    "python.linting.pylintPath": "~/.pyenv/versions/3.9.7/bin/pylint",
-    "python.pythonPath": "~/.pyenv/versions/3.9.7/bin/python",
+    "python.linting.pylintPath": "~/.pyenv/versions/3.10.2/bin/pylint",
+    "python.pythonPath": "~/.pyenv/versions/3.10.2/bin/python",
     "python.terminal.activateEnvironment": false,
     "search.exclude": {
       "**/.git": true,
@@ -88,12 +93,10 @@
       "**/target": true,
       "**/tmp": true
     },
-    "telemetry.enableCrashReporter": false,
-    "telemetry.enableTelemetry": false,
     "terminal.integrated.fontFamily": "Hack Nerd Font",
     "window.title": "${activeEditorMedium}${separator}${rootName}${separator}${rootPath}",
     "window.zoomLevel": 0,
-    "workbench.colorTheme": "Better Solarized Dark Italics",
+    "workbench.colorTheme": "Noctis Azureus",
     "workbench.editor.enablePreview": false,
     "workbench.tree.indent": 24,
     "[dockerfile]": {
@@ -191,27 +194,24 @@
       ]
     },
     "workbench.colorCustomizations": {
-      "activityBar.background": "#d04649",
-      "activityBar.activeBackground": "#d04649",
-      "activityBar.activeBorder": "#37cb34",
-      "activityBar.foreground": "#e7e7e7",
-      "activityBar.inactiveForeground": "#e7e7e799",
-      "activityBarBadge.background": "#37cb34",
-      "activityBarBadge.foreground": "#15202b",
-      "titleBar.activeBackground": "#b52e31",
-      "titleBar.inactiveBackground": "#b52e3199",
-      "titleBar.activeForeground": "#e7e7e7",
-      "titleBar.inactiveForeground": "#e7e7e799",
-      "statusBar.background": "#b52e31",
-      "statusBarItem.hoverBackground": "#d04649",
-      "statusBar.foreground": "#e7e7e7",
-      "editorGroup.border": "#d04649",
-      "panel.border": "#d04649",
-      "sash.hoverBorder": "#d04649",
-      "sideBar.border": "#d04649",
-      "statusBarItem.remoteBackground": "#b52e31",
-      "statusBarItem.remoteForeground": "#e7e7e7"
+      "activityBar.background": "#1accff",
+      "activityBar.activeBackground": "#1accff",
+      "activityBar.activeBorder": "#df00ad",
+      "activityBar.foreground": "#15202b",
+      "activityBar.inactiveForeground": "#15202b99",
+      "activityBarBadge.background": "#df00ad",
+      "activityBarBadge.foreground": "#e7e7e7",
+      "titleBar.activeBackground": "#00b3e6",
+      "titleBar.inactiveBackground": "#00b3e699",
+      "titleBar.activeForeground": "#15202b",
+      "titleBar.inactiveForeground": "#15202b99",
+      "statusBar.background": "#00b3e6",
+      "statusBarItem.hoverBackground": "#008bb3",
+      "statusBar.foreground": "#15202b",
+      "sash.hoverBorder": "#1accff",
+      "statusBarItem.remoteBackground": "#00b3e6",
+      "statusBarItem.remoteForeground": "#15202b"
     },
-    "peacock.color": "#b52e31"
+    "peacock.color": "#00b3e6"
   }
 }

@@ -149,7 +149,7 @@ test-git-secrets-scan-repo-files:
 test-git-check-if-commit-changed-directory:
 	# act
 	output=$$(make git-check-if-commit-changed-directory DIR=build/automation/tmp)
-	# assert
+	# assert
 	mk_test "false == $$output"
 
 test-git-commit-get-hash:
