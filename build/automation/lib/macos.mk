@@ -123,6 +123,7 @@ macos-install-additional:: ### Install additional development dependencies - opt
 	brew $$install --cask keepingyouawake ||:
 	brew $$install --cask nosql-workbench ||:
 	brew $$install --cask postman ||:
+	brew $$install --cask sourcetree ||:
 	brew $$install --cask spectacle ||:
 	brew $$install --cask tunnelblick ||:
 	# Protoman
@@ -181,13 +182,12 @@ macos-install-recommended:: ### Install recommended dependencies - optional: REI
 	brew $$install --cask hammerspoon ||:
 	brew $$install --cask istat-menus ||:
 	brew $$install --cask karabiner-elements ||:
-	brew $$install --cask mindnode-pro ||:
 	brew $$install --cask nordvpn ||:
 	brew $$install --cask raindropio ||:
-	brew $$install --cask sourcetree ||:
 	brew $$install --cask tripmode ||:
 	brew $$install --cask vlc ||:
 	brew $$install --cask wifi-explorer ||:
+	mas list | grep MindNode || ( mas install $$(mas search MindNode | head -n 1 | awk '{ print $$1 }') && mas upgrade $$(mas list | grep MindNode | awk '{ print $$1 }') ) ||:
 
 macos-config:: ### Configure development dependencies
 	make \
