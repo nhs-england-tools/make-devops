@@ -208,10 +208,10 @@ _terraform-delete-state-lock: ### Delete Terraform state lock - mandatory: STACK
 # ==============================================================================
 
 _terraform-copy-common: # Copies all common terraform files to the desired stack - Mandatory: STACK - name of stack to copy common terraform file into
-	cp $(TERRAFORM_DIR)/common/c-*.tf $(TERRAFORM_DIR)/$(STACK)
+	cp $(TERRAFORM_DIR)/common/common-*.tf $(TERRAFORM_DIR)/$(STACK)
 
 _terraform-remove-common: # Removes all common terraform files from the desired stack - Mandatory: STACK - name of stack to clean up common terraform file from
-	rm -f $(TERRAFORM_DIR)/$(STACK)/c-*.tf
+	rm -f $(TERRAFORM_DIR)/$(STACK)/common-*.tf
 
 # ==============================================================================
 
