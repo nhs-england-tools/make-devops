@@ -615,7 +615,7 @@ docker-run-terraform-tfsec: ### Run terraform tfsec container - optional: DIR,AR
 		$$image \
 			.
 
-docker-run-terraform-checkov: ### Run terraform checkov container - optional: DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file],IMAGE=[image name],CONTAINER=[container name]; SEE: https://github.com/bridgecrewio/checkov
+docker-run-checkov: ### Run checkov container - optional: DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file],IMAGE=[image name],CONTAINER=[container name]; SEE: https://github.com/bridgecrewio/checkov
 	make docker-config > /dev/null 2>&1
 	image=$$([ -n "$(IMAGE)" ] && echo $(IMAGE) || echo bridgecrew/checkov:$(DOCKER_TERRAFORM_CHECKOV_VERSION))
 	container=$$([ -n "$(CONTAINER)" ] && echo $(CONTAINER) || echo tfsec-$(BUILD_COMMIT_HASH)-$(BUILD_ID)-$$(date --date=$$(date -u +"%Y-%m-%dT%H:%M:%S%z") -u +"%Y%m%d%H%M%S" 2> /dev/null)-$$(make secret-random LENGTH=8))
