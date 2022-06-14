@@ -88,7 +88,7 @@ function mk_test_print_red_on_yellow() {
 
 function mk_test_print() {
   (
-    set +x
+    # set +x
     if test -t 1 && [ -n "$TERM" ] && [ "$TERM" != "dumb" ]; then
       [ -n "$3" ] && tput setab $3
       [ -n "$2" ] && tput setaf $2

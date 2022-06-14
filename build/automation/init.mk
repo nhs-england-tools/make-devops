@@ -32,6 +32,7 @@ devops-get-variable get-variable: ### Get the specified variable - mandatory: N
 
 devops-test-suite: ### Run the DevOps unit test suite - optional: DEBUG=true
 	make _devops-test DEBUG=$(DEBUG) TESTS=" \
+		test-file \
 		test-ssl \
 		test-git \
 		test-docker \
