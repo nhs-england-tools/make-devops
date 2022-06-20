@@ -21,18 +21,14 @@ DOCKER_MAVEN_VERSION = 3.8.3-openjdk-$(JAVA_VERSION)-slim
 DOCKER_NGINX_VERSION = 1.22.0-alpine
 DOCKER_NODE_VERSION = $(NODE_VERSION)-alpine
 DOCKER_OPENJDK_VERSION = $(JAVA_VERSION)-alpine
-# TODO clarify postgres with Dan
 DOCKER_POSTGRES_VERSION = $(POSTGRES_VERSION)-alpine
 DOCKER_POSTMAN_NEWMAN_VERSION = $(POSTMAN_NEWMAN_VERSION)-alpine
 DOCKER_PYTHON_VERSION = $(PYTHON_VERSION)-alpine
 DOCKER_SONAR_SCANNER_CLI_VERSION = $(SONAR_SCANNER_CLI_VERSION)
 DOCKER_TERRAFORM_CHECKOV_VERSION = 2.0.1210
 DOCKER_TERRAFORM_COMPLIANCE_VERSION = 1.3.33
-# TODO You should use aquasec/tfsec instead  ?
-DOCKER_TERRAFORM_TFSEC_VERSION = v0.39.42
-# TODO how do we confirm texas version v 1.2.2 ?
+DOCKER_TERRAFORM_TFSEC_VERSION = v1.26.0
 DOCKER_TERRAFORM_VERSION = $(TERRAFORM_VERSION)
-# TODO move to [DEPRECATED] Use the official wiremock/wiremock image instead
 DOCKER_WIREMOCK_VERSION = $(WIREMOCK_VERSION)-alpine
 
 DOCKER_LIBRARY_ELASTICSEARCH_VERSION = $(shell cat $(DOCKER_LIB_IMAGE_DIR)/elasticsearch/VERSION 2> /dev/null)
@@ -237,7 +233,7 @@ docker-create-dockerfile: ### Create effective Dockerfile - mandatory: NAME; op
 		s#FROM postgres:latest#FROM postgres:$(DOCKER_POSTGRES_VERSION)#g; \
 		s#FROM postman/newman:latest#FROM postman/newman:$(DOCKER_POSTMAN_NEWMAN_VERSION)#g; \
 		s#FROM python:latest#FROM python:$(DOCKER_PYTHON_VERSION)#g; \
-		s#FROM rodolpheche/wiremock:latest#FROM rodolpheche/wiremock:$(DOCKER_WIREMOCK_VERSION)#g; \
+		s#FROM wiremock/wiremock:latest#FROM wiremock/wiremock:$(DOCKER_WIREMOCK_VERSION)#g; \
 	" Dockerfile.effective
 	cd $$dir
 
@@ -602,7 +598,7 @@ docker-run-terraform: ### Run terraform container - mandatory: CMD; optional: DI
 
 docker-run-terraform-tfsec: ### Run terraform tfsec container - optional: DIR,ARGS=[Docker args],VARS_FILE=[Makefile vars file],IMAGE=[image name],CONTAINER=[container name]; SEE: https://github.com/tfsec/tfsec
 	make docker-config > /dev/null 2>&1
-	image=$$([ -n "$(IMAGE)" ] && echo $(IMAGE) || echo tfsec/tfsec:$(DOCKER_TERRAFORM_TFSEC_VERSION))
+	image=$$([ -n "$(IMAGE)" ] && echo $(IMAGE) || echo aquasec/tfsec:$(DOCKER_TERRAFORM_TFSEC_VERSION))
 	container=$$([ -n "$(CONTAINER)" ] && echo $(CONTAINER) || echo tfsec-$(BUILD_COMMIT_HASH)-$(BUILD_ID)-$$(date --date=$$(date -u +"%Y-%m-%dT%H:%M:%S%z") -u +"%Y%m%d%H%M%S" 2> /dev/null)-$$(make secret-random LENGTH=8))
 	docker run --interactive $(_TTY) --rm \
 		--name $$container \
