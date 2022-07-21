@@ -325,7 +325,7 @@ aws-ecr-get-image-digest: ### Get ECR image digest by matching tag pattern - man
 			--repository-name $(shell echo $(REPO) | sed "s;$(AWS_ECR)/;;g") \
 	" | make -s docker-run-tools CMD="jq -rf $$file" | head -n 1
 
-aws-ecr-get-security-scan: ### Fetches container scan report and returns findings - Mandatory REPOSITORY, TAG=[image tag], UNACCEPTABLE_VULNERABILITY_LEVELS=[LOW,MEDIUM,HIGH,CRITICAL]; optional: FAIL_ON_WARNINGS=true, SHOW_ALL_WARNINGS=true
+aws-ecr-get-security-scan: ### Fetches container scan report and returns findings - Mandatory REPOSITORY, TAG=[image tag], UNACCEPTABLE_VULNERABILITY_LEVELS=[LOW,MEDIUM,HIGH,CRITICAL]; optional: FAIL_ON_WARNINGS=false, SHOW_ALL_WARNINGS=false
 	make -s aws-ecr-wait-for-image-scan-complete REPOSITORY=$(REPOSITORY) TAG=$(TAG)
 	SCAN_FINDINGS=$$(make -s aws-ecr-describe-image-scan-findings REPOSITORY=$(REPOSITORY) TAG=$(TAG))
 	SCAN_WARNINGS=$$(echo $$SCAN_FINDINGS | jq '.imageScanFindings.findingSeverityCounts')
