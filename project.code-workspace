@@ -212,6 +212,7 @@
       "statusBarItem.remoteBackground": "#00b3e6",
       "statusBarItem.remoteForeground": "#15202b"
     },
-    "peacock.color": "#00b3e6"
+    "peacock.color": "#00b3e6",
+    "makefile.extensionOutputFolder": "./.vscode"
   }
 }
