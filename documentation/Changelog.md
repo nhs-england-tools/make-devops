@@ -6,6 +6,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [0.9.0] - 2021-08-01
+
+### Changed
+
+- Upgrade Workflows with latest dependencies
+- Make Checkov make target more generic
+
+### Added
+
+- Add ECR Image Scanning reports make targets
+- Add terraform common targets
+
 ## [0.8.0] - 2021-10-10
 
 This release consists of major improvements and fixes aiming at implementation of a consistent project structure across the UEC DoS products.
