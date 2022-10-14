@@ -11,6 +11,7 @@ test-file:
 		test-file-replace-variables-file-name \
 		test-file-replace-variables-file-name-exclude-file-name \
 		test-file-replace-variables-in-dir \
+		test-file-replace-variables-replace-no-value \
 		test-file-copy-and-replace \
 	)
 	for test in $${tests[*]}; do
@@ -109,6 +110,17 @@ test-file-replace-variables-file-name-exclude-file-name:
 
 test-file-replace-variables-in-dir:
 	mk_test_skip
+
+test-file-replace-variables-replace-no-value:
+	# arrange
+	echo test: VARIABLE_TO_REPLACE > $(TEST_FILE)
+	# act
+	export VARIABLE=
+	make file-replace-variables FILE=$(TEST_FILE) REPLACE_NO_VALUE=true
+	# assert
+	mk_test "test: = $$(cat $(TEST_FILE))"
+	# clean up
+	rm -f $(TEST_FILE)
 
 test-file-copy-and-replace:
 	# arrange
