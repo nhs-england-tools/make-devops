@@ -15,7 +15,7 @@ file-replace-content: ### Replace multiline content from given file - mandatory:
 	mv -f $$tmp_file $(FILE)
 	chmod $$permissions $(FILE)
 
-file-replace-variables: ### Replace all placholders in given file - mandatory: FILE; optional: SUFFIX=[variable suffix, defaults to _TO_REPLACE],EXCLUDE_FILE_NAME=true
+file-replace-variables: ### Replace all placholders in given file - mandatory: FILE; optional: SUFFIX=[variable suffix, defaults to _TO_REPLACE],EXCLUDE_FILE_NAME=true,REPLACE_NO_VALUE=true
 	suffix=$(or $(SUFFIX), _TO_REPLACE)
 	echo "Replace placholders in '$$(echo $(FILE) | sed "s;$(PROJECT_DIR);;g")'"
 	# Replace placholders in file content
@@ -24,7 +24,8 @@ file-replace-variables: ### Replace all placholders in given file - mandatory: F
 		value=$$(echo $$(eval echo "\$$$$key"))
 		if [ -z "$$value" ]; then
 			echo "WARNING: Variable $$key has no value in '$$(echo $(FILE) | sed "s;$(PROJECT_DIR);;g")'"
-		else
+		fi
+		if [ ! -z "$$value" ] || [[ "$(REPLACE_NO_VALUE)" =~ ^(true|yes|y|on|1|TRUE|YES|Y|ON)$$ ]]; then
 			# Replace `${VARIABLE_TO_REPLACE}`
 			sed -i "s;\$${$${key}$${suffix}};$${value//&/\\&};g" $(FILE)
 			# Replace `$VARIABLE_TO_REPLACE`
@@ -42,10 +43,12 @@ file-replace-variables: ### Replace all placholders in given file - mandatory: F
 			file=$$(echo $$file | sed "s;$${key}$${suffix};$${value};g")
 		done
 		echo "Rename file '$$(echo $(FILE) | sed "s;$(PROJECT_DIR);;g")' to '$$file'"
-		[ -z "$$value" ] && echo "WARNING: Variable $$key has no value for '$(FILE)'" || ( \
+		[ -z "$$value" ] && echo "WARNING: Variable $$key has no value for '$(FILE)'"
+
+		if [ ! -z "$$value" ] || [[ "$(REPLACE_NO_VALUE)" =~ ^(true|yes|y|on|1|TRUE|YES|Y|ON)$$ ]]; then
 			mkdir -p $$(dirname $$file)
 			mv -f $(FILE) $$file
-		)
+		fi
 	fi
 
 file-replace-variables-in-dir: ### Replace placholders in all files in given directory - mandatory: DIR; optional: SUFFIX=[variable suffix, defaults to _TO_REPLACE],EXCLUDE_FILE_NAME=true
