@@ -26,12 +26,12 @@ file-replace-variables: ### Replace all placholders in given file - mandatory: F
 			echo "WARNING: Variable $$key has no value in '$$(echo $(FILE) | sed "s;$(PROJECT_DIR);;g")'"
 		fi
 		if [ ! -z "$$value" ] || [[ "$(REPLACE_NO_VALUE)" =~ ^(true|yes|y|on|1|TRUE|YES|Y|ON)$$ ]]; then
-		# Replace `${VARIABLE_TO_REPLACE}`
-		sed -i "s;\$${$${key}$${suffix}};$${value//&/\\&};g" $(FILE)
-		# Replace `$VARIABLE_TO_REPLACE`
-		sed -i "s;\$$$${key}$${suffix};$${value//&/\\&};g" $(FILE)
-		# Replace `VARIABLE_TO_REPLACE`
-		sed -i "s;$${key}$${suffix};$${value//&/\\&};g" $(FILE)
+			# Replace `${VARIABLE_TO_REPLACE}`
+			sed -i "s;\$${$${key}$${suffix}};$${value//&/\\&};g" $(FILE)
+			# Replace `$VARIABLE_TO_REPLACE`
+			sed -i "s;\$$$${key}$${suffix};$${value//&/\\&};g" $(FILE)
+			# Replace `VARIABLE_TO_REPLACE`
+			sed -i "s;$${key}$${suffix};$${value//&/\\&};g" $(FILE)
 		fi
 	done
 	# Replace placholders in file name
