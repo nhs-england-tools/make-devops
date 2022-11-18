@@ -325,6 +325,13 @@ aws-ecr-get-image-digest: ### Get ECR image digest by matching tag pattern - man
 			--repository-name $(shell echo $(REPO) | sed "s;$(AWS_ECR)/;;g") \
 	" | make -s docker-run-tools CMD="jq -rf $$file" | head -n 1
 
+aws-ecr-image-untag: ### Untag (and remove image if there is no tag) images in the ECR - mandatory: NAME=[repository name],TAG=[string to match tag of an image] optional:INCLUDE_LATEST=[true,false]
+	make -s docker-run-tools ARGS="$$(echo $(AWSCLI) | grep awslocal > /dev/null 2>&1 && echo '--env LOCALSTACK_HOST=$(LOCALSTACK_HOST)' ||:)" CMD=" \
+		$(AWSCLI) ecr batch-delete-image \
+			--repository-name $(PROJECT_GROUP_SHORT)/$(PROJECT_NAME_SHORT)/$(NAME) \
+			--image-ids $$(if [ "$(INCLUDE_LATEST)" = "true" ]; then echo imageTag=latest; fi) imageTag=$(TAG) \
+	"
+
 aws-ecr-get-security-scan: ### Fetches container scan report and returns findings - Mandatory REPOSITORY, TAG=[image tag], UNACCEPTABLE_VULNERABILITY_LEVELS=[LOW,MEDIUM,HIGH,CRITICAL]; optional: FAIL_ON_WARNINGS=false, SHOW_ALL_WARNINGS=false
 	make -s aws-ecr-wait-for-image-scan-complete REPOSITORY=$(REPOSITORY) TAG=$(TAG)
 	SCAN_FINDINGS=$$(make -s aws-ecr-describe-image-scan-findings REPOSITORY=$(REPOSITORY) TAG=$(TAG))
