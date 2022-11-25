@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [1.0.0] - 2022-11-25
+
+### Changed
+
+- Added untag make target
+- Tag for version 1 release
+
 ## [0.9.0] - 2022-08-01
 
 ### Changed
