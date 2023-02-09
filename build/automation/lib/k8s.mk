@@ -227,6 +227,10 @@ k8s-job-has-failed: ### Show whether the job failed - return: [true|""]
 		--output jsonpath='{.status.conditions[?(@.type=="Failed")].status}' \
 	| tr '[:upper:]' '[:lower:]' | tr -d '\n'
 
+
+k8s-get-dashboard-token: ### Gets token for Kubernetes cluster dashboard, requires being signed into AWS Account
+	aws eks get-token --cluster-name=live-leks-cluster | jq '.status.token' | sed 's/^\"//' | sed 's/\"$$//'
+
 # ==============================================================================
 
 k8s-replace-variables: ### Replace variables in base and overlay of a stack - mandatory: STACK=[name],PROFILE=[name]
@@ -395,4 +399,5 @@ k8s-job: ### Show status of jobs - mandatory: PROFILE=[name]
 	k8s-kubeconfig-export-variables \
 	k8s-log \
 	k8s-pod-get-status-phase \
-	k8s-sts
+	k8s-sts \
+	k8s-get-dashboard-token
